@@ -1,0 +1,74 @@
+/* Writing variations (conservative — the cards are already liked).
+   Reuse styles.postMeta/postDate/postTopic/postTitle/postDek/postRead and the
+   concept figure; only the card layout changes. */
+
+.section { padding-block: clamp(48px, 6.5vw, 84px); }
+.headRow { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+
+/* post meta (date · reading time) + tag chips, shared by all writing layouts */
+.meta { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.metaSep { color: var(--faint); font-size: 0.8125rem; }
+.tagRow { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 16px; }
+
+/* shared media */
+.img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: var(--r-inner);
+  outline: 1px solid rgb(28 25 23 / 0.08);
+  outline-offset: -1px;
+  display: block;
+}
+
+/* ===================== V2 — stacked feature + compact ================== */
+.featList { display: grid; gap: 16px; }
+.feature {
+  display: block;
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 22px 24px 24px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.feature:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.featMedia { margin-bottom: 20px; }
+.featMedia .img { height: 280px; }
+.featBody { max-width: 60ch; }
+
+.compact {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 28px;
+  align-items: center;
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 22px 24px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.compact:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.compactMedia .img { height: 128px; }
+
+/* ===================== V3 — two-up vertical cards ====================== */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.vcard {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 20px 22px 22px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.vcard:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.vMedia { margin-bottom: 18px; }
+.vMedia .img { height: 180px; }
+.vBody { display: flex; flex-direction: column; flex: 1; }
+
+/* concept figure stretches to fill the media slot in these layouts */
+.mediaConcept { margin: 0; }
+
+@media (max-width: 720px) {
+  .compact { grid-template-columns: 1fr; }
+  .grid2 { grid-template-columns: 1fr; }
+}

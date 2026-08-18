@@ -1,0 +1,328 @@
+/* Education — refined explorations. Rendered inside .theme (shell), so the
+   --surface/--fg/--muted/--faint/--border/--surface-alt tokens + every var(--font-*)
+   resolve from there. Three unique prefixes (.one* / .two* / .tri*) so the
+   versions never collide. No design coral in this section — only the school
+   logos carry their own brand colour. */
+
+/* ============ V1 · REFINED CREDENTIAL — neutral, deliberate Geist sans ====== */
+.oneWrap { margin: 0; }
+.oneList { display: grid; gap: 18px; }
+.oneCard {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) 1fr;
+  gap: 0;
+  padding: 30px 32px;
+  align-items: stretch;
+}
+.oneIdentity {
+  padding-right: 36px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+.oneLogoFrame {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--r-inner);
+  background: var(--surface-alt);
+  box-shadow: inset 0 0 0 1px var(--border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+.oneLogo { width: 52px; height: 52px; object-fit: contain; display: block; }
+.onePeriod {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+  margin: 0 0 8px;
+  font-variant-numeric: tabular-nums;
+}
+.oneSchool {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1.375rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin: 0 0 8px;
+  text-wrap: balance;
+}
+.oneDegree {
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 0;
+}
+.oneHonors { padding-left: 36px; }
+.oneHonorsLabel {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.onePoints { list-style: none; margin: 0; padding: 0; display: grid; gap: 13px; max-width: 66ch; }
+.onePoint {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  gap: 11px;
+  align-items: start;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.oneTick {
+  color: var(--faint);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+}
+.onePointText { min-width: 0; }
+
+@media (max-width: 760px) {
+  .oneCard { grid-template-columns: 1fr; padding: 24px 22px; }
+  .oneIdentity {
+    padding-right: 0;
+    border-right: none;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed var(--border);
+    margin-bottom: 20px;
+  }
+  .oneHonors { padding-left: 0; }
+}
+
+/* ============ V2 · DIPLOMA — editorial Fraunces serif accents =============== */
+.twoWrap { margin: 0; }
+.twoList { display: grid; gap: 18px; }
+.twoCard {
+  padding: 30px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.twoHead {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
+  align-items: center;
+}
+.twoLogoFrame {
+  width: 76px;
+  height: 76px;
+  border-radius: var(--r-inner);
+  background: var(--surface-alt);
+  box-shadow: inset 0 0 0 1px var(--border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.twoLogo { width: 56px; height: 56px; object-fit: contain; display: block; }
+.twoHeadText { min-width: 0; }
+.twoSchool {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  margin: 0 0 6px;
+  text-wrap: balance;
+}
+.twoDegree {
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+.twoPeriod {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  color: var(--faint);
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.twoPeriodLabel {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-style: italic;
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin-right: 4px;
+}
+.twoChips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.twoChip {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--fg);
+  padding: 5px 12px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--border);
+  background: var(--surface-alt);
+  white-space: nowrap;
+}
+.twoHonors {
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.twoHonorsLabel {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-style: italic;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+.twoPoints { list-style: none; margin: 0; padding: 0; display: grid; gap: 13px; max-width: 68ch; }
+.twoPoint {
+  display: grid;
+  grid-template-columns: 7px 1fr;
+  gap: 12px;
+  align-items: start;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.twoMark {
+  width: 5px;
+  height: 5px;
+  margin-top: 9px;
+  border-radius: 50%;
+  background: var(--faint);
+  flex: none;
+}
+.twoPointText { min-width: 0; }
+
+@media (max-width: 640px) {
+  .twoCard { padding: 24px 22px; }
+  .twoHead { grid-template-columns: 1fr; gap: 16px; }
+  .twoLogoFrame { width: 64px; height: 64px; }
+  .twoLogo { width: 48px; height: 48px; }
+  .twoSchool { font-size: 1.375rem; }
+}
+
+/* ============ V3 · REGISTRY — quiet, minimal ledger ======================== */
+.triWrap { margin: 0; }
+.triList { display: grid; gap: 14px; }
+.triCard {
+  display: grid;
+  grid-template-columns: minmax(240px, 300px) 1fr;
+  gap: 32px;
+  padding: 26px 30px;
+  align-items: start;
+}
+.triIdentity {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "logo meta"
+    "period period";
+  column-gap: 14px;
+  row-gap: 12px;
+  align-items: center;
+}
+.triLogoFrame {
+  grid-area: logo;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: var(--surface-alt);
+  box-shadow: inset 0 0 0 1px var(--border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.triLogo { width: 40px; height: 40px; object-fit: contain; display: block; }
+.triMeta { grid-area: meta; min-width: 0; }
+.triSchool {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1.0625rem;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  margin: 0 0 4px;
+  text-wrap: balance;
+}
+.triDegree {
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--muted);
+  margin: 0;
+}
+.triPeriod {
+  grid-area: period;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--faint);
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.triHonors {
+  min-width: 0;
+  padding-left: 32px;
+  border-left: 1px solid var(--border);
+}
+.triHonorsLabel {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 12px;
+}
+.triPoints {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  max-width: 64ch;
+}
+.triPoint {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+@media (max-width: 760px) {
+  .triCard {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 22px 22px;
+  }
+  .triHonors {
+    padding-left: 0;
+    padding-top: 20px;
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
+}

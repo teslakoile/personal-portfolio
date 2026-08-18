@@ -1,0 +1,694 @@
+/* The Quiet Blueprint v2 — restrained CV. Tokens scoped to .root so this sample
+   never collides with siblings. Krehel polish throughout. */
+
+.root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --surface-alt: #f4f2ee;
+  --border: #e9e6e0;
+  --fg: #1c1917;
+  --muted: #57534e;
+  --faint: #a8a29e;
+  --accent: #f5482d;
+  --accent-press: #c9381f;
+
+  /* font system is overridable per variation via --q-serif/--q-sans/--q-mono,
+     set on an ancestor wrapper; falls back to the Fraunces baseline */
+  --serif: var(--q-serif, var(--font-fraunces)), Georgia, serif;
+  --sans: var(--q-sans, var(--font-spline-sans)), ui-sans-serif, system-ui, sans-serif;
+  --mono: var(--q-mono, var(--font-jetbrains-mono)), ui-monospace, monospace;
+
+  --r-card: 16px;
+  --r-inner: 10px;
+  --maxw: 1080px;
+
+  /* layered shadows instead of hard borders (Krehel) */
+  --shadow: 0 0 0 1px rgb(28 25 23 / 0.05), 0 1px 2px -1px rgb(28 25 23 / 0.07),
+    0 6px 16px -8px rgb(28 25 23 / 0.06);
+  --shadow-hover: 0 0 0 1px rgb(28 25 23 / 0.08), 0 2px 4px -1px rgb(28 25 23 / 0.09),
+    0 14px 30px -12px rgb(28 25 23 / 0.12);
+
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+  overflow-x: clip; /* contain the full-bleed impact band's 100vw width */
+}
+
+.root :global(*) { box-sizing: border-box; }
+.root :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 5px;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+/* staggered enter (Krehel): opacity + translateY + blur, reduced-motion safe */
+.rise { opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    opacity: 0;
+    animation: rise 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    will-change: transform, opacity, filter;
+  }
+  .d0 { animation-delay: 0ms; }
+  .d1 { animation-delay: 60ms; }
+  .d2 { animation-delay: 120ms; }
+  .d3 { animation-delay: 180ms; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(9px); filter: blur(6px); }
+    to { opacity: 1; transform: none; filter: blur(0); }
+  }
+}
+
+/* ============================== HEADER ============================== */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: saturate(140%) blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.headerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 62px;
+}
+.wordmark {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  text-decoration: none;
+}
+.nav { display: flex; align-items: center; gap: 6px; }
+.navLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 12px;
+  font-size: 0.875rem;
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: color 0.16s ease, background 0.16s ease;
+}
+.navLink:hover { color: var(--fg); }
+.navActive { color: var(--accent); }
+.navCta {
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  margin-left: 6px;
+  padding: 0 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--fg);
+  text-decoration: none;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--border);
+  transition: box-shadow 0.18s ease, transform 0.12s ease, background 0.2s ease, color 0.18s ease;
+}
+/* fills coral on hover */
+.navCta:hover { background: var(--accent); color: #fff; box-shadow: inset 0 0 0 1px var(--accent); }
+.navCta:active { transform: scale(0.96); }
+.navCta:active { transform: scale(0.96); }
+
+/* =============================== HERO ============================== */
+.hero {
+  position: relative;
+  padding-top: clamp(64px, 11vw, 132px);
+  padding-bottom: clamp(40px, 7vw, 76px);
+}
+.heroGrid {
+  position: absolute;
+  inset: -40px -200px auto -200px;
+  height: 460px;
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.7;
+  -webkit-mask-image: radial-gradient(130% 85% at 28% 0%, #000 0%, transparent 64%);
+  mask-image: radial-gradient(130% 85% at 28% 0%, #000 0%, transparent 64%);
+  pointer-events: none;
+}
+.eyebrow {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.085em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 22px;
+}
+.eyebrowDot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 1.5px;
+  flex: none;
+}
+.heroHeadline {
+  position: relative;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(2.4rem, 5.4vw, 3.85rem);
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  color: var(--fg);
+  max-width: 16ch;
+  text-wrap: balance;
+  margin: 0;
+}
+.heroHeadlineMuted { color: var(--faint); }
+.heroSub {
+  position: relative;
+  margin-top: 22px;
+  max-width: 56ch;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.heroActions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px 26px;
+  margin-top: 30px;
+}
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  border-radius: 999px;
+  box-shadow: 0 1px 2px rgb(146 40 22 / 0.25), 0 6px 16px -6px rgb(245 72 45 / 0.4);
+  transition: background 0.16s ease, transform 0.12s ease, box-shadow 0.16s ease;
+}
+.ctaPrimary:hover {
+  background: var(--accent-press);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgb(146 40 22 / 0.28), 0 12px 26px -8px rgb(245 72 45 / 0.5);
+}
+.ctaPrimary:active { transform: translateY(0) scale(0.97); }
+
+/* secondary CTA — outline pill matching the primary's height (Download CV) */
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 18px;
+  color: var(--fg);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--border), var(--shadow);
+  transition: box-shadow 0.18s ease, transform 0.12s ease, color 0.16s ease;
+}
+.ctaSecondary:hover {
+  color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: inset 0 0 0 1px var(--accent), var(--shadow-hover);
+}
+.ctaSecondary:active { transform: translateY(0) scale(0.97); }
+.ctaDownload { display: inline-flex; color: var(--faint); transition: transform 0.2s ease, color 0.16s ease; }
+.ctaSecondary:hover .ctaDownload { color: var(--accent); transform: translateY(1px); }
+
+/* arrow-loop: the visible arrow exits right while a fresh one slides in from
+   the left. Used on the primary CTA button (empty span; arrows are pseudos). */
+.ctaArrowBox {
+  position: relative;
+  display: inline-block;
+  width: 1.05em;
+  height: 1em;
+  overflow: hidden;
+  vertical-align: middle;
+}
+.ctaArrowBox::before,
+.ctaArrowBox::after {
+  content: "→";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.36s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.ctaArrowBox::after { transform: translateX(0); }
+.ctaArrowBox::before { transform: translateX(-145%); }
+.ctaPrimary:hover .ctaArrowBox::after { transform: translateX(145%); }
+.ctaPrimary:hover .ctaArrowBox::before { transform: translateX(0); }
+
+.ctaArrow { transition: transform 0.18s ease; }
+.ctaPrimary:hover .ctaArrow,
+.postRead:hover .ctaArrow,
+.recLink:hover .ctaArrow { transform: translateX(3px); }
+.contactRow { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.contactLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.16s ease;
+}
+.contactLink:hover { color: var(--accent); }
+.contactIcon { display: inline-flex; color: var(--faint); transition: color 0.16s ease; }
+.contactLink:hover .contactIcon,
+.footerLink:hover .contactIcon { color: var(--accent); }
+
+/* =============================== ABOUT ============================= */
+.about {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 40px;
+  padding-block: clamp(44px, 6vw, 72px);
+}
+.aboutBody { display: grid; gap: 16px; max-width: 52ch; }
+.aboutBody p { margin: 0; color: var(--muted); font-size: 1.0625rem; line-height: 1.7; text-wrap: pretty; }
+.emph { font-weight: 600; color: var(--fg); }
+.focusList {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 9px;
+  align-content: start;
+}
+.focusItem {
+  font-size: 0.875rem;
+  color: var(--muted);
+  padding-left: 16px;
+  position: relative;
+}
+.focusItem::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  background: var(--faint);
+  border-radius: 1px;
+}
+
+/* ============================== SECTIONS =========================== */
+/* No solid divider rules between sections — separation comes from whitespace
+   and the section headings (the rules read as too-explicit <hr> lines). */
+.section { padding-block: clamp(48px, 6.5vw, 84px); }
+.h2 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  letter-spacing: -0.03em;
+  color: var(--fg);
+  margin: 0 0 32px;
+  text-wrap: balance;
+}
+.sectionHeadRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.sectionHeadRow .h2 { margin: 0; }
+.sectionNote {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  color: var(--faint);
+}
+
+/* ============================ EXPERIENCE ========================== */
+.timeline { display: grid; gap: 44px; }
+.tlRow { display: grid; grid-template-columns: 116px 1fr; gap: 24px; }
+.tlPeriod {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--faint);
+  padding-top: 5px;
+}
+.tlRole {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 1.25rem;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  margin: 0;
+}
+.tlAt { font-family: var(--sans); font-weight: 400; font-size: 0.95rem; color: var(--faint); }
+.tlCompany { color: var(--fg); text-decoration: none; box-shadow: inset 0 -1px 0 var(--border); }
+.tlCompany:hover { box-shadow: inset 0 -1px 0 var(--accent); }
+.tlCompanyPlain { color: var(--fg); }
+.tlSummary { margin: 10px 0 0; color: var(--muted); max-width: 60ch; text-wrap: pretty; }
+
+/* every role's detail sits in ONE consistent card (no folder tab) */
+.roleCard {
+  margin-top: 14px;
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 22px 24px;
+}
+.roleSummary { margin: 0; max-width: 68ch; color: var(--muted); font-size: 0.95rem; line-height: 1.6; text-wrap: pretty; }
+.roleSummary + .stackRow { margin-top: 16px; }
+/* when a stack row follows bullets directly (no outcome strip between), it needs
+   its own breathing room — the strip's margins normally provide this */
+.bullets + .stackRow { margin-top: 20px; }
+/* confidential engagement, introduced within the card under a dashed rule */
+.caseHead {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 18px 0 14px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border);
+}
+.caseClient { font-weight: 600; color: var(--fg); font-size: 0.95rem; }
+.caseTag {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--faint);
+  padding: 2px 9px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.bullets { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; max-width: 74ch; }
+.bullet { display: grid; grid-template-columns: 16px 1fr; gap: 10px; color: var(--muted); font-size: 0.9375rem; line-height: 1.6; }
+.bulletMark { color: var(--faint); font-size: 0.7rem; line-height: 1.7; transition: color 0.16s ease; }
+.bullet:hover .bulletMark { color: var(--accent); }
+
+/* outcome lives inside the case it belongs to — metrics stay NEUTRAL (Quiet) */
+.outcomeStrip {
+  margin: 20px 0 18px;
+  padding: 16px 4px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  border-top: 1px dashed var(--border);
+  border-bottom: 1px dashed var(--border);
+}
+.outcomeItem { display: grid; gap: 5px; }
+.outcomeValue {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 1.0625rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+  letter-spacing: -0.01em;
+}
+.outcomeLabel { font-size: 0.75rem; line-height: 1.35; color: var(--faint); }
+
+.stackRow { display: flex; flex-wrap: wrap; gap: 12px 16px; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0 13px;
+  background: var(--surface-alt);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  color: var(--fg);
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.2s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+/* pronounced lift + the logo springs forward */
+.pill:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+.pillLogo { flex: none; display: block; transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.pill:hover .pillLogo { transform: scale(1.22); }
+
+/* ============================== SKILLS ============================ */
+.skillsGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px 24px; }
+.skillCol { display: grid; gap: 13px; align-content: start; }
+.skillTitle { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 0; }
+.skillPills { display: flex; flex-wrap: wrap; gap: 7px; }
+
+/* ============================== WRITING =========================== */
+.postList { display: grid; gap: 16px; }
+.postCard {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 30px;
+  align-items: center;
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 26px 28px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.postCard:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.postMeta { display: flex; align-items: center; gap: 11px; margin-bottom: 12px; }
+.postDate { font-family: var(--sans); font-size: 0.8125rem; font-variant-numeric: tabular-nums; color: var(--faint); }
+.postTopic {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--muted);
+  padding: 3px 9px;
+  background: var(--surface-alt);
+  border-radius: 6px;
+}
+.postThumb {
+  width: 100%;
+  height: 100%;
+  min-height: 156px;
+  object-fit: cover;
+  border-radius: var(--r-inner);
+  outline: 1px solid rgb(28 25 23 / 0.08);
+  outline-offset: -1px;
+}
+.postTitle { font-family: var(--serif); font-weight: 500; font-size: 1.375rem; letter-spacing: -0.015em; color: var(--fg); margin: 0; text-wrap: balance; }
+.postDek { margin: 10px 0 16px; color: var(--muted); font-size: 0.9375rem; line-height: 1.6; text-wrap: pretty; }
+.postRead {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+}
+.conceptFig {
+  margin: 0;
+  padding: 14px;
+  background: var(--surface-alt);
+  border-radius: var(--r-inner);
+  outline: 1px solid rgb(28 25 23 / 0.08);
+  outline-offset: -1px;
+}
+.conceptSvg { display: block; width: 100%; height: auto; }
+.barNon { fill: var(--faint); opacity: 0.5; transition: fill 0.35s ease, opacity 0.35s ease; }
+.barMatch { fill: var(--accent); opacity: 0.85; transition: fill 0.35s ease, opacity 0.35s ease; }
+.thrLine { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 3 3; }
+.thrDot { fill: var(--accent); }
+.conceptCap {
+  margin-top: 10px;
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  color: var(--faint);
+  text-align: center;
+}
+
+/* =========================== CERTIFICATIONS (clickable badges) ==== */
+.certGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.certBadge {
+  position: relative;
+  display: flex;
+  gap: 14px;
+  background: var(--surface);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+.certBadge:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.certIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  background: var(--surface-alt);
+  border-radius: 10px;
+}
+/* text monogram shown when a credential has no verified brand logo (e.g. OpenAI) */
+.certMono {
+  font-family: var(--sans);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.05;
+  padding: 0 3px;
+}
+.certBody { display: flex; flex-direction: column; gap: 3px; min-width: 0; padding-right: 14px; }
+.certName { font-size: 0.9375rem; font-weight: 600; line-height: 1.3; color: var(--fg); }
+.certIssuer { font-size: 0.8125rem; color: var(--muted); }
+.certBlurb { font-size: 0.8125rem; line-height: 1.45; color: var(--muted); margin-top: 4px; text-wrap: pretty; }
+.certDates { display: flex; flex-wrap: wrap; gap: 5px 16px; margin-top: 9px; }
+.certDate { font-size: 0.6875rem; font-weight: 500; color: var(--faint); font-variant-numeric: tabular-nums; }
+.certDate:last-child::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.7;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.certArrow {
+  position: absolute;
+  top: 15px;
+  right: 16px;
+  color: var(--faint);
+  font-size: 0.8rem;
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+.certBadge:hover .certArrow { color: var(--accent); transform: translate(2px, -2px); }
+
+/* =========================== RECOGNITION ========================== */
+.recGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.recCard {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 22px 24px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.recCard:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.recMeta { font-family: var(--sans); font-size: 0.8125rem; color: var(--faint); margin: 0 0 10px; }
+.recTitle { font-family: var(--serif); font-weight: 500; font-size: 1.1875rem; letter-spacing: -0.015em; color: var(--fg); margin: 0 0 8px; }
+.recDesc { margin: 0; max-width: 82ch; color: var(--muted); font-size: 0.9375rem; line-height: 1.6; text-wrap: pretty; }
+.recLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* ============================== FOOTER ============================ */
+.footer { border-top: 1px solid var(--border); margin-top: 20px; padding-block: 32px; }
+.footerInner { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.footerCopy { font-family: var(--sans); font-size: 0.8125rem; color: var(--faint); }
+.footerLinks { display: flex; gap: 18px; }
+.footerLink { display: inline-flex; align-items: center; gap: 6px; font-size: 0.875rem; color: var(--muted); text-decoration: none; transition: color 0.16s ease; }
+.footerLink:hover { color: var(--accent); }
+
+/* ===================== FONT VARIATIONS (data-variant) ===================== */
+.root[data-variant="swiss"] {
+  --q-serif: var(--font-geist);
+  --q-sans: var(--font-geist);
+  --q-mono: var(--font-geist-mono);
+}
+.root[data-variant="editorial"] {
+  --q-serif: var(--font-source-serif);
+  --q-sans: var(--font-inter);
+  --q-mono: var(--font-jetbrains-mono);
+}
+.root[data-variant="mono"] {
+  --q-serif: var(--font-geist-mono);
+  --q-sans: var(--font-inter);
+  --q-mono: var(--font-geist-mono);
+}
+
+/* Swiss: Geist is a sans → headlines want a touch more weight + tracking */
+.root[data-variant="swiss"] .heroHeadline,
+.root[data-variant="swiss"] .tlRole,
+.root[data-variant="swiss"] .postTitle,
+.root[data-variant="swiss"] .recTitle,
+.root[data-variant="swiss"] .wordmark { font-weight: 600; }
+.root[data-variant="swiss"] .heroHeadline { letter-spacing: -0.03em; }
+.root[data-variant="swiss"] .h2 { font-weight: 700; }
+
+/* Mono: negative tracking cramps monospace → neutralize, shrink, add weight */
+.root[data-variant="mono"] .heroHeadline {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-size: clamp(1.95rem, 4.2vw, 2.95rem);
+  line-height: 1.1;
+}
+.root[data-variant="mono"] .h2 { letter-spacing: -0.01em; font-weight: 600; font-size: clamp(1.4rem, 2.4vw, 1.7rem); }
+.root[data-variant="mono"] .tlRole,
+.root[data-variant="mono"] .postTitle,
+.root[data-variant="mono"] .recTitle { letter-spacing: -0.005em; font-weight: 600; }
+.root[data-variant="mono"] .wordmark { letter-spacing: 0; font-weight: 600; font-size: 0.95rem; }
+
+/* Editorial: Source Serif reads best a touch heavier at display sizes */
+.root[data-variant="editorial"] .heroHeadline,
+.root[data-variant="editorial"] .h2 { font-weight: 600; }
+
+/* ===================== SCROLL REVEAL (additive, fire-once) =============== */
+/* Default = visible (no class). Reveal.tsx only adds these below the fold. */
+@media (prefers-reduced-motion: no-preference) {
+  .revealArmed { opacity: 0; transform: translateY(14px); }
+  .revealIn {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+}
+
+/* ===================== EXTRA MICROINTERACTIONS ========================== */
+/* tag / topic chips lift on hover */
+.postTopic { transition: background 0.16s ease, transform 0.14s ease; }
+.postTopic:hover { background: color-mix(in srgb, var(--accent) 10%, var(--surface-alt)); transform: translateY(-1px); }
+/* outcome metric values get a quiet pop when their card is hovered */
+.roleCard .outcomeValue { transition: color 0.18s ease; }
+.postCard:hover .postTopic { background: var(--surface-alt); }
+
+/* ============================== RESPONSIVE ======================== */
+@media (max-width: 720px) {
+  .about { grid-template-columns: 1fr; gap: 24px; }
+  .tlRow { grid-template-columns: 1fr; gap: 8px; }
+  .skillsGrid { grid-template-columns: 1fr; gap: 24px; }
+  .postCard { grid-template-columns: 1fr; }
+  .recGrid { grid-template-columns: 1fr; }
+  .outcomeStrip { grid-template-columns: repeat(2, 1fr); }
+  .certRow { grid-template-columns: 1fr auto; }
+  .certTitle { grid-column: 1 / -1; }
+}

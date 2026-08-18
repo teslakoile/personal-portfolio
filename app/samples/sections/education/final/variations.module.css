@@ -1,0 +1,219 @@
+/* Education — final, card-less. Rendered inside .theme (shell), so
+   --surface/--fg/--muted/--faint/--border/--surface-alt tokens + every
+   var(--font-*) resolve from there. Two unique prefixes (.a* / .b*) so the
+   options never collide. NO card, NO surface box, NO shadow around entries —
+   content sits on the paper, structured by layout + hairlines + type. No design
+   coral anywhere: only the school logos carry their own brand colour. */
+
+/* ============ Option A · LEDGER — logo/identity rail + honours, Geist ======= */
+.aWrap { margin: 0; }
+.aList {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--border);
+}
+.aRow {
+  display: grid;
+  grid-template-columns: minmax(220px, 288px) 1fr;
+  gap: 40px;
+  padding: 32px 0;
+  align-items: start;
+  border-bottom: 1px solid var(--border);
+}
+.aIdentity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.aLogo {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  display: block;
+  margin-bottom: 18px;
+}
+.aPeriod {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+  margin: 0 0 8px;
+  font-variant-numeric: tabular-nums;
+}
+.aSchool {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1.3125rem;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin: 0 0 8px;
+  text-wrap: balance;
+}
+.aDegree {
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 0;
+}
+.aDetail { min-width: 0; }
+/* decluttered: no chips, no label, no underline rule, no tick marks — just a
+   plain honours & activities list. */
+.aPoints {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 13px;
+  max-width: 66ch;
+}
+.aPoint {
+  position: relative;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+/* small dot bullet + hanging indent — wrapped lines align under the text, so
+   the list reads evenly. */
+.aPoint::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--faint);
+}
+
+@media (max-width: 760px) {
+  .aRow {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding: 26px 0;
+  }
+}
+
+/* ============ Option B · REGISTRY — numbered index, Fraunces school names === */
+.bWrap { margin: 0; }
+.bList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+  counter-reset: none;
+  border-top: 1px solid var(--border);
+}
+.bRow {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 28px;
+  padding: 34px 0;
+  align-items: start;
+  border-bottom: 1px solid var(--border);
+}
+.bMargin {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+.bIndex {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.bLogo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  display: block;
+}
+.bBody { min-width: 0; }
+.bHead { margin-bottom: 18px; }
+.bSchool {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  margin: 0 0 7px;
+  text-wrap: balance;
+}
+.bMeta {
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.bDot { color: var(--faint); }
+.bChips {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.bChip {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--fg);
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--surface-alt);
+  white-space: nowrap;
+}
+.bPoints {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 11px;
+  max-width: 66ch;
+}
+.bPoint {
+  position: relative;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.bPoint::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--faint);
+}
+
+@media (max-width: 640px) {
+  .bRow {
+    grid-template-columns: 44px 1fr;
+    gap: 18px;
+    padding: 28px 0;
+  }
+  .bMargin { gap: 12px; }
+  .bIndex { font-size: 0.75rem; }
+  .bSchool { font-size: 1.375rem; }
+}

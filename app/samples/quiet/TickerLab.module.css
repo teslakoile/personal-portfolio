@@ -1,0 +1,72 @@
+/* Three ticker hover behaviors to compare. Base is shared; the [data-v] blocks
+   change only the hover. Inherits Geist tokens from the ancestor .root. */
+
+.band { padding: clamp(16px, 2.5vw, 24px) 0; }
+.rows { display: grid; gap: 0; }
+.marquee {
+  padding-block: 28px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.marquee + .marquee { margin-top: -42px; }
+.track {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: max-content;
+  animation: scroll 46s linear infinite;
+}
+.reverse { animation-direction: reverse; animation-duration: 38s; }
+.marquee:hover .track { animation-play-state: paused; }
+.item {
+  position: relative;
+  z-index: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 16px;
+  background: var(--surface);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  font-size: 0.875rem;
+  color: var(--fg);
+  white-space: nowrap;
+}
+.logo { flex: none; display: block; }
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ===================== V1 — DOCK (JS sets the scale) =================== */
+.band[data-v="1"] .item { transition: transform 0.13s ease; transform-origin: center bottom; }
+
+/* ===================== V2 — INK (coral sweeps across) ================== */
+.band[data-v="2"] .item {
+  background-image: linear-gradient(90deg, var(--accent) 50%, var(--surface) 50%);
+  background-size: 220% 100%;
+  background-position: 100% 0;
+  transition: background-position 0.44s cubic-bezier(0.65, 0, 0.35, 1), color 0.3s ease, transform 0.2s ease;
+}
+.band[data-v="2"] .item:hover { background-position: 0 0; color: #fff; transform: scale(1.05); z-index: 1; }
+
+/* ===================== V3 — POP & CAST ================================= */
+.band[data-v="3"] .item {
+  transition: transform 0.26s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.26s ease, opacity 0.22s ease;
+}
+.band[data-v="3"] .marquee:hover .item:not(:hover) { opacity: 0.4; }
+.band[data-v="3"] .item:hover {
+  transform: translateY(-9px) scale(1.04);
+  /* neutral float shadow + a soft coral glow blurred behind the pill */
+  box-shadow: 0 18px 32px -12px rgb(28 25 23 / 0.26), 0 5px 24px 1px rgb(245 72 45 / 0.34);
+  z-index: 1;
+}
+.band[data-v="3"] .logo { transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.band[data-v="3"] .item:hover .logo { transform: scale(1.45); }
+
+@media (prefers-reduced-motion: reduce) {
+  .track { animation: none; flex-wrap: wrap; width: auto; }
+  .marquee { -webkit-mask-image: none; mask-image: none; }
+}

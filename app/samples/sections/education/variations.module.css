@@ -1,0 +1,315 @@
+/* Education section layout explorations — rendered inside .theme (shell), so the
+   --surface/--fg/--accent/--mono/--shadow tokens resolve from there. Each variant
+   uses a unique class prefix (.a* / .b* / .c*) so the three never collide. */
+
+/* ============ A · CREDENTIAL CERTIFICATE — sealed diploma cards ============ */
+.aWrap { margin: 0; }
+.aList { display: grid; gap: 18px; }
+.aCard {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) 1fr;
+  gap: 0;
+  padding: 30px 32px;
+  align-items: stretch;
+}
+.aEdge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 64px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 0 0 2px 0;
+}
+.aIdentity {
+  padding-right: 36px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+.aSeal {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-inner);
+  background: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgb(146 40 22 / 0.25);
+  margin-bottom: 16px;
+}
+.aSealRings {
+  position: absolute;
+  inset: -7px;
+  border-radius: 14px;
+  background: repeating-radial-gradient(circle at 50% 50%, var(--accent) 0 1px, transparent 1px 4px);
+  opacity: 0.14;
+  pointer-events: none;
+}
+.aSealMark { width: 20px; height: 20px; color: #fff; }
+.aPeriod {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  margin: 0 0 8px;
+  font-variant-numeric: tabular-nums;
+}
+.aSchool {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1.375rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin: 0 0 8px;
+  text-wrap: balance;
+}
+.aDegree { font-size: 0.9375rem; font-weight: 600; color: var(--fg); margin: 0; }
+.aHonors { padding-left: 36px; }
+.aHonorsLabel {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 14px;
+}
+.aPoints { list-style: none; margin: 0; padding: 0; display: grid; gap: 13px; max-width: 66ch; }
+.aPoint {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  gap: 11px;
+  align-items: start;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.aTick {
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+}
+.aPointText { min-width: 0; }
+
+@media (max-width: 760px) {
+  .aCard { grid-template-columns: 1fr; padding: 24px 22px; }
+  .aIdentity {
+    padding-right: 0;
+    border-right: none;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed var(--border);
+    margin-bottom: 20px;
+  }
+  .aHonors { padding-left: 0; }
+}
+
+/* ============ B · ACADEMIC TIMELINE RAIL — coral-node date rail ============ */
+.bSection { margin: 0; }
+.bRail {
+  /* Single source of truth for the timeline geometry so the rail line and the
+     diamond nodes can never desync across breakpoints:
+       --rail-x      distance from .bRail's content-left to the node center / rail
+       --node-size   diamond edge length
+       --date-offset distance from .bRail's content-left to .bDate's padding box
+                     (0 on desktop; the .bStop padding-left on mobile) */
+  --rail-x: 6px;
+  --node-size: 12px;
+  --date-offset: 0px;
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 40px;
+}
+/* continuous vertical rail threading the diamond nodes, centered on --rail-x,
+   spanning first node → last node. */
+.bRail::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--rail-x) - 0.5px);
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: var(--border);
+}
+.bStop { display: grid; grid-template-columns: 132px 1fr; gap: 34px; align-items: start; }
+.bDate { position: relative; padding-left: 26px; }
+.bNode {
+  position: absolute;
+  /* node center lands on --rail-x: subtract .bDate's offset from the rail and
+     half the node so the diamond's center sits exactly on the line. */
+  left: calc(var(--rail-x) - var(--date-offset) - var(--node-size) / 2);
+  top: 4px;
+  width: var(--node-size);
+  height: var(--node-size);
+  border-radius: 3px;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 2px var(--accent);
+  transform: rotate(45deg);
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+.bStop:hover .bNode { background: var(--accent); transform: rotate(45deg) scale(1.12); }
+.bYear {
+  display: block;
+  font-family: var(--mono);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.bYearEnd {
+  display: block;
+  font-family: var(--mono);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+.bBody { min-width: 0; padding-top: 1px; }
+.bSchool {
+  font-size: 1.3125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin: 0 0 7px;
+  text-wrap: balance;
+}
+.bDegree {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 16px;
+}
+.bPoints { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; max-width: 68ch; }
+.bPoint {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  gap: 10px;
+  align-items: start;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.bMark { width: 5px; height: 5px; margin-top: 9px; background: var(--faint); border-radius: 1.5px; }
+
+@media (max-width: 640px) {
+  /* The stop gains a 26px left inset, pushing .bDate's padding box 26px right of
+     the rail. Feed that into --date-offset so the node re-centers on --rail-x and
+     the rail (driven by the same variable) keeps threading the diamonds. */
+  .bRail { --date-offset: 26px; }
+  .bStop { grid-template-columns: 1fr; gap: 10px; padding-left: 26px; }
+  .bDate { padding-left: 0; }
+  .bNode { top: 5px; }
+  .bYear, .bYearEnd { display: inline; font-size: 0.9375rem; }
+  .bYearEnd { margin-left: 5px; }
+}
+
+/* ============ C · TRANSCRIPT — hairline registry with honour highlights ===== */
+.cSection { margin: 0; }
+.cTranscript {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 4px 30px;
+  margin-top: 4px;
+}
+.cRow {
+  display: grid;
+  grid-template-columns: 44px 280px 1fr;
+  column-gap: 36px;
+  padding: 30px 0;
+  border-top: 1px solid var(--border);
+  align-items: start;
+}
+.cRow:first-child { border-top: none; }
+.cIndex {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  padding-top: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.cIdentity { min-width: 0; }
+.cSchool {
+  font-size: 1.1875rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  margin: 0 0 7px;
+  text-wrap: balance;
+}
+.cDegree { font-size: 0.9375rem; font-weight: 600; color: var(--fg); margin: 0 0 8px; }
+.cPeriod {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--faint);
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.cPeriodMark { width: 7px; height: 7px; border-radius: 2px; background: var(--accent); flex: none; }
+.cBody { min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.cHonors { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.cChip {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding: 4px 10px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, var(--border));
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.cPoints {
+  list-style: none;
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border);
+  display: grid;
+  gap: 11px;
+  max-width: 64ch;
+}
+.cPoint {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  gap: 10px;
+  align-items: start;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+.cBullet { width: 5px; height: 5px; margin-top: 8px; border-radius: 1.5px; background: var(--faint); flex: none; }
+
+@media (max-width: 760px) {
+  .cTranscript { padding: 4px 22px; }
+  .cRow { grid-template-columns: 1fr; gap: 16px; }
+  .cIndex { display: block; margin: 0 0 4px; padding-top: 0; }
+  .cBody { max-width: none; }
+}

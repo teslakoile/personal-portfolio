@@ -1,0 +1,531 @@
+/* Community & Speaking section explorations — rendered inside .theme (shell),
+   so all --surface/--fg/--accent/--shadow/--mono tokens resolve from there.
+   Three distinct layouts, one unique class prefix each (a / b / c). */
+
+/* ============ A · EDITORIAL FEATURE SPREAD ============
+   Magazine headline cards over a numbered talk index. */
+.aSection {
+  margin: 0;
+}
+
+/* ZONE 1 — asymmetric feature cards (flagship gets the wider column) */
+.aFeatures {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+.aCard {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 30px 32px 28px;
+  display: flex;
+  flex-direction: column;
+}
+.aKicker {
+  letter-spacing: 0.085em;
+  color: var(--muted);
+  margin: 0 0 14px;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.aKickerSep {
+  color: var(--faint);
+}
+.aHeadline {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1.75rem;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+  margin: 0;
+  text-wrap: balance;
+}
+.aCardLead .aHeadline {
+  font-size: 2.125rem;
+}
+.aRule {
+  border: none;
+  border-top: 1.5px solid var(--accent);
+  width: 44px;
+  margin: 16px 0 14px;
+}
+.aBody {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 46ch;
+  text-wrap: pretty;
+}
+
+/* ZONE 2 — numbered editorial index */
+.aIndexBlock {
+  margin-top: 56px;
+}
+.aIndexLabel {
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+.aIndex {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.aRow {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: baseline;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+}
+.aRow:first-child {
+  border-top: none;
+}
+.aNum {
+  font-family: var(--mono);
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+}
+.aRowMain {
+  min-width: 0;
+}
+.aEyebrow {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 6px;
+}
+.aTitle {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1.1875rem;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  color: var(--fg);
+  margin: 0;
+  text-wrap: balance;
+}
+.aDesc {
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+@media (max-width: 760px) {
+  .aFeatures {
+    grid-template-columns: 1fr;
+  }
+  .aHeadline,
+  .aCardLead .aHeadline {
+    font-size: 1.625rem;
+  }
+  .aIndexBlock {
+    margin-top: 40px;
+  }
+}
+@media (max-width: 600px) {
+  .aRow {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 20px 0;
+  }
+  .aNum {
+    font-size: 1.125rem;
+  }
+}
+
+/* ============ B · UNIFIED BLUEPRINT TIMELINE ============
+   One hairline rail, filled nodes for tenure (cards) + outline nodes for
+   talks (bare), over a faint graph-paper wash. */
+.bSection {
+  margin: 0;
+}
+.bRailWrap {
+  position: relative;
+}
+.bGrid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.4;
+  -webkit-mask-image: radial-gradient(120% 80% at 0% 0%, #000 0%, transparent 60%);
+  mask-image: radial-gradient(120% 80% at 0% 0%, #000 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+.bRail {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 26px;
+}
+.bRail::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 10px;
+  bottom: 10px;
+  width: 1px;
+  background: var(--border);
+}
+.bRow {
+  display: grid;
+  grid-template-columns: 13px 1fr;
+  gap: 22px;
+  position: relative;
+  align-items: start;
+}
+.bRowComm {
+  /* heavier tenure rows — the surface card is the inner .bCard */
+  --comm-row: 1;
+}
+.bRowTalk {
+  /* lighter talk rows sit bare on the page (node hover handled below) */
+  --talk-row: 1;
+}
+.bNode {
+  position: relative;
+  z-index: 2;
+  border-radius: 3px;
+  margin-top: 4px;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+.bNodeComm {
+  width: 13px;
+  height: 13px;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--bg);
+}
+.bNodeTalk {
+  width: 9px;
+  height: 9px;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 2px var(--accent), 0 0 0 4px var(--bg);
+  margin-top: 5px;
+}
+.bRowTalk:hover .bNodeTalk {
+  background: var(--accent);
+  transform: scale(1.12);
+}
+.bCard {
+  padding: 20px 22px;
+}
+.bCardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+.bName {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  margin: 0;
+  text-wrap: balance;
+}
+.bRole {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  margin: 3px 0 0;
+}
+.bPeriod {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--faint);
+  white-space: nowrap;
+  flex: none;
+}
+.bDesc {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.bTalk {
+  padding-block: 2px;
+}
+.bMeta {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0;
+}
+.bTalkTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  margin: 5px 0 0;
+  text-wrap: balance;
+}
+.bTalkDesc {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+@media (max-width: 600px) {
+  .bRow {
+    gap: 16px;
+  }
+  .bCardHead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
+
+/* ============ C · IMPACT LEDGER ============
+   Stat-forward leadership panel + quieter companion + spec-sheet talk rail. */
+.cSection {
+  margin: 0;
+}
+
+/* ZONE 1 — flagship ledger */
+.cLedger {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 36px;
+  align-items: center;
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 30px 32px;
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+.cLedger:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+.cIdentity {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.cOrg {
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin: 12px 0 6px;
+  text-wrap: balance;
+}
+.cMeta {
+  font-size: 0.8125rem;
+  color: var(--faint);
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.cBlurb {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+  max-width: 54ch;
+}
+.cStats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--r-inner);
+  background: var(--surface-alt);
+  box-shadow: inset 0 0 0 1px var(--border);
+  overflow: hidden;
+}
+.cStat {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+.cStat:nth-child(1),
+.cStat:nth-child(2) {
+  border-top: none;
+}
+.cStat:nth-child(odd) {
+  border-left: none;
+}
+.cFig {
+  font-size: 2.35rem;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  margin: 0;
+}
+.cCap {
+  font-family: var(--mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0;
+}
+
+/* ZONE 2 — quieter companion */
+.cCompanion {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 32px;
+  align-items: baseline;
+  background: var(--surface-alt);
+  border-radius: var(--r-card);
+  box-shadow: inset 0 0 0 1px var(--border);
+  padding: 22px 26px;
+}
+.cCoName {
+  min-width: 0;
+}
+.cCoOrg {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  margin: 0 0 5px;
+  text-wrap: balance;
+}
+.cCoBlurb {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* ZONE 3 — speaking spec rail */
+.cTalksBlock {
+  margin-top: 34px;
+}
+.cSubHead {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 16px;
+}
+.cRail {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 2px 26px;
+}
+.cTalk {
+  display: grid;
+  grid-template-columns: 212px 1fr;
+  gap: 32px;
+  padding: 22px 0;
+  border-top: 1px solid var(--border);
+  align-items: start;
+}
+.cTalk:first-child {
+  border-top: none;
+}
+.cTalkLabel {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.cIndex {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+.cTalkMeta {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+  line-height: 1.4;
+  text-wrap: balance;
+}
+.cTalkText {
+  min-width: 0;
+}
+.cTalkTitle {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  margin: 0 0 6px;
+  text-wrap: balance;
+}
+.cTalkDesc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+@media (max-width: 760px) {
+  .cLedger,
+  .cCompanion {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+@media (max-width: 600px) {
+  .cStats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cTalk {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+@media (max-width: 460px) {
+  .cStats {
+    grid-template-columns: 1fr;
+  }
+  .cStat:nth-child(2) {
+    border-top: 1px solid var(--border);
+  }
+  .cStat:nth-child(odd) {
+    border-left: none;
+  }
+  .cStat:nth-child(even) {
+    border-left: none;
+  }
+  .cFig {
+    font-size: 2rem;
+  }
+}

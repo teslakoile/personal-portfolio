@@ -1,0 +1,73 @@
+/* Shared tokens + primitives for all section-variation comparison pages.
+   Geist type system (locked). Import this and wrap the page in .theme. */
+
+.theme {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --surface-alt: #f4f2ee;
+  --border: #e9e6e0;
+  --fg: #1c1917;
+  --muted: #57534e;
+  --faint: #a8a29e;
+  --accent: #f5482d;
+  --accent-press: #c9381f;
+  --sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --mono: var(--font-geist-mono), ui-monospace, monospace;
+  --r-card: 16px;
+  --r-inner: 10px;
+  --shadow: 0 0 0 1px rgb(28 25 23 / 0.05), 0 1px 2px -1px rgb(28 25 23 / 0.07), 0 6px 16px -8px rgb(28 25 23 / 0.06);
+  --shadow-hover: 0 0 0 1px rgb(28 25 23 / 0.08), 0 2px 4px -1px rgb(28 25 23 / 0.09), 0 14px 30px -12px rgb(28 25 23 / 0.12);
+
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+}
+.theme :global(*) { box-sizing: border-box; }
+
+/* comparison-page chrome */
+.pageWrap { max-width: 1000px; margin-inline: auto; padding: 48px 24px 120px; }
+.pageTitle { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 6px; }
+.pageHint { color: var(--muted); font-size: 0.9375rem; margin: 0 0 8px; }
+.vblock { margin-top: 40px; }
+.vlabel { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--faint); margin: 0 0 16px; }
+/* the stage frames a variation lightly so they read as separate options.
+   overflow:hidden clips the hero graph-paper backdrop to the frame; the
+   element-selector rules below neutralize the inter-section separator + trim
+   the large top padding (which only exists relative to sibling sections on the
+   real page) so each variation reads cleanly in isolation and all share the
+   same trim — keeping the comparison fair. */
+.vstage { border: 1px solid var(--border); border-radius: 18px; background: var(--bg); padding: 0 28px; overflow: hidden; }
+.vstage section { border-top: none; padding-top: 40px; padding-bottom: 40px; }
+
+/* container that mimics the real page column width */
+.col { max-width: 880px; margin-inline: auto; }
+
+/* ---- shared primitives (compose these so variations stay on-system) ---- */
+.h2 { font-family: var(--sans); font-weight: 600; font-size: clamp(1.5rem, 2.6vw, 1.9rem); letter-spacing: -0.025em; color: var(--fg); margin: 0 0 24px; text-wrap: balance; }
+.h3 { font-weight: 600; font-size: 1.25rem; letter-spacing: -0.015em; color: var(--fg); margin: 0; }
+.muted { color: var(--muted); }
+.faint { color: var(--faint); }
+.body { color: var(--muted); font-size: 1rem; line-height: 1.7; text-wrap: pretty; }
+.emph { font-weight: 600; color: var(--fg); }
+
+.eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.085em; text-transform: uppercase; color: var(--muted); }
+.eyebrowDot { width: 6px; height: 6px; background: var(--accent); border-radius: 1.5px; flex: none; }
+
+.pill { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 11px; background: var(--surface-alt); border-radius: 999px; font-size: 0.8125rem; color: var(--fg); box-shadow: inset 0 0 0 1px var(--border); }
+.pillLogo { flex: none; display: block; }
+
+.card { background: var(--surface); border-radius: var(--r-card); box-shadow: var(--shadow); padding: 22px 24px; transition: box-shadow 0.18s ease, transform 0.18s ease; }
+.cardHover:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+
+.cta { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; background: var(--accent); color: #fff; font-weight: 500; font-size: 0.9375rem; text-decoration: none; border-radius: 999px; box-shadow: 0 1px 2px rgb(146 40 22 / 0.25), 0 6px 16px -6px rgb(245 72 45 / 0.4); transition: background 0.16s ease, transform 0.12s ease; }
+.cta:hover { background: var(--accent-press); }
+.cta:active { transform: scale(0.96); }
+
+.bulletMark { color: var(--faint); font-size: 0.7rem; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+.dashed { border: none; border-top: 1px dashed var(--border); margin: 0; }
+.tabular { font-variant-numeric: tabular-nums; }
