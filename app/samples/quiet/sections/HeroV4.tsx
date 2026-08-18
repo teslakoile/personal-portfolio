@@ -75,12 +75,7 @@ export function HeroV4() {
         </div>
       </div>
       <div className={`${alt.photoFrame} ${styles.rise} ${styles.d2}`}>
-        {/* Swap this block for: <img className={alt.photoImg} src="/me.jpg" alt="Kyle Naranjo" /> */}
-        <div className={alt.photoPlaceholder}>
-          <div className={alt.photoGridLines} aria-hidden="true" />
-          <span className={alt.photoMono}>KN</span>
-          <span className={alt.photoCaption}>Photo placeholder</span>
-        </div>
+        <img className={alt.photoImg} src="/me.jpg" alt="Kyle Naranjo" />
       </div>
     </section>
   );
