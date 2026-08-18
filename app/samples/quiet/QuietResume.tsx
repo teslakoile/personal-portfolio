@@ -45,7 +45,7 @@ export function QuietResume({
       {/* ============================== HEADER ============================= */}
       <header className={styles.header}>
         <div className={`${styles.container} ${styles.headerInner}`}>
-          <Link href="/samples" className={styles.wordmark}>Kyle&nbsp;Naranjo</Link>
+          <Link href="/" className={styles.wordmark}>Kyle&nbsp;Naranjo</Link>
           <nav className={styles.nav} aria-label="Primary">
             {sample.nav.map((n) => {
               const active = n.label === "Home";
