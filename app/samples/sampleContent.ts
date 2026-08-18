@@ -24,7 +24,7 @@ export const sample = {
   cvUrl: "/Kyle-Naranjo-CV.pdf",
 
   nav: [
-    { label: "Home", href: "/samples", active: true },
+    { label: "Home", href: "/", active: true },
     { label: "Projects", href: "#projects" },
     { label: "Blog", href: "#blog" },
   ],
