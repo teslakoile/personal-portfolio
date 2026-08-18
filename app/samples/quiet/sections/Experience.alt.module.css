@@ -1,0 +1,96 @@
+/* Experience variations (conservative — this section is already approved).
+   V2 and V3 both drop the left period rail and go full-width; they reuse the
+   locked .roleCard, .bullets, .caseHead, .stackRow from styles.module.css. */
+
+.section { padding-block: clamp(48px, 6.5vw, 84px); }
+.list { display: grid; gap: 32px; }
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 20px;
+  flex-wrap: wrap;
+}
+.period {
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+/* V2 — outcome banner that leads the case */
+.banner {
+  margin: 18px 0 4px;
+  padding: 16px 18px;
+  background: var(--surface-alt);
+  border-radius: var(--r-inner);
+}
+.bannerCap {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 13px;
+}
+.bannerGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.bannerItem { display: grid; gap: 5px; }
+.bannerVal {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 1.0625rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+  letter-spacing: -0.01em;
+}
+.bannerLabel { font-size: 0.6875rem; line-height: 1.3; color: var(--faint); }
+
+@media (max-width: 560px) {
+  .bannerGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ===== V1 layout: one current role → uniform full client case cards ===== */
+
+/* the column of case cards under the role head — one consistent gap, so card
+   margins don't stack unevenly */
+.caseStack { display: grid; gap: 16px; margin-top: 16px; }
+/* cancel roleCard's own top margin so the grid gap is the single source of spacing */
+.caseCard { margin-top: 0; }
+
+/* the case head is the FIRST thing in every card now, so it must not carry the
+   dashed separator / top padding the old in-card placement needed (that was the
+   "empty space at the top of the card") */
+.headFirst { margin-top: 0; padding-top: 0; border-top: none; flex-wrap: wrap; row-gap: 4px; }
+
+/* coral label naming an engagement inside a multi-engagement client card */
+.engName {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 12px;
+}
+/* second+ engagement within one client: dashed separator */
+.engNext {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--border);
+}
+
+/* period sits to the right of a card head (past-role cards share the client-card
+   header treatment, so the role title gets the same .caseClient styling) */
+.casePeriod {
+  margin-left: auto;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  padding-left: 14px;
+}
+
+@media (max-width: 520px) {
+  .casePeriod { margin-left: 0; padding-left: 0; }
+}

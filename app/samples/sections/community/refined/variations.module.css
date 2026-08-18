@@ -1,0 +1,650 @@
+/* Community & Speaking — REFINED explorations.
+   All three iterate on the chosen base (Variant C, the "impact ledger").
+   Rendered inside .theme (shell), so every --surface/--fg/--accent/--shadow
+   token resolves from there. Each version owns a unique prefix (v1 / v2 / v3)
+   so classes never collide.
+
+   Two shared goals across all three:
+   1. COHESION — the two community orgs read as one family: a primary org and a
+      quieter sibling built from the SAME card shell + the SAME header grammar
+      (eyebrow · name · meta), differing only in weight/scale. Only the lead
+      carries the KPI strip; the sibling reuses the identical header so the
+      absence of stats never breaks the relationship.
+   2. TYPOGRAPHY — each version gives the indices, talk meta labels, and stat
+      figures a distinct, intentional treatment (no off-system code-mono). */
+
+/* =====================================================================
+   V1 · GEIST, REFINED — everything stays in the Geist sans, but the
+   numerals/labels are re-tuned with deliberate size/weight/tracking/color.
+   Indices: large, light, faint Geist numeral. Meta labels: small-caps-style
+   uppercase Geist with open tracking in --faint. Figures: tight, heavy Geist.
+   ===================================================================== */
+.v1 {
+  margin: 0;
+}
+
+/* --- the org family: a 2-up grid of cards built from one shell --- */
+.v1Orgs {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 18px;
+  align-items: stretch;
+}
+.v1Card {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 26px 28px;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+.v1Card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+/* the quieter sibling: same shell, recessed surface so it reads as family,
+   not as a separate component */
+.v1CardAlt {
+  background: var(--surface-alt);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+/* shared header grammar — identical on both cards (the cohesion anchor) */
+.v1Head {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.v1Eyebrow {
+  font-family: var(--sans);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0;
+}
+.v1Card:not(.v1CardAlt) .v1Eyebrow {
+  color: var(--accent);
+}
+.v1Dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 1.5px;
+  background: currentColor;
+  flex: none;
+}
+.v1Org {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: var(--fg);
+  margin: 12px 0 5px;
+  text-wrap: balance;
+}
+.v1CardAlt .v1Org {
+  font-size: 1.1875rem;
+}
+.v1Meta {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--faint);
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.v1Blurb {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.62;
+  margin: 14px 0 0;
+  text-wrap: pretty;
+  max-width: 52ch;
+}
+
+/* KPI strip — only the lead has stats; figures are heavy, tight Geist */
+.v1Stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin: 22px 0 0;
+  padding: 18px 0 0;
+  border-top: 1px solid var(--border);
+}
+.v1Stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-right: 16px;
+}
+.v1Stat + .v1Stat {
+  padding-left: 18px;
+  border-left: 1px solid var(--border);
+}
+.v1Fig {
+  font-family: var(--sans);
+  font-size: 1.875rem;
+  line-height: 1;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+.v1Cap {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+}
+/* push the blurb to fill, so both cards bottom-align cleanly */
+.v1Spacer {
+  flex: 1 1 auto;
+  min-height: 8px;
+}
+
+/* --- speaking rail: Geist numerals, no mono anywhere --- */
+.v1TalksBlock {
+  margin-top: 34px;
+}
+.v1SubHead {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.v1Rail {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 4px 28px;
+}
+.v1Talk {
+  display: grid;
+  grid-template-columns: 52px 168px 1fr;
+  gap: 24px;
+  padding: 20px 0;
+  align-items: baseline;
+  border-top: 1px solid var(--border);
+}
+.v1Talk:first-child {
+  border-top: none;
+}
+.v1Index {
+  font-family: var(--sans);
+  font-size: 1.625rem;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.v1TalkMeta {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  line-height: 1.4;
+  margin: 0;
+  text-wrap: balance;
+}
+.v1TalkMain {
+  min-width: 0;
+}
+.v1TalkTitle {
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  color: var(--fg);
+  margin: 0 0 5px;
+  text-wrap: balance;
+}
+.v1TalkDesc {
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+@media (max-width: 760px) {
+  .v1Orgs {
+    grid-template-columns: 1fr;
+  }
+  .v1Talk {
+    grid-template-columns: 44px 1fr;
+    grid-template-areas:
+      "idx meta"
+      "idx main";
+    gap: 6px 20px;
+  }
+  .v1Index {
+    grid-area: idx;
+    align-self: start;
+  }
+  .v1TalkMeta {
+    grid-area: meta;
+  }
+  .v1TalkMain {
+    grid-area: main;
+  }
+}
+@media (max-width: 520px) {
+  .v1Stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 0;
+  }
+  .v1Stat:nth-child(odd) {
+    padding-left: 0;
+    border-left: none;
+  }
+  .v1Talk {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "meta"
+      "main";
+    gap: 6px;
+  }
+  .v1Index {
+    display: none;
+  }
+}
+
+/* =====================================================================
+   V2 · EDITORIAL SERIF — Fraunces carries the section heading, the org
+   names, and the stat figures for a warmer, less-techy register. Talk meta
+   becomes a small serif italic label; indices are roman serif numerals.
+   ===================================================================== */
+.v2 {
+  margin: 0;
+}
+.v2Heading {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(1.6rem, 2.8vw, 2rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  margin: 0 0 20px;
+  text-wrap: balance;
+}
+
+/* org family: a shared panel that holds the lead, a hairline, then the
+   sibling — physically one object so they cannot read as disconnected */
+.v2Panel {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 30px 32px;
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+.v2Panel:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+.v2Org {
+  /* lead row */
+}
+.v2OrgHead {
+  display: flex;
+  flex-direction: column;
+}
+.v2Eyebrow {
+  font-family: var(--font-source-serif), Georgia, serif;
+  font-style: italic;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--accent);
+  margin: 0;
+}
+.v2OrgAlt .v2Eyebrow {
+  color: var(--faint);
+}
+.v2Name {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 600;
+  font-size: 1.625rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  margin: 6px 0 4px;
+  text-wrap: balance;
+}
+.v2OrgAlt .v2Name {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+.v2Meta {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  color: var(--faint);
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.v2Blurb {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.64;
+  margin: 14px 0 0;
+  text-wrap: pretty;
+  max-width: 60ch;
+}
+
+/* stat figures — large Fraunces numerals, warm and editorial */
+.v2Stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px 8px;
+  margin: 22px 0 0;
+}
+.v2Stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.v2Fig {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 2.5rem;
+  line-height: 0.95;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  font-variant-numeric: lining-nums tabular-nums;
+  margin: 0;
+}
+.v2Cap {
+  font-family: var(--font-source-serif), Georgia, serif;
+  font-style: italic;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--muted);
+  margin: 0;
+  text-transform: none;
+}
+
+/* the hairline + sibling that keep both orgs in one panel */
+.v2Sep {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 26px 0 22px;
+}
+.v2OrgAlt {
+  display: grid;
+  grid-template-columns: minmax(0, 280px) 1fr;
+  gap: 28px;
+  align-items: baseline;
+}
+
+/* speaking — serif index + italic serif meta */
+.v2TalksBlock {
+  margin-top: 24px;
+}
+.v2SubHead {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 500;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  margin: 0 0 14px;
+}
+.v2Rail {
+  display: grid;
+  gap: 0;
+}
+.v2Talk {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 26px;
+  padding: 20px 0;
+  align-items: baseline;
+  border-top: 1px solid var(--border);
+}
+.v2Talk:first-child {
+  border-top: none;
+}
+.v2Index {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.v2TalkMain {
+  min-width: 0;
+}
+.v2TalkMeta {
+  font-family: var(--font-source-serif), Georgia, serif;
+  font-style: italic;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  color: var(--faint);
+  margin: 0 0 3px;
+  text-transform: none;
+}
+.v2TalkTitle {
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  color: var(--fg);
+  margin: 0 0 5px;
+  text-wrap: balance;
+}
+.v2TalkDesc {
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+@media (max-width: 600px) {
+  .v2Stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .v2OrgAlt {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .v2Talk {
+    grid-template-columns: 40px 1fr;
+    gap: 18px;
+  }
+  .v2Fig {
+    font-size: 2.125rem;
+  }
+}
+
+/* =====================================================================
+   V3 · QUIET — indices and eyebrows are dropped; spacing + scale carry the
+   hierarchy. Stat figures are large but unadorned. Talk meta becomes a tiny
+   accent kicker (not uppercase code-mono). The most stripped of the three.
+   ===================================================================== */
+.v3 {
+  margin: 0;
+}
+
+/* org family: a single recessed surface holding both orgs as stacked rows,
+   separated only by a hairline — no card chrome, so they're unmistakably one
+   system. Scale alone marks primary vs. sibling. */
+.v3Stack {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 8px 32px;
+}
+.v3Org {
+  padding: 28px 0;
+  border-top: 1px solid var(--border);
+}
+.v3Org:first-child {
+  border-top: none;
+}
+.v3OrgHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.v3Name {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--fg);
+  margin: 0;
+  text-wrap: balance;
+}
+.v3OrgAlt .v3Name {
+  font-size: 1.1875rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.v3Meta {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--faint);
+  margin: 0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.v3Role {
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 4px 0 0;
+}
+.v3Blurb {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.64;
+  margin: 12px 0 0;
+  text-wrap: pretty;
+  max-width: 64ch;
+}
+
+/* stats — quiet, large figures on a single open row, no boxes/labels-caps */
+.v3Stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 36px;
+  margin: 22px 0 0;
+}
+.v3Stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.v3Fig {
+  font-family: var(--sans);
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+.v3Cap {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--faint);
+  margin: 0;
+}
+
+/* speaking — no indices, no uppercase meta. Title leads; meta is a small
+   accent kicker above it; generous row rhythm carries the hierarchy. */
+.v3TalksBlock {
+  margin-top: 30px;
+}
+.v3SubHead {
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  margin: 0 0 4px 4px;
+}
+.v3Rail {
+  display: grid;
+  gap: 0;
+}
+.v3Talk {
+  padding: 22px 4px;
+  border-top: 1px solid var(--border);
+}
+.v3Talk:first-child {
+  border-top: none;
+}
+.v3TalkMeta {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--accent);
+  margin: 0 0 4px;
+  text-transform: none;
+}
+.v3TalkTitle {
+  font-family: var(--sans);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  margin: 0 0 5px;
+  text-wrap: balance;
+}
+.v3TalkDesc {
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 62ch;
+  text-wrap: pretty;
+}
+
+@media (max-width: 600px) {
+  .v3Stack {
+    padding: 4px 22px;
+  }
+  .v3OrgHead {
+    gap: 6px;
+  }
+  .v3Stats {
+    gap: 24px;
+  }
+  .v3Fig {
+    font-size: 1.75rem;
+  }
+}

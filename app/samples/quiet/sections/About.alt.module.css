@@ -1,0 +1,109 @@
+/* About variations. Inherit Geist tokens from ancestor .root. */
+
+/* ============================ V2 — lead statement ======================= */
+/* self-sufficient section chrome so it composes onto the real page without
+   relying on .about (avoids a cross-module specificity tie) */
+.v2 {
+  display: block;
+  padding-block: clamp(44px, 6vw, 72px);
+}
+.lead {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+  line-height: 1.4;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  margin: 0;
+  max-width: 32ch;
+  text-wrap: balance;
+}
+.leadSub {
+  margin: 20px 0 0;
+  max-width: 56ch;
+  color: var(--muted);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.chip {
+  font-size: 0.8125rem;
+  color: var(--fg);
+  padding: 5px 13px;
+  background: var(--surface-alt);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+/* ===== V3 — editorial: display lead + de-boxed at-a-glance + focus chips == */
+.v3 {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  column-gap: 56px;
+  row-gap: 40px;
+  align-items: start;
+  padding-block: clamp(48px, 6.5vw, 84px);
+}
+.v3Narrative { grid-column: 1; max-width: 60ch; }
+.v3Lead {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(1.35rem, 2.3vw, 1.7rem);
+  line-height: 1.4;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  margin: 0;
+  text-wrap: balance;
+}
+.v3Support {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+/* de-boxed — no card; quiet labels + values, separated only by spacing */
+.glance { grid-column: 2; display: grid; gap: 20px; margin: 4px 0 0; }
+.glanceRow { display: grid; gap: 5px; }
+.glanceLabel {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.glanceValue { font-size: 0.9375rem; line-height: 1.5; color: var(--fg); }
+.glanceValue a { color: var(--fg); text-decoration: none; box-shadow: inset 0 -1px 0 var(--border); transition: box-shadow 0.16s ease; }
+.glanceValue a:hover { box-shadow: inset 0 -1px 0 var(--accent); }
+.focusChips {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.focusChip {
+  font-size: 0.8125rem;
+  color: var(--fg);
+  padding: 5px 13px;
+  background: var(--surface-alt);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--border);
+  transition: box-shadow 0.16s ease, transform 0.12s ease;
+}
+.focusChip:hover { box-shadow: inset 0 0 0 1px var(--faint); transform: translateY(-1px); }
+
+@media (max-width: 760px) {
+  .v3 { grid-template-columns: 1fr; }
+  .glance { grid-column: 1; }
+}

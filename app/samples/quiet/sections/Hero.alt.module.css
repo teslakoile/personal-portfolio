@@ -1,0 +1,245 @@
+/* Hero variations V2/V3. These classes inherit the Geist token set from the
+   ancestor .root (--accent, --fg, --serif, --sans, --mono, --surface, shadows…),
+   so they stay on the same design language as V1 — only the layout differs. */
+
+/* ============================ V2 — stat-anchored ========================= */
+.v2 {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.3fr 0.95fr;
+  gap: 44px;
+  align-items: center;
+  padding-top: clamp(48px, 8vw, 96px);
+  padding-bottom: clamp(32px, 5vw, 60px);
+}
+.v2Main { position: relative; }
+.headlineSm {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(2rem, 3.7vw, 2.9rem);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+  margin: 18px 0 0;
+  max-width: 15ch;
+  text-wrap: balance;
+}
+.subSm {
+  margin: 18px 0 0;
+  max-width: 46ch;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.v2Actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 22px;
+  margin-top: 26px;
+}
+
+.proofCard {
+  position: relative;
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  padding: 20px 22px;
+}
+.proofLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+.proofLabel::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 1.5px;
+}
+.proofTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--fg);
+  margin: 0 0 4px;
+  text-wrap: balance;
+}
+.proofMetrics {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 15px 0;
+  border-top: 1px dashed var(--border);
+  border-bottom: 1px dashed var(--border);
+}
+.proofRow { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: baseline; }
+.proofVal {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+  letter-spacing: -0.01em;
+}
+.proofMlabel { font-size: 0.75rem; line-height: 1.35; color: var(--muted); }
+.proofStack { display: flex; flex-wrap: wrap; gap: 7px; }
+
+/* ============================ V3 — centered editorial =================== */
+.v3 {
+  text-align: center;
+  max-width: 760px;
+  margin-inline: auto;
+  padding-top: clamp(72px, 11vw, 140px);
+  padding-bottom: clamp(48px, 7vw, 88px);
+}
+.headlineLg {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(2.5rem, 5.6vw, 4rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  color: var(--fg);
+  margin: 22px auto 0;
+  max-width: 18ch;
+  text-wrap: balance;
+}
+.subCenter {
+  margin: 22px auto 0;
+  max-width: 54ch;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.v3Actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: 34px;
+}
+.contactsCenter { justify-content: center; }
+
+/* ===================== V4 — photo (mix of V1 + V2 layout) =============== */
+.v4 {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: clamp(28px, 4.5vw, 56px);
+  align-items: center;
+  padding-top: clamp(52px, 9vw, 112px);
+  padding-bottom: clamp(40px, 6vw, 72px);
+}
+.v4Main { position: relative; z-index: 1; }
+
+/* cursor-reactive blueprint: an accent-tinted copy of the hero grid, revealed
+   only inside a soft radius that tracks the pointer (set via --spot-x/--spot-y).
+   Default position is off-screen, so nothing shows until the mouse moves. */
+.heroSpot {
+  position: absolute;
+  inset: -40px -200px auto -200px;
+  height: 460px;
+  background-image:
+    linear-gradient(to right, var(--accent) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--accent) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask-image: radial-gradient(150px 150px at calc(var(--spot-x, -9999px) + 200px) calc(var(--spot-y, -9999px) + 40px), #000 0%, transparent 68%);
+  mask-image: radial-gradient(150px 150px at calc(var(--spot-x, -9999px) + 200px) calc(var(--spot-y, -9999px) + 40px), #000 0%, transparent 68%);
+}
+.headlineMix {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 5vw, 3.9rem);
+  line-height: 1.02;
+  letter-spacing: -0.038em;
+  color: var(--fg);
+  margin: 22px 0 0;
+  max-width: 15ch;
+  text-wrap: balance;
+}
+.headlineAccent { color: var(--accent); }
+.subMix {
+  margin: 20px 0 0;
+  max-width: 48ch;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.v4Actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: 28px; }
+/* keep the primary CTA + Download CV together as a unit; contacts wrap after */
+.ctaGroup { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+
+/* photo: same Krehel framing whether it holds a real image or the placeholder */
+.photoFrame {
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--r-card);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  outline: 1px solid rgb(28 25 23 / 0.08);
+  outline-offset: -1px;
+  background: var(--surface-alt);
+  justify-self: end;
+  width: 100%;
+  max-width: 360px;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.photoFrame:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.photoFrame:hover .photoImg { transform: scale(1.03); }
+.photoFrame:hover .photoMono { color: var(--muted); }
+.photoImg { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.photoMono { transition: color 0.25s ease; }
+.photoPlaceholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--accent) 8%, var(--surface-alt)) 0%, var(--surface-alt) 62%);
+}
+.photoGridLines {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.6;
+}
+.photoMono {
+  position: relative;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(2.5rem, 6vw, 3.4rem);
+  letter-spacing: -0.02em;
+  color: var(--faint);
+}
+.photoCaption {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+@media (max-width: 760px) {
+  .v4 { grid-template-columns: 1fr; }
+  .photoFrame { justify-self: start; max-width: 280px; }
+}
