@@ -17,9 +17,10 @@ type Education = (typeof sample.education)[number];
 
 const edu = sample.education;
 
-export function Education() {
+export function Education({ eyebrow }: { eyebrow?: React.ReactNode }) {
   return (
     <section className={styles.section} aria-label="Education">
+      {eyebrow}
       <h2 className={styles.h2}>Education</h2>
       <div className={v.aList} role="list">
         {edu.map((e: Education) => (

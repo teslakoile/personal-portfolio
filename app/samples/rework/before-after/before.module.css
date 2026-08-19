@@ -1,0 +1,67 @@
+/* Before/after stage chrome for the font-and-label sweep comparison.
+   `.before` re-applies the OLD presentation (eyebrow + all-caps labels) onto
+   the live components via attribute selectors against the hashed module
+   classes — the components themselves stay untouched. */
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .pair { grid-template-columns: 1fr; }
+}
+.half { min-width: 0; }
+.zoom { zoom: 0.55; }
+
+/* stat tiles for the font-payload comparison */
+.stats { display: grid; gap: 6px; padding: 22px 24px; }
+.statBig { font-size: 1.5rem; font-weight: 650; letter-spacing: -0.02em; color: var(--fg); font-variant-numeric: tabular-nums; }
+.statSub { font-size: 0.875rem; color: var(--muted); }
+
+/* ---------------- the "before" simulation ---------------- */
+
+/* hero eyebrow (removed in the sweep) — reconstructed above the headline */
+.before [class*="headlineMix"]::before {
+  content: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='6'><rect width='6' height='6' rx='1.5' fill='%23f5482d'/></svg>") "  DATA & AI INFRASTRUCTURE";
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.085em;
+  color: var(--muted);
+  line-height: 1;
+  margin-bottom: 22px;
+}
+
+/* ticker label — was uppercase */
+.before [class*="Marquee_label"] {
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+/* about glance labels — were uppercase */
+.before [class*="glanceLabel"] {
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+}
+
+/* community KPI captions — were uppercase */
+.before [class*="variations_cap__"] {
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+/* speaking sub-head — was small mono uppercase */
+.before [class*="comSubHead"],
+.before [class*="subHead"] {
+  text-transform: uppercase;
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+}

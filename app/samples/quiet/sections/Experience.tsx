@@ -81,7 +81,7 @@ function CurrentRole() {
           {orderedClients.map((c) => <ClientCard key={c.client} client={c} />)}
           <div className={`${styles.roleCard} ${alt.caseCard}`}>
             <div className={`${styles.caseHead} ${alt.headFirst}`}>
-              <span className={styles.caseClient}>Internal contributions</span>
+              <span className={styles.caseClient}>Internal Contributions</span>
             </div>
             <Bullets points={current.internal} />
           </div>
@@ -117,10 +117,12 @@ function PastRole({ group }: { group: (typeof past)[number] }) {
 }
 
 /** V1 — the locked experience design: period rail + carded body, the current
-    role broken into full client case cards (bank first), then past roles. */
-function ExperienceV1() {
+    role broken into full client case cards (bank first), then past roles.
+    `eyebrow` is the landing page's numbered section label (absent on samples). */
+function ExperienceV1({ eyebrow }: { eyebrow?: React.ReactNode }) {
   return (
     <section className={styles.section}>
+      {eyebrow}
       <h2 className={styles.h2}>Experience</h2>
       <div className={styles.timeline}>
         <CurrentRole />
@@ -132,7 +134,7 @@ function ExperienceV1() {
 
 // V2/V3 were direction-comparison layouts in the sandbox; the user locked V1, so
 // they route to it now (the comparison routes get cleaned up with the sandbox).
-export function Experience({ variant = 1 }: { variant?: SectionVariant }) {
+export function Experience({ variant = 1, eyebrow }: { variant?: SectionVariant; eyebrow?: React.ReactNode }) {
   void variant;
-  return <ExperienceV1 />;
+  return <ExperienceV1 eyebrow={eyebrow} />;
 }

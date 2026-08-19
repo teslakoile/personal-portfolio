@@ -26,10 +26,9 @@
   border-radius: var(--r-inner);
 }
 .bannerCap {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--faint);
   margin: 0 0 13px;
 }
@@ -65,10 +64,9 @@
 /* coral label naming an engagement inside a multi-engagement client card */
 .engName {
   font-family: var(--sans);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--accent);
   margin: 0 0 12px;
 }

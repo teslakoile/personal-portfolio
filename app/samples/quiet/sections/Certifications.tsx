@@ -7,7 +7,23 @@ import type { SectionVariant } from "./Hero";
 type Cert = (typeof sample.certifications)[number];
 
 function datesLabel(c: Cert) {
-  return c.expires ? `${c.issued} – ${c.expires}` : `${c.issued} · No expiry`;
+  return c.expires ? `${c.issued} – ${c.expires}` : `${c.issued} · No Expiry`;
+}
+
+/** True once the credential's public verify URL replaces the "#" placeholder. */
+function hasUrl(c: Cert) {
+  return c.url.startsWith("http");
+}
+
+/** Anchor when a real credential URL exists; plain div (no dead "#" link, no ↗
+    tell) while the url is still the placeholder. */
+function CertShell({ c, className, children }: { c: Cert; className: string; children: React.ReactNode }) {
+  if (!hasUrl(c)) return <div className={className}>{children}</div>;
+  return (
+    <a href={c.url} className={className} target="_blank" rel="noreferrer">
+      {children}
+    </a>
+  );
 }
 
 /** Verified brand logo, or a clean text monogram when none exists (no wrong marks). */
@@ -23,13 +39,7 @@ function CertificationsV1() {
       <h2 className={styles.h2}>Certifications</h2>
       <div className={styles.certGrid}>
         {sample.certifications.map((c) => (
-          <a
-            key={`${c.issuer}-${c.title}`}
-            href={c.url}
-            className={styles.certBadge}
-            target={c.url.startsWith("http") ? "_blank" : undefined}
-            rel={c.url.startsWith("http") ? "noreferrer" : undefined}
-          >
+          <CertShell key={`${c.issuer}-${c.title}`} c={c} className={styles.certBadge}>
             <span className={styles.certIcon}><CertMark c={c} size={24} /></span>
             <span className={styles.certBody}>
               <span className={styles.certName}>{c.title}</span>
@@ -37,11 +47,11 @@ function CertificationsV1() {
               <span className={styles.certBlurb}>{c.blurb}</span>
               <span className={styles.certDates}>
                 <span className={styles.certDate}>Issued {c.issued}</span>
-                <span className={styles.certDate}>{c.expires ? `Expires ${c.expires}` : "No expiry"}</span>
+                <span className={styles.certDate}>{c.expires ? `Expires ${c.expires}` : "No Expiry"}</span>
               </span>
             </span>
-            <span className={styles.certArrow} aria-hidden="true">↗</span>
-          </a>
+            {hasUrl(c) ? <span className={styles.certArrow} aria-hidden="true">↗</span> : null}
+          </CertShell>
         ))}
       </div>
     </section>
@@ -70,20 +80,14 @@ function CertificationsV2() {
                 <span className={alt.groupCount}>{certs.length} credential{certs.length > 1 ? "s" : ""}</span>
               </div>
               {certs.map((c) => (
-                <a
-                  key={c.title}
-                  href={c.url}
-                  className={alt.row}
-                  target={c.url.startsWith("http") ? "_blank" : undefined}
-                  rel={c.url.startsWith("http") ? "noreferrer" : undefined}
-                >
-                  <span className={alt.rowArrow} aria-hidden="true">↗</span>
+                <CertShell key={c.title} c={c} className={alt.row}>
+                  {hasUrl(c) ? <span className={alt.rowArrow} aria-hidden="true">↗</span> : null}
                   <span className={alt.rowTop}>
                     <span className={alt.rowTitle}>{c.title}</span>
                     <span className={alt.rowDates}>{datesLabel(c)}</span>
                   </span>
                   <span className={alt.rowBlurb}>{c.blurb}</span>
-                </a>
+                </CertShell>
               ))}
             </div>
           );
@@ -100,23 +104,17 @@ function CertificationsV3() {
       <h2 className={styles.h2}>Certifications</h2>
       <div className={alt.grid3}>
         {sample.certifications.map((c) => (
-          <a
-            key={`${c.issuer}-${c.title}`}
-            href={c.url}
-            className={alt.badge}
-            target={c.url.startsWith("http") ? "_blank" : undefined}
-            rel={c.url.startsWith("http") ? "noreferrer" : undefined}
-          >
-            <span className={alt.badgeArrow} aria-hidden="true">↗</span>
+          <CertShell key={`${c.issuer}-${c.title}`} c={c} className={alt.badge}>
+            {hasUrl(c) ? <span className={alt.badgeArrow} aria-hidden="true">↗</span> : null}
             <span className={alt.badgeLogo}><CertMark c={c} size={30} /></span>
             <span className={alt.badgeName}>{c.title}</span>
             <span className={alt.badgeIssuer}>{c.issuer}</span>
             <span className={alt.badgeBlurb}>{c.blurb}</span>
             <span className={alt.badgeDates}>
               <span>Issued {c.issued}</span>
-              <span>{c.expires ? `Expires ${c.expires}` : "No expiry"}</span>
+              <span>{c.expires ? `Expires ${c.expires}` : "No Expiry"}</span>
             </span>
-          </a>
+          </CertShell>
         ))}
       </div>
     </section>

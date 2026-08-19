@@ -37,15 +37,13 @@ export function HeroV4() {
       <div className={styles.heroGrid} aria-hidden="true" />
       <div className={alt.heroSpot} aria-hidden="true" />
       <div className={alt.v4Main}>
-        <p className={`${styles.eyebrow} ${styles.rise} ${styles.d0}`}>
-          <span className={styles.eyebrowDot} aria-hidden="true" />
-          {sample.hero.eyebrow}
-        </p>
-        <h1 className={`${alt.headlineMix} ${styles.rise} ${styles.d1}`}>
+        {/* no eyebrow — the headline opens the page (site principle: no
+            eyebrows, no all-caps labels) */}
+        <h1 className={`${alt.headlineMix} ${styles.rise} ${styles.d0}`}>
           I build the <span className={alt.headlineAccent}>data and AI infrastructure</span> enterprises run on.
         </h1>
-        <p className={`${alt.subMix} ${styles.rise} ${styles.d2}`}><Emph text={sample.hero.subhead} /></p>
-        <div className={`${alt.v4Actions} ${styles.rise} ${styles.d3}`}>
+        <p className={`${alt.subMix} ${styles.rise} ${styles.d1}`}><Emph text={sample.hero.subhead} /></p>
+        <div className={`${alt.v4Actions} ${styles.rise} ${styles.d2}`}>
           <div className={alt.ctaGroup}>
             <Link href={sample.hero.primaryCta.href} className={styles.ctaPrimary}>
               {sample.hero.primaryCta.label}
@@ -74,8 +72,10 @@ export function HeroV4() {
           </div>
         </div>
       </div>
-      <div className={`${alt.photoFrame} ${styles.rise} ${styles.d2}`}>
-        <img className={alt.photoImg} src="/me.jpg" alt="Kyle Naranjo" />
+      {/* halftone portrait — floats on the graph paper (original photo kept at
+          /me.jpg; swap the src back to revert) */}
+      <div className={`${alt.photoHalftone} ${styles.rise} ${styles.d1}`}>
+        <img src="/me-halftone.png" alt="Kyle Naranjo" width={1600} height={1538} />
       </div>
     </section>
   );

@@ -239,7 +239,26 @@
   color: var(--faint);
 }
 
+/* halftone portrait — the framed photo re-rastered as ink dots (generated from
+   me.jpg via a Vision background-cut + halftone pass; asset at
+   /me-halftone.png). Floats directly on the hero's graph paper: no card, no
+   border — the dots ARE the frame. */
+.photoHalftone {
+  position: relative;
+  z-index: 1;
+  justify-self: end;
+  align-self: end;
+  width: 100%;
+  max-width: 420px;
+}
+.photoHalftone img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 @media (max-width: 760px) {
   .v4 { grid-template-columns: 1fr; }
   .photoFrame { justify-self: start; max-width: 280px; }
+  .photoHalftone { justify-self: start; max-width: 300px; }
 }

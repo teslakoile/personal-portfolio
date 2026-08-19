@@ -47,17 +47,12 @@ export function QuietResume({
         <div className={`${styles.container} ${styles.headerInner}`}>
           <Link href="/" className={styles.wordmark}>Kyle&nbsp;Naranjo</Link>
           <nav className={styles.nav} aria-label="Primary">
-            {sample.nav.map((n) => {
-              const active = n.label === "Home";
-              return (
-                <Link key={n.label} href={n.href}
-                  className={`${styles.navLink} ${active ? styles.navActive : ""}`}
-                  aria-current={active ? "page" : undefined}>
-                  {n.label}
-                </Link>
-              );
-            })}
-            <Link href={sample.hero.primaryCta.href} className={styles.navCta}>Get in touch</Link>
+            {sample.nav.map((n) => (
+              <a key={n.label} href={n.href} className={styles.navLink}>
+                {n.label}
+              </a>
+            ))}
+            <Link href={sample.hero.primaryCta.href} className={styles.navCta}>Get in Touch</Link>
           </nav>
         </div>
       </header>
@@ -65,14 +60,14 @@ export function QuietResume({
       <main className={styles.container}>
         <Hero variant={picks?.hero} />
         <Marquee />
-        <Reveal><About variant={picks?.about} /></Reveal>
-        <Reveal><Experience variant={picks?.experience} /></Reveal>
-        <Reveal><Skills variant={picks?.skills} /></Reveal>
-        <Reveal><Education /></Reveal>
-        <Reveal><Certifications variant={picks?.certifications} /></Reveal>
-        <Reveal><Writing variant={picks?.writing} /></Reveal>
-        <Reveal><Community /></Reveal>
-        <Reveal><Recognition variant={picks?.recognition} /></Reveal>
+        <Reveal id="about"><About variant={picks?.about} /></Reveal>
+        <Reveal id="experience"><Experience variant={picks?.experience} /></Reveal>
+        <Reveal id="skills"><Skills variant={picks?.skills} /></Reveal>
+        <Reveal id="education"><Education /></Reveal>
+        <Reveal id="certifications"><Certifications variant={picks?.certifications} /></Reveal>
+        <Reveal id="writing"><Writing variant={picks?.writing} /></Reveal>
+        <Reveal id="community"><Community /></Reveal>
+        <Reveal id="recognition"><Recognition variant={picks?.recognition} /></Reveal>
       </main>
 
       {/* ============================== FOOTER ============================= */}

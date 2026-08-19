@@ -74,10 +74,9 @@
 .glance { grid-column: 2; display: grid; gap: 20px; margin: 4px 0 0; }
 .glanceRow { display: grid; gap: 5px; }
 .glanceLabel {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0;
   color: var(--accent);
 }
 .glanceValue { font-size: 0.9375rem; line-height: 1.5; color: var(--fg); }
