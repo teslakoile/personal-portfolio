@@ -181,6 +181,9 @@ export function FileStackDrag({ projects }: { projects: ReadonlyArray<Proj> }) {
           onHover={hoverTab} onLeave={leaveTab} raised={tug} />
 
         <div className={home.fsWell}>
+          {/* retired variant — kept for possible revival; the live island
+              (FileStack) holds this geometry in state instead */}
+          {/* eslint-disable-next-line react-hooks/refs */}
           <FileUnders projects={projects} idx={idx} tug={tug} tabXs={tabXs.current}
             pull={pull} onHover={hoverTab} onLeave={leaveTab} />
 

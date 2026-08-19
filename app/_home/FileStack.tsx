@@ -50,19 +50,23 @@ export function FileStack({ projects }: { projects: ReadonlyArray<Proj> }) {
 
   // leaving the row clears the tug after a short grace, so the pointer can
   // travel up onto the risen folder (re-entering it cancels the drop).
-  // tabXs caches each tab's row-slot x (measured at mount, refreshed at
-  // hover) so the card's attached tab swaps in — and lands —
-  // pixel-aligned; tabCs caches each tab's center, the point its card
-  // pivots around when the pile fans.
-  const tabXs = useRef<(number | undefined)[]>([]);
-  const tabCs = useRef<(number | undefined)[]>([]);
+  // Tab geometry lives in state (refreshed by the row's ref callbacks
+  // every commit, change-guarded so it settles): xs is each tab's
+  // row-slot x, so the card's attached tab swaps in — and lands —
+  // pixel-aligned; cs is each tab's center, the point its card pivots
+  // around when the pile fans.
+  const [geom, setGeom] = useState<{ xs: (number | undefined)[]; cs: (number | undefined)[] }>({ xs: [], cs: [] });
   const measure = (i: number, left: number, width: number) => {
-    tabXs.current[i] = left;
-    tabCs.current[i] = left + width / 2;
+    const c = left + width / 2;
+    setGeom((g) => {
+      if (g.xs[i] === left && g.cs[i] === c) return g;
+      const xs = g.xs.slice(); const cs = g.cs.slice();
+      xs[i] = left; cs[i] = c;
+      return { xs, cs };
+    });
   };
-  const hover = (i: number, x?: number) => {
+  const hover = (i: number) => {
     if (leaveT.current !== null) { clearTimeout(leaveT.current); leaveT.current = null; }
-    if (x !== undefined) tabXs.current[i] = x;
     setTug(i === idx ? null : i);
   };
   const leave = () => {
@@ -77,8 +81,8 @@ export function FileStack({ projects }: { projects: ReadonlyArray<Proj> }) {
   // filed cards' --fdc. --tabc (the pivot) outlives the tug — dropping
   // it mid-fall would re-aim the easing rotation and tear tab from card.
   const fanVars = (() => {
-    const pivot = tabCs.current[idx] != null
-      ? ({ "--tabc": `${tabCs.current[idx]}px` } as React.CSSProperties)
+    const pivot = geom.cs[idx] != null
+      ? ({ "--tabc": `${geom.cs[idx]}px` } as React.CSSProperties)
       : undefined;
     if (tug === null) return pivot;
     const fd = Math.abs(idx - tug);
@@ -103,7 +107,7 @@ export function FileStack({ projects }: { projects: ReadonlyArray<Proj> }) {
             above it */}
         <div className={home.fsWellWrap}>
           <FileUnders projects={projects} idx={idx} tug={tug}
-            tabXs={tabXs.current} tabCs={tabCs.current}
+            tabXs={geom.xs} tabCs={geom.cs}
             pull={pull} onHover={hover} onLeave={leave} />
 
           <div className={home.fsWell}>
