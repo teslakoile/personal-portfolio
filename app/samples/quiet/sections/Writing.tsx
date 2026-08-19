@@ -33,9 +33,16 @@ function PostBody({ post }: { post: (typeof posts)[number] }) {
       <div className={alt.tagRow}>
         {post.tags.map((t) => <span key={t} className={styles.postTopic}>{t}</span>)}
       </div>
-      <a href="#blog" className={styles.postRead}>
-        Read the explainer <span aria-hidden="true" className={styles.ctaArrow}>→</span>
-      </a>
+      {post.href ? (
+        <a href={post.href} className={styles.postRead}>
+          Read the Explainer <span aria-hidden="true" className={styles.ctaArrow}>→</span>
+        </a>
+      ) : (
+        <span className={styles.postSoon}>
+          <span className={styles.postSoonDot} aria-hidden="true" />
+          Explainer in Progress
+        </span>
+      )}
     </>
   );
 }
@@ -46,7 +53,7 @@ function WritingV1() {
     <section className={styles.section}>
       <div className={styles.sectionHeadRow}>
         <h2 className={styles.h2}>Writing</h2>
-        <span className={styles.sectionNote}>Interactive explainers</span>
+        <span className={styles.sectionNote}>Interactive Explainers</span>
       </div>
       <div className={styles.postList}>
         {posts.map((post) => (
@@ -76,7 +83,7 @@ function WritingV2() {
     <section className={alt.section}>
       <div className={alt.headRow}>
         <h2 className={styles.h2}>Writing</h2>
-        <span className={styles.sectionNote}>Interactive explainers</span>
+        <span className={styles.sectionNote}>Interactive Explainers</span>
       </div>
       <div className={alt.featList}>
         <article className={alt.feature}>
@@ -98,7 +105,7 @@ function WritingV3() {
     <section className={alt.section}>
       <div className={alt.headRow}>
         <h2 className={styles.h2}>Writing</h2>
-        <span className={styles.sectionNote}>Interactive explainers</span>
+        <span className={styles.sectionNote}>Interactive Explainers</span>
       </div>
       <div className={alt.grid2}>
         {posts.map((post) => (

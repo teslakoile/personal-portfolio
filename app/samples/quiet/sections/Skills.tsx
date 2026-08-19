@@ -8,10 +8,12 @@ const groups = sample.skills;
 const idx = (i: number) => String(i + 1).padStart(2, "0");
 
 /** Skills — a spec sheet: numbered rows, domain + blurb on the left, general
-    skills (outlined chips) over specific tooling (logo pills) on the right. */
-function SkillsMain() {
+    skills (outlined chips) over specific tooling (logo pills) on the right.
+    `eyebrow` is the landing page's numbered section label (absent on samples). */
+function SkillsMain({ eyebrow }: { eyebrow?: React.ReactNode }) {
   return (
     <section className={styles.section}>
+      {eyebrow}
       <h2 className={styles.h2}>Skills</h2>
       <div className={alt.rows}>
         {groups.map((g, i) => (
@@ -39,7 +41,7 @@ function SkillsMain() {
 }
 
 // One locked design now (the spec-sheet rows); variant kept for the API.
-export function Skills({ variant = 1 }: { variant?: SectionVariant }) {
+export function Skills({ variant = 1, eyebrow }: { variant?: SectionVariant; eyebrow?: React.ReactNode }) {
   void variant;
-  return <SkillsMain />;
+  return <SkillsMain eyebrow={eyebrow} />;
 }

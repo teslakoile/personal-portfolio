@@ -23,10 +23,12 @@ export const sample = {
   companyUrl: "https://thinkingmachin.es/",
   cvUrl: "/Kyle-Naranjo-CV.pdf",
 
+  // In-page anchors; each id is set by the matching section on the landing page.
   nav: [
-    { label: "Home", href: "/", active: true },
-    { label: "Projects", href: "#projects" },
-    { label: "Blog", href: "#blog" },
+    { label: "Experience", href: "#experience" },
+    { label: "Skills", href: "#skills" },
+    { label: "Writing", href: "#writing" },
+    { label: "Community", href: "#community" },
   ],
 
   hero: {
@@ -34,7 +36,7 @@ export const sample = {
     headline: "I build the data and AI infrastructure enterprises run on.",
     subhead:
       "Data Engineer II at Thinking Machines Data Science — pipelines, agentic AI, MLOps, and cloud infrastructure for financial services, investment management, education, and compliance.",
-    primaryCta: { label: "Get in touch", href: "mailto:kyle.naranjo@gmail.com" },
+    primaryCta: { label: "Get in Touch", href: "mailto:kyle.naranjo@gmail.com" },
   },
 
   // Web contacts (each has a brand/UI icon). Phone is kept for completeness but
@@ -76,7 +78,7 @@ export const sample = {
           client: "A large Singaporean investment holding company",
           engagements: [
             {
-              name: "Investment data platform",
+              name: "Investment Data Platform",
               points: [
                 "Owned backend feature development across 10+ interconnected microservices powering deal discovery, due diligence, and portfolio monitoring workflows.",
                 "Built backend services and data pipelines with FastAPI, Dagster, Kubernetes, and Snowflake, processing terabytes of vendor data from Sustainalytics, PitchBook, Bloomberg, and MSCI.",
@@ -85,7 +87,7 @@ export const sample = {
               stack: ["FastAPI", "Dagster", "Snowflake", "PostgreSQL", "SQLAlchemy", "Pydantic", "Kubernetes", "Kibana", "Grafana"],
             },
             {
-              name: "Enterprise document intelligence platform",
+              name: "Enterprise Document Intelligence Platform",
               points: [
                 "Iterated on Snowflake Cortex AI agent workflows with the Knowledge Graph team so investment officers could extract data from long-form documents, run contextual queries, and analyze portfolios at scale.",
                 "Owned agent tooling, prompt engineering, evaluation, workflow tuning, and production incident triage across the document-intelligence stack.",
@@ -100,7 +102,7 @@ export const sample = {
           metrics: SCV_METRICS,
           engagements: [
             {
-              name: "Enterprise data products",
+              name: "Enterprise Data Products",
               points: [
                 "Led the data products workstream in a year-long engagement, partnering with C-suite leaders, directors, and business units to define and ship priority data products on Azure Databricks.",
                 "Designed and productionized a daily Single Customer View pipeline consolidating ~15 million records from four enterprise systems into ~7 million unique customer keys used across 10+ business units.",
@@ -115,7 +117,7 @@ export const sample = {
           client: "A Philippine education enterprise",
           engagements: [
             {
-              name: "Student-at-risk prediction platform",
+              name: "Student-at-Risk Prediction Platform",
               points: [
                 "Spearheaded the infrastructure and ingestion workstream for a student-at-risk prediction platform on Azure Databricks.",
                 "Provisioned platform infrastructure with Terraform, built API ingestion across three source systems, and migrated Excel-based linear-regression models into production Databricks jobs.",
@@ -129,7 +131,7 @@ export const sample = {
           client: "A large Singaporean enterprise",
           engagements: [
             {
-              name: "Data ingestion and transformation",
+              name: "Data Ingestion and Transformation",
               points: [
                 "Led the ingestion and transformation workstream, building end-to-end pipelines from four source systems in SQL Server and MongoDB into BigQuery.",
                 "Designed surrogate-key strategies to resolve identifier collisions between member and visitor systems and modeled production reporting tables for attendance analytics.",
@@ -143,7 +145,7 @@ export const sample = {
           client: "A Philippine airline",
           engagements: [
             {
-              name: "Enablement curriculum design",
+              name: "Enablement Curriculum Design",
               points: [
                 "Designed and delivered a six-course enablement curriculum covering Python and Power BI from beginner to advanced in four days.",
               ],
@@ -329,9 +331,8 @@ export const sample = {
       period: "Jul 2022 – Present",
       // Real org mark in /public/logos (official Google Developers "<>" icon, SVG).
       logo: "/logos/gdg.svg",
-      // `url` → the org's public page. "#" is a placeholder until the real link
-      // is set (mirrors the certifications convention).
-      url: "#",
+      // Official chapter page on the GDG community platform.
+      url: "https://gdg.community.dev/gdg-davao/",
       description:
         "Led the organizing team behind 10+ in-person events over 2.5 years, bringing together 2,000-plus participants, ~25 speakers, ~25 partners and sponsors, and 50+ volunteers — growing the community from zero to 500-plus official members.",
       // `stats` are the headline impact figures pulled from `description`,
@@ -351,7 +352,7 @@ export const sample = {
       // PLACEHOLDER mark (neutral globe) — swap for the official Global Shapers
       // logo when available (drop it at /public/logos/global-shapers.svg).
       logo: "/logos/global-shapers.svg",
-      url: "#",
+      url: "https://www.globalshapers.org/hubs/davao-hub/",
       description:
         "Member of the World Economic Forum-backed network of young leaders driving local impact through community projects.",
     },
@@ -430,6 +431,236 @@ export const sample = {
     },
   ],
 
+  // GitHub identity for the contributions-graph section on the landing page.
+  github: {
+    user: "teslakoile",
+    url: "https://github.com/teslakoile",
+  },
+
+  // Handpicked resources — books, guides, and tools Kyle actually points people
+  // to. STARTER LIST seeded from his own work (Splink in production, an MCP
+  // server PoC, talks on AI coding agents); EDIT FREELY — this is the one
+  // section meant to be curated by hand, in your own voice.
+  // `image` is a LOCAL thumbnail under public/resources/ (the DDIA cover from
+  // Open Library; site favicons / GitHub avatars for the rest) so the
+  // imagery-led treatments never make runtime requests.
+  resources: [
+    {
+      kind: "Book",
+      title: "Designing Data-Intensive Applications",
+      source: "Martin Kleppmann",
+      note: "Still the canonical map of the data-systems territory. The chapter on partitioning pays for the whole book.",
+      url: "https://dataintensive.net/",
+      image: "/resources/ddia.jpg",
+    },
+    {
+      kind: "Guide",
+      title: "Building Effective Agents",
+      source: "Anthropic",
+      note: "The clearest writing on when you need an agent and when a workflow is enough.",
+      url: "https://www.anthropic.com/research/building-effective-agents",
+      image: "/resources/building-effective-agents.png",
+    },
+    {
+      kind: "Spec",
+      title: "Model Context Protocol",
+      source: "modelcontextprotocol.io",
+      note: "The protocol behind my ChatGPT-to-Databricks proof of concept. Read the spec before wrapping another API.",
+      url: "https://modelcontextprotocol.io/",
+      image: "/resources/mcp.png",
+    },
+    {
+      kind: "Library",
+      title: "Splink",
+      source: "MoJ Analytical Services",
+      note: "Probabilistic record linkage at scale. This is the engine behind the 748,000 duplicate pairs story.",
+      url: "https://moj-analytical-services.github.io/splink/",
+      image: "/resources/splink.png",
+    },
+    {
+      kind: "Blog",
+      title: "Simon Willison's Weblog",
+      source: "simonwillison.net",
+      note: "The most consistently grounded coverage of LLMs and coding agents anywhere.",
+      url: "https://simonwillison.net/",
+      image: "/resources/simonwillison.jpg",
+    },
+  ],
+
+  // ⚠️ MOCK DATA — layout preview only, per Kyle's request. Every entry below is
+  // INVENTED so the section has realistic shape; REPLACE with real quotes (e.g.
+  // LinkedIn recommendations, ported verbatim with the recommender's real name
+  // and title) BEFORE deploying. Delete all entries to hide the section.
+  // `avatar` is an optional local headshot under public/recs/ (square, ≥160px);
+  // while it's null the treatments render an initials chip. The mock names are
+  // distinct (Ana/Ben/Cara) so the derived monograms don't collide.
+  recommendations: [
+    {
+      quote:
+        "Kyle took the messiest part of our data platform and turned it into the most dependable one. He communicates like a consultant and ships like a senior engineer.",
+      name: "Mock Reviewer Ana",
+      title: "Engineering Manager · placeholder",
+      avatar: null,
+    },
+    {
+      quote:
+        "The rare engineer who is equally at home in a C-suite steering meeting and a 2 a.m. pipeline incident. His record-linkage work changed how our bank sees its customers.",
+      name: "Mock Reviewer Ben",
+      title: "Data Platform Lead · placeholder",
+      avatar: null,
+    },
+    {
+      quote:
+        "Every team Kyle touches gets faster. He automates the boring parts, documents the sharp edges, and leaves the codebase better than he found it.",
+      name: "Mock Reviewer Cara",
+      title: "Product Director · placeholder",
+      avatar: null,
+    },
+  ] as ReadonlyArray<{
+    quote: string;
+    name: string;
+    title: string;
+    avatar?: string | null;
+  }>,
+
+  // FLAGSHIP SECTION. Seeded from the engagements above (clients stay
+  // anonymized, numbers are EXACT — same rules as `experience`) plus the two
+  // fully-owned works (AIComprehend, the MCP PoC). `flagship` marks the lead
+  // sheet on the landing; `featured` picks the landing companions; /projects
+  // renders every entry. Curate freely — summaries are prose retellings of the
+  // engagement points, safe to edit.
+  projects: [
+    {
+      slug: "single-customer-view",
+      flagship: true,
+      featured: true,
+      title: "Single Customer View",
+      client: "A major Philippine bank",
+      period: "2024 – 2025",
+      status: "In Production",
+      oneLiner:
+        "A daily pipeline that tells a bank who its ~15 million records actually are.",
+      summary: [
+        "A year-long engagement with a major Philippine bank, partnering with C-suite leaders and business units to ship priority data products on Azure Databricks. The centerpiece is a daily Single Customer View pipeline consolidating ~15 million records from four enterprise systems into ~7 million unique customer keys used across 10+ business units.",
+        "Exact matching misses people. A probabilistic record-linkage engine built with Splink surfaced 748,000 candidate duplicate pairs the exact-match logic could not see, scored through a five-tier confidence framework validated at >99.9% accuracy — while pipeline runtime dropped from over 4 hours to under 1 hour.",
+      ],
+      stack: ["Azure Databricks", "PySpark", "SQL", "Splink", "Delta Lake"],
+      metrics: SCV_METRICS,
+      links: [] as ReadonlyArray<{ label: string; href: string }>,
+    },
+    {
+      slug: "investment-data-platform",
+      featured: true,
+      title: "Investment Data Platform",
+      client: "A large Singaporean investment holding company",
+      period: "Aug 2024 – Present",
+      status: "In Production",
+      oneLiner:
+        "Backend services and pipelines behind deal discovery, due diligence, and portfolio monitoring.",
+      summary: [
+        "Owned backend feature development across 10+ interconnected microservices powering deal discovery, due diligence, and portfolio monitoring workflows for a large Singaporean investment holding company.",
+        "The platform processes terabytes of vendor data from Sustainalytics, PitchBook, Bloomberg, and MSCI through FastAPI services and Dagster pipelines on Kubernetes, landing in Snowflake — with reliability and observability handled through production monitoring on Kibana and Grafana.",
+      ],
+      stack: ["FastAPI", "Dagster", "Snowflake", "Kubernetes", "PostgreSQL"],
+      metrics: [
+        { value: "10+", label: "interconnected microservices" },
+        { value: "4", label: "vendor data feeds processed" },
+      ],
+      links: [] as ReadonlyArray<{ label: string; href: string }>,
+    },
+    {
+      slug: "document-intelligence",
+      title: "Enterprise Document Intelligence Platform",
+      client: "A large Singaporean investment holding company",
+      period: "2025 – Present",
+      status: "In Production",
+      oneLiner:
+        "Agent workflows that let investment officers query long-form documents at scale.",
+      summary: [
+        "Iterated on Snowflake Cortex AI agent workflows with the Knowledge Graph team so investment officers could extract data from long-form documents, run contextual queries, and analyze portfolios at scale.",
+        "Owned agent tooling, prompt engineering, evaluation, workflow tuning, and production incident triage across the document-intelligence stack, partnering with a ~15-person cross-functional team spanning frontend, backend, LLM workflows, MLOps, DevOps, and QA.",
+      ],
+      stack: ["Snowflake Cortex", "OpenAI API", "FastAPI", "Kubernetes"],
+      metrics: [
+        { value: "~15", label: "person cross-functional team" },
+      ],
+      links: [] as ReadonlyArray<{ label: string; href: string }>,
+    },
+    {
+      slug: "student-at-risk",
+      title: "Student-at-Risk Prediction Platform",
+      client: "A Philippine education enterprise",
+      period: "2025",
+      status: "Delivered",
+      oneLiner:
+        "Infrastructure and ingestion for a prediction platform that flags students before they slip.",
+      summary: [
+        "Spearheaded the infrastructure and ingestion workstream for a student-at-risk prediction platform on Azure Databricks: platform infrastructure provisioned with Terraform, API ingestion built across three source systems, and Excel-based linear-regression models migrated into production Databricks jobs.",
+        "Delivery was accelerated by integrating AI coding agents into the workflow with custom agent skills, hooks, and command layers.",
+      ],
+      stack: ["Azure Databricks", "Terraform", "Python", "SQL"],
+      metrics: [
+        { value: "3", label: "source systems ingested via API" },
+      ],
+      links: [] as ReadonlyArray<{ label: string; href: string }>,
+    },
+    {
+      slug: "mcp-databricks",
+      featured: true,
+      title: "ChatGPT-to-Databricks MCP Server",
+      client: "Thinking Machines · internal",
+      period: "2025",
+      status: "Proof of Concept",
+      oneLiner:
+        "An MCP server that lets a chat assistant query a governed lakehouse directly.",
+      summary: [
+        "A proof-of-concept integration connecting ChatGPT to Databricks through a Model Context Protocol server — the experiment behind the MCP spec's place in the resources list.",
+        "The PoC demonstrated a governed path from a conversational assistant to warehouse queries without another one-off API wrapper, and now feeds Kyle's talks on agentic workflows.",
+      ],
+      stack: ["Python", "MCP", "Databricks"],
+      metrics: [] as ReadonlyArray<{ value: string; label: string }>,
+      links: [
+        { label: "MCP Spec", href: "https://modelcontextprotocol.io/" },
+      ] as ReadonlyArray<{ label: string; href: string }>,
+    },
+    {
+      slug: "aicomprehend",
+      featured: true,
+      title: "AIComprehend",
+      client: "UP Diliman EEEEI",
+      period: "2022 – 2023",
+      status: "Published",
+      oneLiner:
+        "An adaptive reading-comprehension platform, validated in a controlled study and published in IEEE.",
+      summary: [
+        "Co-authored and published the IEEE AIComprehend paper, then built and deployed the full-stack Django application used in the study itself.",
+        "A four-week controlled study with 58 high school students showed a 13.9% improvement in test scores — research that started the thread running through the rest of this list.",
+      ],
+      stack: ["Django", "Python", "Keras"],
+      metrics: [
+        { value: "13.9%", label: "test-score improvement" },
+        { value: "58", label: "students in the controlled study" },
+        { value: "4 wk", label: "study duration" },
+      ],
+      links: [
+        { label: "IEEE Paper", href: "https://ieeexplore.ieee.org/document/10323847" },
+      ] as ReadonlyArray<{ label: string; href: string }>,
+    },
+  ] as ReadonlyArray<{
+    slug: string;
+    flagship?: boolean;
+    featured?: boolean;
+    title: string;
+    client: string;
+    period: string;
+    status: string;
+    oneLiner: string;
+    summary: ReadonlyArray<string>;
+    stack: ReadonlyArray<string>;
+    metrics: ReadonlyArray<{ value: string; label: string }>;
+    links: ReadonlyArray<{ label: string; href: string }>;
+  }>,
+
   achievements: [
     {
       meta: "IEEE · Published Nov 27, 2023",
@@ -452,25 +683,29 @@ export const sample = {
   blog: {
     eyebrow: "WRITING",
     // Each post may carry a real thumbnail `image`; when null the card falls back
-    // to a built-in concept figure.
+    // to a built-in concept figure. `href` is the published post URL — null while
+    // the explainer is still being written (the card then shows a quiet
+    // "coming soon" note instead of a dead link).
     posts: [
       {
-        topic: "Record linkage",
+        topic: "Record Linkage",
         date: "2026-05-12",
         readTime: "9 min read",
-        tags: ["Record linkage", "Splink", "Data quality", "PySpark"],
+        tags: ["Record Linkage", "Splink", "Data Quality", "PySpark"],
         title: "Why Exact Matching Misses 748,000 Duplicates",
         dek: "Drag a match-weight threshold and watch duplicate record clusters merge in real time — the same probabilistic linkage that rebuilt a bank's Single Customer View.",
         image: "/writing/record-linkage.png" as string | null,
+        href: null as string | null,
       },
       {
-        topic: "AI agents",
+        topic: "AI Agents",
         date: "2026-03-04",
         readTime: "6 min read",
-        tags: ["MCP", "AI agents", "Databricks", "Proof of concept"],
+        tags: ["MCP", "AI Agents", "Databricks", "Proof of Concept"],
         title: "Wiring ChatGPT to Databricks through an MCP server",
         dek: "A proof-of-concept Model Context Protocol server that lets ChatGPT query and operate a Databricks workspace through a set of typed tools.",
         image: "/writing/mcp.png" as string | null,
+        href: null as string | null,
       },
     ],
   },

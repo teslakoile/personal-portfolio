@@ -9,7 +9,7 @@ import styles from "./styles.module.css";
  * additive: we only arm elements that are below the fold on mount, then animate
  * them in once as they scroll into view. In-view content is never hidden.
  */
-export function Reveal({ children }: { children: ReactNode }) {
+export function Reveal({ id, children }: { id?: string; children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,5 +35,6 @@ export function Reveal({ children }: { children: ReactNode }) {
     return () => obs.disconnect();
   }, []);
 
-  return <div ref={ref}>{children}</div>;
+  // scroll-margin keeps anchored jumps clear of the sticky header
+  return <div ref={ref} id={id} className={id ? styles.anchor : undefined}>{children}</div>;
 }

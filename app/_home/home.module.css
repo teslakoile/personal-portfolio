@@ -1,0 +1,2374 @@
+/* Landing shell — sidebar layout (bryllim.com-inspired) wrapping the Quiet
+   Blueprint sections. All tokens (--bg, --fg, --accent, fonts…) cascade from the
+   quiet styles.root wrapper; this module lays out the shell, the landing-only
+   section treatments, and the ⌘K / ⌘J overlays.
+
+   PAGE RHYTHM CONTRACT — each section carries a distinct texture so no two
+   adjacent sections read the same:
+     paper: Hero (halftone portrait) → Marquee (ticker) → About (editorial lead) →
+            Projects (the case-file pile — the page's only fanned, dimensional
+            object; coral stamp on the open file) →
+            Experience (the ONLY shadow-ring white-card moment) → Skills (spec
+            rows) → Education (ledger)
+     TINT band: Certifications (registry table on --surface-alt)
+     paper: Writing (open feature spreads) → Community (stat billboard +
+            numbered talk index) → Recognition (2px-ink-rule columns) →
+            [Recommendations (pull-quote stack)] → Resources (bare bibliography,
+            deliberately the only rule-less list)
+     INK band: GitHub (coral heatmap on --fg, jumbo total) → paper footer
+   Exactly one tint moment and one inverted moment. Hover grammar for de-carded
+   rows: title/arrow → accent (+ at most one background wash); never lift/shadow. */
+
+/* ============================== LAYOUT ============================= */
+.layout {
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
+  min-height: 100vh;
+}
+/* inline-size container so the year-strip treatment can bleed to the COLUMN
+   edge (100cqw) rather than the viewport; harmless to everything else */
+.main { min-width: 0; container-type: inline-size; }
+
+/* ============================== SIDEBAR ============================ */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  padding: 26px 22px 22px;
+  border-right: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 45%, var(--bg));
+  scrollbar-width: thin;
+}
+.sbWordmark {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  text-decoration: none;
+}
+.sbNav { display: grid; gap: 2px; }
+.sbNavItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  margin-inline: -10px;
+  font-size: 0.875rem;
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.sbNavItem:hover { color: var(--fg); background: color-mix(in srgb, var(--surface-alt) 70%, transparent); }
+.sbNavNum {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--faint);
+  transition: color 0.15s ease;
+}
+.sbNavActive { color: var(--fg); }
+.sbNavActive .sbNavNum { color: var(--accent); }
+
+.sbDivider { border: 0; border-top: 1px dashed var(--border); margin: 0; }
+
+/* utility rows (ask anything / typing test) */
+.sbUtil { display: grid; gap: 2px; }
+.sbUtilBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: calc(100% + 20px);
+  padding: 7px 10px;
+  margin-inline: -10px;
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.sbUtilBtn:hover { color: var(--fg); background: color-mix(in srgb, var(--surface-alt) 70%, transparent); }
+.sbKbd {
+  display: inline-flex;
+  gap: 3px;
+  font-family: var(--mono);
+  font-size: 0.625rem;
+  color: var(--faint);
+}
+.sbKbd kbd {
+  font: inherit;
+  padding: 2px 5px;
+  background: var(--surface);
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px var(--border), 0 1px 0 var(--border);
+}
+
+/* footer block pinned to the bottom of the rail */
+.sbFoot { margin-top: auto; display: grid; gap: 16px; }
+.sbSound {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  margin-inline: -10px;
+  width: fit-content;
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.sbSound:hover { color: var(--fg); }
+.sbSound svg { color: var(--faint); transition: color 0.15s ease; }
+.sbSound:hover svg { color: var(--accent); }
+.sbReach { font-size: 0.75rem; line-height: 1.55; color: var(--faint); margin: 0; }
+.sbEmail {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.8125rem;
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.sbEmail:hover { color: var(--accent); }
+.sbIconRow { display: flex; gap: 4px; }
+.sbCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 16px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.8438rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 999px;
+  box-shadow: 0 1px 2px rgb(146 40 22 / 0.25), 0 6px 16px -6px rgb(245 72 45 / 0.4);
+  transition: background 0.16s ease, transform 0.12s ease, box-shadow 0.16s ease;
+}
+.sbCta:hover {
+  background: var(--accent-press);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgb(146 40 22 / 0.28), 0 10px 22px -8px rgb(245 72 45 / 0.5);
+}
+.sbCta:active { transform: scale(0.97); }
+.sbIconLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  color: var(--muted);
+  border-radius: 8px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.sbIconLink:hover { color: var(--accent); background: color-mix(in srgb, var(--surface-alt) 70%, transparent); }
+
+/* ==================== GLOBAL SECTION GRAMMAR ======================= */
+/* Site principles: no eyebrows, no all-caps labels — hierarchy comes from
+   size, weight, and the three font slots alone. */
+/* one metadata voice: mono, tabular, faint (overrides styles.sectionNote) */
+.secNote {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ========================= FULL-BLEED BANDS ======================== */
+.bandTint { background: var(--surface-alt); }
+.bandInk { background: var(--fg); }
+
+/* =============== RESOURCES / RECOMMENDATIONS — card designs ======== */
+/* (the landing's current treatments; the de-carded alternatives further down
+   are compared at /samples/rework) */
+.resGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.resCard {
+  position: relative;
+  display: grid;
+  gap: 7px;
+  align-content: start;
+  padding: 20px 22px;
+  background: var(--surface);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+.resCard:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.resTop { display: flex; align-items: center; gap: 10px; }
+.resKind {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  padding: 3px 9px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.resSource { font-size: 0.75rem; color: var(--faint); }
+.resTitle { font-size: 0.9375rem; font-weight: 600; color: var(--fg); margin: 0; }
+.resNote { font-size: 0.8125rem; line-height: 1.55; color: var(--muted); margin: 0; text-wrap: pretty; }
+.resArrow {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  color: var(--faint);
+  font-size: 0.8rem;
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+.resCard:hover .resArrow { color: var(--accent); transform: translate(2px, -2px); }
+
+.recsGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.recsCard {
+  display: grid;
+  gap: 16px;
+  align-content: space-between;
+  padding: 22px 24px;
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+}
+.recsQuote {
+  font-family: var(--serif);
+  font-size: 0.9793rem;
+  line-height: 1.62;
+  color: var(--fg);
+  margin: 0;
+  text-wrap: pretty;
+}
+.recsQuote::before { content: "“"; color: var(--accent); }
+.recsQuote::after { content: "”"; color: var(--accent); }
+.recsWho { display: grid; gap: 2px; }
+.recsName { font-size: 0.8125rem; font-weight: 600; color: var(--fg); }
+.recsTitle {
+  font-size: 0.75rem;
+  letter-spacing: 0;
+  color: var(--faint);
+}
+
+/* =============== GITHUB — card design (landing's current) ========== */
+.ghGraphWrap {
+  overflow-x: auto;
+  padding: 20px 22px 16px;
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+}
+.ghFootRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}
+.ghCaption b { color: var(--fg); font-weight: 600; }
+
+/* ================ CERTIFICATIONS — registry table (tint) =========== */
+.certTable { display: grid; }
+.certHeadRow,
+.certRow {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) 110px 110px 28px;
+  gap: 4px 16px;
+  align-items: baseline;
+}
+.certHeadRow {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  color: var(--faint);
+  padding-bottom: 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--fg) 25%, var(--border));
+}
+.certRow {
+  padding: 13px 8px;
+  margin-inline: -8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--fg) 9%, transparent);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s ease;
+}
+a.certRow:hover { background: var(--surface); }
+.certIssuerCell {
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.certMobileMeta { display: none; }
+.certTitleCell { font-size: 0.9375rem; font-weight: 600; color: var(--fg); transition: color 0.15s ease; }
+a.certRow:hover .certTitleCell { color: var(--accent); }
+.certDateCell {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+.certGo { color: var(--faint); font-size: 0.8rem; justify-self: end; transition: color 0.15s ease, transform 0.15s ease; }
+a.certRow:hover .certGo { color: var(--accent); transform: translate(2px, -2px); }
+
+/* ================= WRITING — open feature spreads (paper) ========== */
+.featRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 48px;
+  align-items: center;
+  padding-block: clamp(36px, 4vw, 52px);
+  text-decoration: none;
+  color: inherit;
+}
+.featRow + .featRow { border-top: 1px solid var(--border); }
+.featRowFlip { grid-template-columns: 400px minmax(0, 1fr); }
+.featRowFlip .featMedia { order: -1; }
+.featMeta {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+  margin: 0 0 12px;
+}
+.featTitle {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(1.45rem, 2.6vw, 1.9rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0 0 12px;
+  text-wrap: balance;
+  transition: color 0.16s ease;
+}
+.featDek {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 58ch;
+  margin: 0 0 14px;
+  text-wrap: pretty;
+}
+.featMedia {
+  overflow: hidden;
+  border-radius: 10px;
+  outline: 1px solid rgb(28 25 23 / 0.08);
+  outline-offset: -1px;
+}
+.featMedia img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+a.featRow:hover .featMedia img { transform: scale(1.025); }
+a.featRow:hover .featTitle { color: var(--accent); }
+
+/* ============ COMMUNITY — impact billboard + talk index (paper) ==== */
+.comHead { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.comLogo { height: 22px; width: auto; align-self: center; }
+.comOrg {
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: -0.025em;
+  margin: 0;
+  color: var(--fg);
+}
+.comOrgLink { color: inherit; text-decoration: none; transition: color 0.15s ease; }
+.comOrgLink:hover { color: var(--accent); }
+.comArrow { color: var(--faint); font-size: 0.72em; font-weight: 500; }
+.comOrgLink:hover .comArrow { color: var(--accent); }
+.comMeta {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.comBlurb { color: var(--muted); max-width: 68ch; margin: 10px 0 0; text-wrap: pretty; }
+.comStats { display: grid; grid-template-columns: repeat(4, 1fr); margin: 28px 0 0; }
+.comStat { display: grid; gap: 8px; align-content: start; }
+.comStat:nth-child(n + 2) { border-left: 1px solid var(--border); padding-left: 22px; }
+.comFig {
+  font-weight: 650;
+  font-size: clamp(2rem, 3.4vw, 2.75rem);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+.comCap {
+  font-size: 0.8125rem;
+  letter-spacing: 0;
+  color: var(--faint);
+  margin: 0;
+}
+.comSibling {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+}
+.comSibLogo { height: 20px; width: auto; }
+.comSibName { font-size: 0.9375rem; font-weight: 600; color: var(--fg); transition: color 0.15s ease; }
+.comSibling:hover .comSibName { color: var(--accent); }
+.comSibRole { font-size: 0.8125rem; color: var(--muted); }
+.comSubHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 34px 0 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.comSubHead::after { content: ""; height: 1px; flex: 1; background: var(--border); }
+.talkRow {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) max-content;
+  gap: 16px;
+  padding-block: 14px;
+}
+.talkRow + .talkRow { border-top: 1px solid var(--border); }
+.talkIdx {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+  padding-top: 2px;
+}
+.talkTitle { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; color: var(--fg); margin: 0 0 3px; }
+.talkTitleLink { color: inherit; text-decoration: none; transition: color 0.15s ease; }
+.talkTitleLink:hover { color: var(--accent); }
+.talkTitleLink:hover .comArrow { color: var(--accent); }
+.talkDesc { font-size: 0.8125rem; line-height: 1.55; color: var(--muted); margin: 0; max-width: 62ch; text-wrap: pretty; }
+.talkMetaCol { font-family: var(--mono); font-size: 0.75rem; color: var(--faint); padding-top: 3px; }
+
+/* ============ RECOGNITION — Swiss footnote columns (paper) ========= */
+.regCols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+.regCol {
+  border-top: 2px solid var(--fg);
+  padding-top: 16px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+.regMeta {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+.regTitle { font-family: var(--serif); font-weight: 600; font-size: 1.125rem; letter-spacing: -0.015em; color: var(--fg); margin: 0; }
+.regDesc { font-size: 0.8125rem; line-height: 1.6; color: var(--muted); margin: 0; text-wrap: pretty; }
+.regLink {
+  width: fit-content;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  transition: text-decoration-color 0.15s ease;
+}
+.regLink:hover { text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
+
+/* ============ RECOMMENDATIONS — pull-quote stack (paper) =========== */
+.pq { max-width: 66ch; }
+.pqItem { padding-block: 28px; margin: 0; }
+.pqItem:first-child { padding-top: 8px; }
+.pqItem + .pqItem { border-top: 1px solid var(--border); }
+.pqQuote {
+  position: relative;
+  padding-left: 28px;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.62;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+.pqLead .pqQuote {
+  font-size: clamp(1.3rem, 2.2vw, 1.6rem);
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+}
+.pqQuote::before {
+  content: "\201C";
+  position: absolute;
+  left: 0;
+  top: -0.08em;
+  font-size: 1.6em;
+  line-height: 1;
+  color: var(--accent);
+}
+.pqWho { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 0 28px; }
+.pqName { font-size: 0.8125rem; font-weight: 600; color: var(--fg); }
+.pqTitle { font-size: 0.75rem; letter-spacing: 0; color: var(--faint); }
+
+/* ============ RESOURCES — annotated bibliography (paper) =========== */
+/* deliberately the page's only rule-less list: spacing separates rows */
+.bib { display: grid; gap: 4px; }
+.bibRow {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr) auto;
+  gap: 2px 22px;
+  align-items: baseline;
+  padding: 14px;
+  margin-inline: -14px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s ease;
+}
+.bibRow:hover { background: color-mix(in srgb, var(--surface-alt) 70%, transparent); }
+.bibGutter { display: block; }
+.bibKind {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--faint);
+}
+.bibSource { display: block; font-size: 0.75rem; color: var(--muted); margin-top: 3px; }
+.bibTitle { font-size: 0.9375rem; font-weight: 600; color: var(--fg); transition: color 0.15s ease; }
+.bibNote { display: block; font-size: 0.8125rem; line-height: 1.55; color: var(--muted); max-width: 64ch; margin-top: 2px; text-wrap: pretty; }
+.bibArrow { color: var(--faint); font-size: 0.8rem; transition: color 0.15s ease, transform 0.15s ease; }
+.bibRow:hover .bibTitle { color: var(--accent); }
+.bibRow:hover .bibArrow { color: var(--accent); transform: translate(2px, -2px); }
+
+/* ================== GITHUB — the ink coda (bandInk) ================ */
+.ghGraphBare { overflow-x: auto; padding-bottom: 6px; }
+.ghSvg { display: block; }
+.ghD { rx: 2px; }
+.ghL0 { fill: var(--surface-alt); }
+.ghL1 { fill: color-mix(in srgb, var(--accent) 22%, var(--surface-alt)); }
+.ghL2 { fill: color-mix(in srgb, var(--accent) 45%, var(--surface-alt)); }
+.ghL3 { fill: color-mix(in srgb, var(--accent) 72%, var(--surface-alt)); }
+.ghL4 { fill: var(--accent); }
+.ghStat { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-top: 18px; }
+.ghTotal {
+  font-size: clamp(2rem, 3.4vw, 2.75rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.ghStatLabel { font-size: 0.8125rem; color: var(--muted); }
+.ghCaption { font-size: 0.8125rem; color: var(--muted); margin: 0; }
+.ghLegend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.6875rem;
+  color: var(--faint);
+  margin-left: auto;
+}
+.ghLegend svg { display: block; }
+.ghLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.ghLink:hover { color: var(--accent); }
+
+/* ink-band recolors — descendant overrides keep the components band-agnostic */
+.bandInk h2 { color: var(--bg); }
+.bandInk .secEyebrow { color: #a8a29e; }
+.bandInk .secEyebrow::after { background: rgb(250 249 247 / 0.14); }
+.bandInk .ghLink { color: #a8a29e; }
+.bandInk .ghLink:hover { color: var(--accent); }
+.bandInk .ghL0 { fill: rgb(250 249 247 / 0.07); }
+.bandInk .ghL1 { fill: color-mix(in srgb, var(--accent) 30%, var(--fg)); }
+.bandInk .ghL2 { fill: color-mix(in srgb, var(--accent) 55%, var(--fg)); }
+.bandInk .ghL3 { fill: color-mix(in srgb, var(--accent) 78%, var(--fg)); }
+.bandInk .ghL4 { fill: var(--accent); }
+.bandInk .ghD:hover { stroke: rgb(250 249 247 / 0.5); stroke-width: 1; }
+.bandInk .ghTotal { color: var(--bg); }
+.bandInk .ghStatLabel,
+.bandInk .ghCaption,
+.bandInk .ghLegend { color: #a8a29e; }
+
+/* ========================= OVERLAYS (⌘K / ⌘J) ======================= */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  backdrop-filter: saturate(120%) blur(14px);
+  animation: overlayIn 0.18s ease;
+}
+@keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+.overlayInner { width: min(720px, 100%); }
+.overlayHint {
+  position: fixed;
+  top: 18px;
+  right: 22px;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  color: var(--faint);
+}
+.overlayHint kbd { font: inherit; }
+
+/* Ask anything */
+.askPrompt {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin: 0 0 18px;
+}
+.askInput {
+  width: 100%;
+  font: inherit;
+  font-size: 1.125rem;
+  color: var(--fg);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 2px 12px;
+  outline: none;
+  caret-color: var(--accent);
+  transition: border-color 0.2s ease;
+}
+.askInput:focus { border-bottom-color: var(--accent); }
+.askInput::placeholder { color: var(--faint); }
+.askChips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.askChip {
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  padding: 6px 13px;
+  background: var(--surface);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--border);
+  cursor: pointer;
+  transition: color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+}
+.askChip:hover { color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); transform: translateY(-1px); }
+.askAnswer {
+  margin-top: 26px;
+  display: grid;
+  gap: 10px;
+  animation: riseIn 0.25s ease;
+}
+@keyframes riseIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.askAnswerQ {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--faint);
+  margin: 0;
+}
+.askAnswerA { font-size: 1.0625rem; line-height: 1.65; color: var(--fg); margin: 0; max-width: 58ch; text-wrap: pretty; }
+.askAnswerLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: fit-content;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+}
+.askAnswerLink:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Typing test */
+.typeLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--muted);
+  margin: 0 0 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.typeText {
+  font-family: var(--mono);
+  font-size: clamp(1.05rem, 2.2vw, 1.375rem);
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+  color: var(--faint);
+  margin: 0;
+  cursor: text;
+  user-select: none;
+  text-wrap: pretty;
+}
+.tOk { color: var(--fg); }
+.tBad { color: var(--accent-press); background: color-mix(in srgb, var(--accent) 14%, transparent); border-radius: 2px; }
+.tCaret { box-shadow: inset 2px 0 0 var(--accent); animation: caretBlink 1.1s steps(1) infinite; }
+@keyframes caretBlink { 50% { box-shadow: none; } }
+.typeStats {
+  display: flex;
+  align-items: baseline;
+  gap: 28px;
+  margin-top: 26px;
+}
+.typeStat { display: grid; gap: 3px; }
+.typeStatVal {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+.typeStatDone { color: var(--accent); }
+.typeStatLabel {
+  font-size: 0.75rem;
+  letter-spacing: 0;
+  color: var(--faint);
+}
+.typeRetry {
+  margin-left: auto;
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.typeRetry:hover { color: var(--accent); }
+.typeRetry kbd {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  padding: 2px 5px;
+  margin-right: 6px;
+  background: var(--surface);
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px var(--border), 0 1px 0 var(--border);
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ========== RECOMMENDATIONS C — reference ledger (attribution rail) ===== */
+.refLedger { display: grid; }
+.refRow {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  column-gap: 32px;
+  align-items: start;
+  padding-block: 26px;
+  margin: 0;
+}
+.refRow:first-child { padding-top: 8px; }
+.refRow + .refRow { border-top: 1px solid var(--border); }
+.refWho { grid-column: 1; grid-row: 1; display: grid; gap: 3px; align-content: start; }
+.refWho::before { content: ""; width: 20px; height: 2px; background: var(--accent); margin-bottom: 8px; }
+.refName { font-size: 0.9375rem; font-weight: 600; color: var(--fg); }
+.refTitle { font-size: 0.75rem; line-height: 1.5; color: var(--faint); }
+.refQuote {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  max-width: 62ch;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.62;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+
+/* ========== RECOMMENDATIONS D — blurb wall (run-in attribution) ========= */
+.blurbs { max-width: 66ch; display: grid; }
+.blurb {
+  position: relative;
+  margin: 0;
+  padding-block: 24px;
+  line-height: 1.68;
+  color: var(--fg);
+}
+.blurb:first-child { padding-top: 8px; }
+.blurb + .blurb::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 1px;
+  background: color-mix(in srgb, var(--fg) 25%, var(--border));
+}
+.blurbWho { font-family: var(--sans); font-size: 0.875rem; font-weight: 600; color: var(--fg); }
+.blurbRole { font-family: var(--sans); font-size: 0.875rem; font-weight: 400; color: var(--muted); }
+.blurbQuote { font-family: var(--serif); font-size: 1.0625rem; color: var(--fg); text-wrap: pretty; }
+.blurbQuote::before { content: "\201C"; color: var(--accent); }
+.blurbQuote::after { content: "\201D"; color: var(--accent); }
+
+/* ========== RESOURCES C — contents page (numbered, dot leaders) ========= */
+.tocList { display: grid; counter-reset: res; }
+.tocRow {
+  counter-increment: res;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 5px 18px;
+  padding-block: 20px;
+  text-decoration: none;
+  color: inherit;
+}
+.tocRow + .tocRow { border-top: 1px solid var(--border); }
+.tocRow::before {
+  content: counter(res, decimal-leading-zero);
+  grid-row: 1 / span 2;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--faint);
+  padding-top: 4px;
+}
+.tocLine { display: flex; align-items: baseline; gap: 14px; min-width: 0; }
+.tocTitle {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s ease;
+}
+.tocLeader {
+  flex: 1;
+  min-width: 48px;
+  height: 2px;
+  align-self: center;
+  transform: translateY(0.3em);
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--faint) 65%, transparent) 1px, transparent 1.3px);
+  background-size: 8px 2px;
+  background-repeat: repeat-x;
+  background-position: 0 50%;
+}
+.tocMeta { font-family: var(--mono); font-size: 0.75rem; color: var(--faint); white-space: nowrap; }
+.tocArrow { color: var(--faint); font-size: 0.8rem; transition: color 0.15s ease, transform 0.15s ease; }
+.tocNote { grid-column: 2; margin: 0; font-size: 0.875rem; line-height: 1.6; color: var(--muted); max-width: 62ch; text-wrap: pretty; }
+.tocRow:hover .tocTitle, .tocRow:hover .tocArrow { color: var(--accent); }
+.tocRow:hover .tocArrow { transform: translate(2px, -2px); }
+
+/* ========== RESOURCES D — appendix split (sticky side heading) ========== */
+.splitSec { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 40px; align-items: start; }
+.splitHead { position: sticky; top: 92px; display: grid; gap: 10px; }
+.splitCount {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.splitList { display: grid; }
+.splitRow { display: grid; gap: 7px; padding-block: 22px; text-decoration: none; color: inherit; }
+.splitRow + .splitRow { border-top: 1px solid var(--border); }
+.splitRow:first-child { padding-top: 4px; }
+.splitKind { font-family: var(--mono); font-size: 0.6875rem; letter-spacing: 0.02em; color: var(--faint); }
+.splitTitle {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 9px;
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  transition: color 0.15s ease;
+}
+.splitArrow { font-size: 0.75em; color: var(--faint); transition: color 0.15s ease, transform 0.15s ease; }
+.splitNote { margin: 0; font-size: 0.9063rem; line-height: 1.6; color: var(--muted); max-width: 58ch; text-wrap: pretty; }
+.splitRow:hover .splitTitle { color: var(--accent); }
+.splitRow:hover .splitArrow { color: var(--accent); transform: translate(2px, -2px); }
+
+/* ========== GITHUB C — closing ledger (paper, jumbo total beside field) == */
+.ghLedger {
+  display: grid;
+  grid-template-columns: minmax(170px, 236px) minmax(0, 1fr);
+  gap: 24px 44px;
+  align-items: end;
+}
+.ghLedgerStat { display: grid; gap: 10px; justify-items: start; }
+.ghLedgerTotal {
+  font-size: clamp(2.75rem, 5vw, 3.75rem);
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.ghLedgerLabel { font-size: 0.8125rem; line-height: 1.5; color: var(--muted); max-width: 18ch; margin: 0; }
+.ghLedgerStat .ghLegend { margin-left: 0; }
+.ghLedgerField { overflow-x: auto; padding-bottom: 4px; }
+.ghLedgerField .ghD:hover { stroke: color-mix(in srgb, var(--fg) 35%, transparent); stroke-width: 1; }
+
+/* ========== GITHUB D — terminal plate (contained ink object) ============ */
+.ghPlate {
+  background: var(--fg);
+  border-radius: var(--r-card);
+  padding: 18px 22px 16px;
+  box-shadow: var(--shadow);
+}
+.ghPlateBar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgb(250 249 247 / 0.1);
+}
+.ghPlate .ghLink { font-size: 0.75rem; color: #a8a29e; }
+.ghPlate .ghLink:hover { color: var(--accent); }
+.ghPlateMeta {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: #a8a29e;
+  font-variant-numeric: tabular-nums;
+}
+.ghPlateMeta b { color: var(--bg); font-weight: 600; }
+.ghPlateScroll { overflow-x: auto; padding-bottom: 4px; }
+.ghPlate .ghL0 { fill: rgb(250 249 247 / 0.07); }
+.ghPlate .ghL1 { fill: color-mix(in srgb, var(--accent) 30%, var(--fg)); }
+.ghPlate .ghL2 { fill: color-mix(in srgb, var(--accent) 55%, var(--fg)); }
+.ghPlate .ghL3 { fill: color-mix(in srgb, var(--accent) 78%, var(--fg)); }
+.ghPlate .ghL4 { fill: var(--accent); }
+.ghPlate .ghD:hover { stroke: rgb(250 249 247 / 0.5); stroke-width: 1; }
+.ghPlateFoot { display: flex; justify-content: flex-end; margin-top: 12px; }
+.ghPlate .ghLegend { color: #a8a29e; margin-left: 0; }
+
+/* ============================== RESPONSIVE ========================= */
+@media (max-width: 960px) {
+  .layout { display: block; }
+  /* rail collapses to a compact sticky top bar */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 20px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg) 84%, transparent);
+    backdrop-filter: saturate(140%) blur(10px);
+  }
+  .sbNav, .sbUtil, .sbDivider, .sbReach, .sbIconRow, .sbEmail { display: none; }
+  .sbFoot { margin-top: 0; margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .sbSound { margin-inline: 0; padding: 6px; }
+  .sbSoundText { display: none; }
+  .sbCta { height: 34px; padding: 0 14px; }
+  .recsGrid { grid-template-columns: 1fr; }
+  .resGrid { grid-template-columns: 1fr; }
+  /* footer stacks instead of cramming one row (doubled class outweighs the
+     base .footerInner alignment from the quiet module) */
+  .fInner.fInner { flex-direction: column; align-items: flex-start; gap: 14px; }
+}
+@media (max-width: 1180px) and (min-width: 961px) {
+  .recsGrid { grid-template-columns: 1fr; }
+}
+
+/* section treatments collapse to one column; vertical rules become top rules */
+@media (max-width: 720px) {
+  /* certifications registry: head row hides, meta stacks above the title */
+  .certHeadRow { display: none; }
+  .certRow { grid-template-columns: minmax(0, 1fr) 24px; row-gap: 3px; }
+  .certIssuerCell, .certDateCell { display: none; }
+  .certMobileMeta {
+    display: block;
+    grid-column: 1 / -1;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+  /* writing spreads: single column, media after text */
+  .featRow, .featRowFlip { grid-template-columns: 1fr; gap: 20px; }
+  .featRowFlip .featMedia { order: 0; }
+  /* community billboard: 2×2 stats, left rules only on even columns */
+  .comStats { grid-template-columns: 1fr 1fr; row-gap: 22px; }
+  .comStat:nth-child(odd) { border-left: 0; padding-left: 0; }
+  .comMeta { margin-left: 0; flex-basis: 100%; }
+  .talkRow { grid-template-columns: 34px minmax(0, 1fr); }
+  .talkMetaCol { grid-column: 2; padding-top: 0; }
+  /* recognition columns stack, each keeping its 2px ink stroke */
+  .regCols { grid-template-columns: 1fr; gap: 24px; }
+  /* pull quotes: slightly tighter hanging indent */
+  .pqQuote { padding-left: 22px; }
+  .pqWho { margin-left: 22px; }
+  /* bibliography: gutter collapses to one inline mono line above the title */
+  .bibRow { grid-template-columns: minmax(0, 1fr) auto; }
+  .bibGutter { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 8px; }
+  .bibSource { margin-top: 0; }
+  .bibNote { grid-column: 1; }
+  /* reference ledger: attribution stacks above the quote */
+  .refRow { grid-template-columns: 1fr; row-gap: 12px; }
+  .refWho, .refQuote { grid-column: 1; }
+  .refWho { grid-row: 1; }
+  .refQuote { grid-row: 2; }
+  /* contents page: leader drops, meta wraps under the title */
+  .tocRow { grid-template-columns: 28px minmax(0, 1fr); gap: 3px 12px; }
+  .tocLeader { display: none; }
+  .tocLine { flex-wrap: wrap; gap: 2px 10px; }
+  .tocTitle { flex-basis: 100%; white-space: normal; overflow: visible; }
+  /* closing ledger: stat block above the scrolling graph */
+  .ghLedger { grid-template-columns: 1fr; gap: 18px; }
+  .ghLedgerTotal { font-size: clamp(2.4rem, 9vw, 2.75rem); }
+  /* terminal plate: status bar stacks */
+  .ghPlate { padding: 16px 16px 14px; }
+  .ghPlateBar { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+/* appendix split collapses with the sidebar breakpoint */
+@media (max-width: 960px) {
+  .splitSec { grid-template-columns: 1fr; gap: 12px; }
+  .splitHead { position: static; }
+}
+
+/* ========== RECOMMENDATIONS E — speech bubbles (paper) ================== */
+/* Tinted "received message" bubbles with hairline tails; attribution row
+   (avatar/initials chip + name + title) sits under the tail. Bubbles use
+   --surface-alt so Experience keeps its white-card moment. */
+.vox { display: grid; gap: clamp(26px, 4vw, 38px); max-width: 820px; }
+
+.voxItem {
+  --vox-line: var(--border); /* single knob: bubble border + tail border */
+  display: grid;
+  justify-items: start;
+  margin: 0;
+}
+.voxFlip { justify-items: end; }
+
+.voxBubble {
+  position: relative;
+  margin: 0;
+  max-width: min(52ch, 85%);
+  padding: 18px 22px;
+  background: var(--surface-alt);
+  border: 1px solid var(--vox-line);
+  border-radius: 14px 14px 14px 6px; /* tight corner anchors the tail side */
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.voxFlip .voxBubble { border-radius: 14px 14px 6px 14px; }
+
+/* tail — rotated square sharing the bubble's fill and line */
+.voxBubble::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 24px;
+  width: 11px;
+  height: 11px;
+  background: var(--surface-alt);
+  border-right: 1px solid var(--vox-line);
+  border-bottom: 1px solid var(--vox-line);
+  border-bottom-right-radius: 2px;
+  transform: rotate(45deg);
+  transition: border-color 0.18s ease;
+}
+.voxFlip .voxBubble::after { left: auto; right: 24px; }
+
+.voxItem:hover { --vox-line: color-mix(in srgb, var(--fg) 22%, var(--border)); }
+.voxItem:hover .voxBubble {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 2px rgb(28 25 23 / 0.05), 0 8px 18px -10px rgb(28 25 23 / 0.09);
+}
+
+.voxQuote {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1rem;
+  line-height: 1.62;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+/* the section's single coral gesture — same grammar as recsQuote/blurbQuote */
+.voxQuote::before { content: "\201C"; color: var(--accent); }
+.voxQuote::after { content: "\201D"; color: var(--accent); }
+
+/* attribution row — avatar centered under the tail */
+.voxWho {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 12px 0 0;
+  padding-left: 14px;
+}
+.voxFlip .voxWho {
+  flex-direction: row-reverse;
+  padding-left: 0;
+  padding-right: 14px;
+  text-align: right;
+}
+
+.voxAvatar {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--surface-alt);
+  outline: 1px solid rgb(28 25 23 / 0.08);
+  outline-offset: -1px;
+}
+.voxAvatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.voxInitials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  outline: 1px solid var(--border);
+  outline-offset: -1px;
+}
+
+.voxId { display: grid; gap: 1px; min-width: 0; }
+.voxName { font-size: 0.875rem; font-weight: 600; color: var(--fg); }
+.voxRole { font-size: 0.75rem; color: var(--faint); }
+
+/* ========== RECOMMENDATIONS F — attribution thread (avatar-led) ========= */
+.avtStack {
+  --avt-size: 44px;
+  --avt-pad: 26px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 72ch;
+  display: grid;
+}
+.avtItem {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--avt-size) minmax(0, 1fr);
+  column-gap: 18px;
+  padding-block: var(--avt-pad);
+}
+.avtItem:first-child { padding-top: 8px; }
+
+/* thread spine — endpoints stop at the first/last avatar centers */
+.avtItem::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--avt-size) / 2 - 0.5px);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+.avtItem:first-child::before { top: calc(8px + var(--avt-size) / 2); }
+.avtItem:last-child::before { bottom: calc(100% - var(--avt-pad) - var(--avt-size) / 2); }
+
+.avtChip {
+  position: relative;
+  z-index: 1; /* sits above the spine */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--avt-size);
+  height: var(--avt-size);
+  border-radius: 12px;
+  background: var(--surface-alt);
+  box-shadow: inset 0 0 0 1px var(--border);
+  overflow: hidden;
+  flex: none;
+}
+.avtChip img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avtInitials {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+/* lead entry — the section's single coral moment: an accent ring floated off
+   the lead chip by a 2px paper gap, plus a modest type bump */
+.avtLead .avtChip {
+  box-shadow: inset 0 0 0 1px var(--border), 0 0 0 2px var(--bg), 0 0 0 3px var(--accent);
+}
+.avtLead .avtQuote { font-size: 1.125rem; line-height: 1.6; letter-spacing: -0.01em; }
+
+.avtBody { margin: 0; display: grid; gap: 8px; align-content: start; padding-top: 2px; }
+.avtWho { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin: 0; }
+.avtName { font-size: 0.9375rem; font-weight: 600; color: var(--fg); }
+.avtTitle { font-size: 0.75rem; color: var(--faint); }
+.avtQuote {
+  margin: 0;
+  max-width: 60ch;
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+
+/* facepile — overlapping mini chips in the section head row */
+.avtPile { display: flex; align-items: center; gap: 12px; }
+.avtPileChips { display: flex; }
+.avtPileChips .avtChip {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px var(--border), 0 0 0 2px var(--bg);
+}
+.avtPileChips .avtChip + .avtChip { margin-left: -7px; }
+.avtPileChips .avtInitials { font-size: 0.5625rem; letter-spacing: 0.02em; }
+.avtCount { white-space: nowrap; }
+
+/* ========== RESOURCES E — cover shelf (staff picks on ledges) =========== */
+.cshShelf {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
+  gap: 36px 28px;
+}
+@media (min-width: 1100px) {
+  /* one continuous shelf: N equal columns regardless of item count */
+  .cshShelf {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+  }
+}
+
+.cshItem {
+  display: grid;
+  gap: 5px;
+  align-content: start;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* the shelf cell — objects share a baseline; taller book, shorter plates */
+.cshStage {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  height: 102px;
+  margin-bottom: 14px;
+}
+.cshStage::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--fg) 18%, var(--border));
+}
+.cshStage::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  bottom: -4px;
+  width: 78px;
+  height: 9px;
+  background: radial-gradient(50% 50% at 50% 50%, rgb(28 25 23 / 0.18), transparent 72%);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.cshCover {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* favicon plate — neutral surface-alt frame unifies mixed favicon art */
+.cshPlate {
+  width: 64px;
+  height: 64px;
+  background: var(--surface-alt);
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px var(--border), 0 1px 2px rgb(28 25 23 / 0.06);
+}
+.cshPlate img { display: block; width: 30px; height: 30px; border-radius: 6px; }
+
+/* the book — 3D-ish standing cover; spine left */
+.cshBook {
+  width: 66px;
+  height: 88px;
+  border-radius: 2px 5px 5px 2px;
+  box-shadow: 0 0 0 1px rgb(28 25 23 / 0.08), 0 1px 2px rgb(28 25 23 / 0.12),
+    0 7px 14px -6px rgb(28 25 23 / 0.22);
+}
+.cshBook img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+.cshBook::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(to right, rgb(28 25 23 / 0.28) 0,
+    rgb(255 255 255 / 0.22) 6%, rgb(28 25 23 / 0.12) 9%, transparent 13%);
+  pointer-events: none;
+}
+.cshBook::after {
+  content: ""; /* THE coral moment: one bookmark ribbon */
+  position: absolute;
+  top: -5px;
+  right: 9px;
+  width: 7px;
+  height: 13px;
+  background: var(--accent);
+  clip-path: polygon(0 0, 50% 30%, 100% 0, 100% 100%, 0 100%);
+}
+
+/* the shelf talker */
+.cshMeta {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+  color: var(--faint);
+}
+.cshTitle {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  color: var(--fg);
+  text-wrap: balance;
+  transition: color 0.15s ease;
+}
+.cshArrow {
+  display: inline-block;
+  margin-left: 5px;
+  font-size: 0.8em;
+  color: var(--faint);
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+.cshNote {
+  margin: 3px 0 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.cshItem:hover .cshCover { transform: translateY(-1px); }
+.cshItem:hover .cshPlate {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fg) 22%, var(--border)),
+    0 3px 8px -2px rgb(28 25 23 / 0.14);
+}
+.cshItem:hover .cshBook {
+  box-shadow: 0 0 0 1px rgb(28 25 23 / 0.12), 0 2px 4px rgb(28 25 23 / 0.14),
+    0 10px 20px -8px rgb(28 25 23 / 0.28);
+}
+.cshItem:hover .cshStage::before { opacity: 0.72; transform: translateY(1px) scaleX(1.05); }
+.cshItem:hover .cshTitle,
+.cshItem:hover .cshArrow { color: var(--accent); }
+.cshItem:hover .cshArrow { transform: translate(2px, -2px); }
+
+/* ========== RESOURCES F — icon plate list (app-store row grammar) ======= */
+/* The plate is the row's ONLY card-like object, so the card hover grammar
+   lands on it — the row itself never lifts. */
+.plList { display: grid; }
+.plRow {
+  display: grid;
+  grid-template-columns: 56px minmax(180px, 232px) minmax(0, 1fr) 18px;
+  column-gap: 22px;
+  align-items: center;
+  padding-block: 16px;
+  text-decoration: none;
+  color: inherit;
+}
+.plRow:first-child { padding-top: 6px; }
+.plRow + .plRow { border-top: 1px solid var(--border); }
+
+.plThumb {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  background: var(--surface-alt);
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px var(--border);
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.plThumb img {
+  display: block;
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.plHead { display: grid; gap: 3px; min-width: 0; }
+.plTitle {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  transition: color 0.15s ease;
+}
+.plMeta {
+  font-family: var(--mono);
+  font-size: 0.71875rem;
+  letter-spacing: 0.01em;
+  color: var(--faint);
+}
+
+.plNote {
+  font-size: 0.8438rem;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 60ch;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.plArrow {
+  color: var(--faint);
+  font-size: 0.8rem;
+  justify-self: end;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.plRow:hover .plThumb {
+  transform: translateY(-1px);
+  background: var(--surface);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--fg) 18%, var(--border)),
+    0 1px 2px rgb(28 25 23 / 0.06),
+    0 6px 14px -8px rgb(28 25 23 / 0.12);
+}
+.plRow:hover .plTitle { color: var(--accent); }
+.plRow:hover .plArrow { color: var(--accent); transform: translate(2px, -2px); }
+
+/* ========== GITHUB E — dot matrix (punch-card plate on white) =========== */
+.dmCard {
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.dmHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.dmCaption {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.dmCaption b { color: var(--fg); font-weight: 600; }
+.dmUser {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.dmUser:hover { color: var(--accent); }
+.dmArrow { font-size: 0.9em; transition: transform 0.15s ease; }
+.dmUser:hover .dmArrow { transform: translate(2px, -2px); }
+
+/* rtl scroll container: opens at the RIGHT end so the newest weeks show
+   first when the field overflows on mobile */
+.dmScroll {
+  overflow-x: auto;
+  direction: rtl;
+  padding: 18px 20px 14px;
+  scrollbar-width: thin;
+}
+.dmField { direction: ltr; }
+.dmSvg { display: block; width: 100%; height: auto; }
+
+.dmMonth { font-family: var(--mono); font-size: 9px; fill: var(--faint); }
+
+.dmDot {
+  stroke: transparent; /* invisible hit ring — full-cell hover target */
+  stroke-width: 9;
+  transition: r 0.16s ease, fill 0.16s ease;
+}
+.dmDot:hover { r: 6px; } /* key-press bloom; overrides the r attribute */
+.dmL0 { fill: var(--border); }
+.dmL0:hover { fill: var(--faint); }
+.dmL1, .dmL2, .dmL3 { fill: var(--fg); }
+.dmL4 { fill: var(--accent); }
+
+.dmFoot {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 20px 14px;
+  border-top: 1px solid var(--border);
+}
+.dmLegend {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.6875rem;
+  color: var(--faint);
+}
+.dmLegend svg { display: block; }
+
+@media (prefers-reduced-motion: reduce) { .dmDot { transition: none; } }
+
+/* ========== GITHUB F — year strip (column-bleed dissolve texture) ======= */
+.ysWrap { position: relative; }
+
+/* column bleed + horizontal dissolve: cells fade into paper at both ends */
+.ysBleed {
+  width: 100cqw;
+  margin-left: calc(50% - 50cqw);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right,
+    transparent, #000 clamp(28px, 8vw, 110px),
+    #000 calc(100% - clamp(28px, 8vw, 110px)), transparent);
+  mask-image: linear-gradient(to right,
+    transparent, #000 clamp(28px, 8vw, 110px),
+    #000 calc(100% - clamp(28px, 8vw, 110px)), transparent);
+}
+@supports not (width: 100cqw) {
+  .ysBleed { width: auto; margin-left: 0; margin-inline: -24px; }
+}
+
+/* vertical dissolve: the texture thins toward the stat line it feeds */
+.ysFade {
+  -webkit-mask-image: linear-gradient(to bottom,
+    #000 0%, #000 46%, rgb(0 0 0 / 0.32) 84%, rgb(0 0 0 / 0.22) 100%);
+  mask-image: linear-gradient(to bottom,
+    #000 0%, #000 46%, rgb(0 0 0 / 0.32) 84%, rgb(0 0 0 / 0.22) 100%);
+}
+.ysSvg { display: block; width: 100%; height: auto; }
+/* de-carded hover: quiet ink stroke on the cell — no lift, no shadow */
+.ysFade .ghD:hover { stroke: color-mix(in srgb, var(--fg) 32%, transparent); stroke-width: 0.8; }
+
+/* the stamp: overlapping stat line, painted above the strip */
+.ysStat {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+}
+.ysFig { display: grid; gap: 10px; }
+.ysTotal {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: clamp(3rem, 6.4vw, 5.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  margin-top: -0.62em; /* pulls the numeral up over the dissolved rows */
+  text-shadow: 0 2px 18px var(--bg), 0 0 6px var(--bg); /* paper halo */
+}
+.ysLabel { font-size: 0.8125rem; color: var(--muted); margin: 0; }
+.ysStat .ghLegend { margin-left: 0; padding-bottom: 4px; }
+
+/* ================= PROJECTS — section head row (shared) ================= */
+/* Head grammar shared by the case-file pile and any future treatment: jumbo
+   h2, mono works count, "See All Projects" link. The pile itself is the fs*
+   family below. */
+.pjHeadRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-bottom: 34px;
+}
+/* doubles styles.h2 — the page's largest section heading (hero still wins) */
+.pjH2 { font-size: clamp(2rem, 4.4vw, 3.1rem); letter-spacing: -0.035em; margin: 0; }
+.pjHeadMeta { display: flex; align-items: baseline; gap: 22px; }
+.pjAll {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.pjAll:hover { color: var(--accent); }
+.pjAllArrow { color: var(--faint); font-size: 0.8em; transition: color 0.15s ease, transform 0.15s ease; }
+.pjAll:hover .pjAllArrow { color: var(--accent); transform: translateX(2px); }
+
+/* ============ responsive collapses for the new families ================= */
+@media (max-width: 960px) {
+  .ysBleed { margin-inline: 0; }
+}
+@media (max-width: 720px) {
+  /* speech bubbles: alternation off — every voice full-width, tail left */
+  .vox { gap: 24px; }
+  .voxItem, .voxFlip { justify-items: stretch; }
+  .voxBubble, .voxFlip .voxBubble {
+    max-width: 100%;
+    padding: 16px 18px;
+    border-radius: 14px 14px 14px 6px;
+  }
+  .voxFlip .voxBubble::after { right: auto; left: 24px; }
+  .voxFlip .voxWho { flex-direction: row; padding-right: 0; padding-left: 14px; text-align: left; }
+  .voxQuote { font-size: 0.9375rem; }
+
+  /* attribution thread: smaller chips, count hides so the head row fits */
+  .avtStack { --avt-size: 36px; --avt-pad: 22px; }
+  .avtItem { column-gap: 14px; }
+  .avtChip { border-radius: 10px; }
+  .avtInitials { font-size: 0.6875rem; }
+  .avtQuote { font-size: 0.9375rem; }
+  .avtLead .avtQuote { font-size: 1.0313rem; }
+  .avtPileChips .avtChip { width: 22px; height: 22px; border-radius: 7px; }
+  .avtPileChips .avtChip + .avtChip { margin-left: -6px; }
+  .avtCount { display: none; }
+
+  /* cover shelf: floating-shelf rows — object left, talker text beside it */
+  .cshShelf { grid-template-columns: 1fr; gap: 26px; }
+  .cshItem { grid-template-columns: 88px minmax(0, 1fr); gap: 2px 18px; }
+  .cshStage {
+    grid-row: 1 / span 3;
+    align-self: start;
+    height: 96px;
+    margin-bottom: 0;
+  }
+  .cshNote { max-width: none; }
+
+  /* icon plate list: note drops beneath the identity column */
+  .plRow {
+    grid-template-columns: 48px minmax(0, 1fr) 18px;
+    column-gap: 14px;
+    row-gap: 7px;
+    align-items: start;
+  }
+  .plThumb { width: 48px; height: 48px; border-radius: 11px; grid-row: 1 / span 2; }
+  .plThumb img { width: 32px; height: 32px; }
+  .plHead { grid-column: 2; grid-row: 1; }
+  .plArrow { grid-column: 3; grid-row: 1; padding-top: 3px; align-self: start; }
+  .plNote { grid-column: 2; grid-row: 2; }
+
+  /* dot matrix: tighter strips; left-edge fade as the scroll affordance */
+  .dmHead { padding: 12px 16px; }
+  .dmScroll {
+    padding: 14px 16px 10px;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 28px);
+    mask-image: linear-gradient(to right, transparent 0, #000 28px);
+  }
+  .dmFoot { padding: 10px 16px 12px; justify-content: flex-start; }
+
+  /* year strip: crop to the latest weeks, right-anchored; masked edges hide
+     the cut so the texture still dissolves on both sides */
+  .ysFade { display: flex; justify-content: flex-end; }
+  .ysSvg { width: 190%; flex: none; }
+  .ysTotal { margin-top: -0.5em; }
+
+  /* projects: tighter head */
+  .pjHeadRow { margin-bottom: 24px; }
+  .pjHeadMeta { flex-wrap: wrap; gap: 8px 18px; }
+}
+
+/* ============ PROJECTS — case files (dossier pile with tabs) ============ */
+/* THE BASELINE (the original folder idea, refined per Kyle's spec):
+   1. aligned and straight — fixed, labeled folder tabs in a row along the
+      top edge (a scannable file drawer), the open file square beneath,
+      buried sheet edges stair-stepping below; no leaning side peeks.
+   2. hovering a filed tab lifts it slightly and its folder's header strip
+      (numeral, title, client, claim, lead metric, screenshot thumb) rises
+      from behind the open file as the preview.
+   3. clicking a tab pulls that project to the top: the open file deals
+      away — down, tipped, under the pile — and the chosen file rises.
+   ONE static coral moment: the top file's stamp. Interaction variants
+   (drag/spread/riffle families below) compose onto this grammar. */
+/* --sprX/--sprY set the pile sprawl's base step; the per-depth SPRAWL
+   jitter table (fileParts.tsx) multiplies them (--jx/--jy, lean --jr) so
+   the pile reads hand-stacked, and every lift matches the same slots */
+.fsWrap { display: grid; gap: 30px; overflow-x: clip; margin-inline: -24px; padding-inline: 24px; --sprX: 9px; --sprY: 5px; }
+.fsDesk { width: min(680px, 100%); margin-inline: auto; padding-top: 96px; /* air for a tugged folder (tab + card top) to rise into */ }
+
+/* tab row — the drawer index; order never changes. Resting filed tabs sit
+   BELOW the pile in z (their tucked bottoms disappear behind the file's
+   top edge); a tugged folder — tab riding on its rising header sheet —
+   passes in front of them. */
+/* padding clears the card's 12px corner arc so the first tab never
+   crowds the broken corner — generous enough that a lifted folder's tab
+   stays on its card for shallow depths without clamping (--cardx) */
+.fsTabs { position: relative; display: flex; align-items: flex-end; gap: 6px; padding-inline: 28px; }
+.fsTab {
+  position: relative;
+  z-index: 15;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
+  padding: 7px 12px 8px;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 9px 9px 0 0;
+  /* every tab is card-white — filed vs open reads through the stack's
+     own cast shadows (see .fsFile), not a fill swap (a solid tint pops
+     mid-flight against the white card body) */
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  text-decoration: none;
+  /* sits exactly 1px into its folder's sheet top (the slot's sprawl y +
+     the sheet's border), so the tab's own border meets the sheet edge with
+     no whisker past it, and a tugged folder lifts from precisely this
+     pose — one shared geometry */
+  transform: translateY(calc(var(--jy, 0) * var(--sprY, 5px) + 1px));
+  /* the fan's lean pivots at the tab's base — the junction with its card.
+     Declared HERE (not in the fan states) so the pivot never changes
+     mid-flight: an origin swap at de-hover would re-aim the easing
+     rotation and tear the tab off its card for the length of the fall. */
+  transform-origin: 50% 100%;
+  /* the fall (and staircase re-settle) is a placement, not a launch: gentle
+     start, soft landing. Visibility flips back the moment a falling card
+     lands (matches .fsUnderTab's timing). */
+  transition: transform 0.34s cubic-bezier(0.45, 0, 0.25, 1), color 0.2s ease, visibility 0s linear 0.34s;
+}
+.fsTab:hover { color: var(--fg); }
+/* extend the hit target up into the rise zone (~40px tall; stays clear of
+   neighbors at the row's 6px/4px gaps) */
+.fsTab::after { content: ""; position: absolute; left: -2px; right: -2px; top: -12px; bottom: 0; }
+.fsTab:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.fsTabNum { font-variant-numeric: tabular-nums; color: var(--faint); }
+.fsTabName { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 13ch; }
+.fsTabOn {
+  z-index: 41;
+  color: var(--fg);
+  padding-block: 10px 9px;
+  /* a freshly pulled folder's tab returns the instant its card starts
+     settling — the fall's visibility delay must not apply here */
+  visibility: visible;
+  transition: transform 0.34s cubic-bezier(0.45, 0, 0.25, 1), color 0.2s ease;
+}
+.fsTabOn .fsTabNum { color: var(--muted); }
+/* concave base fillets — the white tab flares into its card's top edge
+   with a small curve instead of dying at a right angle. Drawn with radial
+   gradients (fill outside the arc + hairline along it); the active tab's
+   ::after doubles as this (its hover hit-extension isn't needed — the
+   open file's tab has nothing to tug), hence the auto resets. */
+.fsTabOn::before, .fsTabOn::after,
+.fsUnderUp .fsUnderTab::before, .fsUnderUp .fsUnderTab::after {
+  content: "";
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  width: 6px;
+  height: 6px;
+  pointer-events: none;
+}
+.fsTabOn::before, .fsUnderUp .fsUnderTab::before {
+  left: -6px;
+  right: auto;
+  background: radial-gradient(circle 6px at 0 0, transparent 4.6px, var(--border) 5.1px, var(--surface) 6px);
+}
+.fsTabOn::after, .fsUnderUp .fsUnderTab::after {
+  left: auto;
+  right: -6px;
+  background: radial-gradient(circle 6px at 100% 0, transparent 4.6px, var(--border) 5.1px, var(--surface) 6px);
+}
+/* while its folder is tugged, the row tab hands off to the tab ATTACHED to
+   the rising card (.fsUnderTab) — an instant swap that's pixel-aligned at
+   rest pose, so the folder truly is one object with its tab. The row tab
+   returns the moment the card finishes falling back. */
+.fsTabUp { visibility: hidden; transition: visibility 0s; }
+/* keyboard focus keeps the row tab (and its ring) in place under the preview */
+.fsTabUp:focus-visible { visibility: visible; }
+/* the other filed tabs part around a lifted folder (the drawer making
+   room), on the rise clock — pushed by EXACTLY the card fan's delta and
+   rotated by EXACTLY its angle about the junction point (the tab's own
+   base, which is where its card pivots too), so tab and card stay one
+   glued object throughout the fan and no gap ever opens under a tab */
+.fsTabFanL, .fsTabFanR {
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1) 40ms, color 0.2s ease, visibility 0s linear 0.34s;
+}
+.fsTabFanL { transform: translate(calc(-16px - var(--fd, 1) * 8px), calc(var(--jy, 0) * var(--sprY, 5px) + 1px)) rotate(calc(var(--fdc, 1) * -2deg)); }
+.fsTabFanR { transform: translate(calc(16px + var(--fd, 1) * 8px), calc(var(--jy, 0) * var(--sprY, 5px) + 1px)) rotate(calc(var(--fdc, 1) * 2deg)); }
+/* the open file's tab fans with its card — same push (--fanx), same lean
+   (--fanr), pivoting at its own base, so the open folder stays one glued
+   object while it makes room */
+.fsTabsFan .fsTabOn:not(.fsTabUp) {
+  transform: translate(var(--fanx, 26px), calc(var(--jy, 0) * var(--sprY, 5px) + 1px)) rotate(var(--fanr, 0deg));
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1) 40ms, color 0.2s ease;
+}
+
+/* wrapper for the filed cards + well: positioned but NOT a stacking
+   context, so the filed cards (inline z by index) interleave with the tab
+   rail while the well (z 30) sits above both */
+.fsWellWrap { position: relative; }
+/* the well: top file in flow (sets height); pile + dealt clone layered */
+.fsWell { position: relative; z-index: 30; pointer-events: none; }
+/* the well itself must not swallow clicks meant for the risen card's body
+   band beneath it — children re-enable their own hit-testing */
+.fsWell > * { pointer-events: auto; }
+
+.fsFile {
+  position: relative;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: clamp(20px, 2.6vw, 26px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px 12px 14px 14px;
+  /* three layers, all straight down (light overhead — no x offset, per
+     the make-interfaces-feel-better shadow rules): a crisp 2px lift, a
+     STACK contact layer whose soft blur is what shades the next card's
+     sliver peeking out beneath this one, and a wide ambient. Every card
+     carries the same layers (as-is), so the cast is uniform at every
+     depth of the pile. */
+  box-shadow: 0 2px 6px rgb(28 25 23 / 0.07), 0 4px 10px -3px rgb(28 25 23 / 0.15), 0 24px 48px -26px rgb(28 25 23 / 0.28);
+}
+
+/* filed dossiers — every card in the pile is the SAME card it is when
+   open, rendered as-is (no repaint, no cropping) and simply stacked:
+   each rests at its hand-placed slot offset (SPRAWL jitter, --jx/--jy)
+   with an inline z of 27 − 2i, interleaving with the row tabs (28 − 2i)
+   so occlusion follows pile order and nothing else. The wrapper only
+   places the card; the card paints itself. */
+.fsUnder {
+  position: absolute;
+  inset: 0;
+  z-index: 12; /* fallback; the per-index inline z overrides */
+  /* the card's x — its slot's sprawl offset, CLAMPED so its attached tab
+     (at the row-slot x, --tabx) always lands ≥16px inside the card's
+     left edge; without the clamp a left-edge tab on a deep folder would
+     hang off its own card while lifted */
+  --cardx: min(calc(var(--jx, 1) * var(--sprX)), calc(var(--tabx, 9999px) - 16px));
+  transform: translate(var(--cardx), calc(var(--jy, 1) * var(--sprY)));
+  /* the fan's pivot — this card's own tab center (--tabc is in row
+     space; the card's border box sits --cardx left of that frame).
+     Declared HERE, not in the fan states, so the pivot never changes
+     mid-flight (see .fsTab's transform-origin note). */
+  transform-origin: calc(var(--tabc, 340px) - var(--cardx, 0px)) 0%;
+  transition: transform 0.34s cubic-bezier(0.45, 0, 0.25, 1);
+  pointer-events: none;
+}
+/* stacked sheets share the open card's footprint; a naturally taller
+   card's overflow stays inside its own contour. The card's shadow eases
+   one step deeper while its folder is airborne. */
+.fsUnder .fsFile { height: 100%; overflow: hidden; transition: box-shadow 0.34s ease; }
+/* airborne: the contact cast lifts away (nothing directly beneath) and
+   the drop deepens one step */
+.fsUnderUp .fsFile { box-shadow: 0 2px 6px rgb(28 25 23 / 0.07), 0 20px 44px -22px rgb(28 25 23 / 0.3); }
+/* the tugged folder rises STRAIGHT UP out of its slot — the whole card,
+   as-is, its top (numeral, title, client, stamp) clearing the pile into
+   the head air while the rest stays occluded by whatever the pile order
+   says covers it. Rise slower than fall, with a 40ms hover-intent delay;
+   while risen it's also a click target (pull). */
+.fsUnderUp {
+  transform: translate(var(--cardx, 0px), -100px);
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1) 40ms;
+  pointer-events: auto;
+  cursor: pointer;
+}
+/* while a folder is lifted, the rest of the pile fans open around it —
+   each remaining card (still as-is, still in its z slot) pushes sideways
+   AWAY from the lift and leans the same way (left of it rotates
+   counterclockwise, right of it clockwise), graded by row distance
+   (--fd): the adjacent card eases out 2°, the next 4°… displacement
+   accumulating like a real hand fan. Each card pivots at ITS OWN TAB's
+   row position (--tabc, the tab's center, measured at mount) — the same
+   point and angle its fanned row tab rotates about — so folder and tab
+   swing as one object and the far side of the card sweeps wide, like a
+   fan around its binding. Everything squares back up on the fall. */
+.fsUnderFanL, .fsUnderFanR {
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1) 40ms;
+}
+/* the lean grades on --fdc (--fd capped at 2 → max 4°): past two steps
+   only the push keeps growing, so a far card's rising corner can never
+   sweep up into the head air and cover the risen folder's header */
+.fsUnderFanL { transform: translate(calc(var(--cardx, 0px) - 16px - var(--fd, 1) * 8px), calc(var(--jy, 1) * var(--sprY))) rotate(calc(var(--fdc, 1) * -2deg)); }
+.fsUnderFanR { transform: translate(calc(var(--cardx, 0px) + 16px + var(--fd, 1) * 8px), calc(var(--jy, 1) * var(--sprY))) rotate(calc(var(--fdc, 1) * 2deg)); }
+
+/* pivot pinned on the base class for the same mid-flight reason as above
+   (--tabc here is the OPEN card's tab center, set on the wrap) */
+.fsFileEase { transform-origin: var(--tabc, 340px) 0%; transition: transform 0.34s cubic-bezier(0.45, 0, 0.25, 1); }
+/* the open file fans too: it pushes and leans AWAY from the lifted
+   folder in the same graded grammar as the filed cards (--fanx/--fanr
+   from the island — signed by row position, capped lean), pivoting at
+   its own tab's center so folder and tab (.fsTabsFan above) swing as one */
+.fsFileFan {
+  transform: translateX(var(--fanx, 26px)) rotate(var(--fanr, 0deg));
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1) 40ms;
+}
+
+/* the folder's tab, ATTACHED to its card — sits at the exact row-slot x
+   (--tabx, measured at tug time) and overlaps the card 1px so its
+   background covers the card's top border: a notch, not a sticker.
+   Styled like a row tab (composes) so the visibility handoff with the
+   row tab is pixel-identical; hidden at rest (the row tab plays the
+   part), shown for exactly as long as the folder is off its slot. */
+.fsUnderTab {
+  composes: fsTab;
+  position: absolute;
+  /* --tabx is the row-slot x; subtract the card's actual (clamped) offset
+     so the tab lands on the slot while the card sits at its offset */
+  left: calc(var(--tabx, 14px) - var(--cardx, 0px));
+  bottom: calc(100% - 1px);
+  z-index: 31; /* over the card's own top border — the notch */
+  transform: none;
+  visibility: hidden;
+  /* the fall's text morph lands exactly as the tab docks (0.34s), and
+     only then does the row tab take back over. Background never changes
+     (card-white throughout), so nothing pops mid-flight. */
+  transition: color 0.34s ease, visibility 0s linear 0.34s;
+  pointer-events: none;
+}
+/* text sharpens as the folder rises — same intent delay as the lift.
+   While risen it's also a live hover/click target (the row tab it
+   replaced is visibility-hidden and can't hold the pointer): its events
+   bubble to the card's own handlers, so resting on the tab KEEPS the
+   preview up and clicking it pulls. */
+.fsUnderUp .fsUnderTab {
+  color: var(--fg);
+  visibility: visible;
+  pointer-events: auto;
+  transition: color 0.42s ease 40ms, visibility 0s;
+}
+
+/* the deal: outgoing file lifts down-right, tips, tucks under, fades */
+.fsDealt {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  animation: fsDealAway 0.42s cubic-bezier(0.5, 0, 0.75, 0.4) forwards;
+}
+.fsDealt .fsStamp { opacity: 0; } /* exactly one coral stamp, even mid-deal */
+@keyframes fsDealAway {
+  0% { transform: none; opacity: 1; }
+  55% { transform: translate(9%, 13%) rotate(3.5deg); opacity: 0.9; }
+  100% { transform: translate(3%, 9%) rotate(1.5deg) scale(0.94); opacity: 0; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fsRise { animation: fsRise 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
+  .fsRiseUp { animation: fsRiseUp 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
+}
+/* the pulled card lifts out of its actual sprawl slot (--d0x/--d0y = its
+   jittered offsets at pull time) and settles square on top */
+@keyframes fsRise { from { transform: translate(calc(var(--d0x, 1) * var(--sprX, 9px)), calc(var(--d0y, 1) * var(--sprY, 5px))); } to { transform: none; } }
+/* pulling the folder already in your hand: the card CONTINUES down from
+   its risen preview pose onto the pile top — never teleports back in */
+@keyframes fsRiseUp { from { transform: translate(calc(var(--d0x, 1) * var(--sprX, 9px)), -100px); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .fsTab { transition: none; }
+  .fsUnder { transition: none; }
+  .fsUnderUp, .fsUnderFanL, .fsUnderFanR { transition: none; }
+  .fsTabFanL, .fsTabFanR, .fsFileFan, .fsTabsFan .fsTabOn:not(.fsTabUp) { transition: none; }
+  .fsRise { animation: none; }
+  .fsRiseUp { animation: none; }
+  .fsDealt { animation-duration: 0.01ms; } /* animationend still fires → clone unmounts */
+}
+
+/* dossier cover */
+.fsHead { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 10px 16px; }
+.fsIdent { min-width: 0; flex: 1 1 260px; display: grid; gap: 3px; }
+.fsTitle { margin: 0; font-size: 1.375rem; font-weight: 650; letter-spacing: -0.02em; line-height: 1.15; text-wrap: balance; }
+.fsTitleLink { color: inherit; text-decoration: none; transition: color 0.15s ease; }
+.fsTitleLink:hover { color: var(--accent); }
+.fsClient { margin: 0; font-size: 0.875rem; color: var(--muted); }
+
+/* THE coral moment — the file's stamp, set at a static -2deg rest pose */
+.fsStamp {
+  flex: none;
+  align-self: flex-start;
+  max-width: 16ch;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 650;
+  line-height: 1.35;
+  text-align: center;
+  text-wrap: balance;
+  transform: rotate(-2deg);
+}
+
+.fsDek { margin: 0; font-size: 0.9375rem; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+
+/* the exhibit — screenshot as a clipped-in print on a mat, a hair off-square */
+.fsShotWell { margin: 2px 0 0; padding: 14px; background: var(--surface-alt); border-radius: 10px; overflow: hidden; }
+.fsShot {
+  margin: 0;
+  height: clamp(150px, 21vw, 210px);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface);
+  outline: 1px solid var(--border);
+  outline-offset: -1px;
+  box-shadow: 0 10px 22px -14px rgb(28 25 23 / 0.35);
+  transform: rotate(-0.6deg);
+}
+.fsShot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 14%; }
+
+/* metrics as one mono ledger line — not pills */
+.fsLedger { display: flex; flex-wrap: wrap; gap: 4px 0; margin: 0; font-family: var(--mono); font-size: 0.71875rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.fsLedger strong { font-weight: 650; color: var(--fg); }
+.fsLedgerSep { color: var(--faint); padding-inline: 8px; }
+
+.fsFoot { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 18px; margin-top: 2px; padding-top: 13px; border-top: 1px dashed var(--border); }
+.fsCase { display: inline-flex; align-items: baseline; gap: 6px; font-size: 0.875rem; font-weight: 600; color: var(--fg); text-decoration: none; transition: color 0.15s ease; }
+a.fsCase:hover { color: var(--accent); }
+.fsCaseArrow { color: var(--faint); font-size: 0.8em; transition: color 0.15s ease, transform 0.15s ease; }
+a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); }
+.fsExt { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); text-decoration: none; transition: color 0.15s ease; }
+.fsExt:hover { color: var(--accent); }
+.fsMeta { margin-left: auto; font-family: var(--mono); font-size: 0.71875rem; color: var(--faint); font-variant-numeric: tabular-nums; }
+
+/* rail — counter · next · hint */
+.fsRail { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px 18px; }
+.fsCount { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.fsNext {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--fg);
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.fsNext:hover { border-color: var(--faint); color: var(--accent); }
+.fsHint { font-family: var(--mono); font-size: 0.6875rem; color: var(--faint); }
+
+@media (max-width: 720px) {
+  /* previews off — the tabs' hidden summaries and the counter odometer
+     carry the glimpse; the drawer stays numeral stubs 01–06 */
+  .fsDesk { padding-top: 0; }
+  /* the rise (and the tab handoff, fan, and duck) is off — every card
+     stays in its slot */
+  .fsUnderUp { transform: translate(var(--cardx, 0px), calc(var(--jy, 1) * var(--sprY))); }
+  .fsUnderTab { display: none; }
+  .fsTabUp { visibility: visible; }
+  .fsUnderFanL, .fsUnderFanR { transform: translate(var(--cardx, 0px), calc(var(--jy, 1) * var(--sprY))); }
+  .fsTabFanL, .fsTabFanR { transform: translateY(calc(var(--jy, 0) * var(--sprY, 5px) + 1px)); }
+  .fsFileFan { transform: none; }
+  .fsTabsFan .fsTabOn:not(.fsTabUp) { transform: translateY(calc(var(--jy, 0) * var(--sprY, 5px) + 1px)); }
+  .fsTabs { gap: 4px; padding-inline: 16px; }
+  /* the 4px mobile gaps are tighter than the 6px flare */
+  .fsTabOn::before, .fsTabOn::after { display: none; }
+  /* stagger scales down automatically via the tighter --sprY */
+  .fsTab { padding: 6px 9px 7px; }
+  .fsTabOn { padding-block: 9px 8px; }
+  .fsTabName { display: none; }
+  .fsShotWell { padding: 10px; }
+  .fsShot { height: 140px; transform: rotate(-0.4deg); }
+  /* tighter sprawl — keeps the diagonal inside the section gutter and the
+     short numeral stubs readable at every depth */
+  .fsWrap { --sprX: 4px; --sprY: 3px; }
+  .fsMeta { margin-left: 0; flex-basis: 100%; }
+  .fsHint { display: none; }
+}
+
+
+/* ============ PROJECTS — interaction variants on the baseline =========== */
+/* Optional extra ways of handling the same pile, explored at
+   /samples/rework/projects (the tab-hover preview is part of the BASELINE
+   above, not a variant):
+   fs Grab/Flung = drag to deal (pick the top file up, fling it under)
+   spd = spread the files (lay all six across the desk, pick one to restack)
+   fr = riffle (scrub the tabs, whole files flutter loose onto the pile)
+   Shared grammar: transform/opacity only, cubic-bezier(.22,1,.36,1),
+   rise slower than fall, coral budget unchanged. */
+
+/* shared: visually hidden text (tab summaries, live announcements) */
+.fsSrOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+/* counter ticking with a live preview — muted until committed */
+.fsCountPreview { color: var(--faint); }
+/* hint copy that swaps at the touch breakpoint */
+.fsHintTouch { display: none; }
+
+/* ---- drag to deal (fsGrab / fsFlung) ----------------------------------- */
+.fsGrab { cursor: grab; touch-action: pan-y; }
+.fsGrab a { cursor: pointer; }
+/* in hand: no transitions (1:1 follow), lifted shadow, above the pile */
+.fsInHand {
+  transition: none;
+  cursor: grabbing;
+  z-index: 40;
+  box-shadow: 0 6px 14px rgb(28 25 23 / 0.09), 0 34px 60px -24px rgb(28 25 23 / 0.38);
+}
+/* released under threshold: spring home */
+.fsSpringBack { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+/* released past threshold: the clone carries the drag pose out and under */
+.fsFlung {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  animation: fsFlingAway 0.46s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.fsFlung .fsStamp { opacity: 0; } /* exactly one coral stamp, even mid-deal */
+@keyframes fsFlingAway {
+  0% { transform: translate(var(--fx0, 0px), var(--fy0, 0px)) rotate(var(--fr0, 0deg)) scale(1.01); opacity: 1; }
+  55% { opacity: 0.9; }
+  100% { transform: translate(var(--fx1, 0px), var(--fy1, 56px)) rotate(var(--fr1, 8deg)) scale(0.96); opacity: 0; }
+}
+
+/* ---- riffle (fr) ------------------------------------------------------- */
+/* the loose preview sheet: lies on the pile slightly high and askew,
+   lighter shadow — visibly not yet filed. Remounts per tab crossed, so the
+   140ms flick replays as a flutter. --flick carries scrub direction. */
+.frSheet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  min-height: 100%;
+  z-index: 35;
+  pointer-events: none;
+  transform: translateY(-2px) scale(0.995) rotate(calc(var(--flick, 0.8deg) * 0.75));
+  box-shadow: 0 2px 5px rgb(28 25 23 / 0.06), 0 10px 20px -10px rgb(28 25 23 / 0.14);
+  animation: frFlickIn 0.14s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes frFlickIn {
+  from { transform: translateY(-14px) scale(0.99) rotate(var(--flick, 0.8deg)); opacity: 0; }
+}
+/* the committed file pressed beneath the loose sheet */
+@media (prefers-reduced-motion: no-preference) {
+  .frPressed {
+    transform: translateY(3px) scale(0.99);
+    box-shadow: 0 1px 3px rgb(28 25 23 / 0.06), 0 10px 24px -18px rgb(28 25 23 / 0.16);
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease;
+  }
+}
+/* commit from a preview: the sheet squares up instead of rising */
+.frSettle { animation: frSettle 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes frSettle {
+  from { transform: translateY(-2px) rotate(0.6deg); }
+}
+/* the reshuffle happens under the sheet, not above it */
+.frDealtUnder { z-index: 25; }
+
+/* ---- spread the files (spd) -------------------------------------------- */
+/* Six persistent covers, moved only by transforms. While piled they wait
+   hidden at the pile's center (the pile itself is the baseline); spreading
+   closes the open file and lays the covers across the desk in a loose,
+   hand-placed arrangement (spdG0–5 = fixed slot for file 01–06,
+   deterministic jitter — the same slightly crooked desk every visit).
+   spdS0–5 = circular depth, used for z-order and gather delays. A mode
+   flip retargets vars; CSS transitions do the rest, so rapid clicks bend
+   trajectories. */
+.spdCover {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: 190px;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  row-gap: 2px;
+  padding: 11px 14px 0;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-decoration: none;
+  box-shadow: 0 10px 24px -16px rgb(28 25 23 / 0.28);
+  transform: translate(calc(-50% + var(--tx, 0px)), calc(-50% + var(--ty, 0px) + var(--lift, 0px))) rotate(var(--hr, var(--r, 0deg)));
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) var(--td, 0s), box-shadow 0.3s ease, visibility 0s var(--vd, 0s);
+}
+.spdCover:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+/* depth wash — a sheet of paper light over the deeper files */
+.spdCover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--bg);
+  opacity: var(--wash, 0);
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.spdTab { display: flex; align-items: baseline; gap: 7px; min-width: 0; font-size: 0.875rem; font-weight: 600; color: var(--fg); }
+.spdNum { flex: none; font-family: var(--mono); font-size: 0.6875rem; color: var(--faint); font-variant-numeric: tabular-nums; }
+.spdName { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spdClient { font-size: 0.75rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spdShot { display: block; margin: 8px -14px 0; overflow: hidden; border-top: 1px solid var(--border); background: var(--surface-alt); }
+.spdShot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; }
+/* while spread, the open file's cover carries the coral numeral (the
+   reader's stamp is hidden with it — the coral moment hands off) */
+[data-mode="spread"] .spdS0 .spdNum { color: var(--accent); font-weight: 650; }
+
+/* pile mode: the covers wait hidden at the pile's center, deepest
+   gathering first on the way home */
+[data-mode="pile"] .spdCover { --tx: 0px; --ty: 0px; --r: 0deg; --wash: 0; --vd: 0.55s; visibility: hidden; }
+[data-mode="pile"] .spdS0 { --td: 75ms; z-index: 8; }
+[data-mode="pile"] .spdS1, [data-mode="pile"] .spdS5 { --td: 50ms; z-index: 6; }
+[data-mode="pile"] .spdS2, [data-mode="pile"] .spdS4 { --td: 25ms; z-index: 5; }
+[data-mode="pile"] .spdS3 { --td: 0ms; z-index: 4; }
+/* while spread, the pile steps back: buried sheets and preview strips
+   fade; they return once the desk gathers */
+[data-mode="spread"] .fsUnder, [data-mode="spread"] .fsStrip {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0s 0.25s;
+}
+[data-mode="pile"] .fsUnder, [data-mode="pile"] .fsStrip {
+  opacity: 1;
+  transition: opacity 0.3s ease 0.35s;
+}
+
+/* spread z keeps pile depth (the pile's top file stays highest) */
+[data-mode="spread"] .spdS0 { z-index: 60; }
+[data-mode="spread"] .spdS1 { z-index: 56; }
+[data-mode="spread"] .spdS5 { z-index: 55; }
+[data-mode="spread"] .spdS2 { z-index: 54; }
+[data-mode="spread"] .spdS4 { z-index: 53; }
+[data-mode="spread"] .spdS3 { z-index: 52; }
+/* spread slots — fixed jitter, row-major so numerals scan in order */
+[data-mode="spread"] .spdG0 { --tx: -310px; --ty: -112px; --r: -2.2deg; --td: 0ms; }
+[data-mode="spread"] .spdG1 { --tx: 4px; --ty: -122px; --r: 1.4deg; --td: 30ms; }
+[data-mode="spread"] .spdG2 { --tx: 306px; --ty: -108px; --r: -0.6deg; --td: 60ms; }
+[data-mode="spread"] .spdG3 { --tx: -314px; --ty: 116px; --r: 2deg; --td: 90ms; }
+[data-mode="spread"] .spdG4 { --tx: 6px; --ty: 124px; --r: -1.4deg; --td: 120ms; }
+[data-mode="spread"] .spdG5 { --tx: 300px; --ty: 110px; --r: 0.8deg; --td: 150ms; }
+/* hover: the file squares up under your hand and lifts off the desk */
+[data-mode="spread"] .spdCover:hover, [data-mode="spread"] .spdCover:focus-visible {
+  --lift: -8px;
+  --hr: 0deg;
+  --td: 0s;
+  z-index: 65;
+  box-shadow: 0 4px 10px rgb(28 25 23 / 0.08), 0 24px 44px -20px rgb(28 25 23 / 0.34);
+}
+[data-mode="spread"] .spdWell { min-height: 470px; }
+
+/* the reader: the open dossier, shut and set down while the desk spreads */
+.spdReader {
+  transition: opacity 0.3s ease 0.2s, transform 0.3s ease 0.2s, visibility 0s 0.2s;
+}
+[data-mode="spread"] .spdReader {
+  opacity: 0;
+  transform: translateY(12px) scale(0.96);
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s 0.3s;
+}
+
+/* the toggle — quiet pill beside Next File */
+.spdToggle {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 5px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--fg);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.spdToggle:hover { border-color: var(--faint); color: var(--accent); }
+
+/* ---- variant responsive tiers ------------------------------------------ */
+/* Spread slots key off the CONTAINER (the landing main column / the
+   compare stage are inline-size containers), not the viewport — the desk
+   arrangement must fit the space it actually has. */
+@container (max-width: 979px) {
+  [data-mode="spread"] .spdG0 { --tx: -160px; --ty: -208px; }
+  [data-mode="spread"] .spdG1 { --tx: 160px; --ty: -212px; }
+  [data-mode="spread"] .spdG2 { --tx: -160px; --ty: 0px; }
+  [data-mode="spread"] .spdG3 { --tx: 160px; --ty: 4px; }
+  [data-mode="spread"] .spdG4 { --tx: -160px; --ty: 208px; }
+  [data-mode="spread"] .spdG5 { --tx: 160px; --ty: 204px; }
+  [data-mode="spread"] .spdWell { min-height: 620px; }
+}
+@container (max-width: 720px) {
+  /* the desk becomes a vertical fan, each card overlapping the next so
+     every tab strip stays readable */
+  .spdCover { width: min(300px, calc(100% - 24px)); }
+  [data-mode="spread"] .spdG0 { --tx: -6px; --ty: -180px; --r: -1deg; z-index: 52; }
+  [data-mode="spread"] .spdG1 { --tx: 4px; --ty: -108px; --r: 0.6deg; z-index: 53; }
+  [data-mode="spread"] .spdG2 { --tx: 0px; --ty: -36px; --r: -0.4deg; z-index: 54; }
+  [data-mode="spread"] .spdG3 { --tx: -8px; --ty: 36px; --r: 0.8deg; z-index: 55; }
+  [data-mode="spread"] .spdG4 { --tx: 6px; --ty: 108px; --r: -0.6deg; z-index: 56; }
+  [data-mode="spread"] .spdG5 { --tx: -4px; --ty: 180px; --r: 0.4deg; z-index: 57; }
+  /* the reader can be far taller than the fan — take it out of flow while
+     spread so the well collapses to the fan's height */
+  [data-mode="spread"] .spdReader { position: absolute; top: 0; left: 0; right: 0; }
+  [data-mode="spread"] .spdWell { min-height: 580px; }
+}
+@media (max-width: 720px) {
+  /* hint copy swaps to the touch phrasing (overrides the baseline hide) */
+  .fsHintWide { display: none; }
+  .fsHintTouch { display: inline; }
+}
+
+/* ---- variant reduced motion -------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .fsFlung { animation-duration: 0.01ms; } /* animationend still fires */
+  .fsSpringBack { transition: none; }
+  .frSheet { animation: none; transform: none; }
+  .frSettle { animation: none; }
+  .spdCover, .spdCover::after, .spdReader { transition: none; }
+}

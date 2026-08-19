@@ -42,7 +42,7 @@ export function Marquee() {
   const rowB = [...STACK].reverse();
   return (
     <div className={styles.band}>
-      <p className={styles.label}>Tools I work with</p>
+      <p className={styles.label}>Tools I Work With</p>
       <div className={styles.rows}>
         <Row items={STACK} />
         <Row items={rowB} reverse />

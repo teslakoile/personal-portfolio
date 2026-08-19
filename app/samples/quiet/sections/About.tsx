@@ -34,10 +34,12 @@ function AboutV2() {
 }
 
 /** V3 — editorial: a display lead + supporting line, a de-boxed at-a-glance
-    column, and focus-area chips spanning below. All from existing content. */
-function AboutV3() {
+    column, and focus-area chips spanning below. All from existing content.
+    `eyebrow` is the landing page's numbered section label (absent on samples). */
+function AboutV3({ eyebrow }: { eyebrow?: React.ReactNode }) {
   return (
     <section className={alt.v3}>
+      {eyebrow}
       <div className={alt.v3Narrative}>
         <p className={alt.v3Lead}><Emph text={sample.about[0]} /></p>
         <p className={alt.v3Support}><Emph text={sample.about[1]} /></p>
@@ -66,8 +68,8 @@ function AboutV3() {
   );
 }
 
-export function About({ variant = 1 }: { variant?: SectionVariant }) {
+export function About({ variant = 1, eyebrow }: { variant?: SectionVariant; eyebrow?: React.ReactNode }) {
   if (variant === 2) return <AboutV2 />;
-  if (variant === 3) return <AboutV3 />;
+  if (variant === 3) return <AboutV3 eyebrow={eyebrow} />;
   return <AboutV1 />;
 }

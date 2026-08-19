@@ -70,7 +70,7 @@ export function Community() {
       </div>
 
       <div className={v.talksBlock}>
-        <h3 className={v.subHead}>Speaking &amp; talks</h3>
+        <h3 className={v.subHead}>Speaking &amp; Talks</h3>
         <div className={v.rail}>
           {talks.map((t: Talk) => (
             <article key={t.title} className={v.talk}>

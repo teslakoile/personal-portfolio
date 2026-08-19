@@ -12,7 +12,7 @@ function Body({ a }: { a: (typeof sample.achievements)[number] }) {
       <p className={styles.recDesc}><Emph text={a.desc} /></p>
       {"href" in a && a.href ? (
         <a href={a.href} className={styles.recLink} target="_blank" rel="noreferrer">
-          Read the paper <span aria-hidden="true" className={styles.ctaArrow}>↗</span>
+          Read the Paper <span aria-hidden="true" className={styles.ctaArrow}>↗</span>
         </a>
       ) : null}
     </>
