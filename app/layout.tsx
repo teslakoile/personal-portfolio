@@ -1,7 +1,13 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { fontVars } from "./fonts";
 import "./globals.css";
 
+// --font-geist-sans/--font-geist-mono feed globals.css (body default).
+// fontVars additionally mounts the LOCKED site suite's own variable names
+// (--font-geist + --font-geist-mono, see app/fonts.ts) at the root, so EVERY
+// route — not just pages that remembered to wrap themselves — resolves the
+// quiet design tokens to Geist/Geist Mono instead of the system fallback.
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -55,6 +61,11 @@ export const metadata: Metadata = {
   },
 };
 
+// Warm-paper chrome on mobile browsers, matching the site background.
+export const viewport: Viewport = {
+  themeColor: "#faf9f7",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -63,7 +74,7 @@ export default function RootLayout({
   return (
     <html
       lang="en-PH"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fontVars} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
