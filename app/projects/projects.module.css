@@ -1,0 +1,185 @@
+/* /projects — Blueprint Dossier. Tokens cascade from styles.root (quiet).
+   Every project is a full-width drafting-grid plate over a sticky spec rail
+   (index, period, status, client, stack) beside long-form prose. Coral budget:
+   one drawn accent per plate (inside the figure), the outro CTA, and
+   hover/:target states. */
+
+.prjTopbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: saturate(140%) blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.prjTopbarInner { display: flex; align-items: center; justify-content: space-between; height: 58px; }
+.prjBack {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  text-decoration: none;
+}
+.prjBackArrow { color: var(--faint); transition: color 0.18s ease, transform 0.18s ease; }
+.prjBack:hover .prjBackArrow { color: var(--accent); transform: translateX(-3px); }
+.prjCount {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.prjHead { padding-top: clamp(48px, 8vw, 96px); padding-bottom: clamp(4px, 2vw, 20px); }
+.prjPageTitle {
+  font-family: var(--serif);
+  font-weight: 650;
+  font-size: clamp(2.5rem, 5.5vw, 3.6rem);
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  color: var(--fg);
+  margin: 0 0 18px;
+}
+.prjLede { font-size: 1.0625rem; line-height: 1.65; color: var(--muted); max-width: 58ch; margin: 0; text-wrap: pretty; }
+
+.prjItem { padding-block: clamp(56px, 8vw, 104px); scroll-margin-top: 84px; }
+.prjItem + .prjItem { border-top: 1px solid var(--border); }
+
+/* the plate paints the drafting grid; the inline SVG draws on top of it */
+.prjPlate {
+  margin: 0 0 clamp(28px, 4vw, 44px);
+  aspect-ratio: 12 / 5;
+  background:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px),
+    var(--surface);
+  background-size: 28px 28px, 28px 28px, auto;
+  border-radius: 12px;
+  outline: 1px solid rgb(28 25 23 / 0.08);
+  outline-offset: -1px;
+  overflow: hidden;
+}
+.prjPlate img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.prjBody {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  gap: 40px 56px;
+  align-items: start;
+}
+.prjRail { position: sticky; top: 82px; display: grid; gap: 20px; }
+.prjMetaCluster { display: grid; gap: 12px; }
+.prjIdx {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.prjItem:target .prjIdx { color: var(--accent); } /* arrival cue for /projects#slug */
+.prjMeta {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1.8;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+.prjClient { font-size: 0.8125rem; line-height: 1.5; color: var(--faint); margin: 0; max-width: 22ch; }
+.prjStack { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; }
+.prjChip {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  padding: 3px 9px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.prjName {
+  font-family: var(--serif);
+  font-weight: 650;
+  font-size: clamp(1.55rem, 2.8vw, 2.1rem);
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--fg);
+  margin: 0 0 18px;
+  text-wrap: balance;
+}
+.prjProse { display: grid; gap: 14px; max-width: 62ch; }
+.prjProse p { margin: 0; font-size: 1rem; line-height: 1.7; color: var(--muted); text-wrap: pretty; }
+
+.prjMetrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  margin: 28px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.prjMetric { display: grid; gap: 5px; align-content: start; margin: 0; }
+.prjFig {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: clamp(1.15rem, 1.8vw, 1.45rem);
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+.prjCap { font-size: 0.75rem; line-height: 1.4; color: var(--faint); margin: 0; }
+
+.prjLinks { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 26px; }
+.prjLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.prjLinkArrow { color: var(--faint); font-size: 0.8rem; transition: color 0.15s ease, transform 0.15s ease; }
+.prjLink:hover { color: var(--accent); }
+.prjLink:hover .prjLinkArrow { color: var(--accent); transform: translate(2px, -2px); }
+
+.prjOutro {
+  display: grid;
+  justify-items: start;
+  gap: 20px;
+  padding-block: clamp(56px, 8vw, 96px);
+  border-top: 1px solid var(--border);
+}
+.prjOutroLine {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(1.4rem, 2.6vw, 1.85rem);
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin: 0;
+  max-width: 26ch;
+  text-wrap: balance;
+}
+
+@media (max-width: 960px) {
+  /* rail dissolves; meta cluster leads, stack trails as a footnote */
+  .prjBody { display: flex; flex-direction: column; gap: 18px; }
+  .prjRail { display: contents; }
+  .prjMetaCluster { order: -1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+  .prjMeta { line-height: 1.5; }
+  .prjClient { flex-basis: 100%; max-width: none; }
+  .prjStack { order: 1; width: 100%; margin-top: 8px; padding-top: 18px; border-top: 1px dashed var(--border); }
+  .prjFInner { flex-direction: column; align-items: flex-start; gap: 14px; } /* footer stack, mirrors home.fInner */
+}
+@media (max-width: 720px) {
+  .prjPlate { aspect-ratio: 3 / 2; border-radius: 10px; } /* 12/5 is a sliver at 327px */
+  .prjMetrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 20px; }
+}
+@media (max-width: 480px) {
+  .prjCount { display: none; } /* topbar keeps just the back wordmark at 375px */
+}
