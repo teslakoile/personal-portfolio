@@ -28,7 +28,7 @@ export type SectionPicks = {
 };
 
 /**
- * Quiet Blueprint resume — Geist type system, real multicolor logos, no mono
+ * Quiet Blueprint resume, Geist type system, real multicolor logos, no mono
  * label tells, no folder-tab. Font swapped via `variant` (data-variant on root).
  * Each section is its own component (variant 1 = this locked design) so the
  * section-variation comparison pages render the real thing, not a copy.

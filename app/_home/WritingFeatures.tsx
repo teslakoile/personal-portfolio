@@ -3,7 +3,7 @@ import styles from "../samples/quiet/styles.module.css";
 import home from "./home.module.css";
 
 /**
- * Writing — landing treatment: open editorial feature spreads. Uncarded
+ * Writing, landing treatment: open editorial feature spreads. Uncarded
  * alternating image/text rows with oversized serif titles; the chip wall folds
  * into one mono meta line. Rows become links (image zoom + accent title on
  * hover) only when a post's `href` lands; today both are in progress, so the

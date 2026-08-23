@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-// /samples/* is the design playground — intentionally left out (robots.ts
+// /samples/* is the design playground, intentionally left out (robots.ts
 // disallows it too).
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

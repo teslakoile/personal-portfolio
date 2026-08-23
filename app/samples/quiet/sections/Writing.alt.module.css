@@ -1,4 +1,4 @@
-/* Writing variations (conservative — the cards are already liked).
+/* Writing variations (conservative, the cards are already liked).
    Reuse styles.postMeta/postDate/postTopic/postTitle/postDek/postRead and the
    concept figure; only the card layout changes. */
 
@@ -20,7 +20,7 @@
   display: block;
 }
 
-/* ===================== V2 — stacked feature + compact ================== */
+/* ===================== V2, stacked feature + compact ================== */
 .featList { display: grid; gap: 16px; }
 .feature {
   display: block;
@@ -49,7 +49,7 @@
 .compact:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
 .compactMedia .img { height: 128px; }
 
-/* ===================== V3 — two-up vertical cards ====================== */
+/* ===================== V3, two-up vertical cards ====================== */
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .vcard {
   display: flex;

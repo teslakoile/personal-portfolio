@@ -1,13 +1,13 @@
-/* Community & Speaking — FINAL (converged).
+/* Community & Speaking, FINAL (converged).
    Rendered inside .theme (shell), so every --surface/--fg/--accent/--shadow
    token resolves from there. All classes are scoped to this module; no hex is
-   hardcoded — colors + fonts come from the shared tokens / var(--font-*).
+   hardcoded, colors + fonts come from the shared tokens / var(--font-*).
 
    Converged from Version1 ("Geist refined"):
-   · category eyebrow kickers removed — the header is logo? · name · meta;
+   · category eyebrow kickers removed, the header is logo? · name · meta;
    · BOTH org cards sit on white (--surface). The quieter sibling reads as
      family through the SAME card shell + header grammar, differing only in
-     scale — not through a recessed tint;
+     scale, not through a recessed tint;
    · org logos render only when present (guarded in the TSX);
    · the lead org keeps its KPI stat strip;
    · Version1's numbered speaking index is carried over faithfully.
@@ -39,12 +39,12 @@
   transform: translateY(-2px);
 }
 /* the quieter sibling: SAME white shell, only a slightly softer footprint so
-   it reads as the secondary member of the set — never a different surface. */
+   it reads as the secondary member of the set, never a different surface. */
 .cardAlt {
   box-shadow: inset 0 0 0 1px var(--border);
 }
 
-/* shared header grammar — identical on both cards (the cohesion anchor):
+/* shared header grammar, identical on both cards (the cohesion anchor):
    optional logo, then the org name, then role · period. */
 .head {
   display: flex;
@@ -110,7 +110,7 @@
   max-width: 52ch;
 }
 
-/* KPI strip — only the lead has stats; figures are heavy, tight Geist. */
+/* KPI strip, only the lead has stats; figures are heavy, tight Geist. */
 .stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -153,7 +153,7 @@
   min-height: 8px;
 }
 
-/* --- speaking: V3 "quiet" layout (the user's pick) — no indices, no boxed
+/* --- speaking: V3 "quiet" layout (the user's pick), no indices, no boxed
    rail; bare hairline-separated rows with a small sentence-case accent kicker
    above each title. Row rhythm + scale carry the hierarchy. --- */
 .talksBlock {

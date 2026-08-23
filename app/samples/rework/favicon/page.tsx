@@ -1,7 +1,7 @@
 import shell from "../../sections/_shared.module.css";
 
 /**
- * Favicon options — the current mark (A) plus four replacement concepts, each
+ * Favicon options, the current mark (A) plus four replacement concepts, each
  * shown at 64/32/16 px and inside a browser-tab mockup. Nothing changes at
  * app/icon.svg (and the .ico/apple-icon derivatives) until a pick lands.
  */
@@ -21,13 +21,13 @@ const CONCEPTS: Concept[] = [
   {
     label: "A",
     name: "Current",
-    note: "coral tile, stroke K — what ships today",
+    note: "coral tile, stroke K, what ships today",
     svg: CURRENT,
   },
   {
     label: "B",
     name: "Halftone K",
-    note: "the K rebuilt from a dot grid with one coral terminal dot — previews the site's new halftone motif; at 16px the dots fuse into a softly textured K",
+    note: "the K rebuilt from a dot grid with one coral terminal dot, previews the site's new halftone motif; at 16px the dots fuse into a softly textured K",
     svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="13" fill="#1c1917"/>
   <g fill="#faf9f7">
@@ -43,7 +43,7 @@ const CONCEPTS: Concept[] = [
   {
     label: "C",
     name: "Contribution Tile",
-    note: "a 4×4 heatmap of rounded pixels, the coral ramp rising along the diagonal — reads as a glowing grid, instantly distinct from every lettermark in a tab row",
+    note: "a 4×4 heatmap of rounded pixels, the coral ramp rising along the diagonal, reads as a glowing grid, instantly distinct from every lettermark in a tab row",
     svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="13" fill="#1c1917"/>
   <g fill="#f5482d">
@@ -69,7 +69,7 @@ const CONCEPTS: Concept[] = [
   {
     label: "D",
     name: "Terminal K",
-    note: "the stroke K on an ink tile with a coral underscore cursor on its baseline — a paper 'K_' prompt echoing the mono meta layer",
+    note: "the stroke K on an ink tile with a coral underscore cursor on its baseline, a paper 'K_' prompt echoing the mono meta layer",
     svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="13" fill="#1c1917"/>
   <g stroke="#faf9f7" stroke-width="7" stroke-linecap="round" fill="none">
@@ -83,7 +83,7 @@ const CONCEPTS: Concept[] = [
   {
     label: "E",
     name: "Bar and Chevron",
-    note: "the K deconstructed into two Swiss primitives — paper stem, coral chevron — the quietest, most poster-like read of the mark",
+    note: "the K deconstructed into two Swiss primitives, paper stem, coral chevron, the quietest, most poster-like read of the mark",
     svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="13" fill="#1c1917"/>
   <rect x="16" y="15" width="9" height="34" rx="4" fill="#faf9f7"/>
@@ -119,7 +119,7 @@ function TabMockup({ svg }: { svg: string }) {
       }}
     >
       <Mark svg={svg} size={16} />
-      Kyle Naranjo — Data Engineer
+      Kyle Naranjo, Data Engineer
       <span style={{ color: "var(--faint)", marginLeft: 10 }}>×</span>
     </span>
   );
@@ -134,18 +134,18 @@ export default function FaviconRework() {
         <p className={shell.pageHint}>
           Each concept at 64 / 32 / 16 px, plus how it reads in a browser tab.
           All draw only from the site palette (ink, paper, coral). The current
-          mark stays until you pick — the winner gets rendered into icon.svg,
+          mark stays until you pick, the winner gets rendered into icon.svg,
           favicon.ico, the apple touch icon, and the OG card dot.
         </p>
         <p className={shell.pageHint} style={{ marginTop: 10 }}>
-          <strong style={{ color: "var(--fg)", fontWeight: 600 }}>My pick — </strong>
+          <strong style={{ color: "var(--fg)", fontWeight: 600 }}>My pick, </strong>
           B carries the halftone motif the hero and dot-matrix options introduce;
           C is the boldest tab presence if you want the graph to be the brand.
         </p>
 
         {CONCEPTS.map((c) => (
           <div key={c.label} className={shell.vblock}>
-            <p className={shell.vlabel}>{c.label} · {c.name} — {c.note}</p>
+            <p className={shell.vlabel}>{c.label} · {c.name}, {c.note}</p>
             <div
               className={shell.vstage}
               style={{

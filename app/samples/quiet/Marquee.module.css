@@ -1,4 +1,4 @@
-/* Tech-stack ticker — continuously scrolling logo pills, edge-faded, pause on
+/* Tech-stack ticker, continuously scrolling logo pills, edge-faded, pause on
    hover, static for reduced-motion. Inherits Geist tokens from ancestor .root. */
 
 .band { padding: clamp(20px, 3vw, 32px) 0; }
@@ -27,7 +27,7 @@
   width: max-content;
   animation: scroll 46s linear infinite;
 }
-/* second row drifts the opposite way at a different speed — more organic */
+/* second row drifts the opposite way at a different speed, more organic */
 .reverse { animation-direction: reverse; animation-duration: 38s; }
 .marquee:hover .track { animation-play-state: paused; }
 .item {

@@ -3,7 +3,7 @@ import styles from "../samples/quiet/styles.module.css";
 import home from "./home.module.css";
 
 /**
- * Resources — card grid (the landing design). Content lives in
+ * Resources, card grid (the landing design). Content lives in
  * sampleContent.ts (`resources`) and is meant to be curated by hand. An
  * alternative bibliography treatment lives below as `ResourcesBib` for the
  * /samples/rework comparison.
@@ -32,7 +32,7 @@ export function Resources() {
   );
 }
 
-/** Alternative treatment — contents page: numbered rows with bookish dot
+/** Alternative treatment, contents page: numbered rows with bookish dot
     leaders running from title to a mono kind · source column; the personal
     note hangs beneath each entry. */
 export function ResourcesContents() {
@@ -59,7 +59,7 @@ export function ResourcesContents() {
   );
 }
 
-/** Alternative treatment — appendix split: the heading sits in a sticky left
+/** Alternative treatment, appendix split: the heading sits in a sticky left
     rail (the page's only side-set heading) while entries stack as ruled
     typographic blocks with the note at its largest. */
 export function ResourcesSplit() {
@@ -73,7 +73,7 @@ export function ResourcesSplit() {
         <div className={home.splitList}>
           {sample.resources.map((r) => (
             <a key={r.title} href={r.url} className={home.splitRow} target="_blank" rel="noreferrer">
-              <span className={home.splitKind}>{r.kind} — {r.source}</span>
+              <span className={home.splitKind}>{r.kind} · {r.source}</span>
               <span className={home.splitTitle}>
                 {r.title} <span className={home.splitArrow} aria-hidden="true">↗</span>
               </span>
@@ -86,7 +86,7 @@ export function ResourcesSplit() {
   );
 }
 
-/** Alternative treatment — annotated bibliography: whole-row links on a
+/** Alternative treatment, annotated bibliography: whole-row links on a
     hanging-indent grid (mono kind + source gutter), no hairlines, sidebar-style
     surface wash on hover. */
 export function ResourcesBib() {
@@ -117,9 +117,9 @@ export function ResourcesBib() {
 
 /* ------------------------------------------------------------------------- */
 /* Imagery-led treatments (options E/F): thumbnails are LOCAL files declared
-   per-entry in sampleContent (`image`) — no runtime requests. */
+   per-entry in sampleContent (`image`), no runtime requests. */
 
-/** Alternative treatment — cover shelf: all five picks stand as objects on
+/** Alternative treatment, cover shelf: all five picks stand as objects on
     hairline ledges (the DDIA book as a 3D-ish cover with a coral bookmark,
     web picks as favicons seated on surface-alt plates), with the personal
     note hanging beneath each as a shelf talker. */
@@ -156,7 +156,7 @@ export function ResourcesShelf() {
   );
 }
 
-/** Alternative treatment — icon plate list: app-store row grammar; a fixed
+/** Alternative treatment, icon plate list: app-store row grammar; a fixed
     surface-alt plate holds each thumbnail, identity is a structured column,
     and the personal note gets the widest measure in the row. */
 export function ResourcesPlates() {

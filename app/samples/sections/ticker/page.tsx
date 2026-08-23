@@ -26,13 +26,13 @@ export default function TickerCompare() {
         <p className={shell.vlabel}>Ticker interactions · research-backed</p>
         <h1 className={shell.pageTitle}>Ticker interactions</h1>
         <p className={shell.pageHint}>
-          The thing that makes a ticker feel premium isn&rsquo;t the hover — it&rsquo;s <strong style={{ color: "var(--fg)" }}>ambient life tied to scroll</strong>.
+          The thing that makes a ticker feel premium isn&rsquo;t the hover, it&rsquo;s <strong style={{ color: "var(--fg)" }}>ambient life tied to scroll</strong>.
           The featured one below reacts to the page; the other three are hover-only.
         </p>
 
         <div className={shell.vblock}>
           <p className={shell.vlabel}>
-            ★ Scroll-reactive (recommended) · <strong style={{ color: "var(--fg)" }}>scroll the page up/down</strong> — the rows lean + speed up, then settle. Hover a pill to float it.
+            ★ Scroll-reactive (recommended) · <strong style={{ color: "var(--fg)" }}>scroll the page up/down</strong>, the rows lean + speed up, then settle. Hover a pill to float it.
           </p>
           <Stage><VelocityTicker /></Stage>
         </div>

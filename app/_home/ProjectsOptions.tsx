@@ -12,9 +12,9 @@ import { FileStackRiffle } from "./FileStackRiffle";
  * the baseline itself (Projects.tsx → FileStack); each variant here
  * composes ONE more way of handling the same pile:
  *
- *   B  ProjectsFilesDrag    — pick the open file up and fling it under
- *   C  ProjectsFilesSpread  — lay all six across the desk, pick one back
- *   D  ProjectsFilesRiffle  — scrub the tabs, whole files flutter loose
+ *   B  ProjectsFilesDrag, pick the open file up and fling it under
+ *   C  ProjectsFilesSpread, lay all six across the desk, pick one back
+ *   D  ProjectsFilesRiffle, scrub the tabs, whole files flutter loose
  */
 
 function HeadRow() {
@@ -23,7 +23,7 @@ function HeadRow() {
       <h2 className={`${styles.h2} ${home.pjH2}`}>Projects</h2>
       <div className={home.pjHeadMeta}>
         <span className={home.secNote}>
-          {String(sample.projects.length).padStart(2, "0")} works · 2022 – Present
+          {String(sample.projects.length).padStart(2, "0")} works · 2022 to Present
         </span>
         <Link href="/projects" className={home.pjAll}>
           See All Projects <span className={home.pjAllArrow} aria-hidden="true">→</span>

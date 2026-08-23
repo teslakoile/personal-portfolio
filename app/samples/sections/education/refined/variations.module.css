@@ -1,10 +1,10 @@
-/* Education — refined explorations. Rendered inside .theme (shell), so the
+/* Education, refined explorations. Rendered inside .theme (shell), so the
    --surface/--fg/--muted/--faint/--border/--surface-alt tokens + every var(--font-*)
    resolve from there. Three unique prefixes (.one* / .two* / .tri*) so the
-   versions never collide. No design coral in this section — only the school
+   versions never collide. No design coral in this section, only the school
    logos carry their own brand colour. */
 
-/* ============ V1 · REFINED CREDENTIAL — neutral, deliberate Geist sans ====== */
+/* ============ V1 · REFINED CREDENTIAL, neutral, deliberate Geist sans ====== */
 .oneWrap { margin: 0; }
 .oneList { display: grid; gap: 18px; }
 .oneCard {
@@ -103,7 +103,7 @@
   .oneHonors { padding-left: 0; }
 }
 
-/* ============ V2 · DIPLOMA — editorial Fraunces serif accents =============== */
+/* ============ V2 · DIPLOMA, editorial Fraunces serif accents =============== */
 .twoWrap { margin: 0; }
 .twoList { display: grid; gap: 18px; }
 .twoCard {
@@ -224,7 +224,7 @@
   .twoSchool { font-size: 1.375rem; }
 }
 
-/* ============ V3 · REGISTRY — quiet, minimal ledger ======================== */
+/* ============ V3 · REGISTRY, quiet, minimal ledger ======================== */
 .triWrap { margin: 0; }
 .triList { display: grid; gap: 14px; }
 .triCard {

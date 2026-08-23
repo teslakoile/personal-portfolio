@@ -4,7 +4,7 @@ import alt from "./About.alt.module.css";
 import { Emph } from "../helpers";
 import type { SectionVariant } from "./Hero";
 
-/** V1 — current locked about: prose left, focus-area bullet list right. */
+/** V1, current locked about: prose left, focus-area bullet list right. */
 function AboutV1() {
   return (
     <section className={styles.about}>
@@ -19,7 +19,7 @@ function AboutV1() {
   );
 }
 
-/** V2 — lead statement: the first line set as a focal statement, supporting
+/** V2, lead statement: the first line set as a focal statement, supporting
     line below, focus areas as a full-width chip row. */
 function AboutV2() {
   return (
@@ -33,7 +33,7 @@ function AboutV2() {
   );
 }
 
-/** V3 — editorial: a display lead + supporting line, a de-boxed at-a-glance
+/** V3, editorial: a display lead + supporting line, a de-boxed at-a-glance
     column, and focus-area chips spanning below. All from existing content.
     `eyebrow` is the landing page's numbered section label (absent on samples). */
 function AboutV3({ eyebrow }: { eyebrow?: React.ReactNode }) {

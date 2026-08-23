@@ -3,7 +3,7 @@ import styles from "../samples/quiet/styles.module.css";
 import home from "./home.module.css";
 
 /**
- * Recommendations — quote cards (the landing design). Data comes from
+ * Recommendations, quote cards (the landing design). Data comes from
  * sampleContent.ts (`recommendations`, currently MOCK entries for layout
  * preview); the section renders nothing when the list is empty, so clearing
  * the mocks hides it. An alternative pull-quote treatment lives below as
@@ -32,7 +32,7 @@ export function Recommendations() {
   );
 }
 
-/** Alternative treatment — reference ledger: attribution rail on the left
+/** Alternative treatment, reference ledger: attribution rail on the left
     (coral tick, name, title), serif quote on the right; hairlines between rows.
     Who said it leads, the way references appear on a resume. */
 export function RecommendationsLedger() {
@@ -58,7 +58,7 @@ export function RecommendationsLedger() {
   );
 }
 
-/** Alternative treatment — blurb wall: book-front-matter run-in paragraphs.
+/** Alternative treatment, blurb wall: book-front-matter run-in paragraphs.
     Bold name leads the line, the quote flows on in serif with inline coral
     marks; short top-left rules part the entries. */
 export function RecommendationsBlurbs() {
@@ -73,7 +73,7 @@ export function RecommendationsBlurbs() {
         {sample.recommendations.map((r) => (
           <p key={r.name} className={home.blurb}>
             <span className={home.blurbWho}>{r.name}</span>
-            <span className={home.blurbRole}>, {r.title} — </span>
+            <span className={home.blurbRole}>, {r.title}. </span>
             <span className={home.blurbQuote}>{r.quote}</span>
           </p>
         ))}
@@ -82,7 +82,7 @@ export function RecommendationsBlurbs() {
   );
 }
 
-/** Alternative treatment — single-column pull-quote stack: serif quotes with a
+/** Alternative treatment, single-column pull-quote stack: serif quotes with a
     hanging coral opening mark, the lead quote oversized; no chrome, no hover. */
 export function RecommendationsQuotes() {
   if (!sample.recommendations.length) return null;
@@ -116,7 +116,7 @@ const initialsOf = (name: string) => {
   return ((parts[0]?.[0] ?? "") + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
 };
 
-/** Alternative treatment — speech bubbles: tinted "received message" bubbles
+/** Alternative treatment, speech bubbles: tinted "received message" bubbles
     with hairline tails alternating down a conversation column; avatar (or
     initials chip) + name + title anchored under each tail. */
 export function RecommendationsBubbles() {
@@ -165,9 +165,9 @@ function ThreadChip({ avatar, name }: { avatar?: string | null; name: string }) 
   );
 }
 
-/** Alternative treatment — attribution thread: an avatar-spined log where
+/** Alternative treatment, attribution thread: an avatar-spined log where
     who-said-it leads and the quote follows; a facepile + count sit in the
-    section head row. No bubbles, no tails — a maintained record, not a chat. */
+    section head row. No bubbles, no tails, a maintained record, not a chat. */
 export function RecommendationsThread() {
   const recs = sample.recommendations;
   if (!recs.length) return null;

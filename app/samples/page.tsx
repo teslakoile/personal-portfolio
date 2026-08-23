@@ -5,7 +5,7 @@ import Link from "next/link";
 const directions = [
   {
     key: "quiet-a",
-    name: "Quiet · A — the working home page",
+    name: "Quiet · A, the working home page",
     blurb: "The chosen direction: Geist type system, real multicolor logos, carded experience, certs, image-capable writing cards.",
   },
 ] as const;
@@ -19,7 +19,7 @@ export default function SamplesIndex() {
       <p className="text-xs uppercase tracking-[0.2em] text-stone-500">Design directions · pick one</p>
       <h1 className="mt-3 text-3xl font-semibold tracking-tight">Three rendered samples</h1>
       <p className="mt-3 text-stone-600">
-        Same content in each — only the design language differs. Open each, compare, and tell me which to build out
+        Same content in each, only the design language differs. Open each, compare, and tell me which to build out
         across the full multi-page site.
       </p>
 

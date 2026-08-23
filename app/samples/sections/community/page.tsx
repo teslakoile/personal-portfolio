@@ -12,10 +12,10 @@ const idx = (i: number) => String(i + 1).padStart(2, "0");
    Oversized magazine headlines for the orgs over a numbered talk index. */
 function VariantA() {
   return (
-    <section className={v.aSection} aria-label="Community and speaking — editorial spread">
+    <section className={v.aSection} aria-label="Community and speaking, editorial spread">
       <h2 className={shell.h2}>Community &amp; Speaking</h2>
 
-      {/* ZONE 1 — feature cards */}
+      {/* ZONE 1, feature cards */}
       <div className={v.aFeatures}>
         {sample.community.map((c, i) => (
           <article
@@ -39,7 +39,7 @@ function VariantA() {
         ))}
       </div>
 
-      {/* ZONE 2 — numbered editorial index */}
+      {/* ZONE 2, numbered editorial index */}
       <div className={v.aIndexBlock}>
         <p className={`${shell.eyebrow} ${v.aIndexLabel}`}>
           <span className={shell.eyebrowDot} aria-hidden="true" />
@@ -123,10 +123,10 @@ function VariantB() {
 function VariantC() {
   const [lead, shaper] = sample.community;
   return (
-    <section className={v.cSection} aria-label="Community and speaking — impact ledger">
+    <section className={v.cSection} aria-label="Community and speaking, impact ledger">
       <h2 className={shell.h2}>Community &amp; Speaking</h2>
 
-      {/* ZONE 1 — flagship ledger */}
+      {/* ZONE 1, flagship ledger */}
       <article className={v.cLedger}>
         <div className={v.cIdentity}>
           <span className={shell.eyebrow}>
@@ -151,7 +151,7 @@ function VariantC() {
         </dl>
       </article>
 
-      {/* ZONE 2 — quieter companion */}
+      {/* ZONE 2, quieter companion */}
       <article className={v.cCompanion}>
         <div className={v.cCoName}>
           <h3 className={v.cCoOrg}>{shaper.name}</h3>
@@ -164,7 +164,7 @@ function VariantC() {
         </p>
       </article>
 
-      {/* ZONE 3 — speaking spec rail */}
+      {/* ZONE 3, speaking spec rail */}
       <div className={v.cTalksBlock}>
         <h3 className={v.cSubHead}>Speaking &amp; talks</h3>
         <div className={v.cRail}>

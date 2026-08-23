@@ -7,7 +7,7 @@ import type { SectionVariant } from "./Hero";
 const groups = sample.skills;
 const idx = (i: number) => String(i + 1).padStart(2, "0");
 
-/** Skills — a spec sheet: numbered rows, domain + blurb on the left, general
+/** Skills, a spec sheet: numbered rows, domain + blurb on the left, general
     skills (outlined chips) over specific tooling (logo pills) on the right.
     `eyebrow` is the landing page's numbered section label (absent on samples). */
 function SkillsMain({ eyebrow }: { eyebrow?: React.ReactNode }) {
@@ -25,7 +25,7 @@ function SkillsMain({ eyebrow }: { eyebrow?: React.ReactNode }) {
             </div>
             <div className={alt.rowRight}>
               {g.general.length > 0 ? (
-                <ul className={alt.capChips} aria-label={`${g.title} — general`}>
+                <ul className={alt.capChips} aria-label={`${g.title}, general`}>
                   {g.general.map((c) => <li key={c} className={alt.capChip}>{c}</li>)}
                 </ul>
               ) : null}

@@ -3,9 +3,9 @@ import styles from "../samples/quiet/styles.module.css";
 import home from "./home.module.css";
 
 /**
- * GitHub contributions heatmap — server-rendered from the public contributions
+ * GitHub contributions heatmap, server-rendered from the public contributions
  * fragment GitHub serves for every profile (no token needed), revalidated twice
- * a day. Cells carry data-level 0–4 exactly like GitHub's own calendar; we remap
+ * a day. Cells carry data-level 0-4 exactly like GitHub's own calendar; we remap
  * the greens onto the site's coral scale. Fetch failure degrades to a link.
  *
  * `Contributions` is the landing design (white card). `ContributionsInk` is the
@@ -30,7 +30,7 @@ async function fetchContributions(): Promise<{ total: number; days: Day[] } | nu
     const total = totalMatch ? parseInt(totalMatch[1].replaceAll(",", ""), 10) : 0;
 
     // <td … data-date="YYYY-MM-DD" id="contribution-day-component-<weekday>-<week>"
-    //   … data-level="N" …> — attribute order can shift, so pull each attr from
+    //   … data-level="N" …>, attribute order can shift, so pull each attr from
     // the tag independently.
     const days: Day[] = [];
     for (const tag of html.match(/<td[^>]*ContributionCalendar-day[^>]*>/g) ?? []) {
@@ -65,7 +65,7 @@ function Legend() {
 function Fallback() {
   return (
     <p className={home.ghCaption}>
-      The contribution graph is taking a breather — see the commits directly on{" "}
+      The contribution graph is taking a breather. See the commits directly on{" "}
       <a className={home.ghLink} href={sample.github.url} target="_blank" rel="noreferrer">
         github.com/{sample.github.user} <span aria-hidden="true">↗</span>
       </a>
@@ -85,7 +85,7 @@ function Head() {
   );
 }
 
-/** Landing design — heatmap in a white card with caption + legend. */
+/** Landing design, heatmap in a white card with caption + legend. */
 export async function Contributions() {
   const data = await fetchContributions();
   return (
@@ -108,7 +108,7 @@ export async function Contributions() {
   );
 }
 
-/** Alternative treatment — closing ledger: de-carded paper spread. The total
+/** Alternative treatment, closing ledger: de-carded paper spread. The total
     goes jumbo in a stat column beside the bare coral field; the page closes on
     its biggest number without spending a band. */
 export async function ContributionsLedger() {
@@ -134,8 +134,8 @@ export async function ContributionsLedger() {
   );
 }
 
-/** Alternative treatment — terminal plate: a contained ink panel floating on
-    paper (dark rounded object, mono status bar, recolored ramp) — an inverted
+/** Alternative treatment, terminal plate: a contained ink panel floating on
+    paper (dark rounded object, mono status bar, recolored ramp), an inverted
     moment without a full-bleed band. */
 export async function ContributionsPlate() {
   const data = await fetchContributions();
@@ -168,7 +168,7 @@ export async function ContributionsPlate() {
   );
 }
 
-/** Alternative treatment — the ink coda: de-carded heatmap recolored onto an
+/** Alternative treatment, the ink coda: de-carded heatmap recolored onto an
     inverted band, with an oversized contribution total. Wrap in home.bandInk. */
 export async function ContributionsInk() {
   const data = await fetchContributions();
@@ -226,7 +226,7 @@ function Heatmap({ days, fluid = false }: { days: Day[]; fluid?: boolean }) {
 
 const PITCH = CELL + GAP;
 const LABEL_H = 18; // month-rail band above the dot field
-const RADII = [1.5, 2, 3, 4, 5.5]; // per-level dot radius — size is the encoding
+const RADII = [1.5, 2, 3, 4, 5.5]; // per-level dot radius, size is the encoding
 
 const fmtDay = (iso: string) =>
   new Date(iso + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
@@ -264,8 +264,8 @@ function DotMatrix({ days }: { days: Day[] }) {
             r={RADII[d.level]}
             className={`${home.dmDot} ${home[`dmL${d.level}` as keyof typeof home]}`}>
             <title>{d.level === 0
-              ? `${fmtDay(d.date)} — no contributions`
-              : `${fmtDay(d.date)} — level ${d.level} of 4`}</title>
+              ? `${fmtDay(d.date)}: no contributions`
+              : `${fmtDay(d.date)}: level ${d.level} of 4`}</title>
           </circle>
         ))}
       </svg>
@@ -288,7 +288,7 @@ function DotLegend() {
   );
 }
 
-/** Alternative treatment — dot matrix: radius-scaled ink dots on a white
+/** Alternative treatment, dot matrix: radius-scaled ink dots on a white
     punch-card plate (mono header strip, in-SVG month rail, dot legend); only
     level-4 days flare coral. Size is the encoding, not color. */
 export async function ContributionsDotMatrix() {
@@ -320,7 +320,7 @@ export async function ContributionsDotMatrix() {
   );
 }
 
-/** Alternative treatment — year strip: the heatmap scaled up into a
+/** Alternative treatment, year strip: the heatmap scaled up into a
     column-bleed paper texture whose edges dissolve, with the jumbo mono total
     stamped over the fading bottom rows. The host section is an inline-size
     container so the bleed measures the column, not the viewport (the rework

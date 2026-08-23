@@ -3,7 +3,7 @@ import { sample } from "../samples/sampleContent";
 /**
  * Single source of truth for the landing page's section rail. The sidebar
  * numbers its links from this order, and every section eyebrow ("07 /
- * Certifications") derives its number from the same list — so hiding a section
+ * Certifications") derives its number from the same list, so hiding a section
  * (recommendations auto-hides while its data list is empty) renumbers both
  * rails at once.
  */

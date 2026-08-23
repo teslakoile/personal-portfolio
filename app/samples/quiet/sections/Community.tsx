@@ -4,7 +4,7 @@ import v from "../../sections/community/final/variations.module.css";
 import { Emph } from "../helpers";
 
 /**
- * Community & Speaking — the converged "impact ledger" pick, composed into the
+ * Community & Speaking, the converged "impact ledger" pick, composed into the
  * home. Two org cards sharing one header grammar (logo · linked name · role ·
  * period), a KPI strip on the lead org, then the quiet "Speaking & talks" list
  * (event / org → title with an optional link → description).

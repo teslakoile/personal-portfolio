@@ -1,4 +1,4 @@
-/* Skills card layout explorations — rendered inside .theme (shell), so the
+/* Skills card layout explorations, rendered inside .theme (shell), so the
    --surface/--fg/--shadow/--mono tokens resolve from there. */
 
 /* shared content bits */
@@ -9,7 +9,7 @@
 .tools { display: flex; flex-wrap: wrap; gap: 9px 10px; margin-top: 14px; }
 .toolsDivided { padding-top: 14px; border-top: 1px dashed var(--border); }
 
-/* ============ A · BENTO — flagship domains span the full width ============ */
+/* ============ A · BENTO, flagship domains span the full width ============ */
 .bento { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .bentoCard {
   display: flex;
@@ -23,7 +23,7 @@
 .bentoCard:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
 .span2 { grid-column: 1 / -1; }
 
-/* ============ B · BLUEPRINT — coral index + faint graph-paper ============ */
+/* ============ B · BLUEPRINT, coral index + faint graph-paper ============ */
 .bp { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .bpCard {
   position: relative;
@@ -62,7 +62,7 @@
 .bpHead { display: flex; align-items: center; gap: 10px; }
 .bpDot { width: 7px; height: 7px; background: var(--accent); border-radius: 2px; flex: none; }
 
-/* ============ C · SPEC SHEET — numbered horizontal rows ============ */
+/* ============ C · SPEC SHEET, numbered horizontal rows ============ */
 .rows { background: var(--surface); border-radius: var(--r-card); box-shadow: var(--shadow); padding: 4px 28px; }
 .row {
   display: grid;

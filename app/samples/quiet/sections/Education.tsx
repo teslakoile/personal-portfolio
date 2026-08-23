@@ -5,7 +5,7 @@ import shell from "../../sections/_shared.module.css";
 import { Emph } from "../helpers";
 
 /**
- * Education — the decluttered "ledger" (Option A), composed into the home: a
+ * Education, the decluttered "ledger" (Option A), composed into the home: a
  * card-less two-column row per school (logo + period + school + degree in a left
  * identity rail, a plain bulleted honours & activities list on the right),
  * schools parted only by a full-bleed hairline. No card, no chips, no label.

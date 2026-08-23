@@ -39,7 +39,7 @@
    element-selector rules below neutralize the inter-section separator + trim
    the large top padding (which only exists relative to sibling sections on the
    real page) so each variation reads cleanly in isolation and all share the
-   same trim — keeping the comparison fair. */
+   same trim, keeping the comparison fair. */
 /* inline-size container so column-bleed treatments (100cqw) measure the stage */
 .vstage { border: 1px solid var(--border); border-radius: 18px; background: var(--bg); padding: 0 28px; overflow: hidden; container-type: inline-size; }
 .vstage section { border-top: none; padding-top: 40px; padding-bottom: 40px; }

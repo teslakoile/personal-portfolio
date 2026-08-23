@@ -1,4 +1,4 @@
-/* Community & Speaking section explorations — rendered inside .theme (shell),
+/* Community & Speaking section explorations, rendered inside .theme (shell),
    so all --surface/--fg/--accent/--shadow/--mono tokens resolve from there.
    Three distinct layouts, one unique class prefix each (a / b / c). */
 
@@ -8,7 +8,7 @@
   margin: 0;
 }
 
-/* ZONE 1 — asymmetric feature cards (flagship gets the wider column) */
+/* ZONE 1, asymmetric feature cards (flagship gets the wider column) */
 .aFeatures {
   display: grid;
   grid-template-columns: 1.25fr 1fr;
@@ -61,7 +61,7 @@
   text-wrap: pretty;
 }
 
-/* ZONE 2 — numbered editorial index */
+/* ZONE 2, numbered editorial index */
 .aIndexBlock {
   margin-top: 56px;
 }
@@ -194,7 +194,7 @@
   align-items: start;
 }
 .bRowComm {
-  /* heavier tenure rows — the surface card is the inner .bCard */
+  /* heavier tenure rows, the surface card is the inner .bCard */
   --comm-row: 1;
 }
 .bRowTalk {
@@ -306,7 +306,7 @@
   margin: 0;
 }
 
-/* ZONE 1 — flagship ledger */
+/* ZONE 1, flagship ledger */
 .cLedger {
   display: grid;
   grid-template-columns: 1fr 360px;
@@ -394,7 +394,7 @@
   margin: 0;
 }
 
-/* ZONE 2 — quieter companion */
+/* ZONE 2, quieter companion */
 .cCompanion {
   margin-top: 16px;
   display: grid;
@@ -425,7 +425,7 @@
   text-wrap: pretty;
 }
 
-/* ZONE 3 — speaking spec rail */
+/* ZONE 3, speaking spec rail */
 .cTalksBlock {
   margin-top: 34px;
 }

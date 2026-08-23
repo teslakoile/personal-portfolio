@@ -1,8 +1,8 @@
 /* Hero variations V2/V3. These classes inherit the Geist token set from the
    ancestor .root (--accent, --fg, --serif, --sans, --mono, --surface, shadows…),
-   so they stay on the same design language as V1 — only the layout differs. */
+   so they stay on the same design language as V1, only the layout differs. */
 
-/* ============================ V2 — stat-anchored ========================= */
+/* ============================ V2, stat-anchored ========================= */
 .v2 {
   position: relative;
   display: grid;
@@ -93,7 +93,7 @@
 .proofMlabel { font-size: 0.75rem; line-height: 1.35; color: var(--muted); }
 .proofStack { display: flex; flex-wrap: wrap; gap: 7px; }
 
-/* ============================ V3 — centered editorial =================== */
+/* ============================ V3, centered editorial =================== */
 .v3 {
   text-align: center;
   max-width: 760px;
@@ -129,7 +129,7 @@
 }
 .contactsCenter { justify-content: center; }
 
-/* ===================== V4 — photo (mix of V1 + V2 layout) =============== */
+/* ===================== V4, photo (mix of V1 + V2 layout) =============== */
 .v4 {
   position: relative;
   display: grid;
@@ -169,7 +169,13 @@
   max-width: 15ch;
   text-wrap: balance;
 }
-.headlineAccent { color: var(--accent); }
+/* One nowrap span per comma-separated item of the headline, so the h1 breaks
+   between items and never inside one ("pipelines, agent / workflows, and").
+   Released below 560px, where a single item is wider than the viewport. */
+.headlineKeep { white-space: nowrap; }
+@media (max-width: 560px) {
+  .headlineKeep { white-space: normal; }
+}
 .subMix {
   margin: 20px 0 0;
   max-width: 48ch;
@@ -239,10 +245,10 @@
   color: var(--faint);
 }
 
-/* halftone portrait — the framed photo re-rastered as ink dots (generated from
+/* halftone portrait, the framed photo re-rastered as ink dots (generated from
    me.jpg via a Vision background-cut + halftone pass; asset at
    /me-halftone.png). Floats directly on the hero's graph paper: no card, no
-   border — the dots ARE the frame. */
+   border, the dots ARE the frame. */
 .photoHalftone {
   position: relative;
   z-index: 1;

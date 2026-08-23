@@ -5,10 +5,10 @@ import { Logo, techLogoKey } from "./Logo";
 /**
  * Shared building blocks for the Quiet Blueprint home + its section-variation
  * comparison pages. Keeping these in one place means every variation reuses the
- * exact same emphasis rules, pills, and concept figure — no drift.
+ * exact same emphasis rules, pills, and concept figure, no drift.
  */
 
-// Exact factual substrings that get selectively bolded. Never paraphrased — if a
+// Exact factual substrings that get selectively bolded. Never paraphrased, if a
 // metric is reworded in sampleContent.ts, update the matching entry here too.
 export const EMPH = [
   "~15 million records", "~7 million unique customer keys", "10+ business units",
@@ -52,7 +52,7 @@ export const CONTACT_KIND: Record<string, "email" | "linkedin" | "github"> = {
   Email: "email", LinkedIn: "linkedin", GitHub: "github",
 };
 
-/** Honest concept figure — clearly a concept, not a fake screenshot. */
+/** Honest concept figure, clearly a concept, not a fake screenshot. */
 export function ConceptThreshold() {
   const bars = [6, 10, 16, 22, 18, 11, 7, 5, 9, 15, 24, 30, 26, 17, 9];
   const W = 320, H = 150, pad = 14;

@@ -23,12 +23,12 @@ import { Contributions } from "./Contributions";
 import { Projects } from "./Projects";
 
 /**
- * Landing shell — the Quiet Blueprint sections inside a bryllim.com-inspired
+ * Landing shell, the Quiet Blueprint sections inside a bryllim.com-inspired
  * sidebar layout, plus the new sections: recommendations, resources, and the
  * GitHub contribution graph. Kyle's locked picks: photo hero V4, about V3,
  * timeline experience, spec-sheet skills, writing V1, cert badges, inline
  * recognition V2. Alternative per-section treatments are being explored at
- * /samples/rework — the landing keeps this composition until a pick lands.
+ * /samples/rework, the landing keeps this composition until a pick lands.
  * The prior top-nav composition still lives at /samples/home; the text-dense
  * original at /classic.
  */

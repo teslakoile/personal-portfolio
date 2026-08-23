@@ -7,7 +7,7 @@ import type { SectionVariant } from "./Hero";
 type Cert = (typeof sample.certifications)[number];
 
 function datesLabel(c: Cert) {
-  return c.expires ? `${c.issued} – ${c.expires}` : `${c.issued} · No Expiry`;
+  return c.expires ? `${c.issued} to ${c.expires}` : `${c.issued} · No Expiry`;
 }
 
 /** True once the credential's public verify URL replaces the "#" placeholder. */
@@ -32,7 +32,7 @@ function CertMark({ c, size }: { c: Cert; size: number }) {
   return c.logo ? <Logo name={c.logo} size={size} /> : <span className={styles.certMono}>{mono}</span>;
 }
 
-/** V1 — current: clickable badge grid (logo chip + title + issuer + blurb + dates). */
+/** V1, current: clickable badge grid (logo chip + title + issuer + blurb + dates). */
 function CertificationsV1() {
   return (
     <section className={styles.section}>
@@ -58,7 +58,7 @@ function CertificationsV1() {
   );
 }
 
-/** V2 — grouped by issuer: a logo-forward credential wall showing provider breadth. */
+/** V2, grouped by issuer: a logo-forward credential wall showing provider breadth. */
 function CertificationsV2() {
   const order: string[] = [];
   const byIssuer = new Map<string, Cert[]>();
@@ -97,7 +97,7 @@ function CertificationsV2() {
   );
 }
 
-/** V3 — big-logo badge wall: a 3-column grid of credential cards, logo up top. */
+/** V3, big-logo badge wall: a 3-column grid of credential cards, logo up top. */
 function CertificationsV3() {
   return (
     <section className={alt.section}>

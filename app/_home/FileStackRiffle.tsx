@@ -5,11 +5,11 @@ import home from "./home.module.css";
 import { FileInnards, FileRail, FileTabs, FileUnders, mod, type Proj } from "./fileParts";
 
 /**
- * Case Files variant — RIFFLE. Instead of the baseline's header-strip
+ * Case Files variant, RIFFLE. Instead of the baseline's header-strip
  * preview, scrubbing across the tab row thumbs through WHOLE files live:
  * as the pointer crosses each tab, that file flicks down out of the drawer
- * and lies loose on the pile — slightly high, half a degree askew, lighter
- * shadow, visibly not yet filed — while the open file is pressed beneath
+ * and lies loose on the pile, slightly high, half a degree askew, lighter
+ * shadow, visibly not yet filed, while the open file is pressed beneath
  * it. Click squares the loose sheet up into a real pull; sweeping away
  * costs nothing (the pile falls back). The flick is direction-aware, the
  * counter ticks the preview numeral in muted ink, and previews are
@@ -82,7 +82,7 @@ export function FileStackRiffle({ projects }: { projects: ReadonlyArray<Proj> })
             <FileInnards p={projects[idx]} top={true} />
           </article>
 
-          {/* the loose preview sheet — remounts per tab crossed, so fast
+          {/* the loose preview sheet, remounts per tab crossed, so fast
               scrubs read as one continuous flutter */}
           {preview !== null && preview !== idx && (
             <article

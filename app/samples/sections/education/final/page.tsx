@@ -10,12 +10,12 @@ const edu = sample.education;
 const idx = (i: number) => String(i + 1).padStart(2, "0");
 
 /* ============================================================================
-   Option A · Ledger — a card-less two-column CV row (decluttered)
+   Option A · Ledger, a card-less two-column CV row (decluttered)
    Real logo, school / degree / period in a left identity rail; the honours &
-   activities as a plain, decoration-free list on the right — no chips, no
+   activities as a plain, decoration-free list on the right, no chips, no
    label, no tick marks. No card, no surface, no shadow: each school is a bare
    row on the paper, the two schools parted only by a full-bleed hairline. Type
-   stays Geist-refined; neutral throughout — the logos alone carry brand colour.
+   stays Geist-refined; neutral throughout, the logos alone carry brand colour.
    ========================================================================== */
 function OptionA() {
   return (
@@ -51,12 +51,12 @@ function OptionA() {
 }
 
 /* ============================================================================
-   Option B · Registry — a card-less numbered index
+   Option B · Registry, a card-less numbered index
    A stacked, full-width registry: each school is a hairline-ruled row keyed by a
    quiet ordinal index in a left margin. School names lean editorial in Fraunces;
    degree + period sit as a tabular sans note. Honours collapse to a plain
    hairline-led list (V3 rhythm), with highlights as soft tinted --surface-alt
-   pills. No card, no box — just index, rules, spacing, and type on the paper.
+   pills. No card, no box, just index, rules, spacing, and type on the paper.
    ========================================================================== */
 function OptionB() {
   return (
@@ -89,7 +89,7 @@ function OptionB() {
                   </p>
                 </div>
                 {chips.length > 0 && (
-                  <ul className={v.bChips} aria-label={`${e.school} — honours`}>
+                  <ul className={v.bChips} aria-label={`${e.school}, honours`}>
                     {chips.map((h) => (
                       <li key={h} className={v.bChip}>{h}</li>
                     ))}
@@ -114,21 +114,21 @@ export default function EducationFinal() {
     <div className={shell.theme}>
       <div className={shell.pageWrap}>
         <p className={shell.vlabel}>Education · final · card-less</p>
-        <h1 className={shell.pageTitle}>Card-less education — V1 completeness × V3 registry</h1>
+        <h1 className={shell.pageTitle}>Card-less education, V1 completeness × V3 registry</h1>
         <p className={shell.pageHint}>
-          Two card-less directions: no surface boxes, no shadowed panels — content sits
+          Two card-less directions: no surface boxes, no shadowed panels, content sits
           directly on the paper, organized only by layout, hairline rules, spacing, and
           type. Both keep the real school logos and a neutral ink-and-paper palette (no
           coral; the logos carry their own brand colours).
         </p>
 
         <div className={shell.vblock}>
-          <p className={shell.vlabel}>Option A · Ledger — logo + identity rail, plain honours list on the right (decluttered)</p>
+          <p className={shell.vlabel}>Option A · Ledger, logo + identity rail, plain honours list on the right (decluttered)</p>
           <OptionA />
         </div>
 
         <div className={shell.vblock}>
-          <p className={shell.vlabel}>Option B · Registry — numbered index, full-width hairline rows, Fraunces school names</p>
+          <p className={shell.vlabel}>Option B · Registry, numbered index, full-width hairline rows, Fraunces school names</p>
           <OptionB />
         </div>
       </div>

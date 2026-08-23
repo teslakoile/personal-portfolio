@@ -4,14 +4,14 @@ import { sample } from "../../../sampleContent";
 import { Emph } from "../../../quiet/helpers";
 
 /* =====================================================================
-   COMMUNITY & SPEAKING — FINAL (converged)
+   COMMUNITY & SPEAKING, FINAL (converged)
 
-   Carries forward Version1 ("Geist refined") from the refined round — two
+   Carries forward Version1 ("Geist refined") from the refined round, two
    community org cards sharing one header grammar + a KPI stat strip on the
-   lead org + a numbered "Speaking & talks" index — and folds in the user's
+   lead org + a numbered "Speaking & talks" index, and folds in the user's
    feedback:
      1. eyebrow category kickers ("LEADERSHIP" / "MEMBERSHIP") removed;
-     2. both org cards now sit on white (--surface) — the quieter sibling
+     2. both org cards now sit on white (--surface), the quieter sibling
         reads as family through shared shell + scale, not a recessed tint;
      3. org logos: BOTH orgs show a mark now (GDG official; Global Shapers a
         neutral placeholder until the real logo is supplied), and each org
@@ -31,7 +31,7 @@ const talks = sample.speaking;
 
 /* The KPI strip only exists on the lead org. A type guard keeps the absence
    of `stats` graceful (TS-strict clean) while both cards keep the same header
-   grammar — so the relationship never breaks. */
+   grammar, so the relationship never breaks. */
 function orgStats(o: Org): ReadonlyArray<{ fig: string; label: string }> {
   return "stats" in o ? o.stats : [];
 }
@@ -46,7 +46,7 @@ export default function CommunityFinal() {
           The converged pick: category kickers removed, both org cards on white
           (family by shared shell + scale), both orgs now carrying a logo + a
           link out, the lead org&rsquo;s KPI strip kept, and the V3 quiet
-          &ldquo;Speaking &amp; talks&rdquo; layout — event / org, then title
+          &ldquo;Speaking &amp; talks&rdquo; layout, event / org, then title
           (with an optional link), then description.
         </p>
 

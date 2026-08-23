@@ -3,11 +3,11 @@ import v from "./variations.module.css";
 import { sample } from "../../../sampleContent";
 import { Emph } from "../../../quiet/helpers";
 
-/* Refinements of the chosen base — Variant C, the "impact ledger".
+/* Refinements of the chosen base, Variant C, the "impact ledger".
    Each version below keeps that DNA (a stat-forward lead org + a quieter
    sibling + a talk rail) but resolves two pieces of user feedback:
-   · org cohesion — both orgs now read as one family, and
-   · typography  — the indices / talk meta / stat figures each get a distinct,
+   · org cohesion, both orgs now read as one family, and
+   · typography, the indices / talk meta / stat figures each get a distinct,
      intentional treatment instead of the off-system code-mono. */
 
 type Org = (typeof sample.community)[number];
@@ -20,7 +20,7 @@ const idx = (i: number) => String(i + 1).padStart(2, "0");
 
 /* The KPI strip only exists on the lead org. A small type guard keeps the
    absence of `stats` graceful (TS-strict clean) while both cards still share
-   the same header grammar — so the relationship never breaks. */
+   the same header grammar, so the relationship never breaks. */
 function orgStats(o: Org): ReadonlyArray<{ fig: string; label: string }> {
   return "stats" in o ? o.stats : [];
 }
@@ -33,7 +33,7 @@ function orgStats(o: Org): ReadonlyArray<{ fig: string; label: string }> {
    ===================================================================== */
 function Version1() {
   return (
-    <section className={v.v1} aria-label="Community and speaking — Geist refined">
+    <section className={v.v1} aria-label="Community and speaking, Geist refined">
       <h2 className={shell.h2}>Community &amp; Speaking</h2>
 
       <div className={v.v1Orgs}>
@@ -102,7 +102,7 @@ function Version1() {
 /* =====================================================================
    V2 · EDITORIAL SERIF
    Fraunces carries the heading, org names, and stat figures; Source Serif
-   italic handles the eyebrows, captions, and talk meta — a warmer register.
+   italic handles the eyebrows, captions, and talk meta, a warmer register.
    Both orgs live inside ONE panel split by a hairline, so they are literally
    one object.
    ===================================================================== */
@@ -110,7 +110,7 @@ function Version2() {
   const [lead, ...rest] = orgs;
   const leadStats = orgStats(lead);
   return (
-    <section className={v.v2} aria-label="Community and speaking — editorial serif">
+    <section className={v.v2} aria-label="Community and speaking, editorial serif">
       <h2 className={v.v2Heading}>Community &amp; Speaking</h2>
 
       <article className={v.v2Panel}>
@@ -138,7 +138,7 @@ function Version2() {
           ) : null}
         </div>
 
-        {/* quieter siblings — same panel, same header grammar */}
+        {/* quieter siblings, same panel, same header grammar */}
         {rest.map((o) => (
           <div key={o.name}>
             <hr className={v.v2Sep} aria-hidden="true" />
@@ -183,12 +183,12 @@ function Version2() {
    V3 · QUIET
    Indices and uppercase eyebrows are dropped; spacing + scale carry the
    hierarchy. Both orgs are stacked rows inside one bare surface, separated
-   by a hairline — no card chrome to split them. Talk meta becomes a small
+   by a hairline, no card chrome to split them. Talk meta becomes a small
    accent kicker rather than code-mono.
    ===================================================================== */
 function Version3() {
   return (
-    <section className={v.v3} aria-label="Community and speaking — quiet">
+    <section className={v.v3} aria-label="Community and speaking, quiet">
       <h2 className={shell.h2}>Community &amp; Speaking</h2>
 
       <div className={v.v3Stack}>
@@ -247,23 +247,23 @@ export default function CommunityRefined() {
         <h1 className={shell.pageTitle}>The impact ledger, refined</h1>
         <p className={shell.pageHint}>
           Three refinements of the chosen base (the impact ledger). Each keeps both
-          community orgs reading as one family — a primary org and a quieter sibling
-          built from the same shell — and gives the indices, talk labels, and stat
+          community orgs reading as one family, a primary org and a quieter sibling
+          built from the same shell, and gives the indices, talk labels, and stat
           figures a distinct, intentional type treatment.
         </p>
 
         <div className={shell.vblock}>
-          <p className={shell.vlabel}>V1 · Geist, refined — re-tuned numerals, no code-mono</p>
+          <p className={shell.vlabel}>V1 · Geist, refined, re-tuned numerals, no code-mono</p>
           <Version1 />
         </div>
 
         <div className={shell.vblock}>
-          <p className={shell.vlabel}>V2 · Editorial serif — Fraunces headings &amp; figures</p>
+          <p className={shell.vlabel}>V2 · Editorial serif, Fraunces headings &amp; figures</p>
           <Version2 />
         </div>
 
         <div className={shell.vblock}>
-          <p className={shell.vlabel}>V3 · Quiet — indices dropped, spacing carries it</p>
+          <p className={shell.vlabel}>V3 · Quiet, indices dropped, spacing carries it</p>
           <Version3 />
         </div>
       </div>

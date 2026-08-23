@@ -2,16 +2,16 @@ import { fontVars } from "./fonts";
 import { HomeShell } from "./_home/HomeShell";
 
 /**
- * Landing page — the "Quiet Blueprint" sections inside the sidebar shell
+ * Landing page, the "Quiet Blueprint" sections inside the sidebar shell
  * (app/_home/HomeShell.tsx), with the contributions graph, resources,
  * recommendations, ⌘K ask-anything, ⌘J typing test, and micro-sounds.
- * Fonts come exclusively from the global fontset (app/fonts.ts) — only the
+ * Fonts come exclusively from the global fontset (app/fonts.ts), only the
  * chosen families load here, unlike the /samples playground which loads every
  * candidate for its comparisons. The prior top-nav composition still renders
  * at /samples/home; the original text-dense homepage lives on at /classic.
  */
 
-// Person structured data for search engines — every fact mirrors the visible
+// Person structured data for search engines, every fact mirrors the visible
 // site content.
 const personJsonLd = {
   "@context": "https://schema.org",

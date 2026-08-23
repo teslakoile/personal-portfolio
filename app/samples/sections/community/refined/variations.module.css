@@ -1,20 +1,20 @@
-/* Community & Speaking — REFINED explorations.
+/* Community & Speaking, REFINED explorations.
    All three iterate on the chosen base (Variant C, the "impact ledger").
    Rendered inside .theme (shell), so every --surface/--fg/--accent/--shadow
    token resolves from there. Each version owns a unique prefix (v1 / v2 / v3)
    so classes never collide.
 
    Two shared goals across all three:
-   1. COHESION — the two community orgs read as one family: a primary org and a
+   1. COHESION, the two community orgs read as one family: a primary org and a
       quieter sibling built from the SAME card shell + the SAME header grammar
       (eyebrow · name · meta), differing only in weight/scale. Only the lead
       carries the KPI strip; the sibling reuses the identical header so the
       absence of stats never breaks the relationship.
-   2. TYPOGRAPHY — each version gives the indices, talk meta labels, and stat
+   2. TYPOGRAPHY, each version gives the indices, talk meta labels, and stat
       figures a distinct, intentional treatment (no off-system code-mono). */
 
 /* =====================================================================
-   V1 · GEIST, REFINED — everything stays in the Geist sans, but the
+   V1 · GEIST, REFINED, everything stays in the Geist sans, but the
    numerals/labels are re-tuned with deliberate size/weight/tracking/color.
    Indices: large, light, faint Geist numeral. Meta labels: small-caps-style
    uppercase Geist with open tracking in --faint. Figures: tight, heavy Geist.
@@ -50,7 +50,7 @@
   box-shadow: inset 0 0 0 1px var(--border);
 }
 
-/* shared header grammar — identical on both cards (the cohesion anchor) */
+/* shared header grammar, identical on both cards (the cohesion anchor) */
 .v1Head {
   display: flex;
   flex-direction: column;
@@ -109,7 +109,7 @@
   max-width: 52ch;
 }
 
-/* KPI strip — only the lead has stats; figures are heavy, tight Geist */
+/* KPI strip, only the lead has stats; figures are heavy, tight Geist */
 .v1Stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -270,7 +270,7 @@
 }
 
 /* =====================================================================
-   V2 · EDITORIAL SERIF — Fraunces carries the section heading, the org
+   V2 · EDITORIAL SERIF, Fraunces carries the section heading, the org
    names, and the stat figures for a warmer, less-techy register. Talk meta
    becomes a small serif italic label; indices are roman serif numerals.
    ===================================================================== */
@@ -289,7 +289,7 @@
 }
 
 /* org family: a shared panel that holds the lead, a hairline, then the
-   sibling — physically one object so they cannot read as disconnected */
+   sibling, physically one object so they cannot read as disconnected */
 .v2Panel {
   background: var(--surface);
   border-radius: var(--r-card);
@@ -350,7 +350,7 @@
   max-width: 60ch;
 }
 
-/* stat figures — large Fraunces numerals, warm and editorial */
+/* stat figures, large Fraunces numerals, warm and editorial */
 .v2Stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -396,7 +396,7 @@
   align-items: baseline;
 }
 
-/* speaking — serif index + italic serif meta */
+/* speaking, serif index + italic serif meta */
 .v2TalksBlock {
   margin-top: 24px;
 }
@@ -480,7 +480,7 @@
 }
 
 /* =====================================================================
-   V3 · QUIET — indices and eyebrows are dropped; spacing + scale carry the
+   V3 · QUIET, indices and eyebrows are dropped; spacing + scale carry the
    hierarchy. Stat figures are large but unadorned. Talk meta becomes a tiny
    accent kicker (not uppercase code-mono). The most stripped of the three.
    ===================================================================== */
@@ -489,7 +489,7 @@
 }
 
 /* org family: a single recessed surface holding both orgs as stacked rows,
-   separated only by a hairline — no card chrome, so they're unmistakably one
+   separated only by a hairline, no card chrome, so they're unmistakably one
    system. Scale alone marks primary vs. sibling. */
 .v3Stack {
   background: var(--surface);
@@ -551,7 +551,7 @@
   max-width: 64ch;
 }
 
-/* stats — quiet, large figures on a single open row, no boxes/labels-caps */
+/* stats, quiet, large figures on a single open row, no boxes/labels-caps */
 .v3Stats {
   display: flex;
   flex-wrap: wrap;
@@ -583,7 +583,7 @@
   margin: 0;
 }
 
-/* speaking — no indices, no uppercase meta. Title leads; meta is a small
+/* speaking, no indices, no uppercase meta. Title leads; meta is a small
    accent kicker above it; generous row rhythm carries the hierarchy. */
 .v3TalksBlock {
   margin-top: 30px;

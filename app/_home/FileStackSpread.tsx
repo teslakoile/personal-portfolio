@@ -5,10 +5,10 @@ import home from "./home.module.css";
 import { FileInnards, FileRail, FileTabs, FileUnders, mod, riseOrigin, type Proj } from "./fileParts";
 
 /**
- * Case Files variant — SPREAD THE FILES. The baseline pile (tab-hover
+ * Case Files variant, SPREAD THE FILES. The baseline pile (tab-hover
  * previews included), plus a footer control that slides all six dossiers
  * out of the pile's center and lays them across the desk in a loose,
- * hand-placed arrangement (fixed jitter table — the same slightly crooked
+ * hand-placed arrangement (fixed jitter table, the same slightly crooked
  * desk every visit): every tab strip, client line, and screenshot crop
  * readable at once. While spread, the pile steps back (buried sheets and
  * strips fade, the open file closes). Clicking any cover sweeps the desk
@@ -26,7 +26,7 @@ export function FileStackSpread({ projects }: { projects: ReadonlyArray<Proj> })
   const [riseUp, setRiseUp] = useState(false); // pulled while risen → continue down, not re-rise
   const [tug, setTug] = useState<number | null>(null);
   const [mode, setMode] = useState<"pile" | "spread">("pile");
-  const [hydrated, setHydrated] = useState(false); // toggle needs JS — hidden until the island mounts
+  const [hydrated, setHydrated] = useState(false); // toggle needs JS, hidden until the island mounts
   useEffect(() => setHydrated(true), []);
   const n = projects.length;
 
@@ -45,7 +45,7 @@ export function FileStackSpread({ projects }: { projects: ReadonlyArray<Proj> })
   // leaving the row clears the tug after a short grace, so the pointer can
   // travel up onto the risen folder (re-entering it cancels the drop).
   // tabXs caches each tab's row-slot x (kept through the fall) so the
-  // attached tab swaps in — and lands — pixel-aligned.
+  // attached tab swaps in, and lands, pixel-aligned.
   const leaveT = useRef<number | null>(null);
   const tabXs = useRef<(number | undefined)[]>([]);
   const hoverTab = (i: number, x?: number) => {
@@ -69,13 +69,13 @@ export function FileStackSpread({ projects }: { projects: ReadonlyArray<Proj> })
           onHover={hoverTab} onLeave={leaveTab} raised={tug} />
 
         <div className={`${home.fsWell} ${home.spdWell}`}>
-          {/* retired variant — kept for possible revival; the live island
+          {/* retired variant, kept for possible revival; the live island
               (FileStack) holds this geometry in state instead */}
           {/* eslint-disable-next-line react-hooks/refs */}
           <FileUnders projects={projects} idx={idx} tug={tug} tabXs={tabXs.current}
             pull={pull} onHover={hoverTab} onLeave={leaveTab} />
 
-          {/* the six covers — hidden at the pile's center while piled, laid
+          {/* the six covers, hidden at the pile's center while piled, laid
               across the desk while spread */}
           {projects.map((p, i) => {
             const s = mod(i - idx, n);
@@ -84,7 +84,7 @@ export function FileStackSpread({ projects }: { projects: ReadonlyArray<Proj> })
                 key={p.slug}
                 href={`/projects#${p.slug}`}
                 className={`${home.spdCover} ${home[`spdS${s}`]} ${home[`spdG${i}`]}`}
-                aria-label={`File ${String(i + 1).padStart(2, "0")}, ${p.title} — pull to top`}
+                aria-label={`File ${String(i + 1).padStart(2, "0")}, ${p.title}, pull to top`}
                 aria-current={mode === "spread" && i === idx ? "true" : undefined}
                 onClick={(e) => { e.preventDefault(); pull(i); }}
               >

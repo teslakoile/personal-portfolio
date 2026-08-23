@@ -5,7 +5,7 @@ import home from "./home.module.css";
 import { popOpen, popClose, tick, thud, chime, click } from "./sound";
 
 /* ============================== ASK ANYTHING =============================== */
-/* Curated Q&A over the real site content — no backend, no invented facts. A
+/* Curated Q&A over the real site content, no backend, no invented facts. A
    non-matching question falls back to a prefilled "email me this" mailto. */
 
 type QA = {
@@ -19,7 +19,7 @@ const QAS: QA[] = [
   {
     q: "What do you do?",
     keywords: ["do", "job", "work", "role", "who", "you"],
-    a: "I'm a Data Engineer II at Thinking Machines Data Science. I build data pipelines, agentic AI systems, MLOps workflows, and cloud infrastructure for enterprise clients across financial services, investment management, education, and compliance.",
+    a: "I'm at Thinking Machines Data Science, building data pipelines, agentic AI systems, MLOps workflows, and cloud infrastructure for enterprise clients across financial services, investment management, education, and compliance.",
     link: { label: "See the Experience", href: "#experience" },
   },
   {
@@ -31,7 +31,7 @@ const QAS: QA[] = [
   {
     q: "Are you available for talks?",
     keywords: ["talk", "talks", "speak", "speaking", "speaker", "event", "conference", "available", "invite"],
-    a: "Yes — I speak about generative AI, AI coding agents, and modern engineering workflows. I lead GDG Davao and have spoken at conferences, startup events, and AWS User Group Davao. Email me the date and audience.",
+    a: "Yes. I speak about generative AI, AI coding agents, and modern engineering workflows. I lead GDG Davao and have spoken at conferences, startup events, and AWS User Group Davao. Email me the date and audience.",
     link: { label: "Email Me About a Talk", href: "mailto:kyle.naranjo@gmail.com?subject=Speaking%20invitation", external: true },
   },
   {
@@ -43,13 +43,13 @@ const QAS: QA[] = [
   {
     q: "What certifications do you hold?",
     keywords: ["cert", "certs", "certified", "certifications", "credentials", "gcp", "azure", "aws"],
-    a: "Ten across the stack — including Google Cloud Professional Machine Learning Engineer, Databricks Certified Data Engineer Associate, Azure AI Engineer Associate, and OpenAI AI Technical Practitioner.",
+    a: "Ten across the stack, including Google Cloud Professional Machine Learning Engineer, Databricks Certified Data Engineer Associate, Azure AI Engineer Associate, and OpenAI AI Technical Practitioner.",
     link: { label: "See All Certifications", href: "#certifications" },
   },
   {
     q: "Where did you study?",
     keywords: ["study", "school", "university", "college", "degree", "education", "diliman"],
-    a: "BS Computer Engineering at the University of the Philippines Diliman — graduated summa cum laude with a 1.15 weighted average, Top 5 of the program. Philippine Science High School before that.",
+    a: "BS Computer Engineering at the University of the Philippines Diliman. Graduated summa cum laude with a 1.15 weighted average, Top 5 of the program. Philippine Science High School before that.",
     link: { label: "See Education", href: "#education" },
   },
   {
@@ -60,13 +60,13 @@ const QAS: QA[] = [
   {
     q: "Can I read your writing?",
     keywords: ["writing", "blog", "posts", "articles", "read", "explainers"],
-    a: "Two interactive explainers are in progress — one on probabilistic record linkage (the 748,000-duplicates story) and one on wiring ChatGPT to Databricks through an MCP server.",
+    a: "Two interactive explainers are in progress: one on probabilistic record linkage (the 748,000-duplicates story) and one on wiring ChatGPT to Databricks through an MCP server.",
     link: { label: "Preview the Writing", href: "#writing" },
   },
   {
     q: "Do you do open source?",
     keywords: ["open", "source", "oss", "github", "contribute", "contributions", "airflow"],
-    a: "Yes — I've contributed documentation to Apache Airflow (Azure Blob Storage remote logging, Google Cloud Vertex AI operators), and my GitHub shows 8,000+ contributions in the last year.",
+    a: "Yes. I've contributed documentation to Apache Airflow (Azure Blob Storage remote logging, Google Cloud Vertex AI operators), and my GitHub shows 8,000+ contributions in the last year.",
     link: { label: "See the Graph", href: "#github" },
   },
   {
@@ -152,7 +152,7 @@ function AskAnything({ onClose }: { onClose: () => void }) {
           <div className={home.askAnswer}>
             <p className={home.askAnswerQ}>Good Question</p>
             <p className={home.askAnswerA}>
-              I haven&apos;t written that one down yet — send it to me directly and I&apos;ll answer for real.
+              I haven&apos;t written that one down yet. Send it to me directly and I&apos;ll answer for real.
             </p>
             <a
               className={home.askAnswerLink}
@@ -170,7 +170,7 @@ function AskAnything({ onClose }: { onClose: () => void }) {
 /* =============================== TYPING TEST =============================== */
 
 const SENTENCES = [
-  "I build the data and AI infrastructure enterprises run on.",
+  "I build AI agents, data pipelines, and cloud infrastructure.",
   "Exact matching missed 748,000 duplicate pairs. Probabilistic linkage found them.",
   "Ship the pipeline, watch the dashboards, trust the checks you wrote.",
   "Fifteen million records walk in. Seven million unique customers walk out.",
@@ -214,7 +214,7 @@ function TypingTest({ onClose }: { onClose: () => void }) {
   const elapsedMs = startedAt === null ? 0 : Math.max((endedAt ?? now) - startedAt, 0);
   const minutes = Math.max(elapsedMs / 60000, 1 / 60000);
   // hold the readout until the clock has something real to say
-  const wpm = startedAt === null || (elapsedMs < 1000 && !done) ? "–" : Math.round((typed.length / 5) / minutes);
+  const wpm = startedAt === null || (elapsedMs < 1000 && !done) ? "--" : Math.round((typed.length / 5) / minutes);
   const accuracy = typed.length + errors === 0 ? 100 : Math.round((typed.length / (typed.length + errors)) * 100);
 
   const onKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -261,7 +261,7 @@ function TypingTest({ onClose }: { onClose: () => void }) {
           tabIndex={0}
           onKeyDown={onKey}
           style={{ outline: "none" }}
-          aria-label="Typing area — start typing the sentence"
+          aria-label="Typing area, start typing the sentence"
         >
           <p className={home.typeText} aria-hidden="true">
             {text.split("").map((ch, i) => {
