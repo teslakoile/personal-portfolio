@@ -72,10 +72,18 @@ export function HeroV4() {
           </div>
         </div>
       </div>
-      {/* halftone portrait — floats on the graph paper (original photo kept at
-          /me.jpg; swap the src back to revert) */}
+      {/* halftone portrait — floats on the graph paper. Built by
+          scripts/hero/build.sh from public/hero/source.png; me.jpg and
+          me-halftone.png are left untouched. Reading order is Kyle, the
+          bridge, then the bay as faint texture, and the PNG's own edges
+          dissolve so there is no crop line. */}
       <div className={`${alt.photoHalftone} ${styles.rise} ${styles.d1}`}>
-        <img src="/me-halftone.png" alt="Kyle Naranjo" width={1600} height={1538} />
+        <img
+          src="/hero/portrait-halftone.png"
+          alt="Kyle Naranjo at the Golden Gate Bridge"
+          width={2100}
+          height={2517}
+        />
       </div>
     </section>
   );
