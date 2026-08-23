@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // design playground — keep the section explorations out of search
+        // design playground, keep the section explorations out of search
         disallow: ["/samples/"],
       },
     ],

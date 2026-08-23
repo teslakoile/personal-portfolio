@@ -27,14 +27,14 @@ function SpeakerIcon({ muted }: { muted: boolean }) {
 /**
  * The left rail: wordmark, numbered section nav with a scrollspy, the ⌘K / ⌘J
  * launchers, and the reach-me block. Collapses to a sticky top bar on mobile
- * (nav + launchers hidden there — the anchors remain reachable by scrolling).
+ * (nav + launchers hidden there, the anchors remain reachable by scrolling).
  */
 export function Sidebar() {
   const [active, setActive] = useState<string>("");
   // localStorage-backed toggle; server snapshot matches the "on" default
   const sound = useSyncExternalStore(onSoundChange, soundEnabled, () => true);
 
-  // Scrollspy — the section nearest the upper third of the viewport wins.
+  // Scrollspy, the section nearest the upper third of the viewport wins.
   useEffect(() => {
     const els = NAV_SECTIONS
       .map((s) => document.getElementById(s.id))

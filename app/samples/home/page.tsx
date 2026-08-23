@@ -1,7 +1,7 @@
 import { QuietResume } from "../quiet/QuietResume";
 
 /**
- * Composed home preview — Kyle's picks assembled into one page:
+ * Composed home preview, Kyle's picks assembled into one page:
  *   Hero V4 (photo) · About V3 (at a glance) · Experience V1 (timeline) ·
  *   Skills V3 (descriptor cards) · Writing V1 (+ tags) · Certifications · Recognition V2.
  */

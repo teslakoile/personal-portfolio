@@ -11,7 +11,7 @@ function Media({ post }: { post: (typeof posts)[number] }) {
     // eslint-disable-next-line @next/next/no-img-element
     return <img className={alt.img} src={post.image} alt={post.title} />;
   }
-  // fallback only — every real post carries a static thumbnail image
+  // fallback only, every real post carries a static thumbnail image
   return (
     <figure className={`${styles.conceptFig} ${alt.mediaConcept}`}>
       <ConceptThreshold />
@@ -47,7 +47,7 @@ function PostBody({ post }: { post: (typeof posts)[number] }) {
   );
 }
 
-/** V1 — current locked writing: horizontal cards, text left + image/concept right. */
+/** V1, current locked writing: horizontal cards, text left + image/concept right. */
 function WritingV1() {
   return (
     <section className={styles.section}>
@@ -77,7 +77,7 @@ function WritingV1() {
   );
 }
 
-/** V2 — stacked feature: first post large (media on top), second compact. */
+/** V2, stacked feature: first post large (media on top), second compact. */
 function WritingV2() {
   return (
     <section className={alt.section}>
@@ -99,7 +99,7 @@ function WritingV2() {
   );
 }
 
-/** V3 — two-up vertical cards: media on top, text below. */
+/** V3, two-up vertical cards: media on top, text below. */
 function WritingV3() {
   return (
     <section className={alt.section}>

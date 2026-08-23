@@ -5,7 +5,7 @@ import Link from "next/link";
 import home from "./home.module.css";
 
 /**
- * Shared parts of the Case Files baseline (Projects) — per Kyle's spec:
+ * Shared parts of the Case Files baseline (Projects), per Kyle's spec:
  * every card renders AS-IS (the same card it is when open) and the pile is
  * simply those cards stacked at their slots, occlusion following pile
  * order. A labeled tab row sits along the top edge; hovering a filed tab
@@ -44,11 +44,11 @@ export const mod = (n: number, m: number) => ((n % m) + m) % m;
 // step (--sprX/--sprY in CSS). ONE pose per slot, shared by the buried
 // sheet, the preview card's rest dock, AND the row tab's stagger (tab ty =
 // y·sprY + 2), so a lift is a single continuous motion from exactly the
-// state the pile showed — nothing pops or doubles at hover-start. The
+// state the pile showed, nothing pops or doubles at hover-start. The
 // varied x gaps carry the hand-stacked look; `r` is a slight lean the
 // folder gains only IN FLIGHT (a static lean would crack the pixel-exact
 // tab handoff at rest).
-// Slots are FIXED PER INDEX — the pile is always ordered 01..0n top to
+// Slots are FIXED PER INDEX, the pile is always ordered 01..0n top to
 // bottom (Kyle's model: leftmost = topmost); opening a file takes it OUT
 // of the pile (its slot gaps) and the rest never re-sort.
 export const SPRAWL: ReadonlyArray<{ x: number; y: number; r: number }> = [
@@ -66,10 +66,10 @@ export const sprawlVars = (i: number): CSSProperties => {
   return { "--jx": s.x, "--jy": s.y, "--jr": `${s.r}deg` } as CSSProperties;
 };
 
-// the open file sits square on the desk — its tab carries no slot offset
+// the open file sits square on the desk, its tab carries no slot offset
 export const zeroVars: CSSProperties = { "--jx": 0, "--jy": 0, "--jr": "0deg" } as CSSProperties;
 
-// index → the fsRise start pose. fsRise (slot pull) uses --d0x/--d0y —
+// index → the fsRise start pose. fsRise (slot pull) uses --d0x/--d0y,
 // straight, like the pile at rest; fsRiseUp (pulling the risen preview)
 // uses --d0x/--d0r to continue down from the lifted pose.
 export const riseOrigin = (i: number): CSSProperties => {
@@ -132,7 +132,7 @@ export function FileInnards({ p, top }: { p: Proj; top: boolean }) {
   );
 }
 
-// The drawer index — labeled folder tabs along the pile's top edge, each
+// The drawer index, labeled folder tabs along the pile's top edge, each
 // resting 2px above its folder's sheet top (the slot's SPRAWL y), so the
 // row reads as the stack; pulls re-settle the stagger around the new top.
 // Hovering (or focusing) a filed tab tugs its whole folder via
@@ -210,14 +210,14 @@ export function FileTabs({ projects, idx, pull, onHover, onLeave, raised, fan, m
   );
 }
 
-// Filed cards — every filed dossier is the SAME card it is when open,
+// Filed cards, every filed dossier is the SAME card it is when open,
 // rendered as-is (inert innards) and resting in its FIXED index slot,
 // interleaved into the index-ordered z ladder with the tabs (27 − 2i vs
 // 28 − 2i) so occlusion follows pile order alone. While `tug` points at
 // one, the row tab hands off to the tab attached to the card
 // (fsUnderTab) and the whole folder rises straight up as the preview;
 // risen it's also a click target (`pull`), and hovering it keeps the tug
-// alive so the pointer can travel onto it. Always aria-hidden — the tabs
+// alive so the pointer can travel onto it. Always aria-hidden, the tabs
 // are the semantic path; their summary spans carry the same payoff for
 // screen readers.
 export function FileUnders({ projects, idx, tug, tabXs, tabCs, pull, onHover, onLeave }: {
@@ -225,7 +225,7 @@ export function FileUnders({ projects, idx, tug, tabXs, tabCs, pull, onHover, on
   idx: number;
   tug?: number | null;
   tabXs?: ReadonlyArray<number | undefined>;
-  tabCs?: ReadonlyArray<number | undefined>; // tab centers — each card's fan pivot
+  tabCs?: ReadonlyArray<number | undefined>; // tab centers, each card's fan pivot
   pull?: (i: number) => void;
   onHover?: (i: number) => void;
   onLeave?: () => void;
@@ -256,7 +256,7 @@ export function FileUnders({ projects, idx, tug, tabXs, tabCs, pull, onHover, on
               // through the fall so the attached tab never jumps
               // mid-flight); CSS subtracts the card's own offset
               ...(tabXs?.[i] != null ? { "--tabx": `${tabXs[i]}px` } : null),
-              // its tab's center — the fan's rotation pivot, shared with
+              // its tab's center, the fan's rotation pivot, shared with
               // the row tab so the pair swings as one object
               ...(tabCs?.[i] != null ? { "--tabc": `${tabCs[i]}px` } : null),
             } as CSSProperties}

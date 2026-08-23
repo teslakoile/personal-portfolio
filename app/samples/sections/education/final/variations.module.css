@@ -1,11 +1,11 @@
-/* Education — final, card-less. Rendered inside .theme (shell), so
+/* Education, final, card-less. Rendered inside .theme (shell), so
    --surface/--fg/--muted/--faint/--border/--surface-alt tokens + every
    var(--font-*) resolve from there. Two unique prefixes (.a* / .b*) so the
-   options never collide. NO card, NO surface box, NO shadow around entries —
+   options never collide. NO card, NO surface box, NO shadow around entries,
    content sits on the paper, structured by layout + hairlines + type. No design
    coral anywhere: only the school logos carry their own brand colour. */
 
-/* ============ Option A · LEDGER — logo/identity rail + honours, Geist ======= */
+/* ============ Option A · LEDGER, logo/identity rail + honours, Geist ======= */
 .aWrap { margin: 0; }
 .aList {
   display: grid;
@@ -59,7 +59,7 @@
   margin: 0;
 }
 .aDetail { min-width: 0; }
-/* decluttered: no chips, no label, no underline rule, no tick marks — just a
+/* decluttered: no chips, no label, no underline rule, no tick marks, just a
    plain honours & activities list. */
 .aPoints {
   list-style: none;
@@ -77,7 +77,7 @@
   line-height: 1.55;
   text-wrap: pretty;
 }
-/* small dot bullet + hanging indent — wrapped lines align under the text, so
+/* small dot bullet + hanging indent, wrapped lines align under the text, so
    the list reads evenly. */
 .aPoint::before {
   content: "";
@@ -98,7 +98,7 @@
   }
 }
 
-/* ============ Option B · REGISTRY — numbered index, Fraunces school names === */
+/* ============ Option B · REGISTRY, numbered index, Fraunces school names === */
 .bWrap { margin: 0; }
 .bList {
   list-style: none;

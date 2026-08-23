@@ -4,9 +4,9 @@ import home from "./home.module.css";
 import { Emph } from "../samples/quiet/helpers";
 
 /**
- * Recognition — landing treatment: Swiss footnote columns. Three equal columns,
+ * Recognition, landing treatment: Swiss footnote columns. Three equal columns,
  * each opened by a 2px ink rule (the page's only heavy-rule moment); the one
- * outbound link is a plain underlined accent link. Static by design — the quiet
+ * outbound link is a plain underlined accent link. Static by design, the quiet
  * passage between the stat billboard and the quotes. Carded variants: /samples.
  */
 export function RecognitionColumns() {

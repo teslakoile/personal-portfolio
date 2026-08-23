@@ -4,7 +4,7 @@ import home from "./home.module.css";
 import { Emph } from "../samples/quiet/helpers";
 
 /**
- * Community & Speaking — landing treatment: an impact billboard on bare paper.
+ * Community & Speaking, landing treatment: an impact billboard on bare paper.
  * GDG Davao leads with oversized stat numerals parted by vertical hairlines
  * (one of the page's two jumbo-numeral moments, twinned with the GitHub total);
  * Global Shapers is a one-line ledger footnote; talks are a numbered index.
@@ -20,7 +20,7 @@ export function CommunityBillboard() {
     <section className={styles.section} aria-label="Community and speaking">
       <h2 className={styles.h2}>Community &amp; Speaking</h2>
 
-      {/* lead org — header row, blurb, stat billboard */}
+      {/* lead org, header row, blurb, stat billboard */}
       <div className={home.comHead}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className={home.comLogo} src={lead.logo} alt="" aria-hidden="true" />
@@ -44,7 +44,7 @@ export function CommunityBillboard() {
         </dl>
       ) : null}
 
-      {/* sibling org — a deliberate one-line ledger footnote */}
+      {/* sibling org, a deliberate one-line ledger footnote */}
       <a className={home.comSibling} href={sibling.url} target="_blank" rel="noreferrer">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className={home.comSibLogo} src={sibling.logo} alt="" aria-hidden="true" />
@@ -53,7 +53,7 @@ export function CommunityBillboard() {
         <span className={home.comMeta}>{sibling.period}</span>
       </a>
 
-      {/* speaking — numbered index rows */}
+      {/* speaking, numbered index rows */}
       <p className={home.comSubHead}>Speaking &amp; Talks</p>
       <div>
         {talks.map((t, i) => (

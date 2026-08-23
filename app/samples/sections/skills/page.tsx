@@ -11,7 +11,7 @@ const idx = (i: number) => String(i + 1).padStart(2, "0");
 function General({ g }: { g: Group }) {
   if (g.general.length === 0) return null;
   return (
-    <ul className={v.general} aria-label={`${g.title} — general`}>
+    <ul className={v.general} aria-label={`${g.title}, general`}>
       {g.general.map((c) => <li key={c} className={v.genChip}>{c}</li>)}
     </ul>
   );
@@ -25,7 +25,7 @@ function Tools({ g }: { g: Group }) {
   );
 }
 
-/** A · Bento — the content-heavy domains (Data Engineering, Developer Tools)
+/** A · Bento, the content-heavy domains (Data Engineering, Developer Tools)
     span the full width as anchors; the rest sit in a 2×2 block between them. */
 function VariantBento() {
   return (
@@ -45,7 +45,7 @@ function VariantBento() {
   );
 }
 
-/** B · Blueprint — each card carries a coral index and a faint graph-paper
+/** B · Blueprint, each card carries a coral index and a faint graph-paper
     wash fading from the top-right corner (the site's blueprint motif). */
 function VariantBlueprint() {
   return (
@@ -69,7 +69,7 @@ function VariantBlueprint() {
   );
 }
 
-/** C · Spec sheet — one panel, numbered horizontal rows: title + blurb on the
+/** C · Spec sheet, one panel, numbered horizontal rows: title + blurb on the
     left, general + tooling on the right, hairline between domains. */
 function VariantRows() {
   return (
@@ -102,17 +102,17 @@ export default function SkillsExplore() {
         </p>
 
         <div className={shell.vblock}>
-          <p className={shell.vlabel}>A · Bento — flagship domains span the full width</p>
+          <p className={shell.vlabel}>A · Bento, flagship domains span the full width</p>
           <VariantBento />
         </div>
 
         <div className={shell.vblock}>
-          <p className={shell.vlabel}>B · Blueprint — coral index + faint graph-paper</p>
+          <p className={shell.vlabel}>B · Blueprint, coral index + faint graph-paper</p>
           <VariantBlueprint />
         </div>
 
         <div className={shell.vblock}>
-          <p className={shell.vlabel}>C · Spec sheet — numbered horizontal rows</p>
+          <p className={shell.vlabel}>C · Spec sheet, numbered horizontal rows</p>
           <VariantRows />
         </div>
       </div>

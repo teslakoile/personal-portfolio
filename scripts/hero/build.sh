@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Rebuilds the home-page hero portrait from public/hero/source.png.
 #
-# Nothing here touches public/me.jpg or public/me-halftone.png — those stay as
+# Nothing here touches public/me.jpg or public/me-halftone.png, those stay as
 # they were. The hero reads public/hero/portrait-halftone.png, which this
 # script is the only producer of.
 #

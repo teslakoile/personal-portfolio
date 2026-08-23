@@ -33,7 +33,7 @@ function Cta() {
   );
 }
 
-/** V1 — current locked hero: graph-paper backdrop, two-tone headline, CTA + contact row. */
+/** V1, current locked hero: graph-paper backdrop, two-tone headline, CTA + contact row. */
 function HeroV1() {
   return (
     <section className={styles.hero}>
@@ -43,8 +43,8 @@ function HeroV1() {
         {sample.hero.eyebrow}
       </p>
       <h1 className={`${styles.heroHeadline} ${styles.rise} ${styles.d1}`}>
-        I build the data and AI infrastructure{" "}
-        <span className={styles.heroHeadlineMuted}>enterprises run on.</span>
+        I build AI agents, data pipelines,{" "}
+        <span className={styles.heroHeadlineMuted}>and cloud infrastructure.</span>
       </h1>
       <p className={`${styles.heroSub} ${styles.rise} ${styles.d2}`}>
         <Emph text={sample.hero.subhead} />
@@ -57,7 +57,7 @@ function HeroV1() {
   );
 }
 
-/** V2 — stat-anchored: headline left, a "selected outcome" proof panel right so
+/** V2, stat-anchored: headline left, a "selected outcome" proof panel right so
     the first screen shows concrete proof, not just a claim. */
 function HeroV2() {
   return (
@@ -69,8 +69,8 @@ function HeroV2() {
           {sample.hero.eyebrow}
         </p>
         <h1 className={alt.headlineSm}>
-          I build the data and AI infrastructure{" "}
-          <span className={styles.heroHeadlineMuted}>enterprises run on.</span>
+          I build AI agents, data pipelines,{" "}
+          <span className={styles.heroHeadlineMuted}>and cloud infrastructure.</span>
         </h1>
         <p className={alt.subSm}><Emph text={sample.hero.subhead} /></p>
         <div className={alt.v2Actions}>
@@ -80,7 +80,7 @@ function HeroV2() {
       </div>
       <aside className={alt.proofCard}>
         <p className={alt.proofLabel}>Selected outcome</p>
-        <p className={alt.proofTitle}>Single Customer View — a major Philippine bank</p>
+        <p className={alt.proofTitle}>Single Customer View, a major Philippine bank</p>
         <dl className={alt.proofMetrics}>
           {[sample.outcome.metrics[1], sample.outcome.metrics[2]].map((m) => (
             <div key={m.label} className={alt.proofRow}>
@@ -97,7 +97,7 @@ function HeroV2() {
   );
 }
 
-/** V3 — centered editorial: no grid backdrop, larger headline, calmer and more
+/** V3, centered editorial: no grid backdrop, larger headline, calmer and more
     confident. Eyebrow, headline, subhead and actions all centered. */
 function HeroV3() {
   return (
@@ -107,8 +107,8 @@ function HeroV3() {
         {sample.hero.eyebrow}
       </p>
       <h1 className={alt.headlineLg}>
-        I build the data and AI infrastructure{" "}
-        <span className={styles.heroHeadlineMuted}>enterprises run on.</span>
+        I build AI agents, data pipelines,{" "}
+        <span className={styles.heroHeadlineMuted}>and cloud infrastructure.</span>
       </h1>
       <p className={alt.subCenter}><Emph text={sample.hero.subhead} /></p>
       <div className={alt.v3Actions}>

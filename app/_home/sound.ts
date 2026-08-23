@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Micro sound effects — tiny WebAudio blips, no audio files. Everything is
+ * Micro sound effects, tiny WebAudio blips, no audio files. Everything is
  * guarded: SSR-safe (functions only run in event handlers), autoplay-safe (the
  * context unlocks on the first user gesture that triggers a sound), and
  * user-controllable (persisted toggle, default ON at a near-subliminal volume).
@@ -58,32 +58,32 @@ function blip(freq: number, dur: number, vol: number, type: OscillatorType = "tr
   osc.stop(t + dur + 0.02);
 }
 
-/** Nav hover / keystroke — a faint mechanical tick. */
+/** Nav hover / keystroke, a faint mechanical tick. */
 export function tick() {
   blip(1850, 0.045, 0.028);
 }
 
-/** Click / confirm — slightly rounder. */
+/** Click / confirm, slightly rounder. */
 export function click() {
   blip(940, 0.07, 0.04, "triangle", 660);
 }
 
-/** Modal open — soft rising pop. */
+/** Modal open, soft rising pop. */
 export function popOpen() {
   blip(320, 0.12, 0.045, "sine", 520);
 }
 
-/** Modal close — soft falling pop. */
+/** Modal close, soft falling pop. */
 export function popClose() {
   blip(480, 0.11, 0.04, "sine", 260);
 }
 
-/** Typing-test error — low thud. */
+/** Typing-test error, low thud. */
 export function thud() {
   blip(160, 0.09, 0.05, "sine", 110);
 }
 
-/** Typing-test finish — a tiny two-note chime. */
+/** Typing-test finish, a tiny two-note chime. */
 export function chime() {
   blip(660, 0.14, 0.045, "sine");
   setTimeout(() => blip(990, 0.2, 0.045, "sine"), 110);

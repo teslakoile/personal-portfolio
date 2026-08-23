@@ -5,7 +5,7 @@ import home from "./home.module.css";
 import { FileInnards, FileRail, FileTabs, FileUnders, mod, riseOrigin, type Proj } from "./fileParts";
 
 /**
- * File-stack client island — the Case Files BASELINE for Projects, per
+ * File-stack client island, the Case Files BASELINE for Projects, per
  * Kyle's spec: every card renders AS-IS and the pile is simply those
  * cards stacked on top of each other at their slots. (1) labeled tab row
  * up top, the open file square beneath, filed card edges stair-stepping
@@ -52,7 +52,7 @@ export function FileStack({ projects }: { projects: ReadonlyArray<Proj> }) {
   // travel up onto the risen folder (re-entering it cancels the drop).
   // Tab geometry lives in state (refreshed by the row's ref callbacks
   // every commit, change-guarded so it settles): xs is each tab's
-  // row-slot x, so the card's attached tab swaps in — and lands —
+  // row-slot x, so the card's attached tab swaps in, and lands,
   // pixel-aligned; cs is each tab's center, the point its card pivots
   // around when the pile fans.
   const [geom, setGeom] = useState<{ xs: (number | undefined)[]; cs: (number | undefined)[] }>({ xs: [], cs: [] });
@@ -78,7 +78,7 @@ export function FileStack({ projects }: { projects: ReadonlyArray<Proj> }) {
   // pushed and leaned by row distance, signed by row position (left when
   // its own tab sits left of the hovered one, right otherwise), pivoting
   // at its own tab's center. The lean caps at two steps, matching the
-  // filed cards' --fdc. --tabc (the pivot) outlives the tug — dropping
+  // filed cards' --fdc. --tabc (the pivot) outlives the tug, dropping
   // it mid-fall would re-aim the easing rotation and tear tab from card.
   const fanVars = (() => {
     const pivot = geom.cs[idx] != null

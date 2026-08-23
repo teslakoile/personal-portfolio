@@ -2,12 +2,12 @@ import type { CSSProperties, ReactNode } from "react";
 import { fontVars } from "../fonts";
 
 /**
- * The samples playground now shares THE GLOBAL FONTSET (app/fonts.ts — Swiss:
+ * The samples playground now shares THE GLOBAL FONTSET (app/fonts.ts, Swiss:
  * Geist + Geist Mono). The exploration pages were written against nine font
  * variables; rather than editing every legacy module, the old variable names
  * are aliased onto the global families here, so every sample renders in the
  * locked fontset and nothing extra downloads. (This is also why the retired
- * fontset-comparison page is gone — the candidates no longer load.)
+ * fontset-comparison page is gone, the candidates no longer load.)
  */
 const legacyFontAliases: CSSProperties = {
   "--font-fraunces": "var(--font-geist)",

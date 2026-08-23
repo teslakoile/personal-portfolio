@@ -4,7 +4,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 import styles from "./styles.module.css";
 
 /**
- * Subtle, fire-once entrance for a section. Visible by default — content renders
+ * Subtle, fire-once entrance for a section. Visible by default, content renders
  * with no JS, with reduced-motion, and in screenshots. The reveal is purely
  * additive: we only arm elements that are below the fold on mount, then animate
  * them in once as they scroll into view. In-view content is never hidden.

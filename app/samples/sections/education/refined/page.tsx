@@ -8,12 +8,12 @@ type Education = (typeof sample.education)[number];
 const edu = sample.education;
 
 /* ============================================================================
-   V1 · Refined credential card — the diploma pick, neutralized
+   V1 · Refined credential card, the diploma pick, neutralized
    The base layout (two-column card · identity + honours ledger split by a
    hairline) carried forward, but: the coral seal is replaced by the school's
    REAL logo on a neutral ground, every coral accent is swapped for ink/border
    tones, and the type stays inside Geist sans with a deliberate, code-free
-   hierarchy — the "Honours" label becomes a tracked sans eyebrow under a rule.
+   hierarchy, the "Honours" label becomes a tracked sans eyebrow under a rule.
    ========================================================================== */
 function VariantOne() {
   return (
@@ -53,11 +53,11 @@ function VariantOne() {
 }
 
 /* ============================================================================
-   V2 · Diploma — editorial serif credential
+   V2 · Diploma, editorial serif credential
    The warmest, most academic take. School names + the "Honours" label + the
    period set in Fraunces serif (with a serif-italic "Conferred" period); the
    logo is framed like a wax seal would be, and honours surface as bordered
-   medallion chips. No coral anywhere — ink, paper-alt grounds, and hairlines.
+   medallion chips. No coral anywhere, ink, paper-alt grounds, and hairlines.
    ========================================================================== */
 function VariantTwo() {
   return (
@@ -81,7 +81,7 @@ function VariantTwo() {
                 </div>
               </div>
               {chips.length > 0 && (
-                <ul className={v.twoChips} aria-label={`${e.school} — honours`}>
+                <ul className={v.twoChips} aria-label={`${e.school}, honours`}>
                   {chips.map((h) => (
                     <li key={h} className={v.twoChip}>{h}</li>
                   ))}
@@ -107,10 +107,10 @@ function VariantTwo() {
 }
 
 /* ============================================================================
-   V3 · Registry — quiet, minimal ledger
+   V3 · Registry, quiet, minimal ledger
    The most restrained reading. A low-contrast card with the logo kept small
    beside a tracked label row; school name in a calm sans, period as a faint
-   tabular note. Honours collapse to a plain hairline-led list — no ticks, no
+   tabular note. Honours collapse to a plain hairline-led list, no ticks, no
    colour, just rhythm. "Honours" set as a tiny tracked registry caption.
    ========================================================================== */
 function VariantThree() {
@@ -152,23 +152,23 @@ export default function EducationRefined() {
         <p className={shell.vlabel}>Education · refined explorations</p>
         <h1 className={shell.pageTitle}>Refining the diploma-card pick</h1>
         <p className={shell.pageHint}>
-          Three refinements of the credential-card direction — real school logos in
+          Three refinements of the credential-card direction, real school logos in
           place of the seal, a neutral ink-and-paper palette (no coral; the logos keep
           their own brand colours), and a distinct type treatment per version.
         </p>
 
         <div className={shell.vblock}>
-          <p className={shell.vlabel}>V1 · Refined credential — neutral, deliberate Geist sans</p>
+          <p className={shell.vlabel}>V1 · Refined credential, neutral, deliberate Geist sans</p>
           <VariantOne />
         </div>
 
         <div className={shell.vblock}>
-          <p className={shell.vlabel}>V2 · Diploma — editorial Fraunces serif accents</p>
+          <p className={shell.vlabel}>V2 · Diploma, editorial Fraunces serif accents</p>
           <VariantTwo />
         </div>
 
         <div className={shell.vblock}>
-          <p className={shell.vlabel}>V3 · Registry — quiet, minimal ledger</p>
+          <p className={shell.vlabel}>V3 · Registry, quiet, minimal ledger</p>
           <VariantThree />
         </div>
       </div>

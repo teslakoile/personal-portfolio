@@ -5,11 +5,11 @@ import home from "./home.module.css";
 import { FileInnards, FileRail, FileTabs, FileUnders, mod, riseOrigin, type Proj } from "./fileParts";
 
 /**
- * Case Files variant — DRAG TO DEAL. The baseline pile (tab-hover previews
+ * Case Files variant, DRAG TO DEAL. The baseline pile (tab-hover previews
  * included), but the open file is also a sheet you can pick up: it follows
  * the pointer with a tilt that flips with grab height (paper pivots around
  * your fingers), sideways glide free, vertical follow damped 4:1. Past
- * min(30% width, 140px) — or a flick — the release deals it away in the
+ * min(30% width, 140px), or a flick, the release deals it away in the
  * drag direction (left = next, right = previous) and the neighbor rises;
  * under the threshold it springs back, so a drag either navigates or costs
  * nothing. Drag is a pointer-only enhancement with no aria of its own.
@@ -55,7 +55,7 @@ export function FileStackDrag({ projects }: { projects: ReadonlyArray<Proj> }) {
   // leaving the row clears the tug after a short grace, so the pointer can
   // travel up onto the risen folder (re-entering it cancels the drop).
   // tabXs caches each tab's row-slot x (kept through the fall) so the
-  // attached tab swaps in — and lands — pixel-aligned.
+  // attached tab swaps in, and lands, pixel-aligned.
   const leaveT = useRef<number | null>(null);
   const tabXs = useRef<(number | undefined)[]>([]);
   const hoverTab = (i: number, x?: number) => {
@@ -181,7 +181,7 @@ export function FileStackDrag({ projects }: { projects: ReadonlyArray<Proj> }) {
           onHover={hoverTab} onLeave={leaveTab} raised={tug} />
 
         <div className={home.fsWell}>
-          {/* retired variant — kept for possible revival; the live island
+          {/* retired variant, kept for possible revival; the live island
               (FileStack) holds this geometry in state instead */}
           {/* eslint-disable-next-line react-hooks/refs */}
           <FileUnders projects={projects} idx={idx} tug={tug} tabXs={tabXs.current}

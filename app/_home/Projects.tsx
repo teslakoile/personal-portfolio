@@ -5,7 +5,7 @@ import home from "./home.module.css";
 import { FileStack } from "./FileStack";
 
 /**
- * Projects — the Case Files pile, Kyle's chosen baseline for the flagship
+ * Projects, the Case Files pile, Kyle's chosen baseline for the flagship
  * section (labeled dossier tabs + screenshot peeks; see FileStack.tsx for
  * the island). Interaction variants are explored at /samples/rework/projects;
  * this stays the landing composition until a different pick lands.
@@ -21,7 +21,7 @@ export function Projects() {
         <h2 className={`${styles.h2} ${home.pjH2}`}>Projects</h2>
         <div className={home.pjHeadMeta}>
           <span className={home.secNote}>
-            {String(sample.projects.length).padStart(2, "0")} works · 2022 – Present
+            {String(sample.projects.length).padStart(2, "0")} works · 2022 to Present
           </span>
           <Link href="/projects" className={home.pjAll}>
             See All Projects <span className={home.pjAllArrow} aria-hidden="true">→</span>

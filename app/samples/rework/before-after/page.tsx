@@ -8,10 +8,10 @@ import { About } from "../../quiet/sections/About";
 import { Community } from "../../quiet/sections/Community";
 
 /**
- * Before / after — the fontset trim + label sweep. The "before" column renders
+ * Before / after, the fontset trim + label sweep. The "before" column renders
  * the SAME live components with the old presentation re-applied via CSS
  * (eyebrow above the headline, all-caps labels); the "after" column is the
- * site as it ships. Both columns paint in the global Swiss fontset — the trim
+ * site as it ships. Both columns paint in the global Swiss fontset, the trim
  * itself changed zero pixels on the landing, only the network payload.
  */
 
@@ -54,7 +54,7 @@ export default function BeforeAfter() {
         <h1 className={shell.pageTitle}>What actually changed</h1>
         <p className={shell.pageHint}>
           Left is how the site looked before the sweep; right is how it ships
-          now. Same components, same data — the before column just re-applies
+          now. Same components, same data, the before column just re-applies
           the old eyebrow and all-caps styling.
         </p>
 
@@ -67,7 +67,7 @@ export default function BeforeAfter() {
                 <span className={ba.statBig}>9 families · 13 files · 434 KB</span>
                 <span className={ba.statSub}>
                   Geist, Geist Mono, Fraunces, Spline Sans, Inter, Source Serif 4,
-                  Space Grotesk, JetBrains Mono, IBM Plex Mono — all preloaded,
+                  Space Grotesk, JetBrains Mono, IBM Plex Mono, all preloaded,
                   two actually painted.
                 </span>
               </div>
@@ -77,7 +77,7 @@ export default function BeforeAfter() {
               <div className={`${shell.vstage} ${ba.stats}`}>
                 <span className={ba.statBig}>2 families · 4 files · 52 KB</span>
                 <span className={ba.statSub}>
-                  Geist + Geist Mono — the global fontset (app/fonts.ts), aliased
+                  Geist + Geist Mono, the global fontset (app/fonts.ts), aliased
                   across /samples and /classic too. Identical rendering, 88%
                   smaller.
                 </span>
@@ -86,18 +86,18 @@ export default function BeforeAfter() {
           </div>
         </div>
 
-        <Pair title="Hero + ticker — eyebrow removed, label de-capped">
+        <Pair title="Hero + ticker, eyebrow removed, label de-capped">
           <>
             <Hero variant={4} />
             <Marquee />
           </>
         </Pair>
 
-        <Pair title="About — glance labels de-capped">
+        <Pair title="About, glance labels de-capped">
           <About variant={3} />
         </Pair>
 
-        <Pair title="Community — KPI captions + sub-head de-capped">
+        <Pair title="Community, KPI captions + sub-head de-capped">
           <Community />
         </Pair>
       </div>

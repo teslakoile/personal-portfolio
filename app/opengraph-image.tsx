@@ -1,11 +1,11 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Kyle Naranjo — Data Engineer II. I build the data and AI infrastructure enterprises run on.";
+export const alt = "Kyle Naranjo, Data Engineer II. I build AI agents, data pipelines, and cloud infrastructure.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 /** Geist TTF via the Google Fonts CSS API (an old UA gets truetype URLs).
-    Fails soft — satori falls back to its default sans if the fetch dies. */
+    Fails soft, satori falls back to its default sans if the fetch dies. */
 async function loadGeist(weight: 500 | 700): Promise<ArrayBuffer | null> {
   try {
     const css = await (
@@ -44,7 +44,7 @@ export default async function Image() {
           fontFamily: fonts.length ? "Geist" : "sans-serif",
         }}
       >
-        {/* site principle: no eyebrows, no all-caps — a lone coral dot marks the top */}
+        {/* site principle: no eyebrows, no all-caps, a lone coral dot marks the top */}
         <div style={{ width: 16, height: 16, background: "#f5482d", borderRadius: 4 }} />
 
         <div
@@ -57,7 +57,7 @@ export default async function Image() {
             maxWidth: 900,
           }}
         >
-          I build the data and AI infrastructure enterprises run on.
+          I build AI agents, data pipelines, and cloud infrastructure.
         </div>
 
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>

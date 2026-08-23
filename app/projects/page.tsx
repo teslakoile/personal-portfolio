@@ -11,7 +11,7 @@ import { CONTACT_KIND } from "../samples/quiet/helpers";
 export const metadata: Metadata = {
   title: "Projects | Kyle Naranjo",
   description:
-    "Selected data and AI infrastructure projects — enterprise pipelines, agentic AI platforms, record linkage, and research systems built for financial services, education, and compliance.",
+    "Selected projects: AI agents, enterprise data pipelines, entity resolution, and research systems built for financial services, education, and compliance.",
   alternates: { canonical: "/projects" },
   openGraph: {
     title: "Projects | Kyle Naranjo",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * /projects — the Blueprint Dossier. One monumental column: a full-width
+ * /projects, the Blueprint Dossier. One monumental column: a full-width
  * drafting-grid plate per project (inline schematic from figures.tsx), then a
  * sticky spec rail beside long-form prose, exact metrics in mono, and links.
  * Landing sheets deep-link here via /projects#<slug>.
@@ -38,7 +38,7 @@ export default function ProjectsPage() {
             Kyle Naranjo
           </Link>
           <span className={prj.prjCount}>
-            {String(sample.projects.length).padStart(2, "0")} projects · 2022 – Present
+            {String(sample.projects.length).padStart(2, "0")} projects · 2022 to Present
           </span>
         </div>
       </header>
@@ -47,7 +47,7 @@ export default function ProjectsPage() {
         <div className={prj.prjHead}>
           <h1 className={prj.prjPageTitle}>Projects</h1>
           <p className={prj.prjLede}>
-            The systems behind the résumé lines — enterprise data platforms, agentic AI,
+            The systems behind the résumé lines: enterprise data platforms, agentic AI,
             and the research that started it all. Clients are anonymized; the numbers are exact.
           </p>
         </div>

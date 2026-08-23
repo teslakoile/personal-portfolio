@@ -1,4 +1,4 @@
-/* Skills — spec sheet: numbered rows, domain + blurb left, general skills
+/* Skills, spec sheet: numbered rows, domain + blurb left, general skills
    (outlined chips) over tooling (logo pills) right. Inherits Geist tokens from
    the ancestor .root. */
 
@@ -21,7 +21,7 @@
 }
 .row:first-child { border-top: none; }
 
-/* left column — index + domain + blurb */
+/* left column, index + domain + blurb */
 .rowIndex {
   font-family: var(--mono);
   font-size: 0.75rem;
@@ -41,7 +41,7 @@
 }
 .rowDesc { font-size: 0.8125rem; line-height: 1.5; color: var(--muted); margin: 0; text-wrap: pretty; }
 
-/* right column — general skills then tooling */
+/* right column, general skills then tooling */
 /* general = concepts, no logos → ghost/outlined chips, distinct from the filled,
    logo'd tool pills below them */
 .capChips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 9px 10px; }

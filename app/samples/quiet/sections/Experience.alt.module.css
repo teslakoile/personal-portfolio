@@ -1,4 +1,4 @@
-/* Experience variations (conservative — this section is already approved).
+/* Experience variations (conservative, this section is already approved).
    V2 and V3 both drop the left period rail and go full-width; they reuse the
    locked .roleCard, .bullets, .caseHead, .stackRow from styles.module.css. */
 
@@ -18,7 +18,7 @@
   white-space: nowrap;
 }
 
-/* V2 — outcome banner that leads the case */
+/* V2, outcome banner that leads the case */
 .banner {
   margin: 18px 0 4px;
   padding: 16px 18px;
@@ -50,7 +50,7 @@
 
 /* ===== V1 layout: one current role → uniform full client case cards ===== */
 
-/* the column of case cards under the role head — one consistent gap, so card
+/* the column of case cards under the role head, one consistent gap, so card
    margins don't stack unevenly */
 .caseStack { display: grid; gap: 16px; margin-top: 16px; }
 /* cancel roleCard's own top margin so the grid gap is the single source of spacing */

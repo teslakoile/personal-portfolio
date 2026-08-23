@@ -19,7 +19,7 @@ function Body({ a }: { a: (typeof sample.achievements)[number] }) {
   );
 }
 
-/** V1 — current locked recognition: two cards side by side. */
+/** V1, current locked recognition: two cards side by side. */
 function RecognitionV1() {
   return (
     <section className={styles.section}>
@@ -33,7 +33,7 @@ function RecognitionV1() {
   );
 }
 
-/** V2 — inline list, dashed rule between items (quieter, less boxy). */
+/** V2, inline list, dashed rule between items (quieter, less boxy). */
 function RecognitionV2() {
   return (
     <section className={alt.section}>
@@ -47,7 +47,7 @@ function RecognitionV2() {
   );
 }
 
-/** V3 — accent-marked cards: a restrained coral rule down the left edge. */
+/** V3, accent-marked cards: a restrained coral rule down the left edge. */
 function RecognitionV3() {
   return (
     <section className={alt.section}>

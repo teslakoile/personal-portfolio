@@ -1,8 +1,8 @@
-/* Education section layout explorations — rendered inside .theme (shell), so the
+/* Education section layout explorations, rendered inside .theme (shell), so the
    --surface/--fg/--accent/--mono/--shadow tokens resolve from there. Each variant
    uses a unique class prefix (.a* / .b* / .c*) so the three never collide. */
 
-/* ============ A · CREDENTIAL CERTIFICATE — sealed diploma cards ============ */
+/* ============ A · CREDENTIAL CERTIFICATE, sealed diploma cards ============ */
 .aWrap { margin: 0; }
 .aList { display: grid; gap: 18px; }
 .aCard {
@@ -112,7 +112,7 @@
   .aHonors { padding-left: 0; }
 }
 
-/* ============ B · ACADEMIC TIMELINE RAIL — coral-node date rail ============ */
+/* ============ B · ACADEMIC TIMELINE RAIL, coral-node date rail ============ */
 .bSection { margin: 0; }
 .bRail {
   /* Single source of truth for the timeline geometry so the rail line and the
@@ -222,7 +222,7 @@
   .bYearEnd { margin-left: 5px; }
 }
 
-/* ============ C · TRANSCRIPT — hairline registry with honour highlights ===== */
+/* ============ C · TRANSCRIPT, hairline registry with honour highlights ===== */
 .cSection { margin: 0; }
 .cTranscript {
   background: var(--surface);

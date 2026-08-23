@@ -1,4 +1,4 @@
-/* The Quiet Blueprint v2 — restrained CV. Tokens scoped to .root so this sample
+/* The Quiet Blueprint v2, restrained CV. Tokens scoped to .root so this sample
    never collides with siblings. Krehel polish throughout. */
 
 .root {
@@ -148,7 +148,7 @@
   mask-image: radial-gradient(130% 85% at 28% 0%, #000 0%, transparent 64%);
   pointer-events: none;
 }
-/* LEGACY — only the superseded sample heroes (V1–V3) render an eyebrow. The
+/* LEGACY, only the superseded sample heroes (V1-V3) render an eyebrow. The
    shipped site follows the typography baseline in app/fonts.ts: no eyebrows,
    no all-caps. Kept for the /samples archive. */
 .eyebrow {
@@ -223,7 +223,7 @@
 }
 .ctaPrimary:active { transform: translateY(0) scale(0.97); }
 
-/* secondary CTA — outline pill matching the primary's height (Download CV) */
+/* secondary CTA, outline pill matching the primary's height (Download CV) */
 .ctaSecondary {
   display: inline-flex;
   align-items: center;
@@ -329,7 +329,7 @@
 }
 
 /* ============================== SECTIONS =========================== */
-/* No solid divider rules between sections — separation comes from whitespace
+/* No solid divider rules between sections, separation comes from whitespace
    and the section headings (the rules read as too-explicit <hr> lines). */
 .section { padding-block: clamp(48px, 6.5vw, 84px); }
 .h2 {
@@ -390,7 +390,7 @@
 .roleSummary { margin: 0; max-width: 68ch; color: var(--muted); font-size: 0.95rem; line-height: 1.6; text-wrap: pretty; }
 .roleSummary + .stackRow { margin-top: 16px; }
 /* when a stack row follows bullets directly (no outcome strip between), it needs
-   its own breathing room — the strip's margins normally provide this */
+   its own breathing room, the strip's margins normally provide this */
 .bullets + .stackRow { margin-top: 20px; }
 /* confidential engagement, introduced within the card under a dashed rule */
 .caseHead {
@@ -416,7 +416,7 @@
 .bulletMark { color: var(--faint); font-size: 0.7rem; line-height: 1.7; transition: color 0.16s ease; }
 .bullet:hover .bulletMark { color: var(--accent); }
 
-/* outcome lives inside the case it belongs to — metrics stay NEUTRAL (Quiet) */
+/* outcome lives inside the case it belongs to, metrics stay NEUTRAL (Quiet) */
 .outcomeStrip {
   margin: 20px 0 18px;
   padding: 16px 4px;
@@ -507,7 +507,7 @@
   color: var(--accent);
   text-decoration: none;
 }
-/* unpublished post — an honest, non-interactive note instead of a dead link */
+/* unpublished post, an honest, non-interactive note instead of a dead link */
 .postSoon {
   display: inline-flex;
   align-items: center;
@@ -705,7 +705,7 @@
 
 /* ============================== RESPONSIVE ======================== */
 @media (max-width: 720px) {
-  /* keep the header to wordmark + CTA — four nav labels don't fit a phone */
+  /* keep the header to wordmark + CTA, four nav labels don't fit a phone */
   .navLink { display: none; }
   .about { grid-template-columns: 1fr; gap: 24px; }
   .tlRow { grid-template-columns: 1fr; gap: 8px; }

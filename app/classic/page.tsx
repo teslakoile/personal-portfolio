@@ -511,9 +511,9 @@ export default function Home() {
           Kyle Naranjo
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-relaxed text-foreground/70">
-          I build data and AI infrastructure for enterprise clients and
-          startups across financial services, investment management, education,
-          and compliance.
+          I build AI agents, data pipelines, and cloud infrastructure for enterprise
+          clients and startups across financial services, investment management,
+          education, and compliance.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
           {contactLinks.map((link) => (

@@ -5,7 +5,7 @@ import styles from "./styles.module.css";
 
 /**
  * The record-linkage match-weight figure, auto-demoing: a threshold line sweeps
- * left↔right and bars light up (match) or dim (non-match) as it crosses them —
+ * left↔right and bars light up (match) or dim (non-match) as it crosses them,
  * a live preview of the interactive explainer. SSR renders a valid resting frame
  * (so screenshots / no-JS / reduced-motion all look intentional); the sweep is
  * additive, runs only while on-screen, and stops for reduced-motion.

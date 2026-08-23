@@ -4,7 +4,7 @@ import home from "./home.module.css";
 import { Logo } from "../samples/quiet/Logo";
 
 /**
- * Certifications — landing treatment: a credential registry table on the tinted
+ * Certifications, landing treatment: a credential registry table on the tinted
  * band. Column heads in mono, rows ditto-grouped by issuer, zero cards. Rows
  * become links (with the ↗ tell) only once a real credential URL replaces the
  * "#" placeholder in sampleContent. The carded variants live on at /samples.
@@ -42,11 +42,11 @@ function Row({ cert, issuerCell }: { cert: Cert; issuerCell: boolean }) {
         ) : null}
       </span>
       <span className={home.certMobileMeta}>
-        {cert.issuer} · {cert.issued}{cert.expires ? ` – ${cert.expires}` : ""}
+        {cert.issuer} · {cert.issued}{cert.expires ? ` to ${cert.expires}` : ""}
       </span>
       <span className={home.certTitleCell}>{cert.title}</span>
       <span className={home.certDateCell}>{cert.issued}</span>
-      <span className={home.certDateCell}>{cert.expires ?? "—"}</span>
+      <span className={home.certDateCell}>{cert.expires ?? "None"}</span>
       <span className={home.certGo} aria-hidden="true">{hasUrl(cert) ? "↗" : ""}</span>
     </>
   );

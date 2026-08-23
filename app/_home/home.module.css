@@ -1,12 +1,12 @@
-/* Landing shell — sidebar layout (bryllim.com-inspired) wrapping the Quiet
+/* Landing shell, sidebar layout (bryllim.com-inspired) wrapping the Quiet
    Blueprint sections. All tokens (--bg, --fg, --accent, fonts…) cascade from the
    quiet styles.root wrapper; this module lays out the shell, the landing-only
    section treatments, and the ⌘K / ⌘J overlays.
 
-   PAGE RHYTHM CONTRACT — each section carries a distinct texture so no two
+   PAGE RHYTHM CONTRACT, each section carries a distinct texture so no two
    adjacent sections read the same:
      paper: Hero (halftone portrait) → Marquee (ticker) → About (editorial lead) →
-            Projects (the case-file pile — the page's only fanned, dimensional
+            Projects (the case-file pile, the page's only fanned, dimensional
             object; coral stamp on the open file) →
             Experience (the ONLY shadow-ring white-card moment) → Skills (spec
             rows) → Education (ledger)
@@ -180,7 +180,7 @@
 .sbIconLink:hover { color: var(--accent); background: color-mix(in srgb, var(--surface-alt) 70%, transparent); }
 
 /* ==================== GLOBAL SECTION GRAMMAR ======================= */
-/* Site principles: no eyebrows, no all-caps labels — hierarchy comes from
+/* Site principles: no eyebrows, no all-caps labels, hierarchy comes from
    size, weight, and the three font slots alone. */
 /* one metadata voice: mono, tabular, faint (overrides styles.sectionNote) */
 .secNote {
@@ -195,7 +195,7 @@
 .bandTint { background: var(--surface-alt); }
 .bandInk { background: var(--fg); }
 
-/* =============== RESOURCES / RECOMMENDATIONS — card designs ======== */
+/* =============== RESOURCES / RECOMMENDATIONS, card designs ======== */
 /* (the landing's current treatments; the de-carded alternatives further down
    are compared at /samples/rework) */
 .resGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -265,7 +265,7 @@
   color: var(--faint);
 }
 
-/* =============== GITHUB — card design (landing's current) ========== */
+/* =============== GITHUB, card design (landing's current) ========== */
 .ghGraphWrap {
   overflow-x: auto;
   padding: 20px 22px 16px;
@@ -282,7 +282,7 @@
 }
 .ghCaption b { color: var(--fg); font-weight: 600; }
 
-/* ================ CERTIFICATIONS — registry table (tint) =========== */
+/* ================ CERTIFICATIONS, registry table (tint) =========== */
 .certTable { display: grid; }
 .certHeadRow,
 .certRow {
@@ -327,7 +327,7 @@ a.certRow:hover .certTitleCell { color: var(--accent); }
 .certGo { color: var(--faint); font-size: 0.8rem; justify-self: end; transition: color 0.15s ease, transform 0.15s ease; }
 a.certRow:hover .certGo { color: var(--accent); transform: translate(2px, -2px); }
 
-/* ================= WRITING — open feature spreads (paper) ========== */
+/* ================= WRITING, open feature spreads (paper) ========== */
 .featRow {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 400px;
@@ -382,7 +382,7 @@ a.certRow:hover .certGo { color: var(--accent); transform: translate(2px, -2px);
 a.featRow:hover .featMedia img { transform: scale(1.025); }
 a.featRow:hover .featTitle { color: var(--accent); }
 
-/* ============ COMMUNITY — impact billboard + talk index (paper) ==== */
+/* ============ COMMUNITY, impact billboard + talk index (paper) ==== */
 .comHead { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .comLogo { height: 22px; width: auto; align-self: center; }
 .comOrg {
@@ -467,7 +467,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .talkDesc { font-size: 0.8125rem; line-height: 1.55; color: var(--muted); margin: 0; max-width: 62ch; text-wrap: pretty; }
 .talkMetaCol { font-family: var(--mono); font-size: 0.75rem; color: var(--faint); padding-top: 3px; }
 
-/* ============ RECOGNITION — Swiss footnote columns (paper) ========= */
+/* ============ RECOGNITION, Swiss footnote columns (paper) ========= */
 .regCols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
 .regCol {
   border-top: 2px solid var(--fg);
@@ -498,7 +498,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 }
 .regLink:hover { text-decoration-color: var(--accent); text-decoration-thickness: 2px; }
 
-/* ============ RECOMMENDATIONS — pull-quote stack (paper) =========== */
+/* ============ RECOMMENDATIONS, pull-quote stack (paper) =========== */
 .pq { max-width: 66ch; }
 .pqItem { padding-block: 28px; margin: 0; }
 .pqItem:first-child { padding-top: 8px; }
@@ -531,7 +531,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .pqName { font-size: 0.8125rem; font-weight: 600; color: var(--fg); }
 .pqTitle { font-size: 0.75rem; letter-spacing: 0; color: var(--faint); }
 
-/* ============ RESOURCES — annotated bibliography (paper) =========== */
+/* ============ RESOURCES, annotated bibliography (paper) =========== */
 /* deliberately the page's only rule-less list: spacing separates rows */
 .bib { display: grid; gap: 4px; }
 .bibRow {
@@ -563,7 +563,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .bibRow:hover .bibTitle { color: var(--accent); }
 .bibRow:hover .bibArrow { color: var(--accent); transform: translate(2px, -2px); }
 
-/* ================== GITHUB — the ink coda (bandInk) ================ */
+/* ================== GITHUB, the ink coda (bandInk) ================ */
 .ghGraphBare { overflow-x: auto; padding-bottom: 6px; }
 .ghSvg { display: block; }
 .ghD { rx: 2px; }
@@ -604,7 +604,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 }
 .ghLink:hover { color: var(--accent); }
 
-/* ink-band recolors — descendant overrides keep the components band-agnostic */
+/* ink-band recolors, descendant overrides keep the components band-agnostic */
 .bandInk h2 { color: var(--bg); }
 .bandInk .secEyebrow { color: #a8a29e; }
 .bandInk .secEyebrow::after { background: rgb(250 249 247 / 0.14); }
@@ -786,7 +786,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
   white-space: nowrap;
 }
 
-/* ========== RECOMMENDATIONS C — reference ledger (attribution rail) ===== */
+/* ========== RECOMMENDATIONS C, reference ledger (attribution rail) ===== */
 .refLedger { display: grid; }
 .refRow {
   display: grid;
@@ -814,7 +814,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
   text-wrap: pretty;
 }
 
-/* ========== RECOMMENDATIONS D — blurb wall (run-in attribution) ========= */
+/* ========== RECOMMENDATIONS D, blurb wall (run-in attribution) ========= */
 .blurbs { max-width: 66ch; display: grid; }
 .blurb {
   position: relative;
@@ -839,7 +839,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .blurbQuote::before { content: "\201C"; color: var(--accent); }
 .blurbQuote::after { content: "\201D"; color: var(--accent); }
 
-/* ========== RESOURCES C — contents page (numbered, dot leaders) ========= */
+/* ========== RESOURCES C, contents page (numbered, dot leaders) ========= */
 .tocList { display: grid; counter-reset: res; }
 .tocRow {
   counter-increment: res;
@@ -888,7 +888,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .tocRow:hover .tocTitle, .tocRow:hover .tocArrow { color: var(--accent); }
 .tocRow:hover .tocArrow { transform: translate(2px, -2px); }
 
-/* ========== RESOURCES D — appendix split (sticky side heading) ========== */
+/* ========== RESOURCES D, appendix split (sticky side heading) ========== */
 .splitSec { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 40px; align-items: start; }
 .splitHead { position: sticky; top: 92px; display: grid; gap: 10px; }
 .splitCount {
@@ -918,7 +918,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .splitRow:hover .splitTitle { color: var(--accent); }
 .splitRow:hover .splitArrow { color: var(--accent); transform: translate(2px, -2px); }
 
-/* ========== GITHUB C — closing ledger (paper, jumbo total beside field) == */
+/* ========== GITHUB C, closing ledger (paper, jumbo total beside field) == */
 .ghLedger {
   display: grid;
   grid-template-columns: minmax(170px, 236px) minmax(0, 1fr);
@@ -939,7 +939,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .ghLedgerField { overflow-x: auto; padding-bottom: 4px; }
 .ghLedgerField .ghD:hover { stroke: color-mix(in srgb, var(--fg) 35%, transparent); stroke-width: 1; }
 
-/* ========== GITHUB D — terminal plate (contained ink object) ============ */
+/* ========== GITHUB D, terminal plate (contained ink object) ============ */
 .ghPlate {
   background: var(--fg);
   border-radius: var(--r-card);
@@ -1063,7 +1063,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
   .splitHead { position: static; }
 }
 
-/* ========== RECOMMENDATIONS E — speech bubbles (paper) ================== */
+/* ========== RECOMMENDATIONS E, speech bubbles (paper) ================== */
 /* Tinted "received message" bubbles with hairline tails; attribution row
    (avatar/initials chip + name + title) sits under the tail. Bubbles use
    --surface-alt so Experience keeps its white-card moment. */
@@ -1089,7 +1089,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 }
 .voxFlip .voxBubble { border-radius: 14px 14px 6px 14px; }
 
-/* tail — rotated square sharing the bubble's fill and line */
+/* tail, rotated square sharing the bubble's fill and line */
 .voxBubble::after {
   content: "";
   position: absolute;
@@ -1120,11 +1120,11 @@ a.featRow:hover .featTitle { color: var(--accent); }
   color: var(--fg);
   text-wrap: pretty;
 }
-/* the section's single coral gesture — same grammar as recsQuote/blurbQuote */
+/* the section's single coral gesture, same grammar as recsQuote/blurbQuote */
 .voxQuote::before { content: "\201C"; color: var(--accent); }
 .voxQuote::after { content: "\201D"; color: var(--accent); }
 
-/* attribution row — avatar centered under the tail */
+/* attribution row, avatar centered under the tail */
 .voxWho {
   display: flex;
   align-items: center;
@@ -1167,7 +1167,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .voxName { font-size: 0.875rem; font-weight: 600; color: var(--fg); }
 .voxRole { font-size: 0.75rem; color: var(--faint); }
 
-/* ========== RECOMMENDATIONS F — attribution thread (avatar-led) ========= */
+/* ========== RECOMMENDATIONS F, attribution thread (avatar-led) ========= */
 .avtStack {
   --avt-size: 44px;
   --avt-pad: 26px;
@@ -1186,7 +1186,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 }
 .avtItem:first-child { padding-top: 8px; }
 
-/* thread spine — endpoints stop at the first/last avatar centers */
+/* thread spine, endpoints stop at the first/last avatar centers */
 .avtItem::before {
   content: "";
   position: absolute;
@@ -1222,7 +1222,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
   color: var(--muted);
 }
 
-/* lead entry — the section's single coral moment: an accent ring floated off
+/* lead entry, the section's single coral moment: an accent ring floated off
    the lead chip by a 2px paper gap, plus a modest type bump */
 .avtLead .avtChip {
   box-shadow: inset 0 0 0 1px var(--border), 0 0 0 2px var(--bg), 0 0 0 3px var(--accent);
@@ -1243,7 +1243,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
   text-wrap: pretty;
 }
 
-/* facepile — overlapping mini chips in the section head row */
+/* facepile, overlapping mini chips in the section head row */
 .avtPile { display: flex; align-items: center; gap: 12px; }
 .avtPileChips { display: flex; }
 .avtPileChips .avtChip {
@@ -1256,7 +1256,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .avtPileChips .avtInitials { font-size: 0.5625rem; letter-spacing: 0.02em; }
 .avtCount { white-space: nowrap; }
 
-/* ========== RESOURCES E — cover shelf (staff picks on ledges) =========== */
+/* ========== RESOURCES E, cover shelf (staff picks on ledges) =========== */
 .cshShelf {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
@@ -1279,7 +1279,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
   color: inherit;
 }
 
-/* the shelf cell — objects share a baseline; taller book, shorter plates */
+/* the shelf cell, objects share a baseline; taller book, shorter plates */
 .cshStage {
   position: relative;
   display: flex;
@@ -1313,7 +1313,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
-/* favicon plate — neutral surface-alt frame unifies mixed favicon art */
+/* favicon plate, neutral surface-alt frame unifies mixed favicon art */
 .cshPlate {
   width: 64px;
   height: 64px;
@@ -1323,7 +1323,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 }
 .cshPlate img { display: block; width: 30px; height: 30px; border-radius: 6px; }
 
-/* the book — 3D-ish standing cover; spine left */
+/* the book, 3D-ish standing cover; spine left */
 .cshBook {
   width: 66px;
   height: 88px;
@@ -1404,9 +1404,9 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .cshItem:hover .cshArrow { color: var(--accent); }
 .cshItem:hover .cshArrow { transform: translate(2px, -2px); }
 
-/* ========== RESOURCES F — icon plate list (app-store row grammar) ======= */
+/* ========== RESOURCES F, icon plate list (app-store row grammar) ======= */
 /* The plate is the row's ONLY card-like object, so the card hover grammar
-   lands on it — the row itself never lifts. */
+   lands on it, the row itself never lifts. */
 .plList { display: grid; }
 .plRow {
   display: grid;
@@ -1481,7 +1481,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .plRow:hover .plTitle { color: var(--accent); }
 .plRow:hover .plArrow { color: var(--accent); transform: translate(2px, -2px); }
 
-/* ========== GITHUB E — dot matrix (punch-card plate on white) =========== */
+/* ========== GITHUB E, dot matrix (punch-card plate on white) =========== */
 .dmCard {
   background: var(--surface);
   border-radius: 12px;
@@ -1532,7 +1532,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .dmMonth { font-family: var(--mono); font-size: 9px; fill: var(--faint); }
 
 .dmDot {
-  stroke: transparent; /* invisible hit ring — full-cell hover target */
+  stroke: transparent; /* invisible hit ring, full-cell hover target */
   stroke-width: 9;
   transition: r 0.16s ease, fill 0.16s ease;
 }
@@ -1559,7 +1559,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) { .dmDot { transition: none; } }
 
-/* ========== GITHUB F — year strip (column-bleed dissolve texture) ======= */
+/* ========== GITHUB F, year strip (column-bleed dissolve texture) ======= */
 .ysWrap { position: relative; }
 
 /* column bleed + horizontal dissolve: cells fade into paper at both ends */
@@ -1586,7 +1586,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
     #000 0%, #000 46%, rgb(0 0 0 / 0.32) 84%, rgb(0 0 0 / 0.22) 100%);
 }
 .ysSvg { display: block; width: 100%; height: auto; }
-/* de-carded hover: quiet ink stroke on the cell — no lift, no shadow */
+/* de-carded hover: quiet ink stroke on the cell, no lift, no shadow */
 .ysFade .ghD:hover { stroke: color-mix(in srgb, var(--fg) 32%, transparent); stroke-width: 0.8; }
 
 /* the stamp: overlapping stat line, painted above the strip */
@@ -1614,7 +1614,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .ysLabel { font-size: 0.8125rem; color: var(--muted); margin: 0; }
 .ysStat .ghLegend { margin-left: 0; padding-bottom: 4px; }
 
-/* ================= PROJECTS — section head row (shared) ================= */
+/* ================= PROJECTS, section head row (shared) ================= */
 /* Head grammar shared by the case-file pile and any future treatment: jumbo
    h2, mono works count, "See All Projects" link. The pile itself is the fs*
    family below. */
@@ -1626,7 +1626,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
   gap: 12px 24px;
   margin-bottom: 34px;
 }
-/* doubles styles.h2 — the page's largest section heading (hero still wins) */
+/* doubles styles.h2, the page's largest section heading (hero still wins) */
 .pjH2 { font-size: clamp(2rem, 4.4vw, 3.1rem); letter-spacing: -0.035em; margin: 0; }
 .pjHeadMeta { display: flex; align-items: baseline; gap: 22px; }
 .pjAll {
@@ -1648,7 +1648,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
   .ysBleed { margin-inline: 0; }
 }
 @media (max-width: 720px) {
-  /* speech bubbles: alternation off — every voice full-width, tail left */
+  /* speech bubbles: alternation off, every voice full-width, tail left */
   .vox { gap: 24px; }
   .voxItem, .voxFlip { justify-items: stretch; }
   .voxBubble, .voxFlip .voxBubble {
@@ -1671,7 +1671,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
   .avtPileChips .avtChip + .avtChip { margin-left: -6px; }
   .avtCount { display: none; }
 
-  /* cover shelf: floating-shelf rows — object left, talker text beside it */
+  /* cover shelf: floating-shelf rows, object left, talker text beside it */
   .cshShelf { grid-template-columns: 1fr; gap: 26px; }
   .cshItem { grid-template-columns: 88px minmax(0, 1fr); gap: 2px 18px; }
   .cshStage {
@@ -1715,16 +1715,16 @@ a.featRow:hover .featTitle { color: var(--accent); }
   .pjHeadMeta { flex-wrap: wrap; gap: 8px 18px; }
 }
 
-/* ============ PROJECTS — case files (dossier pile with tabs) ============ */
+/* ============ PROJECTS, case files (dossier pile with tabs) ============ */
 /* THE BASELINE (the original folder idea, refined per Kyle's spec):
-   1. aligned and straight — fixed, labeled folder tabs in a row along the
+   1. aligned and straight, fixed, labeled folder tabs in a row along the
       top edge (a scannable file drawer), the open file square beneath,
       buried sheet edges stair-stepping below; no leaning side peeks.
    2. hovering a filed tab lifts it slightly and its folder's header strip
       (numeral, title, client, claim, lead metric, screenshot thumb) rises
       from behind the open file as the preview.
    3. clicking a tab pulls that project to the top: the open file deals
-      away — down, tipped, under the pile — and the chosen file rises.
+      away, down, tipped, under the pile, and the chosen file rises.
    ONE static coral moment: the top file's stamp. Interaction variants
    (drag/spread/riffle families below) compose onto this grammar. */
 /* --sprX/--sprY set the pile sprawl's base step; the per-depth SPRAWL
@@ -1733,12 +1733,12 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .fsWrap { display: grid; gap: 30px; overflow-x: clip; margin-inline: -24px; padding-inline: 24px; --sprX: 9px; --sprY: 5px; }
 .fsDesk { width: min(680px, 100%); margin-inline: auto; padding-top: 96px; /* air for a tugged folder (tab + card top) to rise into */ }
 
-/* tab row — the drawer index; order never changes. Resting filed tabs sit
+/* tab row, the drawer index; order never changes. Resting filed tabs sit
    BELOW the pile in z (their tucked bottoms disappear behind the file's
-   top edge); a tugged folder — tab riding on its rising header sheet —
+   top edge); a tugged folder, tab riding on its rising header sheet,
    passes in front of them. */
 /* padding clears the card's 12px corner arc so the first tab never
-   crowds the broken corner — generous enough that a lifted folder's tab
+   crowds the broken corner, generous enough that a lifted folder's tab
    stays on its card for shallow depths without clamping (--cardx) */
 .fsTabs { position: relative; display: flex; align-items: flex-end; gap: 6px; padding-inline: 28px; }
 .fsTab {
@@ -1752,7 +1752,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
   border: 1px solid var(--border);
   border-bottom: none;
   border-radius: 9px 9px 0 0;
-  /* every tab is card-white — filed vs open reads through the stack's
+  /* every tab is card-white, filed vs open reads through the stack's
      own cast shadows (see .fsFile), not a fill swap (a solid tint pops
      mid-flight against the white card body) */
   background: var(--surface);
@@ -1763,9 +1763,9 @@ a.featRow:hover .featTitle { color: var(--accent); }
   /* sits exactly 1px into its folder's sheet top (the slot's sprawl y +
      the sheet's border), so the tab's own border meets the sheet edge with
      no whisker past it, and a tugged folder lifts from precisely this
-     pose — one shared geometry */
+     pose, one shared geometry */
   transform: translateY(calc(var(--jy, 0) * var(--sprY, 5px) + 1px));
-  /* the fan's lean pivots at the tab's base — the junction with its card.
+  /* the fan's lean pivots at the tab's base, the junction with its card.
      Declared HERE (not in the fan states) so the pivot never changes
      mid-flight: an origin swap at de-hover would re-aim the easing
      rotation and tear the tab off its card for the length of the fall. */
@@ -1787,15 +1787,15 @@ a.featRow:hover .featTitle { color: var(--accent); }
   color: var(--fg);
   padding-block: 10px 9px;
   /* a freshly pulled folder's tab returns the instant its card starts
-     settling — the fall's visibility delay must not apply here */
+     settling, the fall's visibility delay must not apply here */
   visibility: visible;
   transition: transform 0.34s cubic-bezier(0.45, 0, 0.25, 1), color 0.2s ease;
 }
 .fsTabOn .fsTabNum { color: var(--muted); }
-/* concave base fillets — the white tab flares into its card's top edge
+/* concave base fillets, the white tab flares into its card's top edge
    with a small curve instead of dying at a right angle. Drawn with radial
    gradients (fill outside the arc + hairline along it); the active tab's
-   ::after doubles as this (its hover hit-extension isn't needed — the
+   ::after doubles as this (its hover hit-extension isn't needed, the
    open file's tab has nothing to tug), hence the auto resets. */
 .fsTabOn::before, .fsTabOn::after,
 .fsUnderUp .fsUnderTab::before, .fsUnderUp .fsUnderTab::after {
@@ -1818,14 +1818,14 @@ a.featRow:hover .featTitle { color: var(--accent); }
   background: radial-gradient(circle 6px at 100% 0, transparent 4.6px, var(--border) 5.1px, var(--surface) 6px);
 }
 /* while its folder is tugged, the row tab hands off to the tab ATTACHED to
-   the rising card (.fsUnderTab) — an instant swap that's pixel-aligned at
+   the rising card (.fsUnderTab), an instant swap that's pixel-aligned at
    rest pose, so the folder truly is one object with its tab. The row tab
    returns the moment the card finishes falling back. */
 .fsTabUp { visibility: hidden; transition: visibility 0s; }
 /* keyboard focus keeps the row tab (and its ring) in place under the preview */
 .fsTabUp:focus-visible { visibility: visible; }
 /* the other filed tabs part around a lifted folder (the drawer making
-   room), on the rise clock — pushed by EXACTLY the card fan's delta and
+   room), on the rise clock, pushed by EXACTLY the card fan's delta and
    rotated by EXACTLY its angle about the junction point (the tab's own
    base, which is where its card pivots too), so tab and card stay one
    glued object throughout the fan and no gap ever opens under a tab */
@@ -1834,7 +1834,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 }
 .fsTabFanL { transform: translate(calc(-16px - var(--fd, 1) * 8px), calc(var(--jy, 0) * var(--sprY, 5px) + 1px)) rotate(calc(var(--fdc, 1) * -2deg)); }
 .fsTabFanR { transform: translate(calc(16px + var(--fd, 1) * 8px), calc(var(--jy, 0) * var(--sprY, 5px) + 1px)) rotate(calc(var(--fdc, 1) * 2deg)); }
-/* the open file's tab fans with its card — same push (--fanx), same lean
+/* the open file's tab fans with its card, same push (--fanx), same lean
    (--fanr), pivoting at its own base, so the open folder stays one glued
    object while it makes room */
 .fsTabsFan .fsTabOn:not(.fsTabUp) {
@@ -1849,7 +1849,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 /* the well: top file in flow (sets height); pile + dealt clone layered */
 .fsWell { position: relative; z-index: 30; pointer-events: none; }
 /* the well itself must not swallow clicks meant for the risen card's body
-   band beneath it — children re-enable their own hit-testing */
+   band beneath it, children re-enable their own hit-testing */
 .fsWell > * { pointer-events: auto; }
 
 .fsFile {
@@ -1862,7 +1862,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px 12px 14px 14px;
-  /* three layers, all straight down (light overhead — no x offset, per
+  /* three layers, all straight down (light overhead, no x offset, per
      the make-interfaces-feel-better shadow rules): a crisp 2px lift, a
      STACK contact layer whose soft blur is what shades the next card's
      sliver peeking out beneath this one, and a wide ambient. Every card
@@ -1871,7 +1871,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
   box-shadow: 0 2px 6px rgb(28 25 23 / 0.07), 0 4px 10px -3px rgb(28 25 23 / 0.15), 0 24px 48px -26px rgb(28 25 23 / 0.28);
 }
 
-/* filed dossiers — every card in the pile is the SAME card it is when
+/* filed dossiers, every card in the pile is the SAME card it is when
    open, rendered as-is (no repaint, no cropping) and simply stacked:
    each rests at its hand-placed slot offset (SPRAWL jitter, --jx/--jy)
    with an inline z of 27 − 2i, interleaving with the row tabs (28 − 2i)
@@ -1881,13 +1881,13 @@ a.featRow:hover .featTitle { color: var(--accent); }
   position: absolute;
   inset: 0;
   z-index: 12; /* fallback; the per-index inline z overrides */
-  /* the card's x — its slot's sprawl offset, CLAMPED so its attached tab
+  /* the card's x, its slot's sprawl offset, CLAMPED so its attached tab
      (at the row-slot x, --tabx) always lands ≥16px inside the card's
      left edge; without the clamp a left-edge tab on a deep folder would
      hang off its own card while lifted */
   --cardx: min(calc(var(--jx, 1) * var(--sprX)), calc(var(--tabx, 9999px) - 16px));
   transform: translate(var(--cardx), calc(var(--jy, 1) * var(--sprY)));
-  /* the fan's pivot — this card's own tab center (--tabc is in row
+  /* the fan's pivot, this card's own tab center (--tabc is in row
      space; the card's border box sits --cardx left of that frame).
      Declared HERE, not in the fan states, so the pivot never changes
      mid-flight (see .fsTab's transform-origin note). */
@@ -1902,7 +1902,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 /* airborne: the contact cast lifts away (nothing directly beneath) and
    the drop deepens one step */
 .fsUnderUp .fsFile { box-shadow: 0 2px 6px rgb(28 25 23 / 0.07), 0 20px 44px -22px rgb(28 25 23 / 0.3); }
-/* the tugged folder rises STRAIGHT UP out of its slot — the whole card,
+/* the tugged folder rises STRAIGHT UP out of its slot, the whole card,
    as-is, its top (numeral, title, client, stamp) clearing the pile into
    the head air while the rest stays occluded by whatever the pile order
    says covers it. Rise slower than fall, with a 40ms hover-intent delay;
@@ -1913,14 +1913,14 @@ a.featRow:hover .featTitle { color: var(--accent); }
   pointer-events: auto;
   cursor: pointer;
 }
-/* while a folder is lifted, the rest of the pile fans open around it —
+/* while a folder is lifted, the rest of the pile fans open around it,
    each remaining card (still as-is, still in its z slot) pushes sideways
    AWAY from the lift and leans the same way (left of it rotates
    counterclockwise, right of it clockwise), graded by row distance
    (--fd): the adjacent card eases out 2°, the next 4°… displacement
    accumulating like a real hand fan. Each card pivots at ITS OWN TAB's
-   row position (--tabc, the tab's center, measured at mount) — the same
-   point and angle its fanned row tab rotates about — so folder and tab
+   row position (--tabc, the tab's center, measured at mount), the same
+   point and angle its fanned row tab rotates about, so folder and tab
    swing as one object and the far side of the card sweeps wide, like a
    fan around its binding. Everything squares back up on the fall. */
 .fsUnderFanL, .fsUnderFanR {
@@ -1937,14 +1937,14 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .fsFileEase { transform-origin: var(--tabc, 340px) 0%; transition: transform 0.34s cubic-bezier(0.45, 0, 0.25, 1); }
 /* the open file fans too: it pushes and leans AWAY from the lifted
    folder in the same graded grammar as the filed cards (--fanx/--fanr
-   from the island — signed by row position, capped lean), pivoting at
+   from the island, signed by row position, capped lean), pivoting at
    its own tab's center so folder and tab (.fsTabsFan above) swing as one */
 .fsFileFan {
   transform: translateX(var(--fanx, 26px)) rotate(var(--fanr, 0deg));
   transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1) 40ms;
 }
 
-/* the folder's tab, ATTACHED to its card — sits at the exact row-slot x
+/* the folder's tab, ATTACHED to its card, sits at the exact row-slot x
    (--tabx, measured at tug time) and overlaps the card 1px so its
    background covers the card's top border: a notch, not a sticker.
    Styled like a row tab (composes) so the visibility handoff with the
@@ -1957,7 +1957,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
      so the tab lands on the slot while the card sits at its offset */
   left: calc(var(--tabx, 14px) - var(--cardx, 0px));
   bottom: calc(100% - 1px);
-  z-index: 31; /* over the card's own top border — the notch */
+  z-index: 31; /* over the card's own top border, the notch */
   transform: none;
   visibility: hidden;
   /* the fall's text morph lands exactly as the tab docks (0.34s), and
@@ -1966,7 +1966,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
   transition: color 0.34s ease, visibility 0s linear 0.34s;
   pointer-events: none;
 }
-/* text sharpens as the folder rises — same intent delay as the lift.
+/* text sharpens as the folder rises, same intent delay as the lift.
    While risen it's also a live hover/click target (the row tab it
    replaced is visibility-hidden and can't hold the pointer): its events
    bubble to the card's own handlers, so resting on the tab KEEPS the
@@ -2000,7 +2000,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
    jittered offsets at pull time) and settles square on top */
 @keyframes fsRise { from { transform: translate(calc(var(--d0x, 1) * var(--sprX, 9px)), calc(var(--d0y, 1) * var(--sprY, 5px))); } to { transform: none; } }
 /* pulling the folder already in your hand: the card CONTINUES down from
-   its risen preview pose onto the pile top — never teleports back in */
+   its risen preview pose onto the pile top, never teleports back in */
 @keyframes fsRiseUp { from { transform: translate(calc(var(--d0x, 1) * var(--sprX, 9px)), -100px); } to { transform: none; } }
 @media (prefers-reduced-motion: reduce) {
   .fsTab { transition: none; }
@@ -2020,7 +2020,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 .fsTitleLink:hover { color: var(--accent); }
 .fsClient { margin: 0; font-size: 0.875rem; color: var(--muted); }
 
-/* THE coral moment — the file's stamp, set at a static -2deg rest pose */
+/* THE coral moment, the file's stamp, set at a static -2deg rest pose */
 .fsStamp {
   flex: none;
   align-self: flex-start;
@@ -2040,7 +2040,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 
 .fsDek { margin: 0; font-size: 0.9375rem; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
 
-/* the exhibit — screenshot as a clipped-in print on a mat, a hair off-square */
+/* the exhibit, screenshot as a clipped-in print on a mat, a hair off-square */
 .fsShotWell { margin: 2px 0 0; padding: 14px; background: var(--surface-alt); border-radius: 10px; overflow: hidden; }
 .fsShot {
   margin: 0;
@@ -2055,7 +2055,7 @@ a.featRow:hover .featTitle { color: var(--accent); }
 }
 .fsShot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 14%; }
 
-/* metrics as one mono ledger line — not pills */
+/* metrics as one mono ledger line, not pills */
 .fsLedger { display: flex; flex-wrap: wrap; gap: 4px 0; margin: 0; font-family: var(--mono); font-size: 0.71875rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 .fsLedger strong { font-weight: 650; color: var(--fg); }
 .fsLedgerSep { color: var(--faint); padding-inline: 8px; }
@@ -2069,7 +2069,7 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
 .fsExt:hover { color: var(--accent); }
 .fsMeta { margin-left: auto; font-family: var(--mono); font-size: 0.71875rem; color: var(--faint); font-variant-numeric: tabular-nums; }
 
-/* rail — counter · next · hint */
+/* rail, counter · next · hint */
 .fsRail { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px 18px; }
 .fsCount { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 .fsNext {
@@ -2089,10 +2089,10 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
 .fsHint { font-family: var(--mono); font-size: 0.6875rem; color: var(--faint); }
 
 @media (max-width: 720px) {
-  /* previews off — the tabs' hidden summaries and the counter odometer
-     carry the glimpse; the drawer stays numeral stubs 01–06 */
+  /* previews off, the tabs' hidden summaries and the counter odometer
+     carry the glimpse; the drawer stays numeral stubs 01-06 */
   .fsDesk { padding-top: 0; }
-  /* the rise (and the tab handoff, fan, and duck) is off — every card
+  /* the rise (and the tab handoff, fan, and duck) is off, every card
      stays in its slot */
   .fsUnderUp { transform: translate(var(--cardx, 0px), calc(var(--jy, 1) * var(--sprY))); }
   .fsUnderTab { display: none; }
@@ -2110,7 +2110,7 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
   .fsTabName { display: none; }
   .fsShotWell { padding: 10px; }
   .fsShot { height: 140px; transform: rotate(-0.4deg); }
-  /* tighter sprawl — keeps the diagonal inside the section gutter and the
+  /* tighter sprawl, keeps the diagonal inside the section gutter and the
      short numeral stubs readable at every depth */
   .fsWrap { --sprX: 4px; --sprY: 3px; }
   .fsMeta { margin-left: 0; flex-basis: 100%; }
@@ -2118,7 +2118,7 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
 }
 
 
-/* ============ PROJECTS — interaction variants on the baseline =========== */
+/* ============ PROJECTS, interaction variants on the baseline =========== */
 /* Optional extra ways of handling the same pile, explored at
    /samples/rework/projects (the tab-hover preview is part of the BASELINE
    above, not a variant):
@@ -2140,7 +2140,7 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
   white-space: nowrap;
   border: 0;
 }
-/* counter ticking with a live preview — muted until committed */
+/* counter ticking with a live preview, muted until committed */
 .fsCountPreview { color: var(--faint); }
 /* hint copy that swaps at the touch breakpoint */
 .fsHintTouch { display: none; }
@@ -2174,7 +2174,7 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
 
 /* ---- riffle (fr) ------------------------------------------------------- */
 /* the loose preview sheet: lies on the pile slightly high and askew,
-   lighter shadow — visibly not yet filed. Remounts per tab crossed, so the
+   lighter shadow, visibly not yet filed. Remounts per tab crossed, so the
    140ms flick replays as a flutter. --flick carries scrub direction. */
 .frSheet {
   position: absolute;
@@ -2211,9 +2211,9 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
 /* Six persistent covers, moved only by transforms. While piled they wait
    hidden at the pile's center (the pile itself is the baseline); spreading
    closes the open file and lays the covers across the desk in a loose,
-   hand-placed arrangement (spdG0–5 = fixed slot for file 01–06,
-   deterministic jitter — the same slightly crooked desk every visit).
-   spdS0–5 = circular depth, used for z-order and gather delays. A mode
+   hand-placed arrangement (spdG0-5 = fixed slot for file 01-06,
+   deterministic jitter, the same slightly crooked desk every visit).
+   spdS0-5 = circular depth, used for z-order and gather delays. A mode
    flip retargets vars; CSS transitions do the rest, so rapid clicks bend
    trajectories. */
 .spdCover {
@@ -2236,7 +2236,7 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) var(--td, 0s), box-shadow 0.3s ease, visibility 0s var(--vd, 0s);
 }
 .spdCover:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
-/* depth wash — a sheet of paper light over the deeper files */
+/* depth wash, a sheet of paper light over the deeper files */
 .spdCover::after {
   content: "";
   position: absolute;
@@ -2254,7 +2254,7 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
 .spdShot { display: block; margin: 8px -14px 0; overflow: hidden; border-top: 1px solid var(--border); background: var(--surface-alt); }
 .spdShot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; }
 /* while spread, the open file's cover carries the coral numeral (the
-   reader's stamp is hidden with it — the coral moment hands off) */
+   reader's stamp is hidden with it, the coral moment hands off) */
 [data-mode="spread"] .spdS0 .spdNum { color: var(--accent); font-weight: 650; }
 
 /* pile mode: the covers wait hidden at the pile's center, deepest
@@ -2283,7 +2283,7 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
 [data-mode="spread"] .spdS2 { z-index: 54; }
 [data-mode="spread"] .spdS4 { z-index: 53; }
 [data-mode="spread"] .spdS3 { z-index: 52; }
-/* spread slots — fixed jitter, row-major so numerals scan in order */
+/* spread slots, fixed jitter, row-major so numerals scan in order */
 [data-mode="spread"] .spdG0 { --tx: -310px; --ty: -112px; --r: -2.2deg; --td: 0ms; }
 [data-mode="spread"] .spdG1 { --tx: 4px; --ty: -122px; --r: 1.4deg; --td: 30ms; }
 [data-mode="spread"] .spdG2 { --tx: 306px; --ty: -108px; --r: -0.6deg; --td: 60ms; }
@@ -2312,7 +2312,7 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
   transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s 0.3s;
 }
 
-/* the toggle — quiet pill beside Next File */
+/* the toggle, quiet pill beside Next File */
 .spdToggle {
   display: inline-flex;
   align-items: baseline;
@@ -2332,7 +2332,7 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
 
 /* ---- variant responsive tiers ------------------------------------------ */
 /* Spread slots key off the CONTAINER (the landing main column / the
-   compare stage are inline-size containers), not the viewport — the desk
+   compare stage are inline-size containers), not the viewport, the desk
    arrangement must fit the space it actually has. */
 @container (max-width: 979px) {
   [data-mode="spread"] .spdG0 { --tx: -160px; --ty: -208px; }
@@ -2353,7 +2353,7 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
   [data-mode="spread"] .spdG3 { --tx: -8px; --ty: 36px; --r: 0.8deg; z-index: 55; }
   [data-mode="spread"] .spdG4 { --tx: 6px; --ty: 108px; --r: -0.6deg; z-index: 56; }
   [data-mode="spread"] .spdG5 { --tx: -4px; --ty: 180px; --r: 0.4deg; z-index: 57; }
-  /* the reader can be far taller than the fan — take it out of flow while
+  /* the reader can be far taller than the fan, take it out of flow while
      spread so the well collapses to the fan's height */
   [data-mode="spread"] .spdReader { position: absolute; top: 0; left: 0; right: 0; }
   [data-mode="spread"] .spdWell { min-height: 580px; }

@@ -1,12 +1,12 @@
 // SINGLE SOURCE OF TRUTH for the live portfolio content. Ported losslessly from
 // the real résumé (app/page.tsx). Clients are ANONYMIZED; every metric, date,
-// and credential is EXACT — do not round or paraphrase numbers.
+// and credential is EXACT, do not round or paraphrase numbers.
 //
 // IMPORTANT: factual phrases here are written in the SYMBOLIC style ("~15 million
 // records", ">99.9% accuracy", "over 4 hours") so the selective-bold pass in
 // helpers.tsx (EMPH) can match them. If you reword a metric, update EMPH too.
 
-// Bank Single Customer View outcome — referenced by Experience (the bank client
+// Bank Single Customer View outcome, referenced by Experience (the bank client
 // card) and by the Hero V2 proof panel, so it lives once here.
 const SCV_METRICS = [
   { value: "15M → 7M", label: "records consolidated to unique customer keys" },
@@ -33,9 +33,9 @@ export const sample = {
 
   hero: {
     eyebrow: "DATA & AI INFRASTRUCTURE",
-    headline: "I build the data and AI infrastructure enterprises run on.",
+    headline: "I build AI agents, data pipelines, and cloud infrastructure.",
     subhead:
-      "Data Engineer II at Thinking Machines Data Science — pipelines, agentic AI, MLOps, and cloud infrastructure for financial services, investment management, education, and compliance.",
+      "I work with enterprise clients in financial services, investment management, education, and compliance. I love a hard entity resolution problem, and I lead GDG Davao.",
     primaryCta: { label: "Get in Touch", href: "mailto:kyle.naranjo@gmail.com" },
   },
 
@@ -69,9 +69,9 @@ export const sample = {
       company: "Thinking Machines Data Science",
       companyUrl: "https://thinkingmachin.es/",
       role: "Data Engineer II",
-      period: "Aug 2024 – Present",
+      period: "Aug 2024 to Present",
       summary:
-        "Builds production data and AI infrastructure for enterprise clients across financial services, investment management, education, and compliance.",
+        "Builds AI agents, data pipelines, and cloud infrastructure for enterprise clients across financial services, investment management, education, and compliance.",
       // Each anonymized client is one card; the bank carries the outcome strip.
       clients: [
         {
@@ -166,14 +166,14 @@ export const sample = {
         roles: [
           {
             title: "Backend Software Engineer",
-            period: "Jan 2022 – Jul 2024",
+            period: "Jan 2022 to Jul 2024",
             description:
               "Built the backend of a compliance case-management platform on Django, deployed across two AWS regions with separate databases for data residency and GDPR. Decomposed the monolith into cross-region services and shipped ~50 production API endpoints supporting 100+ reports per day.",
             stack: ["Django", "Python", "AWS", "PostgreSQL"],
           },
           {
             title: "Software Engineer (Part-time)",
-            period: "Jan 2022 – Sep 2022",
+            period: "Jan 2022 to Sep 2022",
             description:
               "Built a Google Cloud data-processing pipeline for a COVID-19 contact-tracing and vaccination-tracking application and led a two-week data science internship for eight participants.",
             stack: ["GCP", "Python"],
@@ -185,7 +185,7 @@ export const sample = {
         roles: [
           {
             title: "Research Associate",
-            period: "Aug 2022 – Nov 2023",
+            period: "Aug 2022 to Nov 2023",
             description:
               "Co-authored and published the IEEE AIComprehend paper, then built and deployed the full-stack Django application used in a month-long controlled study that showed a 13.9% improvement in student test scores.",
             stack: ["Python", "Django", "Keras"],
@@ -197,7 +197,7 @@ export const sample = {
         roles: [
           {
             title: "Technology and Operations Intern",
-            period: "Jun 2022 – Aug 2022",
+            period: "Jun 2022 to Aug 2022",
             description:
               "Modeled and transformed production datasets into Looker Studio dashboards used by the Technology and Operations team to track a 300-plus participant developer program.",
             stack: ["Looker Studio", "SQL"],
@@ -207,7 +207,7 @@ export const sample = {
     ],
   },
 
-  // Bank Single Customer View outcome — kept top-level for the Hero V2 proof
+  // Bank Single Customer View outcome, kept top-level for the Hero V2 proof
   // panel; the Experience bank card reads its own client.metrics (same data).
   outcome: {
     client: "A major Philippine bank",
@@ -222,13 +222,13 @@ export const sample = {
   skills: [
     {
       title: "Data Engineering",
-      blurb: "Warehouses, lakehouses, and orchestration — moving and modeling data at enterprise scale.",
+      blurb: "Warehouses, lakehouses, and orchestration for moving and modeling data at enterprise scale.",
       general: ["Data Modeling", "Data Warehousing", "Data Pipelines", "ETL / ELT", "Record Linkage"],
       tools: ["Databricks", "Snowflake", "BigQuery", "PostgreSQL", "MongoDB", "PySpark", "Pandas", "Airflow", "Dagster", "dbt", "Dataform", "Azure Data Factory", "AWS Glue", "Dataflow"],
     },
     {
       title: "AI & Machine Learning",
-      blurb: "Agentic systems, RAG, and probabilistic matching — prototype to production.",
+      blurb: "Agentic systems, RAG, and probabilistic matching, from prototype to production.",
       general: ["RAG", "Embeddings", "Document Extraction", "LLM Evals", "Prompt Engineering", "Computer Vision", "NLP", "AI Agents", "MLOps"],
       tools: ["OpenAI API", "Vertex AI", "Azure AI Services", "Snowflake Cortex", "LangChain", "Keras", "TensorFlow", "Splink"],
     },
@@ -240,7 +240,7 @@ export const sample = {
     },
     {
       title: "Backend",
-      blurb: "APIs and services behind enterprise platforms — FastAPI and Django at multi-region scale.",
+      blurb: "APIs and services behind enterprise platforms, built with FastAPI and Django at multi-region scale.",
       general: ["REST APIs", "Microservices"],
       tools: ["FastAPI", "Django", "Flask", "SQLAlchemy", "Pydantic"],
     },
@@ -328,16 +328,16 @@ export const sample = {
     {
       name: "Google Developer Group Davao",
       role: "Community Lead / L&D Lead",
-      period: "Jul 2022 – Present",
+      period: "Jul 2022 to Present",
       // Real org mark in /public/logos (official Google Developers "<>" icon, SVG).
       logo: "/logos/gdg.svg",
       // Official chapter page on the GDG community platform.
       url: "https://gdg.community.dev/gdg-davao/",
       description:
-        "Led the organizing team behind 10+ in-person events over 2.5 years, bringing together 2,000-plus participants, ~25 speakers, ~25 partners and sponsors, and 50+ volunteers — growing the community from zero to 500-plus official members.",
+        "Led the organizing team behind 10+ in-person events over 2.5 years, bringing together 2,000-plus participants, ~25 speakers, ~25 partners and sponsors, and 50+ volunteers, growing the community from zero to 500-plus official members.",
       // `stats` are the headline impact figures pulled from `description`,
       // surfaced as a KPI strip in the Community "impact ledger" exploration.
-      // Figures are EXACT — keep in sync with the description prose.
+      // Figures are EXACT, keep in sync with the description prose.
       stats: [
         { fig: "10+", label: "Events" },
         { fig: "2,000+", label: "Participants" },
@@ -348,8 +348,8 @@ export const sample = {
     {
       name: "Global Shapers Community",
       role: "Shaper, Davao Hub",
-      period: "Jan 2026 – Present",
-      // PLACEHOLDER mark (neutral globe) — swap for the official Global Shapers
+      period: "Jan 2026 to Present",
+      // PLACEHOLDER mark (neutral globe), swap for the official Global Shapers
       // logo when available (drop it at /public/logos/global-shapers.svg).
       logo: "/logos/global-shapers.svg",
       url: "https://www.globalshapers.org/hubs/davao-hub/",
@@ -364,7 +364,7 @@ export const sample = {
   speaking: [
     {
       meta: "Conference Talk",
-      title: "Geeks On A Beach — AI Show and Tell",
+      title: "Geeks On A Beach: AI Show and Tell",
       description: "Configuring AI coding assistants with subagents, agent skills, and AGENTS.md.",
       tags: ["Conference", "AI Agents", "Dev Tools"],
       link: null as string | null,
@@ -396,7 +396,7 @@ export const sample = {
     {
       school: "University of the Philippines Diliman",
       degree: "BS Computer Engineering",
-      period: "2019 – 2024",
+      period: "2019 to 2024",
       // Real institution mark in /public/logos (official seal, transparent PNG).
       logo: "/logos/up-diliman.png",
       // `highlights` are short honour chips derived from `points`; optional per
@@ -415,9 +415,9 @@ export const sample = {
       ],
     },
     {
-      school: "Philippine Science High School – Southern Mindanao",
+      school: "Philippine Science High School, Southern Mindanao",
       degree: "High School Diploma, STEM",
-      period: "2013 – 2019",
+      period: "2013 to 2019",
       logo: "/logos/pshs.png",
       highlights: [
         "High Honors",
@@ -437,9 +437,9 @@ export const sample = {
     url: "https://github.com/teslakoile",
   },
 
-  // Handpicked resources — books, guides, and tools Kyle actually points people
+  // Handpicked resources, books, guides, and tools Kyle actually points people
   // to. STARTER LIST seeded from his own work (Splink in production, an MCP
-  // server PoC, talks on AI coding agents); EDIT FREELY — this is the one
+  // server PoC, talks on AI coding agents); EDIT FREELY, this is the one
   // section meant to be curated by hand, in your own voice.
   // `image` is a LOCAL thumbnail under public/resources/ (the DDIA cover from
   // Open Library; site favicons / GitHub avatars for the rest) so the
@@ -487,7 +487,7 @@ export const sample = {
     },
   ],
 
-  // ⚠️ MOCK DATA — layout preview only, per Kyle's request. Every entry below is
+  // ⚠️ MOCK DATA, layout preview only, per Kyle's request. Every entry below is
   // INVENTED so the section has realistic shape; REPLACE with real quotes (e.g.
   // LinkedIn recommendations, ported verbatim with the recommender's real name
   // and title) BEFORE deploying. Delete all entries to hide the section.
@@ -524,10 +524,10 @@ export const sample = {
   }>,
 
   // FLAGSHIP SECTION. Seeded from the engagements above (clients stay
-  // anonymized, numbers are EXACT — same rules as `experience`) plus the two
+  // anonymized, numbers are EXACT, same rules as `experience`) plus the two
   // fully-owned works (AIComprehend, the MCP PoC). `flagship` marks the lead
   // sheet on the landing; `featured` picks the landing companions; /projects
-  // renders every entry. Curate freely — summaries are prose retellings of the
+  // renders every entry. Curate freely, summaries are prose retellings of the
   // engagement points, safe to edit.
   projects: [
     {
@@ -536,13 +536,13 @@ export const sample = {
       featured: true,
       title: "Single Customer View",
       client: "A major Philippine bank",
-      period: "2024 – 2025",
+      period: "2024 to 2025",
       status: "In Production",
       oneLiner:
         "A daily pipeline that tells a bank who its ~15 million records actually are.",
       summary: [
         "A year-long engagement with a major Philippine bank, partnering with C-suite leaders and business units to ship priority data products on Azure Databricks. The centerpiece is a daily Single Customer View pipeline consolidating ~15 million records from four enterprise systems into ~7 million unique customer keys used across 10+ business units.",
-        "Exact matching misses people. A probabilistic record-linkage engine built with Splink surfaced 748,000 candidate duplicate pairs the exact-match logic could not see, scored through a five-tier confidence framework validated at >99.9% accuracy — while pipeline runtime dropped from over 4 hours to under 1 hour.",
+        "Exact matching misses people. A probabilistic record-linkage engine built with Splink surfaced 748,000 candidate duplicate pairs the exact-match logic could not see, scored through a five-tier confidence framework validated at >99.9% accuracy, while pipeline runtime dropped from over 4 hours to under 1 hour.",
       ],
       stack: ["Azure Databricks", "PySpark", "SQL", "Splink", "Delta Lake"],
       metrics: SCV_METRICS,
@@ -553,13 +553,13 @@ export const sample = {
       featured: true,
       title: "Investment Data Platform",
       client: "A large Singaporean investment holding company",
-      period: "Aug 2024 – Present",
+      period: "Aug 2024 to Present",
       status: "In Production",
       oneLiner:
         "Backend services and pipelines behind deal discovery, due diligence, and portfolio monitoring.",
       summary: [
         "Owned backend feature development across 10+ interconnected microservices powering deal discovery, due diligence, and portfolio monitoring workflows for a large Singaporean investment holding company.",
-        "The platform processes terabytes of vendor data from Sustainalytics, PitchBook, Bloomberg, and MSCI through FastAPI services and Dagster pipelines on Kubernetes, landing in Snowflake — with reliability and observability handled through production monitoring on Kibana and Grafana.",
+        "The platform processes terabytes of vendor data from Sustainalytics, PitchBook, Bloomberg, and MSCI through FastAPI services and Dagster pipelines on Kubernetes, landing in Snowflake, with reliability and observability handled through production monitoring on Kibana and Grafana.",
       ],
       stack: ["FastAPI", "Dagster", "Snowflake", "Kubernetes", "PostgreSQL"],
       metrics: [
@@ -572,7 +572,7 @@ export const sample = {
       slug: "document-intelligence",
       title: "Enterprise Document Intelligence Platform",
       client: "A large Singaporean investment holding company",
-      period: "2025 – Present",
+      period: "2025 to Present",
       status: "In Production",
       oneLiner:
         "Agent workflows that let investment officers query long-form documents at scale.",
@@ -614,7 +614,7 @@ export const sample = {
       oneLiner:
         "An MCP server that lets a chat assistant query a governed lakehouse directly.",
       summary: [
-        "A proof-of-concept integration connecting ChatGPT to Databricks through a Model Context Protocol server — the experiment behind the MCP spec's place in the resources list.",
+        "A proof-of-concept integration connecting ChatGPT to Databricks through a Model Context Protocol server, the experiment behind the MCP spec's place in the resources list.",
         "The PoC demonstrated a governed path from a conversational assistant to warehouse queries without another one-off API wrapper, and now feeds Kyle's talks on agentic workflows.",
       ],
       stack: ["Python", "MCP", "Databricks"],
@@ -628,13 +628,13 @@ export const sample = {
       featured: true,
       title: "AIComprehend",
       client: "UP Diliman EEEEI",
-      period: "2022 – 2023",
+      period: "2022 to 2023",
       status: "Published",
       oneLiner:
         "An adaptive reading-comprehension platform, validated in a controlled study and published in IEEE.",
       summary: [
         "Co-authored and published the IEEE AIComprehend paper, then built and deployed the full-stack Django application used in the study itself.",
-        "A four-week controlled study with 58 high school students showed a 13.9% improvement in test scores — research that started the thread running through the rest of this list.",
+        "A four-week controlled study with 58 high school students showed a 13.9% improvement in test scores, research that started the thread running through the rest of this list.",
       ],
       stack: ["Django", "Python", "Keras"],
       metrics: [
@@ -683,7 +683,7 @@ export const sample = {
   blog: {
     eyebrow: "WRITING",
     // Each post may carry a real thumbnail `image`; when null the card falls back
-    // to a built-in concept figure. `href` is the published post URL — null while
+    // to a built-in concept figure. `href` is the published post URL, null while
     // the explainer is still being written (the card then shows a quiet
     // "coming soon" note instead of a dead link).
     posts: [
@@ -693,7 +693,7 @@ export const sample = {
         readTime: "9 min read",
         tags: ["Record Linkage", "Splink", "Data Quality", "PySpark"],
         title: "Why Exact Matching Misses 748,000 Duplicates",
-        dek: "Drag a match-weight threshold and watch duplicate record clusters merge in real time — the same probabilistic linkage that rebuilt a bank's Single Customer View.",
+        dek: "Drag a match-weight threshold and watch duplicate record clusters merge in real time, the same probabilistic linkage that rebuilt a bank's Single Customer View.",
         image: "/writing/record-linkage.png" as string | null,
         href: null as string | null,
       },

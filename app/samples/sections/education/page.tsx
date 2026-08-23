@@ -8,7 +8,7 @@ type Education = (typeof sample.education)[number];
 const edu = sample.education;
 
 /* ============================================================================
-   A · Credential Certificate — sealed diploma cards
+   A · Credential Certificate, sealed diploma cards
    Each school is an elevated credential card with a coral seal node, a vertical
    hairline divider, and an honours ledger on the right.
    ========================================================================== */
@@ -56,16 +56,16 @@ function VariantA() {
 }
 
 /* ============================================================================
-   B · Academic Timeline Rail — coral-node date rail with degree dossiers
+   B · Academic Timeline Rail, coral-node date rail with degree dossiers
    A single vertical timeline; the period years anchor the left rail, coral
    diamond nodes thread a continuous hairline, dossiers sit on the right.
    ========================================================================== */
 function railYears(period: string): [string, string] {
-  // Tolerate any dash variant (en-dash, em-dash, hyphen) with or without
-  // surrounding whitespace, and future-proof open-ended periods like
-  // "2024 – Present". A missing end simply yields an empty trailing label.
-  const [a = period.trim(), b] = period.split(/\s*[–—-]\s*/);
-  return [a, b ? `– ${b}` : ""];
+  // Tolerate "to" or a hyphen, with or without surrounding whitespace, and
+  // future-proof open-ended periods like "2024 to Present". A missing end
+  // simply yields an empty trailing label.
+  const [a = period.trim(), b] = period.split(/\s+to\s+|\s*-\s*/);
+  return [a, b ? `to ${b}` : ""];
 }
 
 function VariantB() {
@@ -108,7 +108,7 @@ function VariantB() {
 }
 
 /* ============================================================================
-   C · Transcript — hairline registry with honour highlights
+   C · Transcript, hairline registry with honour highlights
    One flush registry panel; numbered rows separated by hairlines, each leading
    with a strip of honour chips before the full prose points.
    ========================================================================== */
@@ -133,7 +133,7 @@ function VariantC() {
               </div>
               <div className={v.cBody}>
                 {chips.length > 0 && (
-                  <ul className={v.cHonors} aria-label={`${e.school} — honours`}>
+                  <ul className={v.cHonors} aria-label={`${e.school}, honours`}>
                     {chips.map((h) => (
                       <li key={h} className={`${v.cChip} ${shell.tabular}`}>{h}</li>
                     ))}
@@ -164,21 +164,21 @@ export default function EducationExplore() {
         <h1 className={shell.pageTitle}>Three ways to frame the credentials</h1>
         <p className={shell.pageHint}>
           Same two schools, three directions. Every variant keeps the school, degree,
-          period, and full honours points — the standout metrics bold automatically.
+          period, and full honours points, the standout metrics bold automatically.
         </p>
 
         <div className={shell.vblock}>
-          <p className={shell.vlabel}>A · Credential certificate — sealed diploma cards</p>
+          <p className={shell.vlabel}>A · Credential certificate, sealed diploma cards</p>
           <VariantA />
         </div>
 
         <div className={shell.vblock}>
-          <p className={shell.vlabel}>B · Academic timeline rail — coral-node date rail</p>
+          <p className={shell.vlabel}>B · Academic timeline rail, coral-node date rail</p>
           <VariantB />
         </div>
 
         <div className={shell.vblock}>
-          <p className={shell.vlabel}>C · Transcript — hairline registry with honour highlights</p>
+          <p className={shell.vlabel}>C · Transcript, hairline registry with honour highlights</p>
           <VariantC />
         </div>
       </div>

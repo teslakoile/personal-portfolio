@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type MouseEvent } from "react";
+import { Fragment, useRef, type MouseEvent } from "react";
 import Link from "next/link";
 import { sample } from "../../sampleContent";
 import styles from "../styles.module.css";
@@ -9,11 +9,31 @@ import { Emph, CONTACT_KIND } from "../helpers";
 import { ContactIcon } from "../Logo";
 
 /**
- * V4 hero — photo layout, with experiments in micro-interaction:
+ * Split a headline after each comma and hold every piece on one line.
+ *
+ * The hero text column is 586px, which is four lines of this headline however
+ * it breaks; left alone the browser picks "I build data / pipelines, agent /
+ * workflows, and / cloud infrastructure.", splitting two of the three list
+ * items across lines and ending one on a bare "and". Breaking only at the
+ * commas costs nothing and gives three lines that each read as a unit.
+ * Derived from the string rather than hardcoded, so rewording the headline in
+ * sampleContent.ts still typesets correctly.
+ */
+function Clauses({ text }: { text: string }) {
+  return text.split(/(?<=,)\s+/).map((clause, i) => (
+    <Fragment key={clause}>
+      {i > 0 ? " " : null}
+      <span className={alt.headlineKeep}>{clause}</span>
+    </Fragment>
+  ));
+}
+
+/**
+ * V4 hero, photo layout, with experiments in micro-interaction:
  *  • staggered entrance on load (eyebrow → headline → sub → actions / photo)
  *  • cursor-reactive blueprint: the graph-paper lines glow coral near the pointer
  *    (a radial mask tracks the cursor over an accent-tinted copy of the grid).
- * Pure pointer response — no effect until the mouse moves, reduced-motion safe.
+ * Pure pointer response, no effect until the mouse moves, reduced-motion safe.
  */
 export function HeroV4() {
   const ref = useRef<HTMLElement>(null);
@@ -37,10 +57,10 @@ export function HeroV4() {
       <div className={styles.heroGrid} aria-hidden="true" />
       <div className={alt.heroSpot} aria-hidden="true" />
       <div className={alt.v4Main}>
-        {/* no eyebrow — the headline opens the page (site principle: no
+        {/* no eyebrow, the headline opens the page (site principle: no
             eyebrows, no all-caps labels) */}
         <h1 className={`${alt.headlineMix} ${styles.rise} ${styles.d0}`}>
-          I build the <span className={alt.headlineAccent}>data and AI infrastructure</span> enterprises run on.
+          <Clauses text={sample.hero.headline} />
         </h1>
         <p className={`${alt.subMix} ${styles.rise} ${styles.d1}`}><Emph text={sample.hero.subhead} /></p>
         <div className={`${alt.v4Actions} ${styles.rise} ${styles.d2}`}>
@@ -72,7 +92,7 @@ export function HeroV4() {
           </div>
         </div>
       </div>
-      {/* halftone portrait — floats on the graph paper. Built by
+      {/* halftone portrait, floats on the graph paper. Built by
           scripts/hero/build.sh from public/hero/source.png; me.jpg and
           me-halftone.png are left untouched. Reading order is Kyle, the
           bridge, then the bay as faint texture, and the PNG's own edges

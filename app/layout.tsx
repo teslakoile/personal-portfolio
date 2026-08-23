@@ -6,7 +6,7 @@ import "./globals.css";
 // --font-geist-sans/--font-geist-mono feed globals.css (body default).
 // fontVars additionally mounts the LOCKED site suite's own variable names
 // (--font-geist + --font-geist-mono, see app/fonts.ts) at the root, so EVERY
-// route — not just pages that remembered to wrap themselves — resolves the
+// route, not just pages that remembered to wrap themselves, resolves the
 // quiet design tokens to Geist/Geist Mono instead of the system fallback.
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://kylenaranjo.cv"),
   title: "Kyle Naranjo | Data Engineer",
   description:
-    "Kyle Nathan G. Naranjo is a Data Engineer II building data and AI infrastructure, GenAI systems, MLOps workflows, and backend platforms.",
+    "Kyle Nathan G. Naranjo is a Data Engineer II building AI agents, data pipelines, cloud infrastructure, MLOps systems, and backend platforms.",
   keywords: [
     "Kyle Naranjo",
     "Data Engineer",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Kyle Naranjo | Data Engineer",
     description:
-      "Data Engineer II at Thinking Machines Data Science focused on data and AI infrastructure, GenAI, MLOps, and backend engineering.",
+      "Data Engineer II at Thinking Machines Data Science focused on AI agents, data pipelines, cloud infrastructure, MLOps, and backend engineering.",
     url: "/",
     siteName: "Kyle Naranjo",
     locale: "en_PH",

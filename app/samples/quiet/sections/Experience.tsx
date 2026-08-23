@@ -36,7 +36,7 @@ function StackRow({ stack }: { stack: readonly string[] }) {
 }
 
 /** One anonymized client = one full case-study card: confidential head, its
-    engagement(s) of bullets + stack, and — for the bank — the outcome strip. */
+    engagement(s) of bullets + stack, and, for the bank, the outcome strip. */
 function ClientCard({ client }: { client: Client }) {
   const multi = client.engagements.length > 1;
   const metrics = "metrics" in client ? client.metrics : undefined;
@@ -66,7 +66,7 @@ function ClientCard({ client }: { client: Client }) {
   );
 }
 
-/** Thinking Machines — the current role: every client as a full case card. */
+/** Thinking Machines, the current role: every client as a full case card. */
 function CurrentRole() {
   return (
     <article className={styles.tlRow}>
@@ -116,7 +116,7 @@ function PastRole({ group }: { group: (typeof past)[number] }) {
   );
 }
 
-/** V1 — the locked experience design: period rail + carded body, the current
+/** V1, the locked experience design: period rail + carded body, the current
     role broken into full client case cards (bank first), then past roles.
     `eyebrow` is the landing page's numbered section label (absent on samples). */
 function ExperienceV1({ eyebrow }: { eyebrow?: React.ReactNode }) {

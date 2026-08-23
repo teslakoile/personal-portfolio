@@ -1,5 +1,5 @@
 /* Real, multicolor brand logos served from /public/logos (curated + visually
-   verified). Only verified-correct logos exist here — anything missing renders
+   verified). Only verified-correct logos exist here, anything missing renders
    as clean text by the caller (no mono-blue, no wrong marks). */
 
 const LOGO_FILES = new Set([

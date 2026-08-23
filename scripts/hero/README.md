@@ -19,15 +19,15 @@ the only file the page loads.
 
 ## Stages
 
-1. `hero_real.py` — tone. Kyle is stretched over his own pixel range so the
+1. `hero_real.py`, tone. Kyle is stretched over his own pixel range so the
    jacket opens without losing his face; the scene is lifted toward paper; the
    bridge is held back from that lift so it stays legible; Fort Point gets an
    extra lift because dark brick otherwise prints as a block.
-2. `halftone.py` — round-dot screen at pitch 9 on a 2100px base. Aspect is
+2. `halftone.py`, round-dot screen at pitch 9 on a 2100px base. Aspect is
    derived from the plate, never forced square.
-3. `compose.py` — weights the dots by region: Kyle, then bridge, then a floor
+3. `compose.py`, weights the dots by region: Kyle, then bridge, then a floor
    for everything else.
-4. `edge_fade.py` — ramps alpha to zero at the frame edges so the PNG has no
+4. `edge_fade.py`, ramps alpha to zero at the frame edges so the PNG has no
    visible boundary. Kyle is excluded, or his shoulder dissolves where it meets
    the right edge.
 

@@ -27,7 +27,7 @@ export function Compare({
         <p className={shell.pageHint}>{hint}</p>
         {recommend ? (
           <p className={shell.pageHint} style={{ marginTop: 10 }}>
-            <strong style={{ color: "var(--fg)", fontWeight: 600 }}>My pick — </strong>
+            <strong style={{ color: "var(--fg)", fontWeight: 600 }}>My pick, </strong>
             {recommend}
           </p>
         ) : null}

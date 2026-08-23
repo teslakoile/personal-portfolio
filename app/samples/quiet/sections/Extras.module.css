@@ -1,4 +1,4 @@
-/* Community / Speaking / Education — shares the Quiet Blueprint tokens from the
+/* Community / Speaking / Education, shares the Quiet Blueprint tokens from the
    ancestor .root. Cards match the recognition/skill card language (surface +
    soft shadow, lift on hover). */
 
@@ -46,7 +46,7 @@
   margin: 0 0 16px;
 }
 /* speaking = a VERTICAL "talks timeline": a single rail with coral square nodes,
-   one row per talk — adding a talk just extends the rail (fully dynamic). Each
+   one row per talk, adding a talk just extends the rail (fully dynamic). Each
    row: node + meta (left) + title/description (right). */
 .talkTimeline { position: relative; display: grid; gap: 22px; }
 /* the rail runs through the node centres; spans first→last node */
@@ -102,7 +102,7 @@
 }
 .talkDesc { margin: 0; color: var(--muted); font-size: 0.875rem; line-height: 1.55; text-wrap: pretty; }
 
-/* education — a prominent 2-column feature: school identity left (large), the
+/* education, a prominent 2-column feature: school identity left (large), the
    achievements alongside on the right. A coral edge marks it as a headline credential. */
 .eduList { display: grid; gap: 16px; }
 .eduCard {
