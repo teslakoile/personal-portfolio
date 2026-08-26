@@ -2372,3 +2372,681 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
   .frSettle { animation: none; }
   .spdCover, .spdCover::after, .spdReader { transition: none; }
 }
+
+/* ---- shared profile chip for the G/H/J treatments ---------------------- */
+/* Circle, surface-alt fill, hairline ring; mono initials while `avatar` is
+   null, the photo drops in unchanged. Size set per treatment below. */
+.pfp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: 50%;
+  background: var(--surface-alt);
+  outline: 1px solid var(--border);
+  outline-offset: -1px;
+  overflow: hidden;
+}
+.pfp img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pfpInitials {
+  font-family: var(--mono);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+.pfpLtt { width: 32px; height: 32px; }
+.pfpLtt .pfpInitials { font-size: 0.625rem; }
+.pfpMgn { width: 26px; height: 26px; }
+.pfpMgn .pfpInitials { font-size: 0.5625rem; }
+.pfpGit { width: 22px; height: 22px; align-self: center; }
+.pfpGit .pfpInitials { font-size: 0.5rem; }
+
+/* ========== RECOMMENDATIONS G, reference letters (paper fan) =========== */
+/* Three letter sheets fanned a degree or two off square. Letterhead: a mono
+   "Re:" line over a hairline. Body: serif, no quote glyphs (letters don't
+   quote themselves). Signature block pinned to the foot over a short coral
+   pen rule, the treatment's single coral gesture. Hover squares the sheet
+   and lifts it, same paper physics as the case files. */
+.lttRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px 22px;
+  align-items: stretch;
+}
+.lttSheet {
+  --ltt-rot: 0deg;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 16px;
+  margin: 0;
+  padding: 22px 24px 24px;
+  background: var(--surface);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+  transform: rotate(var(--ltt-rot));
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.lttSheet:nth-child(3n + 1) { --ltt-rot: -1.3deg; }
+.lttSheet:nth-child(3n + 2) { --ltt-rot: 0.9deg; margin-top: 12px; }
+.lttSheet:nth-child(3n + 3) { --ltt-rot: -0.6deg; margin-top: 5px; }
+.lttSheet:hover { transform: rotate(0deg) translateY(-3px); box-shadow: var(--shadow-hover); }
+.lttRe {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.01em;
+  color: var(--faint);
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--border);
+}
+.lttQuote {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 0.9793rem;
+  line-height: 1.62;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+.lttSign { display: grid; gap: 9px; }
+.lttSign::before { content: ""; width: 34px; height: 1px; background: var(--accent); }
+.lttSignRow { display: flex; align-items: center; gap: 10px; }
+.lttId { display: grid; gap: 2px; min-width: 0; }
+.lttName { font-size: 0.8125rem; font-weight: 600; color: var(--fg); }
+.lttTitle { font-size: 0.75rem; color: var(--faint); }
+@media (max-width: 900px) {
+  .lttRow { grid-template-columns: 1fr; gap: 18px; }
+  /* single column: fan flattens to a near-square stack, offsets cleared */
+  .lttSheet:nth-child(3n + 1) { --ltt-rot: -0.5deg; }
+  .lttSheet:nth-child(3n + 2) { --ltt-rot: 0.4deg; margin-top: 0; }
+  .lttSheet:nth-child(3n + 3) { --ltt-rot: -0.3deg; margin-top: 0; }
+}
+
+/* ========== RECOMMENDATIONS H, margin notes (reviewed manuscript) ====== */
+/* The quote runs as manuscript text with its load-bearing phrase held in a
+   coral wash; the recommender sits in the right margin as a doc-review
+   comment chip, caret aimed at the text it annotates. Hover deepens the
+   wash and lifts the chip. */
+.mgn { display: grid; }
+.mgnRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 200px;
+  column-gap: 40px;
+  align-items: start;
+  padding-block: 26px;
+  margin: 0;
+}
+.mgnRow:first-child { padding-top: 8px; }
+.mgnRow + .mgnRow { border-top: 1px solid var(--border); }
+.mgnQuote {
+  margin: 0;
+  max-width: 56ch;
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  line-height: 1.66;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+.mgnMark {
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  border-radius: 3px;
+  padding: 0.04em 0.16em;
+  margin-inline: -0.06em;
+  color: inherit;
+  transition: background 0.18s ease;
+}
+.mgnRow:hover .mgnMark { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+.mgnNote {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 10px;
+  align-items: center;
+  margin: 0;
+  margin-top: 4px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.mgnId { display: grid; gap: 2px; min-width: 0; }
+/* caret aimed back at the manuscript column */
+.mgnNote::before {
+  content: "";
+  position: absolute;
+  top: 15px;
+  left: -4px;
+  width: 9px;
+  height: 9px;
+  background: var(--surface);
+  border-radius: 0 0 0 2px;
+  transform: rotate(45deg);
+  box-shadow: -1px 1px 1px rgb(28 25 23 / 0.04);
+}
+.mgnRow:hover .mgnNote { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
+.mgnName { font-size: 0.8125rem; font-weight: 600; color: var(--fg); }
+.mgnTitle { font-size: 0.71875rem; line-height: 1.5; color: var(--faint); }
+@media (max-width: 900px) {
+  .mgnRow { grid-template-columns: 1fr; row-gap: 14px; }
+  .mgnNote { justify-self: start; margin-top: 0; }
+  .mgnNote::before { display: none; }
+}
+
+/* ========== RECOMMENDATIONS I, spotlight stage (facepile tabs) ========= */
+/* One oversized serif quote on stage; the facepile rail below switches
+   speakers, active chip wearing the thread's coral ring; a mono counter
+   keeps score. The figure remounts per pick so the enter animation
+   replays. min-height on the stage keeps the rail from bouncing between
+   quotes of different lengths. */
+.stg { display: grid; gap: 28px; max-width: 72ch; }
+.stgItem { margin: 0; display: grid; gap: 18px; align-content: start; min-height: 200px; }
+.stgQuote {
+  position: relative;
+  margin: 0;
+  padding-left: 36px;
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 2.3vw, 1.65rem);
+  line-height: 1.52;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+.stgQuote::before {
+  content: "\201C";
+  position: absolute;
+  left: 0;
+  top: -0.06em;
+  font-size: 1.6em;
+  line-height: 1;
+  color: var(--accent);
+}
+.stgWho { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-left: 36px; }
+.stgName { font-size: 0.875rem; font-weight: 600; color: var(--fg); }
+.stgTitle { font-size: 0.75rem; color: var(--faint); }
+@media (prefers-reduced-motion: no-preference) {
+  .stgItem { animation: stgIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+  @keyframes stgIn {
+    from { opacity: 0; transform: translateY(7px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+.stgRail { display: flex; align-items: center; gap: 10px; }
+.stgChip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  background: var(--surface-alt);
+  box-shadow: inset 0 0 0 1px var(--border);
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.72;
+  transition: opacity 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+.stgChip:hover { opacity: 1; transform: translateY(-1px); }
+.stgChip img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.stgChipActive {
+  opacity: 1;
+  box-shadow: inset 0 0 0 1px var(--border), 0 0 0 2px var(--bg), 0 0 0 3px var(--accent);
+}
+.stgInitials {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+.stgCount { margin-left: 6px; }
+@media (max-width: 640px) {
+  .stgItem { min-height: 0; }
+  .stgQuote { padding-left: 26px; }
+  .stgWho { margin-left: 26px; }
+}
+
+/* ========== RECOMMENDATIONS J, commit log (git-native ledger) ========== */
+/* Each recommendation formatted as git log output: coral mono short-hash,
+   author name and role on the meta line, the quote indented below as the
+   commit message. A faint `$ git log` command line opens the block; the
+   conceit pairs with the contributions graph. */
+.gitLog { display: grid; max-width: 70ch; }
+.gitCmd {
+  margin: 0 0 6px;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--faint);
+}
+.gitCmd::before { content: "$ "; color: color-mix(in srgb, var(--faint) 55%, transparent); }
+.gitEntry { margin: 0; padding-block: 20px; display: grid; gap: 10px; }
+.gitMeta { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
+.gitHash {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
+.gitName { font-size: 0.875rem; font-weight: 600; color: var(--fg); }
+.gitRole { font-size: 0.75rem; color: var(--faint); }
+.gitQuote {
+  margin: 0;
+  padding-left: 20px;
+  max-width: 58ch;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.62;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+@media (max-width: 640px) {
+  .gitQuote { padding-left: 0; }
+}
+
+/* ========== RECOMMENDATIONS K, comic balloons (halftone shadow) ======== */
+/* Proper speech balloons: ink outline, pointed tail aimed at the speaker,
+   and a halftone dot-grid shadow offset behind each balloon, the hero
+   portrait's print grammar. Hover lifts the balloon off its dots. */
+.pfpKom { width: 36px; height: 36px; }
+.pfpKom .pfpInitials { font-size: 0.6875rem; }
+.kom {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px 26px;
+  align-items: start;
+}
+/* the ITEM is the stacking context (isolation) and carries the hover
+   transform: the dot shadow's negative z-index then lands between the page
+   background and the balloon. Transforming the balloon itself would make IT
+   the context and pull the dots above its own background. */
+.komItem { margin: 0; display: grid; justify-items: start; isolation: isolate; transition: transform 0.2s ease; }
+.komItem:hover { transform: translate(-1px, -2px); }
+.komBalloon {
+  --kom-ink: color-mix(in srgb, var(--fg) 82%, var(--border));
+  position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 18px 20px;
+  background: var(--surface);
+  border: 1.5px solid var(--kom-ink);
+  border-radius: 20px;
+}
+/* halftone shadow: a dot grid offset down-right, clipped to the balloon */
+.komBalloon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  transform: translate(7px, 9px);
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--accent) 42%, transparent) 1.1px,
+    transparent 1.3px
+  );
+  background-size: 6px 6px;
+  transition: transform 0.2s ease;
+}
+/* tail: rotated square sharing the balloon's fill and ink */
+.komBalloon::after {
+  content: "";
+  position: absolute;
+  bottom: -7.5px;
+  left: 26px;
+  width: 13px;
+  height: 13px;
+  background: var(--surface);
+  border-right: 1.5px solid var(--kom-ink);
+  border-bottom: 1.5px solid var(--kom-ink);
+  border-bottom-right-radius: 2px;
+  transform: rotate(45deg);
+}
+.komItem:hover .komBalloon::before { transform: translate(9px, 12px); }
+.komQuote {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 0.9793rem;
+  line-height: 1.6;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+.komWho { display: flex; align-items: center; gap: 11px; margin: 16px 0 0 12px; }
+.komId { display: grid; gap: 1px; min-width: 0; }
+.komName { font-size: 0.875rem; font-weight: 600; color: var(--fg); }
+.komRole { font-size: 0.75rem; color: var(--faint); }
+@media (max-width: 900px) {
+  .kom { grid-template-columns: 1fr; gap: 30px; }
+}
+
+/* ========== RECOMMENDATIONS L, dialog boxes (desktop cascade) ========== */
+/* Each recommendation as an OS dialog: window lights (the close light is
+   the coral gesture), a mono filename in the bar, the quote as the dialog
+   message, speaker + a deadpan OK button in the footer. The three windows
+   cascade like a desktop; hover lifts one to the front. */
+.pfpDlg { width: 26px; height: 26px; }
+.pfpDlg .pfpInitials { font-size: 0.5625rem; }
+.dlgRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px 22px;
+  align-items: start;
+}
+.dlg {
+  margin: 0;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.dlg:nth-child(3n + 2) { margin-top: 16px; }
+.dlg:nth-child(3n + 3) { margin-top: 32px; }
+.dlg:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+.dlgBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+}
+.dlgDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--fg) 14%, var(--border));
+  flex: none;
+}
+.dlgDotClose { background: var(--accent); }
+.dlgTitle {
+  margin-left: 8px;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.01em;
+  color: var(--faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dlgQuote {
+  margin: 0;
+  padding: 18px 20px 16px;
+  font-family: var(--serif);
+  font-size: 0.9793rem;
+  line-height: 1.6;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+.dlgFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding: 4px 14px 14px 16px;
+}
+.dlgWho { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.dlgId { display: grid; gap: 1px; min-width: 0; }
+.dlgName { font-size: 0.8125rem; font-weight: 600; color: var(--fg); }
+.dlgRole { font-size: 0.6875rem; line-height: 1.4; color: var(--faint); }
+.dlgOk {
+  flex: none;
+  padding: 5px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--fg);
+  background: var(--surface);
+}
+.dlg:hover .dlgOk { border-color: color-mix(in srgb, var(--fg) 22%, var(--border)); }
+@media (max-width: 900px) {
+  .dlgRow { grid-template-columns: 1fr; gap: 18px; }
+  .dlg:nth-child(3n + 2), .dlg:nth-child(3n + 3) { margin-top: 0; }
+}
+
+/* ========== RECOMMENDATIONS M, chat window (one app frame) ============= */
+/* The whole section lives in one app window: window lights + a mono
+   #channel title in the bar, message rows that highlight on hover, and the
+   footer where the input would be invites the next recommendation on
+   LinkedIn (the coral gesture on hover). */
+.pfpChw { width: 36px; height: 36px; border-radius: 10px; }
+.pfpChw .pfpInitials { font-size: 0.6875rem; }
+.chw {
+  max-width: 760px;
+  background: var(--surface);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.chwBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 16px;
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+}
+.chwTitle {
+  margin-left: 8px;
+  font-family: var(--mono);
+  font-size: 0.71875rem;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+}
+.chwList { display: grid; padding-block: 6px; }
+.chwMsg {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  column-gap: 13px;
+  align-items: start;
+  margin: 0;
+  padding: 14px 20px;
+  transition: background 0.15s ease;
+}
+.chwMsg:hover { background: var(--surface-alt); }
+.chwBody { display: grid; gap: 4px; min-width: 0; }
+.chwWho { display: flex; align-items: baseline; flex-wrap: wrap; gap: 3px 9px; margin: 0; }
+.chwName { font-size: 0.875rem; font-weight: 600; color: var(--fg); }
+.chwRole { font-size: 0.71875rem; color: var(--faint); }
+.chwText {
+  margin: 0;
+  max-width: 58ch;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+.chwFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 16px;
+  margin: 8px 12px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-decoration: none;
+  transition: border-color 0.16s ease;
+}
+.chwPrompt { font-size: 0.8125rem; color: var(--muted); transition: color 0.16s ease; }
+.chwArrow { font-size: 0.8125rem; color: var(--faint); transition: color 0.16s ease, transform 0.16s ease; }
+.chwFoot:hover { border-color: color-mix(in srgb, var(--fg) 20%, var(--border)); }
+.chwFoot:hover .chwPrompt { color: var(--fg); }
+.chwFoot:hover .chwArrow { color: var(--accent); transform: translate(1px, -1px); }
+
+/* ---- source-linked attribution (all recommendation treatments) --------- */
+/* When sampleContent sets `href`, recommender names render as links to the
+   LinkedIn profile: quiet at rest, coral on hover. Verifiability is the one
+   pattern every credible testimonial section shares. */
+.whoLink {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.whoLink:hover { color: var(--accent); }
+
+/* ========== RECOMMENDATIONS N, mosaic (research pick) ================== */
+/* Staggered masonry where the stagger is CAUSED by content: three column
+   stacks with flush tops, quote cards dealt round-robin, and small
+   ornament tiles occupying the notches (a giant coral quote-mark tile, a
+   facepile-with-count tile, a Write-One-on-LinkedIn tile), so nothing
+   floats. Paper cards, attribution header leading, mono "via LinkedIn"
+   foot as the source signal. */
+.pfpMos { width: 36px; height: 36px; }
+.pfpMos .pfpInitials { font-size: 0.6875rem; }
+.mos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.mosCol { display: grid; gap: 18px; align-content: start; }
+.mosCard {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 20px 22px;
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.mosCard:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+
+/* ghost cards: the not-yet-written recommendations. Same card anatomy,
+   skeleton bars instead of words, the whole card dissolving toward the
+   frame edge (mask), so the stagger reads as a window onto a longer wall */
+.mosGhost {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 20px 22px;
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow);
+  opacity: 0.75;
+}
+.mosGhostUp {
+  -webkit-mask-image: linear-gradient(to top, rgb(0 0 0) 30%, transparent 100%);
+  mask-image: linear-gradient(to top, rgb(0 0 0) 30%, transparent 100%);
+}
+.mosGhostDown {
+  -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0) 30%, transparent 100%);
+  mask-image: linear-gradient(to bottom, rgb(0 0 0) 30%, transparent 100%);
+}
+.mosGhostHead { display: flex; align-items: center; gap: 11px; }
+.mosGhostChip {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--fg) 4%, var(--surface-alt));
+}
+.mosGhostId { display: grid; gap: 6px; flex: 1; }
+.mosGhostName {
+  width: 46%;
+  height: 9px;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--fg) 5%, var(--surface-alt));
+}
+.mosGhostRole {
+  width: 64%;
+  height: 7px;
+  border-radius: 4px;
+  background: var(--surface-alt);
+}
+.mosGhostBody { display: grid; gap: 8px; }
+.mosGhostBar {
+  height: 10px;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--fg) 4%, var(--surface-alt));
+}
+.mosGhostBar:nth-child(2n) { width: 93%; }
+.mosGhostBar:last-child { width: 58%; }
+
+/* invite: the bottom ghost is the card the viewer could write, with the
+   ask floating on it as a paper pill */
+.mosInvite { position: relative; }
+.mosInviteLink {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+.mosInvitePill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 9px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  font-size: 0.8125rem;
+  color: var(--muted);
+  transition: color 0.16s ease, border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+}
+.mosInvitePill .mosViaArrow { color: var(--faint); }
+.mosInviteLink:hover .mosInvitePill {
+  color: var(--fg);
+  border-color: color-mix(in srgb, var(--fg) 20%, var(--border));
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+.mosInviteLink:hover .mosViaArrow { color: var(--accent); transform: translate(1px, -1px); }
+.mosWho { display: flex; align-items: center; gap: 11px; margin: 0; }
+.mosId { display: grid; gap: 1px; min-width: 0; }
+.mosName { font-size: 0.875rem; font-weight: 600; color: var(--fg); }
+.mosRole { font-size: 0.71875rem; line-height: 1.4; color: var(--faint); }
+.mosQuote {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 0.9793rem;
+  line-height: 1.62;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+.mosQuote::before { content: "\201C"; color: var(--accent); }
+.mosQuote::after { content: "\201D"; color: var(--accent); }
+.mosVia {
+  justify-self: start;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.01em;
+  color: var(--faint);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.mosViaArrow { transition: transform 0.15s ease; }
+.mosVia:hover { color: var(--accent); }
+.mosVia:hover .mosViaArrow { transform: translate(1px, -1px); }
+@media (max-width: 1100px) {
+  /* two tracks: the third stack wraps under the first */
+  .mos { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 760px) {
+  /* single column: columns dissolve (display: contents) so tiles reflow;
+     ghosts drop, the invite orders to the end as a plain hairline tile */
+  .mos { grid-template-columns: 1fr; }
+  .mosCol { display: contents; }
+  .mosGhost { display: none; }
+  .mosInvite {
+    order: 99;
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+  }
+  .mosInviteLink { position: static; padding: 15px 18px; justify-content: space-between; }
+  .mosInvitePill { padding: 0; border: none; background: transparent; box-shadow: none; }
+  .mosInviteLink:hover .mosInvitePill { transform: none; box-shadow: none; border: none; }
+}
