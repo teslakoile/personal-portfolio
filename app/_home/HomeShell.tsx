@@ -1,4 +1,5 @@
 import { sample } from "../samples/sampleContent";
+import { sectionEnabled } from "../flags";
 import { fontVariant } from "../fonts";
 import styles from "../samples/quiet/styles.module.css";
 import home from "./home.module.css";
@@ -41,20 +42,20 @@ export function HomeShell() {
           <main className={styles.container}>
             <Hero variant={4} />
             <Marquee />
-            <Reveal id="about"><About variant={3} /></Reveal>
-            <Reveal id="projects"><Projects /></Reveal>
-            <Reveal id="experience"><Experience variant={1} /></Reveal>
-            <Reveal id="skills"><Skills variant={3} /></Reveal>
-            <Reveal id="education"><Education /></Reveal>
-            <Reveal id="certifications"><Certifications variant={1} /></Reveal>
-            <Reveal id="writing"><Writing variant={1} /></Reveal>
-            <Reveal id="community"><Community /></Reveal>
-            <Reveal id="recognition"><Recognition variant={2} /></Reveal>
-            {sample.recommendations.length > 0 ? (
+            {sectionEnabled("about") ? <Reveal id="about"><About variant={3} /></Reveal> : null}
+            {sectionEnabled("projects") ? <Reveal id="projects"><Projects /></Reveal> : null}
+            {sectionEnabled("experience") ? <Reveal id="experience"><Experience variant={1} /></Reveal> : null}
+            {sectionEnabled("skills") ? <Reveal id="skills"><Skills variant={3} /></Reveal> : null}
+            {sectionEnabled("education") ? <Reveal id="education"><Education /></Reveal> : null}
+            {sectionEnabled("certifications") ? <Reveal id="certifications"><Certifications variant={1} /></Reveal> : null}
+            {sectionEnabled("writing") ? <Reveal id="writing"><Writing variant={1} /></Reveal> : null}
+            {sectionEnabled("community") ? <Reveal id="community"><Community /></Reveal> : null}
+            {sectionEnabled("recognition") ? <Reveal id="recognition"><Recognition variant={2} /></Reveal> : null}
+            {sectionEnabled("recommendations") && sample.recommendations.length > 0 ? (
               <Reveal id="recommendations"><RecommendationsMosaic /></Reveal>
             ) : null}
-            <Reveal id="resources"><Resources /></Reveal>
-            <Reveal id="github"><Contributions /></Reveal>
+            {sectionEnabled("resources") ? <Reveal id="resources"><Resources /></Reveal> : null}
+            {sectionEnabled("github") ? <Reveal id="github"><Contributions /></Reveal> : null}
           </main>
 
           <footer className={styles.footer}>

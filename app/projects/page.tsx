@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { sample } from "../samples/sampleContent";
+import { sectionEnabled } from "../flags";
 import { fontVariant } from "../fonts";
 import styles from "../samples/quiet/styles.module.css";
 import prj from "./projects.module.css";
@@ -29,6 +31,8 @@ export const metadata: Metadata = {
  * Landing sheets deep-link here via /projects#<slug>.
  */
 export default function ProjectsPage() {
+  // rides the projects section flag with the landing section that links here
+  if (!sectionEnabled("projects")) notFound();
   return (
     <div className={styles.root} data-variant={fontVariant}>
       <header className={prj.prjTopbar}>

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import home from "./home.module.css";
+import { sectionEnabled } from "../flags";
 import { popOpen, popClose, tick, thud, chime, click } from "./sound";
 
 /* ============================== ASK ANYTHING =============================== */
@@ -15,7 +16,7 @@ type QA = {
   link?: { label: string; href: string; external?: boolean };
 };
 
-const QAS: QA[] = [
+const ALL_QAS: QA[] = [
   {
     q: "What do you do?",
     keywords: ["do", "job", "work", "role", "who", "you"],
@@ -76,6 +77,13 @@ const QAS: QA[] = [
     link: { label: "Download the CV", href: "/Kyle-Naranjo-CV.pdf", external: true },
   },
 ];
+
+// A QA whose link anchors into a flagged-off landing section would scroll
+// nowhere, so it falls out with the section and that question takes the
+// mailto fallback instead.
+const QAS = ALL_QAS.filter(
+  (qa) => !qa.link?.href.startsWith("#") || sectionEnabled(qa.link.href.slice(1)),
+);
 
 const SUGGESTIONS = ["What do you do?", "What's your stack?", "Are you available for talks?", "Can I see your CV?"];
 
