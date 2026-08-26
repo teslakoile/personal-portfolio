@@ -17,7 +17,7 @@ import { Education } from "../samples/quiet/sections/Education";
 import { Recognition } from "../samples/quiet/sections/Recognition";
 import { Sidebar } from "./Sidebar";
 import { Overlays } from "./Overlays";
-import { Recommendations } from "./Recommendations";
+import { RecommendationsMosaic } from "./Recommendations";
 import { Resources } from "./Resources";
 import { Contributions } from "./Contributions";
 import { Projects } from "./Projects";
@@ -51,7 +51,7 @@ export function HomeShell() {
             <Reveal id="community"><Community /></Reveal>
             <Reveal id="recognition"><Recognition variant={2} /></Reveal>
             {sample.recommendations.length > 0 ? (
-              <Reveal id="recommendations"><Recommendations /></Reveal>
+              <Reveal id="recommendations"><RecommendationsMosaic /></Reveal>
             ) : null}
             <Reveal id="resources"><Resources /></Reveal>
             <Reveal id="github"><Contributions /></Reveal>
