@@ -493,34 +493,48 @@ export const sample = {
   // and title) BEFORE deploying. Delete all entries to hide the section.
   // `avatar` is an optional local headshot under public/recs/ (square, ≥160px);
   // while it's null the treatments render an initials chip. The mock names are
-  // distinct (Ana/Ben/Cara) so the derived monograms don't collide.
+  // distinct (Ana/Ben/Cara) so the derived monograms don't collide. `highlight`
+  // is an optional verbatim substring of `quote` that the margin-notes
+  // treatment holds in a coral wash; omit it (or let it drift from the quote)
+  // and that quote simply renders unmarked. `href` is the recommender's
+  // LinkedIn profile URL: every treatment renders the name as a link when it
+  // is set (source-linked quotes are the one pattern every credible
+  // testimonial section shares), so capture it when porting the real quotes.
   recommendations: [
     {
       quote:
         "Kyle took the messiest part of our data platform and turned it into the most dependable one. He communicates like a consultant and ships like a senior engineer.",
+      highlight: "turned it into the most dependable one",
       name: "Mock Reviewer Ana",
       title: "Engineering Manager · placeholder",
       avatar: null,
+      href: "https://www.linkedin.com/",
     },
     {
       quote:
         "The rare engineer who is equally at home in a C-suite steering meeting and a 2 a.m. pipeline incident. His record-linkage work changed how our bank sees its customers.",
+      highlight: "changed how our bank sees its customers",
       name: "Mock Reviewer Ben",
       title: "Data Platform Lead · placeholder",
       avatar: null,
+      href: "https://www.linkedin.com/",
     },
     {
       quote:
         "Every team Kyle touches gets faster. He automates the boring parts, documents the sharp edges, and leaves the codebase better than he found it.",
+      highlight: "Every team Kyle touches gets faster.",
       name: "Mock Reviewer Cara",
       title: "Product Director · placeholder",
       avatar: null,
+      href: "https://www.linkedin.com/",
     },
   ] as ReadonlyArray<{
     quote: string;
+    highlight?: string | null;
     name: string;
     title: string;
     avatar?: string | null;
+    href?: string | null;
   }>,
 
   // FLAGSHIP SECTION. Seeded from the engagements above (clients stay
