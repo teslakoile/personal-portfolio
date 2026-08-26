@@ -1,11 +1,12 @@
 import { sample } from "../samples/sampleContent";
+import { sectionEnabled } from "../flags";
 
 /**
  * Single source of truth for the landing page's section rail. The sidebar
  * numbers its links from this order, and every section eyebrow ("07 /
  * Certifications") derives its number from the same list, so hiding a section
- * (recommendations auto-hides while its data list is empty) renumbers both
- * rails at once.
+ * (via its flags.ts entry, or recommendations auto-hiding while its data list
+ * is empty) renumbers both rails at once.
  */
 export const NAV_SECTIONS = [
   { id: "about", label: "About" },
@@ -20,7 +21,9 @@ export const NAV_SECTIONS = [
   { id: "recommendations", label: "Recommendations" },
   { id: "resources", label: "Resources" },
   { id: "github", label: "GitHub" },
-].filter((s) => s.id !== "recommendations" || sample.recommendations.length > 0);
+]
+  .filter((s) => sectionEnabled(s.id))
+  .filter((s) => s.id !== "recommendations" || sample.recommendations.length > 0);
 
 export function sectionNumber(id: string): string {
   const i = NAV_SECTIONS.findIndex((s) => s.id === id);
