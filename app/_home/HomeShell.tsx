@@ -40,7 +40,7 @@ export function HomeShell() {
         <Sidebar />
         <div className={home.main}>
           <main className={styles.container}>
-            <Hero variant={4} />
+            <Hero variant={4} portrait="/hero/portrait-hero-black.webp" />
             <Marquee />
             {sectionEnabled("about") ? <Reveal id="about"><About variant={3} /></Reveal> : null}
             {sectionEnabled("projects") ? <Reveal id="projects"><Projects /></Reveal> : null}

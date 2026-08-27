@@ -11,8 +11,10 @@ from PIL import Image
 INK = np.array([0x1c, 0x19, 0x17], np.float32)
 
 
-def compose(dots, out, crop, person_p, bridge_p, floor=0.68, bridge_gain=2.2):
-    A = np.asarray(Image.open(dots).getchannel("A")).astype(np.float32) / 255
+def compose(dots, out, crop, person_p, bridge_p, floor=0.68, bridge_gain=2.2,
+            keep_rgb=False):
+    src = Image.open(dots).convert("RGBA")
+    A = np.asarray(src.getchannel("A")).astype(np.float32) / 255
     H, W = A.shape
     x, y, w, h = crop
 
@@ -22,7 +24,10 @@ def compose(dots, out, crop, person_p, bridge_p, floor=0.68, bridge_gain=2.2):
 
     keep = np.clip(reg(person_p) + reg(bridge_p) * bridge_gain + floor, 0, 1)
     a = (A * keep)[..., None]
-    rgb = np.broadcast_to(INK, (H, W, 3))
+    # keep_rgb carries a duotone plate's own inks through; otherwise every dot
+    # is the single black the flat treatment uses
+    rgb = (np.asarray(src.convert("RGB")).astype(np.float32) if keep_rgb
+           else np.broadcast_to(INK, (H, W, 3)))
     Image.fromarray(np.dstack([rgb, a * 255]).astype(np.uint8), "RGBA").save(out)
 
 
@@ -31,4 +36,5 @@ if __name__ == "__main__":
     compose(sys.argv[1], sys.argv[2],
             crop=tuple(int(v) for v in kw["crop"].split(",")),
             person_p=kw["person"], bridge_p=kw["bridge"],
-            floor=float(kw.get("floor", 0.68)), bridge_gain=float(kw.get("gain", 2.2)))
+            floor=float(kw.get("floor", 0.68)), bridge_gain=float(kw.get("gain", 2.2)),
+            keep_rgb=kw.get("keep_rgb", "0") == "1")

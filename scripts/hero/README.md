@@ -7,7 +7,60 @@ left exactly as they were.
     ./build.sh
 
 reads `public/hero/source.png` and writes `public/hero/portrait-halftone.png`,
-the only file the page loads.
+the file the landing page loads today.
+
+    ./build-duotone.sh
+
+writes the three coral halftone treatments compared at
+`/samples/rework/hero-portrait`.
+
+    ./build-screen.sh
+
+writes the two dot-screen treatments, which are the Franky reference's actual
+effect rather than a halftone. Measured off the reference: a constant 5px
+axis-aligned lattice, a continuous-tone photograph underneath (190k unique
+colours, cell contrast that never collapses at the tone extremes the way
+ink-on-paper does), and one dark dot per cell at about 20 levels. Recovering
+the reference's own base and re-screening it lands within 8.5 levels of it,
+against 20.7 for the halftone. See `dotscreen.py`.
+
+    ./build-franky.sh              # PALETTE=blue ./build-franky.sh to recolour
+    franky_filter.py SRC OUT pitch=N palette=coral
+
+is the reference's treatment, in three stages that are deliberately separate:
+
+1. `prepare`, discard the source's colour, flatten surfaces with a median (not
+   a gaussian, which softens the edges as well as the surfaces), and normalise
+   levels from percentiles so any photograph lands on the same rungs.
+2. `dither`, a sine-screen ordered dither that quantises tone to N rungs.
+3. `paint`, rung index straight to an ink from a named palette.
+
+Because colour is discarded in stage 1 and chosen in stage 3, the source's own
+colour never reaches the output: the same call gives coral, ink, blue, forest
+or plum from the same frame, and a grey photograph comes out as coral just as
+readily as an orange one. Add a palette to `PALETTES` to get another.
+
+`public/hero/bridge-franky.webp` is a Golden Gate tower generated with
+`gpt-image-2`; `portrait-franky.webp` is Kyle through the identical call.
+
+    ./build-icon.sh                 # PALETTE=ink4 for the black and white variant
+
+builds the site icons from the same filter: `app/icon.png`, `apple-icon.png`
+and `favicon.ico`. Two preprocessing steps do the work before the screen. The
+square crop is derived from the subject matte (the neck is where the silhouette
+widens past 1.4x the head's own median width, and the box centres on the HEAD's
+x-extent, because the figure's centroid sits at the shoulders and pulls the crop
+off-centre). Then the background is lifted 55% toward paper through that same
+matte, so the bridge and the bay recede and he carries the frame.
+
+Pitch scales per size to hold about 50 cells, so every icon has the same dot
+texture. One render downscaled would not: downsampling a dither blends its inks,
+which took a 2-colour file to 233 colours at 32px.
+
+`pitch` is the one number that does not transfer. The reference's dots measure
+5px, so set it per slot: `pitch = plate_width / (display_width / 5)`.
+
+Nothing on the landing page loads any of these until a pick lands.
 
 ## Inputs
 
@@ -30,6 +83,24 @@ the only file the page loads.
 4. `edge_fade.py`, ramps alpha to zero at the frame edges so the PNG has no
    visible boundary. Kyle is excluded, or his shoulder dissolves where it meets
    the right edge.
+
+`build-duotone.sh` inserts one more stage between 2 and 3:
+
+- `duotone.py`, colour. A halftone stores tone as dot area, so blurring the
+  plate's own alpha over about one cell reads that tone back out, and the value
+  indexes a colour ramp: sparse dots take pale orange, dense dots a deep
+  maroon, the accent sits in the middle. Only RGB is written, so the geometry
+  carries through untouched. `compose.py keep_rgb=1` then leaves those inks
+  alone instead of flattening every dot to one black.
+
+## Why the duotone build uses different numbers
+
+| Setting | Flat | Duotone | Why |
+|---|---|---|---|
+| `pitch` | 9 | 20 (14 for the fine variant) | the hero slot is 262px wide, so a pitch-9 dot lands at 1.1px and the screen stops being visible. Pitch 20 puts it at 2.5px. Past 20 his glasses stop resolving. |
+| `cover` | 0.72 | 1.05 | the flat plate tops out at 41% ink, which is dark in black and merely pink in coral. Denser dots reach 84%. |
+| `floor` | 0.68 | 0.34 | the denser plate carries the bay on its own; the old floor turns it into a slab. |
+| format | PNG | WebP | duotone RGB varies per pixel, which costs a PNG about 1.5 MB. WebP at the same 2100px is about 200 KB, under the flat treatment's own PNG. |
 
 ## Tuning
 

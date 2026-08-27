@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Quiet Blueprint mark: coral tile + geometric K (strokes, no font deps) -->
-  <rect width="64" height="64" rx="14" fill="#f5482d"/>
-  <g stroke="#ffffff" stroke-width="7" stroke-linecap="round" fill="none">
-    <path d="M23 17v30"/>
-    <path d="M42 17 24.5 33.2"/>
-    <path d="M25.5 31.8 43 47"/>
-  </g>
-</svg>

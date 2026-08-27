@@ -119,9 +119,9 @@ function HeroV3() {
   );
 }
 
-export function Hero({ variant = 1 }: { variant?: HeroVariant }) {
+export function Hero({ variant = 1, portrait, bleed }: { variant?: HeroVariant; portrait?: string; bleed?: boolean }) {
   if (variant === 2) return <HeroV2 />;
   if (variant === 3) return <HeroV3 />;
-  if (variant === 4) return <HeroV4 />;
+  if (variant === 4) return <HeroV4 portrait={portrait} bleed={bleed} />;
   return <HeroV1 />;
 }
