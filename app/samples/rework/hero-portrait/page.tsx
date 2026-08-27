@@ -193,14 +193,16 @@ export default function HeroPortraitRework() {
           right and the bottom. That is where its look comes from, not from the
           screen: at that size you get visible dots AND a face that still
           resolves, which a 262px slot cannot give you at any pitch. This is the
-          filter as H, same palette, same call, pointed at his own plate at
-          pitch 12 instead. Colour no longer has to be invented for him: it
-          comes from the palette, not from the photograph.
+          filter as H, pointed at his own plate: four inks at pitch 22, with
+          the dark end lifted off the bottom rung so the jacket dithers instead
+          of printing as a slab. Colour no longer has to be invented for him,
+          it comes from the palette rather than the photograph, which is why
+          the same call also produces the coral variant and the icon.
         </p>
         <div className={shell.vstage}>
           <div className={quiet.root} data-variant="swiss" style={{ minHeight: 0, background: "transparent" }}>
             <div className={quiet.container}>
-              <Hero variant={4} portrait="/hero/portrait-franky.webp" bleed />
+              <Hero variant={4} portrait="/hero/portrait-hero-black.webp" bleed />
             </div>
           </div>
         </div>

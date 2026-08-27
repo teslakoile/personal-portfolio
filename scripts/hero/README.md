@@ -43,6 +43,20 @@ readily as an orange one. Add a palette to `PALETTES` to get another.
 `public/hero/bridge-franky.webp` is a Golden Gate tower generated with
 `gpt-image-2`; `portrait-franky.webp` is Kyle through the identical call.
 
+    ./build-icon.sh                 # PALETTE=ink4 for the black and white variant
+
+builds the site icons from the same filter: `app/icon.png`, `apple-icon.png`
+and `favicon.ico`. Two preprocessing steps do the work before the screen. The
+square crop is derived from the subject matte (the neck is where the silhouette
+widens past 1.4x the head's own median width, and the box centres on the HEAD's
+x-extent, because the figure's centroid sits at the shoulders and pulls the crop
+off-centre). Then the background is lifted 55% toward paper through that same
+matte, so the bridge and the bay recede and he carries the frame.
+
+Pitch scales per size to hold about 50 cells, so every icon has the same dot
+texture. One render downscaled would not: downsampling a dither blends its inks,
+which took a 2-colour file to 233 colours at 32px.
+
 `pitch` is the one number that does not transfer. The reference's dots measure
 5px, so set it per slot: `pitch = plate_width / (display_width / 5)`.
 
