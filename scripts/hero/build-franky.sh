@@ -12,7 +12,8 @@ cd "$(dirname "$0")"
 TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
 RUN="uv run --with pillow --with numpy python"
 CROP=40,300,984,1180
-PAL=${PALETTE:-coral}
+PAL=${PALETTE:-ink4}          # the hero ships black; the icon carries the coral
+PITCH_ARGS="pitch=22 amp=1.5 floor=0.54 ceil=0.94 transparent=1"
 
 # --- the bridge: a generated Golden Gate tower, no cut-out needed ------------
 # Source is tracked at public/hero/bridge-source.webp: it came out of
@@ -23,7 +24,7 @@ im = Image.open('../../public/hero/bridge-source.webp').convert('RGB')
 w = round(im.height*4/5)                      # .photoBleed is 4:5
 im.crop((im.width-w, 0, im.width, im.height)).save('$TMP/bridge.png')"
 $RUN franky_filter.py "$TMP/bridge.png" ../../public/hero/bridge-franky.webp \
-  pitch=8 palette="$PAL" quality=80
+  palette="$PAL" pitch=14 amp=1.5 floor=0.54 ceil=0.94 transparent=1 quality=80
 echo "wrote public/hero/bridge-franky.webp"
 
 # --- Kyle: tone the plate first, so the bay is held back and he is not ------
@@ -35,6 +36,8 @@ $RUN -c "
 from PIL import Image
 im = Image.open('$TMP/plate.png')
 im.resize((1200, round(1200*im.height/im.width)), Image.LANCZOS).save('$TMP/plate.png')"
-$RUN franky_filter.py "$TMP/plate.png" ../../public/hero/portrait-franky.webp \
-  pitch=12 palette="$PAL" quality=80
-echo "wrote public/hero/portrait-franky.webp"
+$RUN franky_filter.py "$TMP/plate.png" ../../public/hero/portrait-hero-black.webp \
+  palette=ink4 $PITCH_ARGS quality=80
+$RUN franky_filter.py "$TMP/plate.png" ../../public/hero/portrait-hero-coral.webp \
+  palette=coral4 $PITCH_ARGS quality=80
+echo "wrote public/hero/portrait-hero-{black,coral}.webp"
