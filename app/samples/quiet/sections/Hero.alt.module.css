@@ -268,3 +268,41 @@
   .photoFrame { justify-self: start; max-width: 280px; }
   .photoHalftone { justify-self: start; max-width: 300px; }
 }
+
+/* ---- V4 bleed: the Franky reference's composition ---------------------
+   The reference works because the plate is huge and runs off two edges, not
+   because of its screen. One big portrait anchored to the column's right
+   edge, cropped by its own frame, with the headline holding the empty left.
+   Uses portrait-coral-bleed.webp, whose right and bottom edges are hard
+   (they leave the page) while the left and top still dissolve. */
+.v4Bleed {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: end;
+  /* the plate is absolute, so the section needs its own floor or the image
+     hangs out of the top. 1.25x the plate's own width, its 4/5 aspect. */
+  min-height: clamp(380px, 46vw, 700px);
+}
+.v4Bleed .v4Main { max-width: 60%; padding-bottom: clamp(8px, 2vw, 32px); }
+
+.photoBleed {
+  position: absolute;
+  right: -24px;                      /* cancels .container's padding */
+  bottom: 0;
+  width: min(50%, 760px);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;                  /* the crop IS the bleed */
+  z-index: 0;
+  pointer-events: none;
+}
+.photoBleed img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 42% bottom;
+}
+
+@media (max-width: 900px) {
+  .v4Bleed .v4Main { max-width: 100%; }
+  .photoBleed { position: relative; right: 0; width: 100%; aspect-ratio: 3 / 2; margin-top: 24px; }
+}

@@ -35,7 +35,10 @@ function Clauses({ text }: { text: string }) {
  *    (a radial mask tracks the cursor over an accent-tinted copy of the grid).
  * Pure pointer response, no effect until the mouse moves, reduced-motion safe.
  */
-export function HeroV4() {
+export function HeroV4({
+  portrait = "/hero/portrait-halftone.png",
+  bleed = false,
+}: { portrait?: string; bleed?: boolean } = {}) {
   const ref = useRef<HTMLElement>(null);
 
   const onMove = (e: MouseEvent<HTMLElement>) => {
@@ -53,7 +56,12 @@ export function HeroV4() {
   };
 
   return (
-    <section ref={ref} className={alt.v4} onMouseMove={onMove} onMouseLeave={onLeave}>
+    <section
+      ref={ref}
+      className={bleed ? `${alt.v4} ${alt.v4Bleed}` : alt.v4}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+    >
       <div className={styles.heroGrid} aria-hidden="true" />
       <div className={alt.heroSpot} aria-hidden="true" />
       <div className={alt.v4Main}>
@@ -96,10 +104,12 @@ export function HeroV4() {
           scripts/hero/build.sh from public/hero/source.png; me.jpg and
           me-halftone.png are left untouched. Reading order is Kyle, the
           bridge, then the bay as faint texture, and the PNG's own edges
-          dissolve so there is no crop line. */}
-      <div className={`${alt.photoHalftone} ${styles.rise} ${styles.d1}`}>
+          dissolve so there is no crop line. The coral duotone treatments from
+          scripts/hero/build-duotone.sh swap in through `portrait`, which is
+          how /samples/rework/hero-portrait shows them on the real hero. */}
+      <div className={`${bleed ? alt.photoBleed : alt.photoHalftone} ${styles.rise} ${styles.d1}`}>
         <img
-          src="/hero/portrait-halftone.png"
+          src={portrait}
           alt="Kyle Naranjo at the Golden Gate Bridge"
           width={2100}
           height={2517}
