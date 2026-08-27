@@ -9,6 +9,7 @@ import shell from "../sections/_shared.module.css";
 // Fontset decision: Swiss (Geist + Geist Mono), locked in app/fonts.ts, the
 // comparison page is retired and the whole app renders the global set.
 const PAGES = [
+  { href: "/samples/rework/hero-portrait", title: "Hero portrait", note: "4 options, current ink · coral duotone at pitch 14 and 20 · split inks (coral scene, ink Kyle)" },
   { href: "/samples/rework/before-after", title: "Before / after, font trim + label sweep", note: "payload 434 KB → 52 KB · eyebrow removed · all-caps labels de-capped" },
   { href: "/samples/rework/certifications", title: "Certifications", note: "4 options, badge cards · registry table · issuer groups · badge wall" },
   { href: "/samples/rework/writing", title: "Writing", note: "4 options, horizontal cards · editorial spreads · stacked feature · two-up" },
