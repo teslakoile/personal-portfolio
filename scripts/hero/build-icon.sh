@@ -72,3 +72,20 @@ im = Image.open('../../app/icon.png').convert('RGBA')
 bg = Image.new('RGBA', im.size, (250,249,247,255)); bg.alpha_composite(im)
 bg.save('../../app/favicon.ico', format='ICO', sizes=[(16,16),(32,32),(48,48)])"
 echo "wrote ../../app/favicon.ico"
+
+# Guard, not decoration: Turbopack decodes the PNG inside the ICO and rejects
+# any colour type but RGBA, and a webpack build never looks, so an RGB save
+# passes locally and fails only on deploy. Fail here instead.
+$RUN -c "
+import struct, sys
+d = open('../../app/favicon.ico','rb').read()
+n = struct.unpack('<HHH', d[:6])[2]
+bad = []
+for i in range(n):
+    w, h, *_ , size, off = struct.unpack('<BBBBHHII', d[6+i*16:22+i*16])
+    b = d[off:off+size]
+    if b[:8] == b'\x89PNG\r\n\x1a\n' and b[25] != 6:
+        bad.append(f'{w or 256}x{h or 256} is PNG colour type {b[25]}, not 6 (RGBA)')
+if bad:
+    sys.exit('favicon.ico would fail the Turbopack build:\n  ' + '\n  '.join(bad))
+print(f'favicon.ico: {n} frames, all RGBA')"
