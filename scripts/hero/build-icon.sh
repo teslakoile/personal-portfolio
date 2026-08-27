@@ -63,10 +63,12 @@ Image.open('$TMP/base.png').resize(($1,$1), Image.LANCZOS).save('$TMP/b$1.png')"
 emit 256 5 ../../app/icon.png
 emit 180 4 ../../app/apple-icon.png
 
-# favicon.ico carries the small legacy sizes
+# favicon.ico carries the small legacy sizes. It must stay RGBA: Turbopack
+# decodes the PNG inside the ICO and rejects anything else, which a webpack
+# build does not check, so an RGB save passes locally and fails on deploy.
 $RUN -c "
 from PIL import Image
 im = Image.open('../../app/icon.png').convert('RGBA')
 bg = Image.new('RGBA', im.size, (250,249,247,255)); bg.alpha_composite(im)
-bg.convert('RGB').save('../../app/favicon.ico', sizes=[(16,16),(32,32),(48,48)])"
+bg.save('../../app/favicon.ico', format='ICO', sizes=[(16,16),(32,32),(48,48)])"
 echo "wrote ../../app/favicon.ico"
