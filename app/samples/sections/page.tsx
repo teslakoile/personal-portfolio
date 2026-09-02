@@ -14,6 +14,7 @@ const sections = [
   { key: "education/refined", name: "Education, refined", pick: "round 2 · from A (diploma cards)", blurb: "Real UP/PSHS logos, coral removed, restyled Honours; V1 Geist · V2 Fraunces diploma · V3 registry." },
   { key: "community/final", name: "Community & Speaking, converged", pick: "round 3 · the pick, dialed in", blurb: "V1 base: labels removed, both cards white, GDG logo added (Shapers = wordmark), KPI + numbered talks kept." },
   { key: "education/final", name: "Education, card-less", pick: "round 3 · 2 card-less takes", blurb: "No card containers, content on paper w/ hairlines. A=Ledger (Geist), B=Registry (Fraunces, numbered)." },
+  { key: "stack", name: "Tech Stack Band", pick: "V1 · Quiet Line (your pick)", blurb: "One slow ruled row, bare logos. Alternatives kept: Hairline Grid, Grouped Rails, Paged Rail, and the old two-row marquee." },
 ];
 
 export default function SectionsIndex() {

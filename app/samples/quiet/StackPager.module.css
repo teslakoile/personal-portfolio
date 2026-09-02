@@ -1,0 +1,93 @@
+/* Tech-stack paged rail: reader-driven snap scrolling, no autoplay.
+   Inherits Geist tokens from ancestor .root. */
+
+.band { padding: clamp(20px, 3vw, 32px) 0; }
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 4px;
+}
+.label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--faint);
+  margin: 0;
+}
+.controls { display: flex; gap: 8px; }
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: var(--muted);
+  cursor: pointer;
+  transition-property: transform, box-shadow, color, opacity;
+  transition-duration: 0.16s;
+  transition-timing-function: ease;
+}
+/* extend the hit area to 40px without overlapping the sibling button */
+.btn::after { content: ""; position: absolute; inset: -4px; }
+.btn:hover:enabled { box-shadow: var(--shadow-hover); color: var(--fg); }
+.btn:active:enabled { transform: scale(0.96); }
+.btn:disabled { opacity: 0.35; cursor: default; }
+
+.railWrap { position: relative; }
+.rail {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  /* vertical room for the hover lift + shadow */
+  padding-block: 20px 26px;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 16px;
+  background: var(--surface);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  font-size: 0.875rem;
+  color: var(--fg);
+  white-space: nowrap;
+  scroll-snap-align: start;
+  transition-property: transform, box-shadow;
+  transition-duration: 0.18s;
+  transition-timing-function: ease;
+}
+.item:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.logo { flex: none; display: block; }
+
+/* fades appear only on the side that still has content */
+.fadeL, .fadeR {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 52px;
+  pointer-events: none;
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+}
+.fadeL { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+.fadeR { right: 0; background: linear-gradient(270deg, var(--bg), transparent); }
+.railWrap[data-can-prev="true"] .fadeL { opacity: 1; }
+.railWrap[data-can-next="true"] .fadeR { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rail { scroll-behavior: auto; }
+}

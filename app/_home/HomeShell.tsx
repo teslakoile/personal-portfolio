@@ -6,7 +6,7 @@ import home from "./home.module.css";
 import { ContactIcon } from "../samples/quiet/Logo";
 import { CONTACT_KIND } from "../samples/quiet/helpers";
 import { Reveal } from "../samples/quiet/Reveal";
-import { Marquee } from "../samples/quiet/Marquee";
+import { StackLine } from "../samples/quiet/StackLine";
 import { Hero } from "../samples/quiet/sections/Hero";
 import { About } from "../samples/quiet/sections/About";
 import { Experience } from "../samples/quiet/sections/Experience";
@@ -28,7 +28,7 @@ import { Projects } from "./Projects";
  * sidebar layout, plus the new sections: recommendations, resources, and the
  * GitHub contribution graph. Kyle's locked picks: photo hero V4, about V3,
  * timeline experience, spec-sheet skills, writing V1, cert badges, inline
- * recognition V2. Alternative per-section treatments are being explored at
+ * recognition V2, quiet-line stack band (alternatives at /samples/sections/stack). Alternative per-section treatments are being explored at
  * /samples/rework, the landing keeps this composition until a pick lands.
  * The prior top-nav composition still lives at /samples/home; the text-dense
  * original at /classic.
@@ -41,7 +41,7 @@ export function HomeShell() {
         <div className={home.main}>
           <main className={styles.container}>
             <Hero variant={4} portrait="/hero/portrait-hero-black.webp" />
-            <Marquee />
+            <StackLine />
             {sectionEnabled("about") ? <Reveal id="about"><About variant={3} /></Reveal> : null}
             {sectionEnabled("projects") ? <Reveal id="projects"><Projects /></Reveal> : null}
             {sectionEnabled("experience") ? <Reveal id="experience"><Experience variant={1} /></Reveal> : null}
