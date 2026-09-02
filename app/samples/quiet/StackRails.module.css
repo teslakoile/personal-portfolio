@@ -1,0 +1,59 @@
+/* Tech-stack grouped rails. Inherits Geist tokens from ancestor .root. */
+
+.band { padding: clamp(20px, 3vw, 32px) 0; }
+.label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--faint);
+  margin: 0 0 12px;
+}
+.rows { border-top: 1px solid var(--border); }
+.row {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 24px;
+  align-items: start;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+.groupTitle {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--faint);
+  margin: 0;
+  /* optical: mono cap height sits a hair high next to the 16px logos */
+  padding-top: 3px;
+  white-space: nowrap;
+}
+.tools {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 22px;
+  row-gap: 10px;
+}
+.tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--muted);
+  white-space: nowrap;
+  transition-property: color;
+  transition-duration: 0.16s;
+  transition-timing-function: ease;
+}
+.tool:hover { color: var(--fg); }
+.logo {
+  flex: none;
+  display: block;
+  transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tool:hover .logo { transform: scale(1.18); }
+
+@media (max-width: 640px) {
+  .row { grid-template-columns: 1fr; gap: 8px; }
+  .groupTitle { padding-top: 0; }
+}
