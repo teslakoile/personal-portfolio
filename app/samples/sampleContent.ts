@@ -35,7 +35,7 @@ export const sample = {
     eyebrow: "DATA & AI INFRASTRUCTURE",
     headline: "I build AI agents, data pipelines, and cloud infrastructure.",
     subhead:
-      "I work with enterprise clients in financial services, investment management, education, and compliance. I love a hard entity resolution problem, and I lead GDG Davao.",
+      "I work with enterprise clients in financial services, investment management, education, and compliance.",
     primaryCta: { label: "Get in Touch", href: "mailto:kyle.naranjo@gmail.com" },
   },
 
