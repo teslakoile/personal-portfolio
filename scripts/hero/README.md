@@ -66,8 +66,8 @@ Nothing on the landing page loads any of these until a pick lands.
 
 | File | What it is |
 |---|---|
-| `../../public/hero/source.png` | the graded photo, 1024x1536 |
-| `subject-matte.png` | Kyle's alpha, from `rembg` u2net_human_seg |
+| `../../public/hero/source.png` | the graded photo, 1024x1536, downscaled from a 2048x3072 master (`~/Desktop/Pics/portrait-retouched/kyle-sf-portrait-og.png`). Built in steps: the hair (soft, loosely flowing, a few pieces on the forehead) from `gpt-image-2` edits; a sharp overcast background from a `gpt-image-2` render referenced on a real Fort Point photo; the streaky water left of his face replaced with real ripples from the right side of the same rows; the side hair darkened about 25% by a multiply filter limited to neutral hair pixels above the ears; and a light Gaussian blur (sigma 1.2 at 2048x3072) on the background, faded to zero within about 60 px of him. The blur is a filter, not generated, so it hides the AI texture without leaving an outline. The earlier combed, glossy hair read as AI at the hero's scale. |
+| `subject-matte.png` | Kyle's alpha, from `rembg` u2net_human_seg on the current `source.png` |
 | `bridge-mask.png` | the bridge structure, keyed on international orange, largest connected component, Fort Point cut out |
 
 ## Stages
