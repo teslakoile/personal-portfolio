@@ -23,7 +23,7 @@ Look at the rendered page before you call a UI change done; reading the source i
 - `npm run shot -- / --selector "#experience"`: one element.
 - `--viewport tablet` or `--viewport 1280x800`, `--reduced-motion`, `--base <url>`, `--out <dir>`.
 
-The capture turns off the site's smooth scrolling and hides the Next dev badge. If Chromium is missing, run `./scripts/install-browser.sh`. In cloud sessions the SessionStart hook in `.claude/settings.json` installs it.
+The capture turns off the site's smooth scrolling and hides the Next dev badge. Headless Chromium on Linux renders Geist with slightly tighter spacing than Chrome on macOS, so do not treat small kerning differences in cloud screenshots as bugs. If Chromium is missing, run `./scripts/install-browser.sh`. In cloud sessions the SessionStart hook in `.claude/settings.json` installs it.
 
 ## Design rules
 
