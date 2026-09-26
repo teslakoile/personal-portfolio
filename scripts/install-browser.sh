@@ -31,7 +31,13 @@ if [ ! -f "$install_dir/INSTALLATION_COMPLETE" ]; then
   if [ -n "$version" ] && curl -fsSL --retry 2 --max-time 300 -o "$tmp/shell.zip" "$google_url"; then
     rm -rf "$install_dir"
     mkdir -p "$install_dir"
-    unzip -q "$tmp/shell.zip" -d "$install_dir"
+    if command -v unzip >/dev/null; then
+      unzip -q "$tmp/shell.zip" -d "$install_dir"
+    else
+      # Python's zipfile drops the executable bits, so restore them after.
+      python3 -m zipfile -e "$tmp/shell.zip" "$install_dir"
+      chmod -R a+rx "$install_dir"
+    fi
     touch "$install_dir/INSTALLATION_COMPLETE"
     echo "install-browser: Chrome Headless Shell $version from storage.googleapis.com"
   else
