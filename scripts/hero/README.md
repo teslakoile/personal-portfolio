@@ -52,8 +52,13 @@ saved RGBA and checked, since Turbopack rejects anything else),
 `public/icons/{icon-192,icon-512,maskable-512}.png` for `app/manifest.ts`.
 `icon.png` has to match the favicon: Chrome on a Retina screen draws the tab
 from the 512 PNG. The share-image photo, `app/_og/kyle-card.png`, is the hero
-card: Kyle in true colour over a two-tone coral Bayer dither (`#e0401f` on
-`#ffd2bf`, 3px cells), read by `app/opengraph-image.tsx`.
+card, read by `app/opengraph-image.tsx`: Kyle in true colour over a dither of
+the photo in its own colours on cream (red bridge, blue-green water), 3px
+cells, 8x8 Bayer. The sky is a soft cloudy blue: the bridge cables are folded
+into it by closing the sky mask (they are 1-2 cells wide, the reddish towers
+and deck are kept), and the cloud tone mixes the true sky's broad light
+(blurred about 10 cells, sampled from sky cells only) with fixed-seed noise.
+Sharper cloud detail brings the cable lines back, so it stays broad.
 
 It uses `subject-matte-birefnet.png`, rembg `birefnet-general-lite` run on the
 2048x3072 master and downscaled to `source.png`. The u2net matte below leaves a
