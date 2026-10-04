@@ -43,6 +43,31 @@ readily as an orange one. Add a palette to `PALETTES` to get another.
 `public/hero/bridge-franky.webp` is a Golden Gate tower generated with
 `gpt-image-2`; `portrait-franky.webp` is Kyle through the identical call.
 
+    uv run --with pillow --with numpy python build_brand.py
+
+builds the shipped icons and the share-image photo. Icons are Kyle in brand ink
+`#1c1917` on brand cream `#faf9f7`, no dither: `app/favicon.ico` (16/32/48,
+saved RGBA and checked, since Turbopack rejects anything else),
+`app/icon.png` (512), `app/apple-icon.png` (180), and
+`public/icons/{icon-192,icon-512,maskable-512}.png` for `app/manifest.ts`.
+`icon.png` has to match the favicon: Chrome on a Retina screen draws the tab
+from the 512 PNG. The share-image photo, `app/_og/kyle-card.png`, is the hero
+card, read by `app/opengraph-image.tsx`: Kyle in true colour over a dither of
+the photo in its own colours on cream (red bridge, blue-green water), 3px
+cells, 8x8 Bayer. The sky is a soft cloudy blue: the bridge cables are folded
+into it by closing the sky mask (they are 1-2 cells wide, the reddish towers
+and deck are kept), and the cloud tone mixes the true sky's broad light
+(blurred about 10 cells, sampled from sky cells only) with fixed-seed noise.
+Sharper cloud detail brings the cable lines back, so it stays broad.
+
+It uses `subject-matte-birefnet.png`, rembg `birefnet-general-lite` run on the
+2048x3072 master and downscaled to `source.png`. The u2net matte below leaves a
+grey-blue sky halo round the hair and hood; this one, choked 1px with the edge
+colours pulled from the subject, does not. Every crop anchors on the head, not
+the figure.
+
+The earlier coral-screened icons still build with
+
     ./build-icon.sh                 # PALETTE=ink4 for the black and white variant
 
 builds the site icons from the same filter: `app/icon.png`, `apple-icon.png`
@@ -68,6 +93,7 @@ Nothing on the landing page loads any of these until a pick lands.
 |---|---|
 | `../../public/hero/source.png` | the graded photo, 1024x1536, downscaled from a 2048x3072 master (`~/Desktop/Pics/portrait-retouched/kyle-sf-portrait-og.png`). Built in steps: the hair (soft, loosely flowing, a few pieces on the forehead) from `gpt-image-2` edits; a sharp overcast background from a `gpt-image-2` render referenced on a real Fort Point photo; the streaky water left of his face replaced with real ripples from the right side of the same rows; the side hair darkened about 25% by a multiply filter limited to neutral hair pixels above the ears; and a light Gaussian blur (sigma 1.2 at 2048x3072) on the background, faded to zero within about 60 px of him. The blur is a filter, not generated, so it hides the AI texture without leaving an outline. The earlier combed, glossy hair read as AI at the hero's scale. |
 | `subject-matte.png` | Kyle's alpha, from `rembg` u2net_human_seg on the current `source.png` |
+| `subject-matte-birefnet.png` | Kyle's alpha, from `rembg` birefnet-general-lite on the 2048x3072 master, downscaled to `source.png`; used by `build_brand.py` |
 | `bridge-mask.png` | the bridge structure, keyed on international orange, largest connected component, Fort Point cut out |
 
 ## Stages
