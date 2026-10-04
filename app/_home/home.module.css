@@ -3050,3 +3050,8 @@ a.fsCase:hover .fsCaseArrow { color: var(--accent); transform: translateX(2px); 
   .mosInvitePill { padding: 0; border: none; background: transparent; box-shadow: none; }
   .mosInviteLink:hover .mosInvitePill { transform: none; box-shadow: none; border: none; }
 }
+
+/* ============================ BLOG PREVIEW ========================= */
+.blogCard { color: inherit; text-decoration: none; }
+.blogCard:hover .ctaArrow { transform: translateX(3px); }
+.blogCardText { grid-template-columns: 1fr; }
