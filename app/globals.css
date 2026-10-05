@@ -29,3 +29,21 @@ body {
   /* global fontset (app/fonts.ts): Geist everywhere, Geist Mono for numerals */
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
+
+/* Site cursor: the coral line-icon pointer (public/cursors/README.md).
+   Only for a mouse or trackpad; touch screens never show a cursor. One
+   pointer everywhere, links included; text fields keep the text cursor and
+   drag areas keep the grab hand. The url() line is the fallback for browsers
+   without image-set(). */
+@media (pointer: fine) {
+  html,
+  html * {
+    cursor: url("/cursors/pointer.svg") 3 3, auto !important;
+    cursor: image-set(url("/cursors/pointer.svg") 1x, url("/cursors/pointer@2x.svg") 2x) 3 3, auto !important;
+  }
+  html :is(input:not([type="button"], [type="submit"], [type="checkbox"], [type="radio"]), textarea, [contenteditable="true"]) {
+    cursor: text !important;
+  }
+  html [class*="fsGrab"] { cursor: grab !important; }
+  html [class*="fsGrab"]:active { cursor: grabbing !important; }
+}

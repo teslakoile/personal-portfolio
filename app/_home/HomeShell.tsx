@@ -11,7 +11,6 @@ import { Hero } from "../samples/quiet/sections/Hero";
 import { About } from "../samples/quiet/sections/About";
 import { Experience } from "../samples/quiet/sections/Experience";
 import { Skills } from "../samples/quiet/sections/Skills";
-import { Writing } from "../samples/quiet/sections/Writing";
 import { Certifications } from "../samples/quiet/sections/Certifications";
 import { Community } from "../samples/quiet/sections/Community";
 import { Education } from "../samples/quiet/sections/Education";
@@ -22,12 +21,13 @@ import { RecommendationsMosaic } from "./Recommendations";
 import { Resources } from "./Resources";
 import { Contributions } from "./Contributions";
 import { Projects } from "./Projects";
+import { BlogPreview } from "./BlogPreview";
 
 /**
  * Landing shell, the Quiet Blueprint sections inside a bryllim.com-inspired
  * sidebar layout, plus the new sections: recommendations, resources, and the
  * GitHub contribution graph. Kyle's locked picks: photo hero V4, about V3,
- * timeline experience, spec-sheet skills, writing V1, cert badges, inline
+ * timeline experience, spec-sheet skills, writing V1 cards fed by content/blog (BlogPreview), cert badges, inline
  * recognition V2, quiet-line stack band (alternatives at /samples/sections/stack). Alternative per-section treatments are being explored at
  * /samples/rework, the landing keeps this composition until a pick lands.
  * The prior top-nav composition still lives at /samples/home; the text-dense
@@ -48,7 +48,7 @@ export function HomeShell() {
             {sectionEnabled("skills") ? <Reveal id="skills"><Skills variant={3} /></Reveal> : null}
             {sectionEnabled("education") ? <Reveal id="education"><Education /></Reveal> : null}
             {sectionEnabled("certifications") ? <Reveal id="certifications"><Certifications variant={1} /></Reveal> : null}
-            {sectionEnabled("writing") ? <Reveal id="writing"><Writing variant={1} /></Reveal> : null}
+            {sectionEnabled("writing") ? <Reveal id="writing"><BlogPreview /></Reveal> : null}
             {sectionEnabled("community") ? <Reveal id="community"><Community /></Reveal> : null}
             {sectionEnabled("recognition") ? <Reveal id="recognition"><Recognition variant={2} /></Reveal> : null}
             {sectionEnabled("recommendations") && sample.recommendations.length > 0 ? (
