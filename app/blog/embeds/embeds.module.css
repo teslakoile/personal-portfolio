@@ -1,0 +1,235 @@
+/* Interactive embeds on the brand system: each embed is a frame row split
+   into square cells by 1px rules, controls are round, Geist with tabular
+   numerals, coral only on what you can press (the active pill, sliders,
+   drag tips). Data colors b1 to b4 and raw appear only in the diagram and
+   its legend, and every diagram says what its marks are. Tokens fall back
+   to the brand values so an embed renders the same anywhere. */
+
+.shell {
+  --e-paper: var(--paper, #faf9f7);
+  --e-surface: var(--surface, #ffffff);
+  --e-sunk: var(--sunk, #f3f1ed);
+  --e-line: var(--line, #e7e3de);
+  --e-line-2: var(--line-2, #d9d3cc);
+  --e-ink: var(--ink, #1c1917);
+  --e-ink-2: var(--ink-2, #57534e);
+  --e-ink-3: var(--ink-3, #a8a29e);
+  --e-coral: var(--coral, #f5482d);
+  --e-b1: var(--b1, #f26a4b);
+  --e-b2: var(--b2, #7fb99a);
+  --e-b3: var(--b3, #86a9c8);
+  --e-b4: var(--b4, #e9b65c);
+  --e-raw: var(--raw, #e4dfd8);
+  --e-gutter: var(--gutter, 44px);
+
+  background: var(--e-paper);
+  color: var(--e-ink);
+  font: 400 15px/1.5 var(--sans, system-ui, sans-serif);
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ------------------------------ head row --------------------------- */
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding: 16px var(--e-gutter);
+  border-bottom: 1px solid var(--e-line);
+}
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill {
+  appearance: none;
+  height: 32px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--e-surface);
+  color: var(--e-ink-2);
+  font: 500 13.5px var(--sans, system-ui, sans-serif);
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px var(--e-line-2);
+  transition: color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, transform 0.12s ease;
+}
+.pill:hover { color: var(--e-ink); box-shadow: inset 0 0 0 1px var(--e-ink-3); }
+.pill:active { transform: scale(0.97); }
+.pill[data-active] { color: var(--e-ink); box-shadow: inset 0 0 0 1.5px var(--e-coral); }
+
+.readout { display: inline-flex; align-items: baseline; gap: 10px; }
+.label { margin: 0; font-size: 12.5px; font-weight: 500; color: var(--e-ink-3); }
+.figure { font-size: 26px; font-weight: 500; letter-spacing: -0.03em; line-height: 1; }
+.value { font-size: 14.5px; font-weight: 500; color: var(--e-ink); }
+
+/* ------------------------------ cells ------------------------------ */
+.cells { display: grid; grid-template-columns: minmax(0, 1fr) 300px; }
+.cells > * { min-width: 0; }
+.cells > :first-child { border-right: 1px solid var(--e-line); }
+
+.plotCell { display: grid; gap: 14px; padding: 22px var(--e-gutter) 20px; }
+.plot { margin: 0; background: var(--e-surface); outline: 1px solid var(--e-line); outline-offset: -1px; touch-action: none; }
+.svg { display: block; width: 100%; height: auto; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 11.5px; color: var(--e-ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { display: inline-block; width: 12px; height: 6px; flex: none; }
+.keyOld { background: var(--e-line-2); }
+.keyNew { background: var(--e-ink-3); }
+.keyU { background: var(--e-ink); }
+.keyV { background: var(--e-b3); }
+.keyArea { background: color-mix(in srgb, var(--e-b3) 45%, white); }
+.keyAreaNeg { background: color-mix(in srgb, var(--e-b4) 55%, white); }
+
+/* side cell: blocks split by dashed rules, as items inside one cell */
+.side { display: grid; align-content: start; }
+.sideBlock { margin: 0; padding: 16px 24px; border-bottom: 1px dashed var(--e-line); }
+.side > :last-child { border-bottom: 0; }
+
+.slider { display: grid; gap: 10px; }
+.sliderHead { display: flex; justify-content: space-between; align-items: baseline; }
+.slider input { width: 100%; margin: 0; accent-color: var(--e-coral); cursor: pointer; }
+
+.matrix { display: flex; align-items: center; gap: 10px; }
+.matrixName { font-size: 14px; color: var(--e-ink-2); }
+.matrixBody {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 2px 18px;
+  padding: 4px 10px;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: right;
+}
+.matrixBody::before,
+.matrixBody::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  border: 1.5px solid var(--e-ink);
+}
+.matrixBody::before { left: 0; border-right: 0; }
+.matrixBody::after { right: 0; border-left: 0; }
+.colV { color: #5f86ab; }
+.formula { margin: 10px 0 0; font-size: 13px; color: var(--e-ink-2); }
+
+.note { font-size: 14.5px; line-height: 1.55; color: var(--e-ink-2); min-height: 7.4em; text-wrap: pretty; }
+
+.kvs { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; border-bottom: 1px dashed var(--e-line); }
+.kvs > div { padding: 14px 10px 14px 24px; }
+.kvs > div + div { padding-left: 12px; border-left: 1px dashed var(--e-line); }
+.kvs dt { white-space: nowrap; }
+.kvs dd { margin: 3px 0 0; font-size: 14.5px; font-weight: 500; }
+
+.chipRow { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  appearance: none;
+  padding: 3px 8px;
+  border: 1px dashed var(--e-line-2);
+  border-radius: 6px;
+  background: var(--e-surface);
+  color: var(--e-ink-2);
+  font: 400 12.5px/1.5 var(--sans, system-ui, sans-serif);
+  cursor: pointer;
+  transition: border-color 0.16s ease, color 0.16s ease;
+}
+.chip:hover { border-color: var(--e-coral); border-style: solid; color: var(--e-ink); }
+.chip[data-active] { border-color: var(--e-coral); border-style: solid; color: var(--e-ink); }
+
+/* --------------------------- determinant --------------------------- */
+.gridOld { stroke: var(--e-line); stroke-width: 1; fill: none; }
+.gridNew { stroke: rgb(28 25 23 / 0.2); stroke-width: 1; fill: none; }
+.axis { stroke: rgb(28 25 23 / 0.32); stroke-width: 1; }
+.area { stroke: var(--e-ink); stroke-width: 1.25; stroke-linejoin: round; fill: color-mix(in srgb, var(--e-b3) 35%, transparent); }
+.area[data-sign="neg"] { fill: color-mix(in srgb, var(--e-b4) 45%, transparent); stroke-dasharray: 5 4; }
+.area[data-sign="zero"] { fill: none; }
+.arc { fill: none; stroke: var(--e-ink-2); stroke-width: 1.5; }
+.arcHead { fill: var(--e-ink-2); }
+.vecU { stroke: var(--e-ink); stroke-width: 3; stroke-linecap: round; }
+.vecV { stroke: var(--e-b3); stroke-width: 3; stroke-linecap: round; }
+.vecLabel {
+  font: 500 15px var(--sans, system-ui, sans-serif);
+  fill: var(--e-ink);
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: var(--e-surface);
+  stroke-width: 4px;
+}
+.vecLabelV { fill: #5f86ab; }
+.handle { cursor: grab; }
+.handle[data-dragging] { cursor: grabbing; }
+.handleHit { fill: transparent; }
+.handleDot { fill: var(--e-coral); stroke: var(--e-surface); stroke-width: 2.5; transition: r 0.15s ease; }
+.handle:hover .handleDot,
+.handle[data-dragging] .handleDot { r: 8.5; }
+
+/* ------------------------- grader playground ------------------------ */
+.table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.table th {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--e-line);
+  text-align: left;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--e-ink-3);
+  white-space: nowrap;
+}
+.table td { padding: 10px 12px; border-bottom: 1px dashed var(--e-line); vertical-align: top; color: var(--e-ink-2); }
+.table tr:last-child td { border-bottom: 0; }
+.table th:first-child, .table td:first-child { padding-left: var(--e-gutter); }
+.table th:last-child, .table td:last-child { padding-right: var(--e-gutter); }
+.table td.ink { color: var(--e-ink); }
+.shell .table code { font-family: var(--mono, ui-monospace, monospace); font-size: 12px; color: var(--e-ink); background: var(--e-surface); box-shadow: inset 0 0 0 1px var(--e-line); padding: 1px 5px; border-radius: 6px; white-space: pre; }
+.table tr[data-disagree] td { background: color-mix(in srgb, var(--e-b4) 12%, transparent); }
+.verdict { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; color: var(--e-ink); }
+.verdict i { display: inline-block; width: 9px; height: 9px; flex: none; }
+.pass { background: var(--e-b2); }
+.fail { background: var(--e-b1); }
+.dist { color: var(--e-ink-3); font-size: 12px; }
+
+.scoreCells { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--e-line); }
+.scoreCells > div { padding: 18px 24px 20px; display: grid; gap: 8px; align-content: start; }
+.scoreCells > div:first-child { padding-left: var(--e-gutter); }
+.scoreCells > div + div { border-left: 1px solid var(--e-line); }
+.blocks { display: flex; gap: 2px; }
+.blocks i { width: 14px; height: 9px; display: block; }
+.caption { margin: 0; font-size: 11.5px; color: var(--e-ink-3); }
+.gate { font-size: 14.5px; font-weight: 500; }
+.gate[data-ok="true"] { color: var(--e-ink); }
+.gate[data-ok="false"] { color: var(--e-ink); }
+.gate b { font-weight: 500; }
+
+.shell .yaml {
+  margin: 0;
+  padding: 16px var(--e-gutter) 18px;
+  border-top: 1px solid var(--e-line);
+  background: var(--e-surface);
+  font: 12.5px/1.65 var(--mono, ui-monospace, monospace);
+  color: var(--e-ink);
+  white-space: pre;
+  overflow-x: auto;
+  user-select: text;
+  -webkit-user-select: text;
+}
+.yamlHead { display: flex; justify-content: space-between; gap: 12px; padding: 12px var(--e-gutter) 0; border-top: 1px solid var(--e-line); background: var(--e-surface); }
+.yamlHead + .shell .yaml, .shell .yamlHead + .yaml { border-top: 0; padding-top: 8px; }
+
+@media (max-width: 760px) {
+  .cells { grid-template-columns: 1fr; }
+  .cells > :first-child { border-right: 0; border-bottom: 1px solid var(--e-line); }
+  .note { min-height: 0; }
+  .scoreCells { grid-template-columns: 1fr; }
+  .scoreCells > div + div { border-left: 0; border-top: 1px solid var(--e-line); }
+  .scoreCells > div { padding-inline: var(--e-gutter); }
+  .tableWrap { overflow-x: auto; }
+  .table { min-width: 640px; }
+  .handleHit { r: 30px; }
+  .handleDot, .handle:hover .handleDot { r: 11px; }
+  .handle[data-dragging] .handleDot { r: 13px; }
+  .vecLabel { font-size: 22px; }
+}
+.tableWrap { min-width: 0; }

@@ -1,0 +1,240 @@
+{
+  "title": "What a Determinant Measures",
+  "dek": "Drag the columns of a 2×2 matrix and watch the unit square's area become the determinant.",
+  "tags": [
+    "Linear Algebra",
+    "Interactive"
+  ],
+  "cover": "/blog/what-a-determinant-measures/cover.webp",
+  "coverAlt": "Close-up of the Determinant Explorer on Flip: the unit square turned into a mirrored parallelogram on a sheared grid.",
+  "status": "draft",
+  "createdAt": "2026-10-04T08:00:00.000Z",
+  "updatedAt": "2026-10-04T08:00:00.000Z",
+  "publishedAt": null,
+  "doc": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "A 2×2 matrix sends the plane to itself. Its two columns, "
+          },
+          {
+            "type": "text",
+            "text": "u",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " and "
+          },
+          {
+            "type": "text",
+            "text": "v",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": ", say where the basis vectors land, and every other point follows along. The determinant is one number that summarizes what happened to area along the way."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Area Is the Whole Story"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "The unit square spanned by the original basis vectors has area 1. After the matrix acts, that square becomes the parallelogram spanned by "
+          },
+          {
+            "type": "text",
+            "text": "u",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " and "
+          },
+          {
+            "type": "text",
+            "text": "v",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": ". Its area is "
+          },
+          {
+            "type": "text",
+            "text": "|det A|",
+            "marks": [
+              {
+                "type": "bold"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": ", and because the map is linear, every other region scales by the same factor."
+          }
+        ]
+      },
+      {
+        "type": "embed",
+        "attrs": {
+          "kind": "determinant",
+          "props": {
+            "preset": "shear"
+          }
+        }
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Try the presets. A shear leans the square without changing its area, so the determinant stays at 1 even though the matrix is far from the identity. A stretch scales area by exactly the stretch factor."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "The Sign Is Orientation"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Use Flip and push the slider past zero. The parallelogram passes through a sliver and comes out mirrored: the arc from "
+          },
+          {
+            "type": "text",
+            "text": "u",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " to "
+          },
+          {
+            "type": "text",
+            "text": "v",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " now turns clockwise. A negative determinant means the map reverses orientation."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Zero Means Collapse"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Use Collapse and drag the slider to the end. When "
+          },
+          {
+            "type": "text",
+            "text": "v",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " lands on the line through "
+          },
+          {
+            "type": "text",
+            "text": "u",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": ", the plane flattens onto a line. No column is zero, yet the determinant is 0 and the matrix has no inverse."
+          }
+        ]
+      },
+      {
+        "type": "blockquote",
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "The determinant is the factor by which a linear map scales area, with a sign for orientation."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
