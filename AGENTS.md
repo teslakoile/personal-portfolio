@@ -27,10 +27,10 @@ The capture turns off the site's smooth scrolling and hides the Next dev badge. 
 
 ## Design rules
 
-- Two font families only: Geist for display and body, Geist Mono for numbers, dates, and metadata. `app/fonts.ts` is the single source.
+- Two font families only: Geist for all text, numbers and dates included, with tabular numerals. Geist Mono only for code identifiers, such as labels inside a pipeline diagram. `app/fonts.ts` is the single source.
 - No eyebrow labels and no all-caps phrases. Hierarchy comes from size, weight, and the font slots.
 - Headings, sub-heads, chips, and UI labels use Title Case ("Get in Touch"). Body copy, questions, and metadata use sentence case.
-- Light, warm off-white surfaces with one coral accent (`#F5482D`), used on the live or interactive element and never as a fill.
+- Light, warm off-white surfaces with one coral accent on the live or interactive element, never as a large fill: `#F5482D` for marks and type 24px and up, `#D2381F` for smaller coral text and the primary button so both meet WCAG AA.
 - Real brand logos from `public/logos/`. Never fabricate screenshots, dashboards, or product mockups of confidential work.
 - Build design options as real routes under `app/samples/` so they can be compared rendered, not described in prose.
 

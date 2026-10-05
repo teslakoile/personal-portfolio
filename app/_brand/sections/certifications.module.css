@@ -1,0 +1,49 @@
+/* Certification list options (no blocks). Tokens from app/_brand/brand.module.css. */
+
+/* shared */
+.logo { width: 18px; height: 18px; object-fit: contain; flex: none; }
+.title { font-size: 15px; font-weight: 500; color: var(--ink); }
+.muted { color: var(--ink-3) !important; }
+.tag { display: inline-block; margin-left: 8px; padding: 1px 7px; font-size: 11.5px; font-weight: 500; color: var(--ink-3); border: 1px dashed var(--line-2); border-radius: var(--r-chip); vertical-align: 2px; }
+
+/* A: registry table */
+.table { border-top: 1px solid var(--line); }
+.tHead, .tRow { display: grid; grid-template-columns: minmax(0, 1fr) 170px 100px 110px; gap: 16px; align-items: center; padding: 0 var(--gutter); }
+.tHead { height: 40px; font-size: 12.5px; font-weight: 500; color: var(--ink-3); border-bottom: 1px solid var(--line); }
+.tRow { min-height: 52px; border-bottom: 1px dashed var(--line); font-size: 14px; color: var(--ink-2); }
+.tRow:last-child { border-bottom: 0; }
+.tName { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.tMeta { display: none; }
+
+/* B: by issuer */
+.issuerCell { padding: 26px 28px 22px; border-bottom: 1px solid var(--line); }
+.issuerCell:nth-child(3n + 1) { padding-left: var(--gutter); }
+.issuerCell:nth-last-child(-n + 3) { border-bottom: 0; }
+.issuerHead { display: flex; align-items: center; gap: 10px; }
+.issuerHead .logo { width: 22px; height: 22px; }
+.issuerName { font-size: 16px; font-weight: 500; }
+.issuerCount { margin-left: auto; font-size: 12.5px; color: var(--ink-3); }
+.issuerList { margin: 14px 0 0; padding: 0; list-style: none; }
+.issuerList li { padding: 10px 0; border-top: 1px dashed var(--line); }
+.issuerList small { display: block; margin-top: 2px; font-size: 13px; color: var(--ink-3); }
+
+/* C: compact two-column list */
+.compact { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.cItem { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 16px var(--gutter); border-bottom: 1px dashed var(--line); }
+.cItem:nth-child(odd) { border-right: 1px solid var(--line); }
+.cTile { display: grid; place-items: center; width: 40px; height: 40px; background: var(--sunk); }
+.cMeta { display: block; margin-top: 2px; font-size: 13px; color: var(--ink-3); }
+.cStatus { font-size: 13px; color: var(--ink-2); white-space: nowrap; }
+
+@media (max-width: 720px) {
+  .tHead { display: none; }
+  .tRow { grid-template-columns: minmax(0, 1fr); gap: 2px; padding-block: 12px; }
+  .tRow > :not(.tName):not(.tMeta) { display: none; }
+  .tMeta { display: block; padding-left: 30px; font-size: 13px; color: var(--ink-3); }
+  .compact { grid-template-columns: minmax(0, 1fr); }
+  .cItem:nth-child(odd) { border-right: 0; }
+  .cItem { grid-template-columns: 40px minmax(0, 1fr); row-gap: 4px; }
+  .cStatus { grid-column: 2; }
+  .issuerCell, .issuerCell:nth-child(3n + 1) { padding: 22px var(--gutter); border-bottom: 1px solid var(--line); }
+  .issuerCell:last-child { border-bottom: 0; }
+}

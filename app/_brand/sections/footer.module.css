@@ -1,0 +1,57 @@
+/* Wallpaper footer: an 8 x 3 grid of everyday photos. At rest each tile is
+   the bridge-style halftone printed in one of the four palette inks; on hover
+   (or while pressed on touch) it fades to the original photo. */
+.wall { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: repeat(3, 128px); gap: 6px; padding: 6px; }
+.tile { position: relative; overflow: hidden; background: var(--paper); }
+.tile img, .tile i { position: absolute; inset: 0; }
+.tile img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.25s ease-out; }
+.tile i { background: var(--tile-ink); -webkit-mask: var(--src) center / cover no-repeat; mask: var(--src) center / cover no-repeat; transition: opacity 0.25s ease-out; }
+.tile { cursor: pointer; }
+.tile:hover img, .tile.on img { opacity: 1; }
+.tile:hover i, .tile.on i { opacity: 0; }
+
+.card { grid-column: 3 / span 4; grid-row: 2; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line-2); text-align: center; }
+.cardLine { margin: 0; font-size: 15px; color: var(--ink-2); }
+.cardMail { font-size: 30px; font-weight: 500; letter-spacing: -0.025em; line-height: 1.15; color: var(--ink); text-decoration: none; background-image: linear-gradient(var(--coral), var(--coral)); background-repeat: no-repeat; background-position: 0 100%; background-size: 100% 2px; padding-bottom: 2px; }
+.cardMail:hover { color: var(--coral-ink); }
+
+.quiet { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 24px; padding: 20px var(--gutter); font-size: 13px; color: var(--ink-3); }
+.quiet nav { display: flex; gap: 20px; }
+.quiet a { color: var(--ink-2); text-decoration: none; }
+.quiet a:hover { color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) { .tile img, .tile i { transition: none; } }
+
+/* Phone layouts. The in-grid card is hidden and .mCard sits above the photos,
+   so the email leads. Three variants, chosen by the footer's `mobile` prop. */
+.mCard, .drift { display: none; }
+.strip, .rows, .drift-on { min-width: 0; }   /* the drift track is max-content wide; never let it widen the page */
+.drift { max-width: 100%; }
+
+@media (max-width: 760px) {
+  .card { display: none; }
+  .mCard { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 36px var(--gutter) 28px; }
+  .mCard .cardMail { font-size: 24px; }
+  .mCard .cardLine { font-size: 14px; }
+
+  /* strip: one row of large tiles you swipe through */
+  .strip .wall { display: flex; gap: 6px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; grid-template-rows: none; padding: 6px var(--gutter) 6px; scroll-padding-inline: var(--gutter); }
+  .strip .wall::-webkit-scrollbar { display: none; }
+  .strip .tile { flex: none; width: 148px; height: 148px; scroll-snap-align: start; }
+
+  /* rows: two rows of four, the first eight photos only */
+  .rows .wall { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: none; grid-auto-rows: auto; padding: 6px var(--gutter); }
+  .rows .tile { aspect-ratio: 1; }
+  .rows .tile:nth-of-type(n + 9) { display: none; }
+
+  /* drift: one slow, endless row; pauses while touched; static under reduced motion */
+  .drift-on .wall { display: none; }
+  .drift-on .drift { display: block; overflow: hidden; padding: 6px 0; }
+  .track { display: flex; width: max-content; animation: drift 60s linear infinite; }
+  .track .tile { flex: none; width: 132px; height: 132px; margin-right: 6px; }
+  .drift-on .drift:active .track { animation-play-state: paused; }
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+}
+@media (max-width: 760px) and (prefers-reduced-motion: reduce) {
+  .track { animation: none; }
+}
