@@ -1,0 +1,420 @@
+/* Loading and hover experiments. Tokens mirror the proposed brand kit
+   (paper, one coral, four block colors, --raw grey) so these drop into it
+   unchanged. Every animation stops under prefers-reduced-motion. */
+
+.root {
+  --paper: #faf9f7;
+  --surface: #ffffff;
+  --sunk: #f3f1ed;
+  --line: #e7e3de;
+  --line-2: #d9d3cc;
+  --ink: #1c1917;
+  --ink-2: #57534e;
+  --ink-3: #a8a29e;
+  --ink-4: #c3bcb5;
+  --coral: #f5482d;
+  --b1: #f26a4b;
+  --b2: #7fb99a;
+  --b3: #86a9c8;
+  --b4: #e9b65c;
+  --raw: #e4dfd8;
+  --float: 0 0 0 1px rgb(28 25 23 / 0.06), 0 24px 48px -22px rgb(28 25 23 / 0.22);
+  --ease: cubic-bezier(0.3, 0.7, 0.2, 1);
+
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 16px/1.5 var(--font-geist), system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+.root :global(*) { box-sizing: border-box; }
+.root :focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+
+/* ============================== frame =============================== */
+.frame { max-width: 1080px; margin-inline: auto; border-inline: 1px solid var(--line); }
+.row { position: relative; border-bottom: 1px solid var(--line); }
+.row::before, .row::after {
+  content: "+";
+  position: absolute;
+  bottom: -9px;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--line-2);
+}
+.row::before { left: -5px; }
+.row::after { right: -5px; }
+.intro { padding: 84px 44px 44px; }
+.intro h1 { margin: 0; font-size: clamp(38px, 5.4vw, 60px); font-weight: 500; letter-spacing: -0.032em; line-height: 1.02; }
+.intro h1 em { font-style: normal; color: var(--coral); }
+.intro p { margin: 20px 0 0; max-width: 560px; font-size: 18px; line-height: 1.45; color: var(--ink-2); }
+.head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px 40px; padding: 48px 44px 26px; }
+.head h2 { margin: 0; font-size: clamp(28px, 3.4vw, 40px); font-weight: 500; letter-spacing: -0.03em; line-height: 1.05; }
+.head h2 span { display: inline-block; vertical-align: top; margin: 5px 14px 0 0; font-size: 16px; letter-spacing: 0; color: var(--coral); }
+.head p { margin: 0; max-width: 400px; font-size: 15px; color: var(--ink-2); }
+.cells { display: grid; border-top: 1px solid var(--line); }
+.cells > * { min-width: 0; border-right: 1px solid var(--line); }
+.cells > *:last-child { border-right: 0; }
+.cell { padding: 26px 28px 30px; }
+.cell:first-child { padding-left: 44px; }
+.cell h3 { margin: 0; font-size: 16px; font-weight: 500; }
+.cell p { margin: 6px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+.label { font-size: 12.5px; font-weight: 500; color: var(--ink-3); }
+.dim { color: var(--ink-3); font-size: 14px; }
+
+/* =============================== verbs =============================== */
+/* one type setting for the whole loading line, wherever it sits (buttons
+   included): Geist 400 at 15px, tabular digits so the seconds never jitter */
+.loading {
+  display: inline-grid;
+  gap: 6px;
+  justify-items: start;
+  font: 400 15px/1.4 var(--font-geist), system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: normal;
+}
+.loadingRow { display: inline-flex; align-items: center; gap: 10px; color: var(--ink-2); white-space: nowrap; }
+/* the verb slot: every verb stacked invisibly sets the width, so the line
+   never resizes; the live verb and the outgoing one crossfade on top */
+.slot { display: inline-grid; justify-items: start; color: var(--ink-3); }
+.slot > * { grid-area: 1 / 1; white-space: nowrap; }
+.slotSizer { visibility: hidden; }
+/* with a timer, the slot eases to the live word so the seconds follow it */
+/* with a timer, the slot eases to the live word in both directions; clipping
+   the overflow reveals a longer word as the slot opens, so it never runs
+   into the seconds */
+.slotFit { overflow-x: clip; overflow-clip-margin: 2px; transition: width 0.42s var(--ease); }
+.slotFit > .slotSizer { justify-self: start; }
+.wordOn { opacity: 1; }
+.wordIn { animation: wordIn 0.42s var(--ease) both; }
+.wordOut { animation: wordOut 0.42s var(--ease) both; }
+@keyframes wordIn {
+  from { opacity: 0; transform: translateY(0.3em); filter: blur(2px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes wordOut {
+  from { opacity: 1; transform: none; filter: none; }
+  to { opacity: 0; transform: translateY(-0.3em); filter: blur(2px); }
+}
+.elapsed { color: var(--ink-3); min-width: 3.4em; }
+
+/* resolve: unprocessed letters are raw blocks the width of the letter */
+.resolve { color: var(--ink); }
+.charRaw, .charHot { color: transparent; box-shadow: inset 0 0 0 1px var(--paper); }
+.charRaw { background: var(--raw); }
+.charHot { background: var(--coral); }
+
+/* roll: the new verb slides up into place */
+.rollBox { display: inline-block; overflow: hidden; vertical-align: bottom; color: var(--ink); }
+.roll { display: inline-block; animation: rollIn 0.42s var(--ease) both; }
+@keyframes rollIn { from { transform: translateY(80%); opacity: 0; filter: blur(2px); } to { transform: none; opacity: 1; filter: none; } }
+
+/* shimmer: a light pass across the verb */
+.shimmer {
+  background: linear-gradient(90deg, var(--ink-3) 0%, var(--ink-3) 38%, var(--ink) 50%, var(--ink-3) 62%, var(--ink-3) 100%);
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shine 1.7s linear infinite;
+}
+.shimmerCoral, .shimmerSync {
+  background: linear-gradient(90deg, var(--ink-3) 0%, var(--ink-3) 38%, var(--coral) 50%, var(--ink-3) 62%, var(--ink-3) 100%);
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shine 1.7s linear infinite;
+}
+.shimmerSync {
+  background-image: linear-gradient(90deg, var(--ink-3) 0%, var(--ink-3) 38%, var(--ink) 50%, var(--ink-3) 62%, var(--ink-3) 100%);
+  animation-duration: 1.1s;
+}
+
+/* letter wave: each letter brightens in turn, like the chevron's cells */
+.wave { color: var(--ink); }
+.wave span { opacity: 0.35; animation: letterWave 1.4s ease-in-out infinite; animation-delay: calc(var(--i) * 60ms); }
+@keyframes letterWave {
+  0%, 100% { opacity: 0.35; }
+  22%, 36% { opacity: 1; }
+  58% { opacity: 0.35; }
+}
+
+/* blur in: a new word sharpens into place */
+.blurIn { display: inline-block; color: var(--ink); animation: blurIn 0.45s var(--ease) both; }
+@keyframes blurIn { from { opacity: 0; filter: blur(4px); transform: translateY(2px); } to { opacity: 1; filter: none; transform: none; } }
+
+/* typewriter: letters arrive behind a coral caret */
+.typed { display: inline-flex; align-items: center; color: var(--ink); }
+.caret { width: 2px; height: 1.05em; margin-left: 2px; background: var(--coral); animation: caretBlink 0.9s steps(2, start) infinite; }
+@keyframes caretBlink { to { visibility: hidden; } }
+
+.plain { color: var(--ink); }
+
+/* comparison grid */
+.effectCell { display: grid; gap: 10px; align-content: start; padding: 22px 28px 26px; min-width: 0; }
+.effectCell:first-child, .effectCell:nth-child(3n + 1) { padding-left: 44px; }
+.effectCell p { margin: 0; font-size: 13px; color: var(--ink-2); }
+.effectStage { display: flex; align-items: center; min-height: 56px; padding: 12px 16px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+.cells > .effectCell:nth-child(3n) { border-right: 0; }
+.cells > .effectCell { border-bottom: 1px solid var(--line); }
+
+@keyframes shine { from { background-position: 100% 0; } to { background-position: -60% 0; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+
+/* playground */
+.stage { display: grid; grid-template-rows: 1fr auto; min-height: 260px; border-top: 1px solid var(--line); background: var(--surface); }
+.stageCenter { display: grid; place-items: center; padding: 40px 24px; }
+.controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 16px 24px 20px; border-top: 1px dashed var(--line); }
+.seg { display: inline-flex; padding: 3px; gap: 2px; background: var(--sunk); border-radius: 999px; }
+.seg button {
+  height: 28px;
+  padding: 0 12px;
+  font: 500 12.5px var(--font-geist), sans-serif;
+  color: var(--ink-2);
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.seg button:hover { color: var(--ink); }
+.seg .segOn { color: var(--ink); background: var(--surface); box-shadow: 0 0 0 1px var(--line-2); }
+.ghost {
+  height: 34px;
+  padding: 0 14px;
+  font: 500 13px var(--font-geist), sans-serif;
+  color: var(--ink);
+  background: var(--surface);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--line-2);
+  cursor: pointer;
+}
+.ghost:hover { box-shadow: inset 0 0 0 1px var(--ink-3); }
+.ghost:active { transform: scale(0.97); }
+
+.patterns { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); }
+.patternCell { display: grid; gap: 4px; align-content: start; padding: 26px 24px 28px; border-right: 1px solid var(--line); }
+.patternCell:first-child { padding-left: 44px; }
+.patternCell:last-child { border-right: 0; }
+.patternCell b { font-size: 15px; font-weight: 500; }
+.patternCell > span { font-size: 13px; color: var(--ink-2); }
+
+/* =============================== ⌘K =============================== */
+.ask { display: grid; align-content: start; min-height: 300px; background: var(--surface); border-top: 1px solid var(--line); }
+.askBar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px 14px 20px; border-bottom: 1px dashed var(--line); }
+.askQ { font-size: 15px; }
+.askQ::before { content: "⌘K"; margin-right: 10px; padding: 1px 6px; font-size: 11px; color: var(--ink-2); border: 1px solid var(--line-2); border-bottom-width: 2px; border-radius: 6px; }
+.askBtn {
+  height: 32px;
+  padding: 0 14px;
+  font: 500 13px var(--font-geist), sans-serif;
+  color: #fff;
+  background: var(--coral);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.askBtn:disabled { opacity: 0.45; cursor: default; }
+.askBody { display: grid; gap: 12px; align-content: start; padding: 20px; }
+.traceHead {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  justify-self: start;
+  padding: 0;
+  font: 500 13.5px var(--font-geist), sans-serif;
+  color: var(--ink-2);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.traceHead:hover { color: var(--ink); }
+.chev { display: inline-block; transition: transform 0.2s var(--ease); }
+.chev[data-open] { transform: rotate(90deg); }
+.steps { display: grid; gap: 8px; margin: 0; padding: 0 0 0 14px; list-style: none; border-left: 1px dashed var(--line-2); }
+.steps li { display: flex; align-items: center; gap: 9px; font-size: 14px; animation: fadeUp 0.3s var(--ease) both; }
+.steps em { font-style: normal; font-size: 12.5px; color: var(--ink-3); }
+.tick { width: 9px; height: 5px; background: var(--b2); flex: none; }
+.steps li[data-live] { color: var(--ink-2); }
+.steps li[data-live] .tick { background: var(--coral); animation: blink 0.6s steps(2, start) infinite; }
+@keyframes blink { 50% { opacity: 0.25; } }
+.answer { font-size: 15px; line-height: 1.55; animation: fadeUp 0.35s var(--ease) both; }
+.answer a { color: var(--coral); text-decoration: none; }
+
+/* ============================ skeleton ============================ */
+.skel { display: grid; gap: 16px; justify-items: start; }
+.skel p { margin: 0; font-size: 22px; line-height: 1.45; letter-spacing: -0.015em; max-width: 30em; }
+.word { color: var(--ink); transition: color 0.2s ease; }
+.wordRaw, .wordHot { color: transparent; box-shadow: inset 0 0 0 2px var(--surface); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.wordRaw { background: var(--raw); }
+.wordHot { background: var(--coral); }
+
+/* ============================ hover lab ============================ */
+.glide { position: relative; display: grid; width: 220px; }
+.glide a {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 34px;
+  padding-left: 12px;
+  font-size: 14.5px;
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.glide a span { width: 22px; font-size: 11.5px; color: var(--ink-4); transition: color 0.15s ease; }
+.glide a:hover { color: var(--ink); }
+.glide a[data-on] { color: var(--ink); font-weight: 500; }
+.glide a[data-on] span { color: var(--coral); }
+.glide a[data-on]::before { content: ""; position: absolute; left: 0; top: 9px; width: 2px; height: 16px; background: var(--coral); }
+.glideBg {
+  position: absolute;
+  inset: 0 0 auto 0;
+  background: var(--sunk);
+  transition: transform 0.24s var(--ease), height 0.24s var(--ease), opacity 0.18s ease;
+  pointer-events: none;
+}
+
+.dl {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  height: 42px;
+  min-width: 170px;
+  padding: 0 20px;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--surface);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--line-2);
+}
+.dlA, .dlB { grid-area: 1 / 1; } /* stacked; the fill stays absolutely positioned over the whole pill */
+.dlFill { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(12, 1fr); }
+.dlFill i { background: var(--ink); transform: scaleY(0); transform-origin: bottom; transition: transform 0.22s var(--ease); transition-delay: calc(var(--o) * 16ms); }
+.dl:hover .dlFill i, .dl:focus-visible .dlFill i { transform: scaleY(1); }
+.dlA, .dlB { position: relative; transition: transform 0.3s var(--ease), opacity 0.2s ease; }
+.dlB { color: var(--paper); transform: translateY(110%); opacity: 0; }
+.dl:hover .dlA, .dl:focus-visible .dlA { transform: translateY(-110%); opacity: 0; }
+.dl:hover .dlB, .dl:focus-visible .dlB { transform: none; opacity: 1; }
+.dl:active { transform: scale(0.97); }
+
+.copy {
+  padding: 0;
+  font: 400 15px var(--font-geist), sans-serif;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  border-bottom: 1px dashed var(--line-2);
+  cursor: copy;
+}
+.copy:hover { border-bottom-color: var(--coral); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 9px;
+  font-size: 13px;
+  color: var(--ink-2);
+  background: var(--surface);
+  border: 1px dashed var(--line-2);
+  border-radius: 6px;
+  cursor: default;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.chip img { display: block; transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.chip:hover, .chip:focus-visible { color: var(--ink); border-style: solid; border-color: var(--ink-3); }
+.chip:hover img { transform: scale(1.2); }
+.tip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  z-index: 5;
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+  width: max-content;
+  max-width: 240px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--surface);
+  border-radius: 14px;
+  box-shadow: var(--float);
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition: opacity 0.16s ease, transform 0.2s var(--ease);
+  pointer-events: none;
+}
+.tip > span:last-child { font-weight: 400; color: var(--ink-3); }
+.chip:hover .tip, .chip:focus-visible .tip { opacity: 1; transform: translate(-50%, 0); }
+.tipBlocks { display: flex; gap: 2px; }
+.tipBlocks i { width: 7px; height: 5px; background: var(--raw); }
+.tipBlocks i[data-on] { background: var(--coral); }
+
+.months { display: grid; gap: 10px; }
+.monthRow { display: flex; flex-wrap: wrap; gap: 2px; }
+.monthRow i { width: 10px; height: 9px; background: var(--b1); transition: background 0.08s ease; }
+.monthRow:hover i { background: var(--raw); }
+.monthRow:hover i[data-on] { background: var(--b1); }
+.monthTip { font-size: 12.5px; color: var(--ink-2); min-height: 1.5em; }
+
+.link {
+  color: var(--ink);
+  text-decoration: none;
+  background-image: linear-gradient(var(--coral), var(--coral));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  border-bottom: 1px dashed var(--line-2);
+  transition: background-size 0.32s var(--ease), color 0.15s ease;
+}
+.link:hover { background-size: 100% 1px; color: var(--coral); }
+
+/* =========================== empty states =========================== */
+.empty { display: grid; justify-items: start; gap: 10px; }
+.emptyGrid { display: inline-grid; grid-template-columns: repeat(3, 14px); gap: 2px; margin-bottom: 8px; }
+.emptyGrid i { width: 14px; height: 14px; background: var(--b2); }
+.emptyGrid i[data-gone] { background: none; box-shadow: inset 0 0 0 1px var(--line-2); background-image: repeating-linear-gradient(135deg, var(--line-2) 0 1px, transparent 1px 4px); }
+.empty b { font-size: 20px; font-weight: 500; letter-spacing: -0.02em; }
+.empty span { font-size: 14px; color: var(--ink-2); max-width: 34em; }
+
+/* verb list */
+.verbs { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; padding: 0; list-style: none; }
+.verbs li { padding: 3px 9px; font-size: 13px; color: var(--ink-2); background: var(--surface); border: 1px dashed var(--line-2); border-radius: 6px; }
+.verbTags { margin-left: 7px; font-size: 11px; color: var(--ink-3); }
+
+.takeaways { display: grid; gap: 10px; margin: 12px 0 0; padding-left: 18px; font-size: 14px; color: var(--ink-2); }
+.takeaways b { color: var(--ink); font-weight: 500; }
+
+.footer { display: flex; justify-content: space-between; gap: 12px; padding: 22px 44px; font-size: 13.5px; color: var(--ink-3); }
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer, .shimmerCoral, .shimmerSync { animation: none; color: var(--ink); background: none; }
+  .wave span, .blurIn, .caret { animation: none; opacity: 1; }
+  .roll, .steps li, .answer { animation: none; }
+  .wordIn, .wordOut { animation: none; }
+  .slotFit { transition: none; }
+  .wordOut { display: none; }
+  .glideBg, .dlFill i, .dlA, .dlB, .tip, .link { transition: none; }
+}
+
+@media (max-width: 760px) {
+  .intro, .head { padding-inline: 20px; }
+  .head { flex-direction: column; align-items: flex-start; }
+  .cells, .patterns { grid-template-columns: 1fr !important; }
+  .cells > *, .patternCell { border-right: 0; border-bottom: 1px solid var(--line); }
+  .cell:first-child, .patternCell:first-child { padding-left: 20px; }
+  .cell, .patternCell { padding-inline: 20px; }
+  .loadingRow { white-space: normal; flex-wrap: wrap; }
+}
