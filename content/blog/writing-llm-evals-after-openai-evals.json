@@ -1,0 +1,1123 @@
+{
+  "title": "Writing LLM Evals After OpenAI Evals",
+  "dek": "OpenAI Evals goes read-only on October 31 and shuts down on November 30. This guide maps its datasets and graders onto a Promptfoo config that lives in your repo and runs in CI.",
+  "tags": [
+    "Evals",
+    "Promptfoo",
+    "OpenAI API",
+    "CI/CD"
+  ],
+  "cover": "/blog/writing-llm-evals-after-openai-evals/cover.webp",
+  "coverAlt": "Rows of the Grader Playground: model outputs such as \"hardware\" and \"Software.\" marked Fail by exact match while the reviewer marks them Correct.",
+  "status": "draft",
+  "createdAt": "2026-10-04T10:00:00.000Z",
+  "updatedAt": "2026-10-04T10:00:00.000Z",
+  "publishedAt": null,
+  "doc": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "On June 3, 2026, OpenAI announced that it is "
+          },
+          {
+            "type": "text",
+            "text": "deprecating the Evals platform",
+            "marks": [
+              {
+                "type": "link",
+                "attrs": {
+                  "href": "https://developers.openai.com/api/docs/deprecations"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": ". Existing evals become read-only on October 31, 2026, and the Evals dashboard and API shut down on November 30, 2026. The migration path OpenAI recommends is "
+          },
+          {
+            "type": "text",
+            "text": "Promptfoo",
+            "marks": [
+              {
+                "type": "link",
+                "attrs": {
+                  "href": "https://www.promptfoo.dev/docs/getting-started/"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": ", an open-source CLI for evaluating and red-teaming LLM applications."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "The concepts carry over unchanged. An eval is still test data, a prompt, a model, and graders. What changes is where the eval lives: a YAML file next to your application code, run from the command line or from CI, instead of a dashboard."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "What an Eval Is Made Of"
+          }
+        ]
+      },
+      {
+        "type": "bulletList",
+        "content": [
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Test data: inputs with the expected answer, one row per case."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "A prompt and a model: the thing under test."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Graders: checks that turn each output into a pass, a fail, or a score."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "In "
+          },
+          {
+            "type": "text",
+            "text": "OpenAI Evals",
+            "marks": [
+              {
+                "type": "link",
+                "attrs": {
+                  "href": "https://platform.openai.com/docs/guides/evals"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " these lived in two API objects. The eval held a "
+          },
+          {
+            "type": "text",
+            "text": "data_source_config",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": ", the schema of each test row, and "
+          },
+          {
+            "type": "text",
+            "text": "testing_criteria",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": ", the graders. A run pointed a model and a prompt template at an uploaded JSONL file. Templates referenced the test row as "
+          },
+          {
+            "type": "text",
+            "text": "{{ item.correct_label }}",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " and the model's answer as "
+          },
+          {
+            "type": "text",
+            "text": "{{ sample.output_text }}",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": "."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "The Same Eval in Promptfoo"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "OpenAI's guide uses a support ticket classifier as its example: label each ticket as Hardware, Software, or Other. In Promptfoo the whole eval is one config file and one data file."
+          }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": {
+          "language": "yaml"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "# promptfooconfig.yaml\ndescription: IT ticket categorization\n\nprompts:\n  - |\n    Categorize the support ticket below into one of Hardware, Software,\n    or Other. Respond with only one of those words.\n\n    Ticket: {{ticket_text}}\n\nproviders:\n  - openai:gpt-5.6\n\ntests: file://tickets.csv\n\ndefaultTest:\n  assert:\n    - type: equals\n      value: '{{correct_label}}'"
+          }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": {
+          "language": "csv"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "ticket_text,correct_label\n\"My monitor won't turn on.\",Hardware\n\"I'm in vim and I can't quit.\",Software\n\"Best restaurants near the office?\",Other"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Each CSV column becomes a variable that the prompt and the assertions can reference. Run the eval, then open the results viewer:"
+          }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": {
+          "language": "bash"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "npx promptfoo@latest eval\nnpx promptfoo@latest view"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "eval",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " runs every test case against every prompt and provider in the config. "
+          },
+          {
+            "type": "text",
+            "text": "view",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " opens the results in a local web viewer, one row per test case."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Mapping the Graders"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Each OpenAI grader type has a "
+          },
+          {
+            "type": "text",
+            "text": "Promptfoo assertion",
+            "marks": [
+              {
+                "type": "link",
+                "attrs": {
+                  "href": "https://www.promptfoo.dev/docs/configuration/expected-outputs/"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " that does the same job:"
+          }
+        ]
+      },
+      {
+        "type": "bulletList",
+        "content": [
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "string_check",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": " becomes "
+                  },
+                  {
+                    "type": "text",
+                    "text": "equals",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": " for "
+                  },
+                  {
+                    "type": "text",
+                    "text": "eq",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": ", "
+                  },
+                  {
+                    "type": "text",
+                    "text": "contains",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": " for "
+                  },
+                  {
+                    "type": "text",
+                    "text": "like",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": ", and "
+                  },
+                  {
+                    "type": "text",
+                    "text": "icontains",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": " for "
+                  },
+                  {
+                    "type": "text",
+                    "text": "ilike",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": "."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "text_similarity",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": " becomes a metric assertion: "
+                  },
+                  {
+                    "type": "text",
+                    "text": "levenshtein",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": ", "
+                  },
+                  {
+                    "type": "text",
+                    "text": "rouge-n",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": ", "
+                  },
+                  {
+                    "type": "text",
+                    "text": "bleu",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": ", "
+                  },
+                  {
+                    "type": "text",
+                    "text": "gleu",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": ", or "
+                  },
+                  {
+                    "type": "text",
+                    "text": "meteor",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": ", or "
+                  },
+                  {
+                    "type": "text",
+                    "text": "similar",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": " for embedding cosine similarity."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "score_model",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": " and "
+                  },
+                  {
+                    "type": "text",
+                    "text": "label_model",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": " become "
+                  },
+                  {
+                    "type": "text",
+                    "text": "llm-rubric",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": ", which asks a model to grade the output against a rubric you write."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "python",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": " graders become "
+                  },
+                  {
+                    "type": "text",
+                    "text": "python",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": " assertions, which receive the output and a "
+                  },
+                  {
+                    "type": "text",
+                    "text": "context",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": " object holding the test case's variables."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "OpenAI's "
+          },
+          {
+            "type": "text",
+            "text": "migration guide",
+            "marks": [
+              {
+                "type": "link",
+                "attrs": {
+                  "href": "https://developers.openai.com/cookbook/examples/evaluation/moving-from-openai-evals-to-promptfoo"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " adds two cautions: similarity scores may not match across systems, and any recreated LLM-as-a-judge grader should be validated before you rely on it for regression decisions. Validation is the step that is easiest to skip, so the rest of this post is about it."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Choosing a Grader"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "A grader stands in for a human reviewer. The useful question is how often its verdicts agree with that reviewer, and a high pass rate does not answer it. Below, eight test cases are graded four different ways. The rows are written to show the common failure modes: correct answers with different casing or punctuation, a correct answer inside a sentence, a hedged answer that names two categories, and a wrong label."
+          }
+        ]
+      },
+      {
+        "type": "embed",
+        "attrs": {
+          "kind": "grader-playground",
+          "props": {
+            "grader": "equals"
+          },
+          "caption": "Example data written for this post. Every verdict, edit distance, and pass rate is computed in your browser."
+        }
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "On the same eight outputs, exact match reports a 38% pass rate, contains reports 88%, and the reviewer marks 75% correct. Both numbers come from the grader, not from the model. The Python check also reports 75%, and it agrees with the reviewer on every row, because it encodes the rule the reviewer applied: exactly one label, and the right one."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Two habits follow from this:"
+          }
+        ]
+      },
+      {
+        "type": "bulletList",
+        "content": [
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Review a sample by hand before you trust a grader. A few dozen reviewed rows usually show whether a grader under-counts or over-counts."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Fix the output before you fix the grader. If formatting variants cause most failures, constrain the output with structured outputs and an enum, and exact match becomes the right grader again."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 3
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Model Graders"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "For open-ended answers, where no string check fits, use "
+          },
+          {
+            "type": "text",
+            "text": "llm-rubric",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " with a rubric that states the rule in one sentence:"
+          }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": {
+          "language": "yaml"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "defaultTest:\n  assert:\n    - type: llm-rubric\n      value: Names exactly one category and gives no explanation."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "A model grader is still a grader. Run it over the reviewed sample and check its agreement before it gates a release."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Running Evals in CI"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Because the eval is a file in the repository, it can "
+          },
+          {
+            "type": "text",
+            "text": "run in CI",
+            "marks": [
+              {
+                "type": "link",
+                "attrs": {
+                  "href": "https://www.promptfoo.dev/docs/integrations/ci-cd/"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " on every pull request that changes a prompt. Promptfoo writes results as JSON, HTML, or JUnit XML, and the JSON output includes success and failure counts you can gate on:"
+          }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": {
+          "language": "bash"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "npx promptfoo@latest eval -c promptfooconfig.yaml -o results.json\n\nFAILURES=$(jq '.results.stats.failures' results.json)\nif [ \"$FAILURES\" -gt 0 ]; then\n  echo \"Eval failed with $FAILURES failures\"\n  exit 1\nfi"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "To gate on a pass rate instead of zero failures, divide "
+          },
+          {
+            "type": "text",
+            "text": "successes",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " by "
+          },
+          {
+            "type": "text",
+            "text": "successes + failures",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " from the same "
+          },
+          {
+            "type": "text",
+            "text": "stats",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " object and compare the result to a threshold. Set that threshold from the reviewed sample. The CI gate slider above shows why: a gate set higher than the reviewer's own pass rate fails a model that is doing the job."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Migrating an Existing Eval"
+          }
+        ]
+      },
+      {
+        "type": "orderedList",
+        "attrs": {
+          "start": 1
+        },
+        "content": [
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Copy your test data and any past results you want to keep out of the OpenAI dashboard. Existing evals become read-only on October 31, and the dashboard shuts down on November 30."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Recreate the prompt, provider, test cases, and assertions in "
+                  },
+                  {
+                    "type": "text",
+                    "text": "promptfooconfig.yaml",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": ", using the grader mapping above."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Validate the config with "
+                  },
+                  {
+                    "type": "text",
+                    "text": "promptfoo validate config -c promptfooconfig.yaml",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": "."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Run it with "
+                  },
+                  {
+                    "type": "text",
+                    "text": "promptfoo eval -c promptfooconfig.yaml --no-cache",
+                    "marks": [
+                      {
+                        "type": "code"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": " and compare the results with your last OpenAI Evals run."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Check every recreated model grader against reviewed rows before it gates a release."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Sources: OpenAI's "
+          },
+          {
+            "type": "text",
+            "text": "deprecations page",
+            "marks": [
+              {
+                "type": "link",
+                "attrs": {
+                  "href": "https://developers.openai.com/api/docs/deprecations"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " and "
+          },
+          {
+            "type": "text",
+            "text": "Evals guide",
+            "marks": [
+              {
+                "type": "link",
+                "attrs": {
+                  "href": "https://platform.openai.com/docs/guides/evals"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": ", the "
+          },
+          {
+            "type": "text",
+            "text": "Moving from OpenAI Evals to Promptfoo",
+            "marks": [
+              {
+                "type": "link",
+                "attrs": {
+                  "href": "https://developers.openai.com/cookbook/examples/evaluation/moving-from-openai-evals-to-promptfoo"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " cookbook, and Promptfoo's "
+          },
+          {
+            "type": "text",
+            "text": "assertions",
+            "marks": [
+              {
+                "type": "link",
+                "attrs": {
+                  "href": "https://www.promptfoo.dev/docs/configuration/expected-outputs/"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " and "
+          },
+          {
+            "type": "text",
+            "text": "CI/CD",
+            "marks": [
+              {
+                "type": "link",
+                "attrs": {
+                  "href": "https://www.promptfoo.dev/docs/integrations/ci-cd/"
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " docs."
+          }
+        ]
+      }
+    ]
+  }
+}

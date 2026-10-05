@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # Builds the site icons: Kyle's portrait, screened in coral.
 #
+# SUPERSEDED for the shipped icons: build_brand.py now writes the locked set
+# (brand ink on brand cream, no dither). Running this script overwrites
+# app/icon.png, apple-icon.png and favicon.ico with the older coral screen.
+#
 # Two preprocessing steps happen before the screen, and both matter:
 #   1. a square crop derived from the subject matte rather than hand-picked, so
 #      it lands the same way on any photo of him. The neck is where the

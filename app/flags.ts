@@ -14,7 +14,7 @@ export const SECTION_FLAGS = {
   skills: true,
   education: true,
   certifications: true,
-  writing: false, // both explainers unpublished; the dated cards read stale
+  writing: false, // previews content/blog; flip on once the first post is published
   community: true,
   recognition: true,
   recommendations: false, // sampleContent entries are invented mocks, port the real LinkedIn quotes first

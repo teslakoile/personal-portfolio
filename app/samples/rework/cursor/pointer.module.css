@@ -1,0 +1,225 @@
+/* Pointer lab: the ink cursor and KYLLM over the real landing page. */
+
+.lab { position: relative; min-height: 100vh; }
+.content { position: relative; }
+/* only the cursor under test runs, so the hero's grid glow is hidden here */
+.content :global([class*="heroSpot"]) { display: none; }
+
+/* ---- A: the OS draws the cursor, from an SVG ---- */
+.cssArrow, .cssArrow :global(*) { cursor: var(--kn-arrow) !important; }
+.cssArrow :global(:is(a, button, [role="button"], summary, label, select)),
+.cssArrow :global(:is(a, button, [role="button"], summary, label, select) *) { cursor: var(--kn-arrow-link) !important; }
+
+/* ---- B and C: the page draws the cursor ---- */
+.hideNative, .hideNative :global(*) { cursor: none !important; }
+.cssArrow :global(:is(input, textarea, [contenteditable="true"])),
+.hideNative :global(:is(input, textarea, [contenteditable="true"])) { cursor: text !important; }
+
+/* ============================ ink cursor ============================ */
+/* .ink sits exactly on the pointer; .inkTilt leans; .inkScale grows and
+   squeezes. The arrow's tip is at the origin of all three. */
+.ink {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  will-change: transform;
+}
+.ink[data-shown] { opacity: 1; }
+.ink[data-mode="field"] { opacity: 0; }
+.inkTilt { position: absolute; left: 0; top: 0; transform: rotate(var(--lean, 0deg)); transform-origin: 0 0; }
+.inkScale {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.12s ease;
+}
+.ink[data-mode="link"] .inkScale { transform: scale(1.08); }
+.ink[data-pressed] .inkScale { transform: scale(0.84); transition-duration: 0.08s; transition-timing-function: ease-out; }
+.ink[data-mode="grab"][data-pressed] .inkScale { transform: scale(0.76); }
+.ink[data-mode="text"] .inkScale { opacity: 0; transform: scale(0.6); }
+
+.inkArrow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: -2.75px 0 0 -3.67px; /* the path's tip (4, 3) at 22px sits on the origin */
+  overflow: visible;
+  filter: drop-shadow(0 1px 1.2px rgb(28 25 23 / 0.32));
+}
+.inkArrow path { fill: #1c1917; transition: fill 0.14s ease; }
+.ink[data-mode="link"] .inkArrow path { fill: #f5482d; }
+
+/* where it goes: a small paper chip above-right of the tip */
+.inkBadge {
+  position: absolute;
+  left: 11px;
+  top: -9px;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  color: #f5482d;
+  font: 600 10px/1 var(--font-geist), system-ui, sans-serif;
+  box-shadow: 0 0 0 1px rgb(28 25 23 / 0.08), 0 2px 6px -2px rgb(28 25 23 / 0.3);
+  transform: scale(0);
+  transform-origin: 0 100%;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.ink[data-badge="true"] .inkBadge { transform: scale(1); }
+.ink[data-mode="grab"] .inkBadge { color: #1c1917; }
+
+/* over body copy: an I-beam the height of the line */
+.inkBeam {
+  position: absolute;
+  left: -1px;
+  top: calc(var(--beam, 19px) / -2);
+  width: 2px;
+  height: var(--beam, 19px);
+  border-radius: 1px;
+  background: #1c1917;
+  opacity: 0;
+  transform: scaleY(0.5);
+  transition: opacity 0.12s ease, transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.15s ease;
+}
+.inkBeam::before, .inkBeam::after {
+  content: "";
+  position: absolute;
+  left: -2.5px;
+  width: 7px;
+  height: 1.5px;
+  border-radius: 1px;
+  background: inherit;
+}
+.inkBeam::before { top: 0; }
+.inkBeam::after { bottom: 0; }
+.ink[data-mode="text"] .inkBeam { opacity: 1; transform: none; }
+
+/* ============================== KYLLM ============================== */
+.companion {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  will-change: transform;
+}
+.companion[data-shown] { opacity: 1; }
+.companion[data-hidden] { opacity: 0; }
+.companion[data-sleep] { opacity: 0.5; }
+.companionArrow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: -2.75px 0 0 -3.67px;
+  overflow: visible;
+  transform: rotate(var(--tilt, 0deg));
+  transform-origin: 3.67px 2.75px;
+  filter: drop-shadow(0 1px 1.5px rgb(146 40 22 / 0.35));
+}
+.companionTag {
+  position: absolute;
+  left: 13px;
+  top: 19px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 6px;
+  background: #f5482d;
+  color: #fff;
+  font: 500 11px/1 var(--font-geist), system-ui, sans-serif;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px -3px rgb(146 40 22 / 0.5);
+}
+/* near the window's right edge it rides on the left, tag and all */
+.companion[data-flip="true"] .companionTag { left: auto; right: 4px; }
+.companionTag b { font-weight: 600; letter-spacing: 0.02em; }
+.companionAction {
+  display: none;
+  padding-left: 6px;
+  border-left: 1px solid rgb(255 255 255 / 0.35);
+  font: 400 11px/1 var(--font-geist-mono), ui-monospace, monospace;
+}
+.companion[data-has-action="true"] .companionAction { display: inline; }
+/* thinking and listening: the label shimmers, like an agent's reasoning state */
+.companion[data-thinking="true"] .companionAction {
+  background: linear-gradient(90deg, rgb(255 255 255 / 0.55) 0%, #fff 45%, rgb(255 255 255 / 0.55) 90%) 0 0 / 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: knShimmer 1.4s linear infinite;
+}
+.companion[data-thinking="true"] .companionAction::after { content: "…"; }
+@keyframes knShimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+
+/* what KYLLM is looking at: a Figma-style selection with corner handles */
+.companionFrame {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9997;
+  pointer-events: none;
+  border: 1px solid rgb(245 72 45 / 0.85);
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.companionFrame[data-on] { opacity: 1; }
+.companionFrame i {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: #fff;
+  border: 1px solid #f5482d;
+}
+.companionFrame i:nth-child(1) { left: -3px; top: -3px; }
+.companionFrame i:nth-child(2) { right: -3px; top: -3px; }
+.companionFrame i:nth-child(3) { left: -3px; bottom: -3px; }
+.companionFrame i:nth-child(4) { right: -3px; bottom: -3px; }
+
+.switcher {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  z-index: 70;
+  width: min(760px, calc(100vw - 32px));
+  transform: translateX(-50%);
+  padding: 12px 12px 10px;
+  border-radius: 14px;
+  background: rgb(255 255 255 / 0.92);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 0 1px rgb(28 25 23 / 0.06), 0 24px 48px -22px rgb(28 25 23 / 0.3);
+  font-family: var(--font-geist), system-ui, sans-serif;
+}
+.note { margin: 0 4px 10px; font-size: 12.5px; line-height: 1.45; color: #57534e; }
+.note b { color: #1c1917; font-weight: 600; }
+.buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  font: 500 13px var(--font-geist), system-ui, sans-serif;
+  color: #57534e;
+  background: #f4f2ee;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.btn span { font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 11px; color: #a8a29e; }
+.btn:hover { color: #1c1917; }
+.btnOn { background: #1c1917; color: #fff; }
+.btnOn span { color: #f5482d; }
