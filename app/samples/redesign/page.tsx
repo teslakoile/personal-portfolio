@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { sample } from "../sampleContent";
 import { BrandRoot, Frame, Rail, Button } from "../../_brand/kit";
 import { Footer } from "../../_brand/sections/Footer";
+import { Cursor } from "../../_brand/Cursor";
 import { Certifications } from "../../_brand/sections/Certifications";
 import s from "./redesign.module.css";
 
@@ -21,6 +22,7 @@ const SECTIONS = [{ id: "certifications", label: "Certifications", num: "06" }];
 export default function RedesignPage() {
   return (
     <BrandRoot>
+      <Cursor />
       <div className={s.page}>
         <div className={s.railWrap}>
           <Rail
