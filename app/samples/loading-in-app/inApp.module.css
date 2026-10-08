@@ -1,0 +1,96 @@
+/* Mock surfaces for /samples/loading-in-app. Tokens come from the states page
+   root (paper, ink, coral, raw); these only lay out the mocks. */
+
+.mockCell { padding: 28px 28px 32px 44px; min-width: 0; }
+.facts { display: grid; gap: 18px; align-content: start; margin: 0; padding: 28px 28px 32px; }
+.facts dt { font-size: 12.5px; font-weight: 500; color: var(--ink-3); }
+.facts dd { margin: 4px 0 0; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+
+/* 01 ⌘K: the overlay over a dimmed page */
+.scrim { display: grid; place-items: center; padding: 36px 24px; background: rgb(28 25 23 / 0.08); }
+.askPanel {
+  width: 100%;
+  max-width: 520px;
+  padding: 22px 24px 26px;
+  background: var(--surface);
+  border-radius: 14px;
+  box-shadow: var(--float);
+}
+.askPrompt { margin: 0 0 10px; font-size: 13px; color: var(--ink-3); }
+.askInput { padding: 12px 0; font-size: 20px; letter-spacing: -0.01em; border-bottom: 1px solid var(--line); }
+.askBody { padding-top: 18px; }
+
+/* 02 chat */
+.chat { display: grid; max-width: 560px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+.chatHead { display: flex; align-items: baseline; gap: 10px; padding: 14px 18px; border-bottom: 1px dashed var(--line); }
+.chatHead b { font-weight: 600; }
+.chatHead span { font-size: 12.5px; color: var(--ink-3); }
+.chatLog { display: grid; gap: 14px; padding: 18px; min-height: 150px; align-content: start; }
+.bubbleUser {
+  justify-self: end;
+  max-width: 80%;
+  margin: 0;
+  padding: 10px 14px;
+  font-size: 14px;
+  background: var(--sunk);
+  border-radius: 14px;
+}
+.bubbleBot { justify-self: start; padding: 4px 2px; }
+.chatInput { padding: 14px 18px; font-size: 14px; color: var(--ink-3); border-top: 1px solid var(--line); }
+
+/* 03 GitHub: resting cells in the graph's shape, loader on top */
+.ghCard { position: relative; padding: 20px 22px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+.ghHead { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.ghHead b { font-size: 18px; font-weight: 500; }
+.ghHead span { font-size: 12.5px; color: var(--ink-3); }
+.ghGrid { display: grid; grid-template-rows: repeat(7, 9px); grid-auto-flow: column; grid-auto-columns: 9px; gap: 3px; overflow: hidden; }
+.ghGrid i { background: var(--raw); opacity: 0.45; }
+.ghOverlay {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  transform: translate(-50%, -50%);
+  padding: 10px 16px;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--line);
+}
+
+/* 04 navigation: a browser frame with skeleton chrome */
+.browser { box-shadow: inset 0 0 0 1px var(--line); background: var(--surface); }
+.browserBar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.browserBar i { width: 9px; height: 9px; border-radius: 50%; background: var(--raw); }
+.browserBar span { margin-left: 12px; font-size: 12.5px; color: var(--ink-3); }
+.browserBody { display: grid; grid-template-columns: 150px 1fr; min-height: 220px; }
+.skelSide { display: grid; gap: 10px; align-content: start; padding: 18px 16px; border-right: 1px solid var(--line); }
+.skelSide i { height: 8px; background: var(--raw); opacity: 0.6; }
+.skelSide i:nth-child(odd) { width: 70%; }
+.browserMain { display: grid; place-items: center; align-content: center; gap: 22px; padding: 24px; }
+.skelLines { display: grid; gap: 8px; width: 60%; }
+.skelLines i { height: 8px; background: var(--raw); opacity: 0.5; }
+.skelLines i:last-child { width: 55%; }
+
+/* 05 contact form, sending */
+.form { display: grid; gap: 14px; max-width: 460px; }
+.field { display: grid; gap: 5px; opacity: 0.55; }
+.field span { font-size: 12.5px; font-weight: 500; color: var(--ink-3); }
+.field div { padding: 10px 12px; font-size: 14px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line-2); }
+.field .fieldArea { min-height: 64px; }
+.sendBtn {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  height: 42px;
+  padding: 0 20px;
+  font-size: 15px;
+  font-weight: 500;
+  background: var(--surface);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--line-2);
+  cursor: progress;
+}
+
+@media (max-width: 760px) {
+  .mockCell { padding-left: 20px; padding-right: 20px; }
+  .browserBody { grid-template-columns: 1fr; }
+  .skelSide { display: none; }
+}
