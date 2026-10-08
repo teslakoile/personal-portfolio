@@ -6,7 +6,7 @@ Run vectorize.py first. Writes to public/kyllm/:
 
     kyllm-flat.svg          the whole character, transparent
     kyllm-flat.png          the same at 1024px
-    kyllm-avatar.svg        circle avatar: brand paper background, lower body
+    kyllm-avatar.svg        circle avatar: sky background, lower body
                             cropped out by the circle, room above the leaf
     kyllm-avatar-{56,72,96,192}.png and .webp
                             the avatar at 2x for 28, 36, 48, and 96px
@@ -14,8 +14,9 @@ Run vectorize.py first. Writes to public/kyllm/:
 The frame is measured, not placed by eye: the circle is FRAME_D times the
 character's width, the glasses' centre sits FRAME_G of the way down it, and
 the character shifts left until the hanging lens clears the circle's edge by
-MARGIN of the diameter.
+MARGIN of the diameter. NUDGE then moves it a little further left and down.
 """
+import os
 import re
 from pathlib import Path
 
@@ -23,9 +24,13 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 HERE = Path(__file__).parent
-OUT = HERE.parent.parent / "public/kyllm"
-PAPER = "#faf9f7"
+OUT = Path(os.environ["AVATAR_OUT"]) if os.environ.get("AVATAR_OUT") else HERE.parent.parent / "public/kyllm"
+# Circle background: sky, a light tint of the brand data blue --b3 #86a9c8.
+# Coral reads stronger on it than on paper, and the circle shows on the
+# paper page without an outline. AVATAR_BG overrides it to compare others.
+PAPER = os.environ.get("AVATAR_BG", "#d6e4f0")
 FRAME_D, FRAME_G, MARGIN = 1.15, 0.60, 0.08
+NUDGE = (0.03, 0.03)   # then move the character left and down by these fractions of the diameter
 
 flat = Image.open(HERE / "flat.png")
 px = np.asarray(flat).astype(int)
@@ -44,6 +49,9 @@ over = np.hypot(xs - cx, ys - cy).max() - D / 2 * (1 - 2 * MARGIN)
 while over > 0:
     cx += 1
     over = np.hypot(xs - cx, ys - cy).max() - D / 2 * (1 - 2 * MARGIN)
+
+cx += NUDGE[0] * D
+cy -= NUDGE[1] * D
 
 svg = (HERE / "flat.svg").read_text()
 body = re.search(r"<g>.*</g>", svg, re.S).group(0)

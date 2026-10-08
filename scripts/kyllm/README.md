@@ -60,9 +60,9 @@ The site uses a flat KYLLM in brand colors. It's built in three steps, and none 
 | Bridge | Rounded bar between the rims, its width measured from the master | ink `#1c1917` |
 | Temple arm | Rounded bar, its inner end run into the rim | ink `#1c1917` |
 | Eyes | Ovals with each eye's own moments | ink `#1c1917` |
-| Avatar background | Circle | paper `#faf9f7` |
+| Avatar background | Circle | sky `#d6e4f0`, a light tint of `--b3` `#86a9c8` |
 
-The avatar's circle is 1.15 times the character's width, with the glasses' center 60% of the way down. That leaves room above the leaf and crops the lower body out through the bottom. `avatar.py` then shifts the character left until the hanging lens clears the circle's edge by 8% of the diameter, so the glasses are never cut off and have room on the right.
+The avatar's circle is 1.15 times the character's width, with the glasses' center 60% of the way down. That leaves room above the leaf and crops the lower body out through the bottom. `avatar.py` then shifts the character left until the hanging lens clears the circle's edge by 8% of the diameter, so the glasses are never cut off and have room on the right. `NUDGE` then moves it 3% of the diameter further left and down. To try another circle color, set `AVATAR_BG` (for example `AVATAR_BG="#b7cde2"`) when you run `avatar.py`.
 
 ## New poses
 
