@@ -1,14 +1,23 @@
 /* Wallpaper footer: an 8 x 3 grid of everyday photos. At rest each tile is
-   the bridge-style halftone printed in one of the four palette inks; on hover
-   (or while pressed on touch) it fades to the original photo. */
+   the bridge-style halftone printed in one of the four palette inks. On hover
+   the original opens in a circle from where the pointer came in (--lx, --ly,
+   radius --full, set by FooterTile.tsx), lightly desaturated at first, and
+   closes toward where the pointer left. A click keeps it open. */
 .wall { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: repeat(3, 128px); gap: 6px; padding: 6px; }
-.tile { position: relative; overflow: hidden; background: var(--paper); }
+.tile { position: relative; overflow: hidden; background: var(--paper); cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .tile img, .tile i { position: absolute; inset: 0; }
-.tile img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.25s ease-out; }
-.tile i { background: var(--tile-ink); -webkit-mask: var(--src) center / cover no-repeat; mask: var(--src) center / cover no-repeat; transition: opacity 0.25s ease-out; }
-.tile { cursor: pointer; }
-.tile:hover img, .tile.on img { opacity: 1; }
-.tile:hover i, .tile.on i { opacity: 0; }
+.tile i { background: var(--tile-ink); -webkit-mask: var(--src) center / cover no-repeat; mask: var(--src) center / cover no-repeat; }
+.tile img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  clip-path: circle(0px at var(--lx, 50%) var(--ly, 50%));
+  filter: saturate(0.6);
+  transition: clip-path 0.25s cubic-bezier(0.65, 0, 0.35, 1), filter 0.2s ease-out;   /* closing */
+}
+.tile:hover img, .tile.on img {
+  clip-path: circle(var(--full, 75%) at var(--lx, 50%) var(--ly, 50%));
+  filter: none;
+  transition: clip-path 0.35s cubic-bezier(0.33, 1, 0.68, 1), filter 0.5s ease-out;   /* opening */
+}
 
 .card { grid-column: 3 / span 4; grid-row: 2; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line-2); text-align: center; }
 .cardLine { margin: 0; font-size: 15px; color: var(--ink-2); }
@@ -20,7 +29,7 @@
 .quiet a { color: var(--ink-2); text-decoration: none; }
 .quiet a:hover { color: var(--ink); }
 
-@media (prefers-reduced-motion: reduce) { .tile img, .tile i { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .tile img { transition: none !important; } }
 
 /* Phone layouts. The in-grid card is hidden and .mCard sits above the photos,
    so the email leads. Three variants, chosen by the footer's `mobile` prop. */
