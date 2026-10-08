@@ -1,0 +1,60 @@
+/* Hero chat: fixed height, the thread scrolls inside. Tokens come from the page root. */
+
+.panel {
+  width: 100%; max-width: 640px; height: 592px; align-self: center;
+  display: flex; flex-direction: column; overflow: hidden;
+  background: var(--surface); border-radius: 14px; box-shadow: var(--float);
+}
+
+.newChat {
+  height: 26px; padding: 0 11px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface);
+  font: inherit; font-size: 12.5px; color: var(--ink-2); cursor: pointer;
+}
+.newChat:hover { background: var(--sunk); color: var(--ink); }
+
+.scrollWrap { position: relative; flex: 1; min-height: 0; }
+/* a soft fade at the top edge once something is above */
+.scrollWrap::before {
+  content: ""; position: absolute; left: 0; right: 10px; top: 0; height: 28px; z-index: 1; pointer-events: none;
+  background: linear-gradient(var(--surface), transparent); opacity: 0; transition: opacity 0.2s;
+}
+.scrollWrap[data-scrolled]::before { opacity: 1; }
+
+.scroll {
+  height: 100%; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent;
+}
+.thread { display: flex; flex-direction: column; gap: 16px; padding: 18px 18px 8px; }
+
+.answer { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 12px; font-size: 15px; line-height: 1.6; animation: rise 0.3s var(--ease) both; }
+.answer > img { margin-top: -2px; }
+.answerBody { min-width: 0; display: grid; gap: 8px; }
+.answerBody p { margin: 0; }
+.reveal { display: grid; gap: 10px; animation: rise 0.35s var(--ease) both; }
+.block { margin-top: 2px; }
+.sources { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.sources > span { font-size: 12.5px; color: var(--ink-3); margin-right: 2px; }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.latest {
+  position: absolute; left: 50%; bottom: 10px; z-index: 2; transform: translate(-50%, 8px);
+  height: 28px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface);
+  box-shadow: 0 6px 16px -8px rgb(28 25 23 / 0.25); font: inherit; font-size: 12.5px; color: var(--ink-2); cursor: pointer;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.25s var(--ease);
+}
+.latest[data-show] { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+.latest:hover { color: var(--ink); }
+
+.foot { flex: none; display: grid; gap: 10px; padding: 10px 18px 16px; border-top: 1px solid var(--line); background: var(--surface); }
+.chips { display: flex; gap: 7px; flex-wrap: wrap; animation: rise 0.3s var(--ease) both; }
+.chip {
+  display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px; border-radius: 999px;
+  border: 1px solid var(--line-2); background: var(--surface); font: inherit; font-size: 13px; color: var(--ink-2); cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.chip:hover { background: var(--sunk); color: var(--ink); }
+.chip i { width: 8px; height: 5px; display: inline-block; }
+
+@media (prefers-reduced-motion: reduce) {
+  .answer, .reveal, .chips { animation: none; }
+  .scrollWrap::before, .latest { transition: none; }
+}
