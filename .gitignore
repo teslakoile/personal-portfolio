@@ -42,3 +42,6 @@ next-env.d.ts
 
 # generated image experiments (large, reproducible via scripts/hero)
 /output/
+
+# KYLLM style references (third-party images, local only)
+/scripts/kyllm/ref-*.png
