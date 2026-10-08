@@ -7,7 +7,8 @@ import { Geist, Geist_Mono } from "next/font/google";
  *   display (--q-serif) · body/UI (--q-sans) · mono (--q-mono)
  *
  * LOCKED PICK: "Swiss", Geist covers BOTH the display and body slots (two
- * families total), Geist Mono covers numerals, dates, and meta. `fontVariant`
+ * families total), numbers and dates included, set with tabular numerals.
+ * Geist Mono is kept only for code identifiers (labels inside diagrams). `fontVariant`
  * is the quiet root's data-variant that maps the slots to these families
  * (app/samples/quiet/styles.module.css). The samples playground aliases its
  * legacy font variables onto this set too (app/samples/layout.tsx), so the

@@ -180,8 +180,12 @@ export function Stage({ step, title, value, note }: { step: string; title: strin
   );
 }
 
-/** Stat row: figure and label, then blocks and the unit of one block. */
-export function Stat({ figure, label, n, c, unit }: { figure: string; label: string; n: number; c: BlockColor; unit: string }) {
+/** A figure and its label. Pass n, c, and unit only for a real measured count
+    whose unit is stated; community and program numbers stay plain. */
+export function Stat({ figure, label, n, c, unit }: { figure: string; label: string; n?: number; c?: BlockColor; unit?: string }) {
+  if (!n || !c || !unit) {
+    return <div className={`${b.stat} ${b.statPlain}`}><b>{figure}</b><span>{label}</span></div>;
+  }
   return (
     <div className={b.stat}>
       <div><b>{figure}</b><small>{label}</small></div>
@@ -208,7 +212,9 @@ export function Talk({ title, desc, meta }: { title: string; desc: string; meta:
     utility launchers, then the reach-me block pinned to the bottom. */
 export function Rail({ wordmark, items, active, utils, foot }: {
   wordmark: string;
-  items: { id: string; label: string }[];
+  /** num pins a row's number to its place on the full page (a partial page
+      keeps "06 Certifications"); without it rows number from 01. */
+  items: { id: string; label: string; num?: string }[];
   active?: string;
   utils?: { label: string; keys: string[] }[];
   foot?: ReactNode;
@@ -220,7 +226,7 @@ export function Rail({ wordmark, items, active, utils, foot }: {
         {items.map((x, i) => (
           <a key={x.id} href={`#${x.id}`} className={`${b.navItem} ${x.id === active ? b.navActive : ""}`}
             aria-current={x.id === active ? "true" : undefined}>
-            <span>{String(i + 1).padStart(2, "0")}</span>{x.label}
+            <span>{x.num ?? String(i + 1).padStart(2, "0")}</span>{x.label}
           </a>
         ))}
       </nav>

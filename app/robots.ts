@@ -6,8 +6,8 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // design playground, keep the section explorations out of search
-        disallow: ["/samples/"],
+        // design playground and the hidden brand sheet stay out of search
+        disallow: ["/samples/", "/branding"],
       },
     ],
     sitemap: "https://kylenaranjo.cv/sitemap.xml",

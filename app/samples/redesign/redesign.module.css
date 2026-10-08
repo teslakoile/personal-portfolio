@@ -1,0 +1,16 @@
+/* Shell for the redesign preview: rail on the left, the ruled frame beside it.
+   Tokens and components come from app/_brand. */
+.page { display: grid; grid-template-columns: var(--rail-width, 248px) minmax(0, 1fr); min-height: 100vh; }
+.railWrap { position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; }
+.railWrap > aside { width: 100%; }
+.main { min-width: 0; padding: 0 24px; }
+.pending { padding: 28px var(--gutter) 32px; font-size: 13.5px; color: var(--ink-3); }
+
+@media (max-width: 760px) {
+  .page { grid-template-columns: minmax(0, 1fr); }
+  .railWrap { position: static; height: auto; }
+  .railWrap > aside { flex-direction: row; align-items: center; justify-content: space-between; padding: 14px 20px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .railWrap nav, .railWrap hr, .railWrap button { display: none; }
+  .railWrap > aside > div { margin-top: 0 !important; }
+  .main { padding: 0; }
+}

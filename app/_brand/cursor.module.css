@@ -1,0 +1,22 @@
+/* Drawn cursor (Cursor.tsx). The wrapper sits on the click point, and both
+   the arrow's tip and the hand's fingertip are drawn at it, so the change
+   never shifts where a click lands. */
+/* Hiding the OS cursor while this one is mounted lives in app/globals.css
+   (:root[data-kc]), since a CSS module cannot hold bare global rules. */
+
+.cursor { position: fixed; top: 0; left: 0; z-index: 2147483647; pointer-events: none; opacity: 0; transition: opacity 0.15s ease-out; will-change: transform; filter: drop-shadow(0 0.5px 0.5px rgb(28 25 23 / 0.18)); }
+.cursor[data-shown] { opacity: 1; }
+.press { transform-origin: 0 0; transition: transform 0.18s cubic-bezier(0.33, 1, 0.68, 1); }
+.cursor[data-down] .press { transform: scale(0.86); transition-duration: 0.08s; }
+/* click spark (clickFx.ts): eight rays centred on the click point, each
+   with a paper edge so it reads on photos and on coral */
+.ray { position: fixed; z-index: 2147483646; width: 8px; height: 2.4px; border-radius: 2.4px; background: #f5482d; box-shadow: 0 0 0 1px #faf9f7; pointer-events: none; transform: translate(-50%, -50%); opacity: 0; }
+/* one shape, morphed point by point in Cursor.tsx; (0, 0) is the click point */
+.shape { position: absolute; left: -12px; top: -5px; overflow: visible; }
+
+/* text fields: the system text cursor takes over */
+.cursor[data-state="text"] .press { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor, .press { transition: none !important; }
+}

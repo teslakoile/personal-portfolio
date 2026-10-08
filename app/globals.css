@@ -32,7 +32,8 @@ body {
 
 /* Site cursor: the coral line-icon pointer (public/cursors/README.md).
    Only for a mouse or trackpad; touch screens never show a cursor. One
-   pointer everywhere, links included; text fields keep the text cursor and
+   pointer everywhere; over links, buttons, and other clickable things it
+   becomes a coral hand. Text fields keep the text cursor and
    drag areas keep the grab hand. The url() line is the fallback for browsers
    without image-set(). */
 @media (pointer: fine) {
@@ -41,9 +42,19 @@ body {
     cursor: url("/cursors/pointer.svg") 3 3, auto !important;
     cursor: image-set(url("/cursors/pointer.svg") 1x, url("/cursors/pointer@2x.svg") 2x) 3 3, auto !important;
   }
+  /* over anything clickable it becomes the coral hand (fingertip at 12, 4) */
+  html :is(a[href], button:not(:disabled), select, summary, label[for], [role="button"], [role="link"], [role="tab"], [data-clickable], input:is([type="button"], [type="submit"], [type="checkbox"], [type="radio"])),
+  html :is(a[href], button:not(:disabled), select, summary, label[for], [role="button"], [role="link"], [role="tab"], [data-clickable]) * {
+    cursor: url("/cursors/pointer-hand.svg") 12 4, auto !important;
+    cursor: image-set(url("/cursors/pointer-hand.svg") 1x, url("/cursors/pointer-hand@2x.svg") 2x) 12 4, auto !important;
+  }
   html :is(input:not([type="button"], [type="submit"], [type="checkbox"], [type="radio"]), textarea, [contenteditable="true"]) {
     cursor: text !important;
   }
+  /* a page that mounts the drawn cursor (app/_brand/Cursor.tsx) hides the
+     OS one; text fields still get the system text cursor */
+  :root[data-kc], :root[data-kc] * { cursor: none !important; }
+  :root[data-kc] :is(input:not([type="button"], [type="submit"], [type="checkbox"], [type="radio"]), textarea, [contenteditable="true"]) { cursor: text !important; }
   html [class*="fsGrab"] { cursor: grab !important; }
   html [class*="fsGrab"]:active { cursor: grabbing !important; }
 }

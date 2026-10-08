@@ -4,11 +4,13 @@
    on app/samples/quiet/styles.module.css. Rules in one line each:
      shape   square structure (0 radius), 6px chips, 14px floating layers,
              999px buttons
-     color   warm paper, stone greys, one coral for UI; four block colors for
-             data only, grey (--raw) means raw or expired
+     color   warm paper, stone greys, one coral for UI (coral-ink for small
+             text and fills); four block colors for data only, grey (--raw)
+             means raw or expired
      type    Geist everywhere with tabular numerals; Geist Mono only for code
              identifiers inside diagrams
-     blocks  only in diagrams, and every block is a stated unit of real data */
+     blocks  only where a timeline or a real metric matters, and every block
+             is a stated unit; never skills, tool lists, or community stats */
 
 .root {
   --paper: #faf9f7;
@@ -18,10 +20,11 @@
   --line-2: #d9d3cc;
   --ink: #1c1917;
   --ink-2: #57534e;
-  --ink-3: #a8a29e;
+  --ink-3: #78716c;
   --ink-4: #c3bcb5;
-  --coral: #f5482d;
-  --coral-press: #d93a21;
+  --coral: #f5482d;      /* marks and large type: ticks, today lines, focus rings, 24px+ words */
+  --coral-ink: #d2381f;  /* small coral text and the primary button: 4.6:1 on paper */
+  --coral-press: #b5301a;
 
   --b1: #f26a4b;
   --b2: #7fb99a;
@@ -99,7 +102,7 @@
   padding: 48px var(--gutter) 28px;
 }
 .head p { margin: 0; max-width: 380px; font-size: 15.5px; color: var(--ink-2); }
-.num { display: inline-block; vertical-align: top; margin: 6px 16px 0 0; font-size: 16px; font-weight: 500; letter-spacing: 0; color: var(--coral); }
+.num { display: inline-block; vertical-align: top; margin: 6px 16px 0 0; font-size: 16px; font-weight: 500; letter-spacing: 0; color: var(--coral-ink); }
 
 /* ========================== CONTROLS =========================== */
 .btn {
@@ -118,7 +121,7 @@
   transition: background 0.16s ease, transform 0.12s ease, box-shadow 0.16s ease, color 0.16s ease;
 }
 .btn:active { transform: scale(0.97); }
-.btnPrimary { background: var(--coral); color: #fff; box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.16), 0 1px 2px rgb(245 72 45 / 0.3); }
+.btnPrimary { background: var(--coral-ink); color: #fff; box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.16), 0 1px 2px rgb(245 72 45 / 0.3); }
 .btnPrimary:hover { background: var(--coral-press); }
 .btnSecondary { background: var(--surface); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-2); }
 .btnSecondary:hover { box-shadow: inset 0 0 0 1px var(--ink-3); }
@@ -165,7 +168,7 @@
   border-radius: var(--r-chip);
 }
 
-.link { color: var(--coral); font-size: 14px; font-weight: 500; text-decoration: none; }
+.link { color: var(--coral-ink); font-size: 14px; font-weight: 500; text-decoration: none; }
 .link:hover { text-decoration: underline; text-underline-offset: 3px; }
 .contact { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: var(--ink-2); }
 .contact a { display: inline-flex; align-items: center; gap: 7px; color: inherit; text-decoration: none; }
@@ -212,6 +215,10 @@
 }
 .stat b { display: block; font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
 .stat small { display: block; font-size: 11px; color: var(--ink-3); }
+.statPlain { display: block; padding: 16px 0; }
+.statPlain b { font-size: 30px; letter-spacing: -0.03em; line-height: 1.1; }
+.statPlain span { font-size: 13.5px; color: var(--ink-2); }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; }
 
 .talk { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 12px 0; border-top: 1px dashed var(--line); }
 .talk:first-child { border-top: 0; }
@@ -242,7 +249,7 @@
 .laneLabel img { height: 15px; width: auto; }
 .lane .blocks { flex-wrap: nowrap; }
 .today { position: absolute; top: -6px; bottom: -6px; border-left: 1px dashed var(--coral); }
-.today span { position: absolute; bottom: -20px; right: 4px; font-size: 10.5px; color: var(--coral); white-space: nowrap; }
+.today span { position: absolute; bottom: -20px; right: 4px; font-size: 10.5px; color: var(--coral-ink); white-space: nowrap; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 26px; font-size: 11.5px; color: var(--ink-2); }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .legend i { display: inline-block; width: 12px; height: 6px; }
@@ -265,7 +272,7 @@
 .navItem span { width: 22px; font-size: 11.5px; color: var(--ink-4); }
 .navItem:hover { color: var(--ink); }
 .navActive { color: var(--ink); font-weight: 500; }
-.navActive span { color: var(--coral); }
+.navActive span { color: var(--coral-ink); }
 .navActive::before { content: ""; position: absolute; left: 0; top: 9px; width: 2px; height: 16px; background: var(--coral); }
 .sep { margin: 22px 0; border: 0; border-top: 1px dashed var(--line-2); }
 .util {
@@ -297,6 +304,10 @@
 
 @media (max-width: 720px) {
   .root { --gutter: 20px; }
+  /* timelines: each label sits above its lane, so the blocks get the width */
+  .axis, .legendWrap { margin-left: 0 !important; }
+  .lane { display: block !important; height: auto; padding: 4px 0 6px; }
+  .laneLabel { padding: 0 0 5px; }
   .head { flex-direction: column; align-items: flex-start; padding-top: 36px; }
   .cells { grid-template-columns: 1fr !important; }
   .cells > * { border-right: 0; border-bottom: 1px solid var(--line); }
