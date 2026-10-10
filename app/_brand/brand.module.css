@@ -71,10 +71,14 @@
 .xr { right: -6px; bottom: -6px; }
 .pad { padding-inline: var(--gutter); }
 
-/* split cells inside a row, separated by vertical rules */
-.cells { display: grid; border-top: 1px solid var(--line); }
-.cells > * { border-right: 1px solid var(--line); min-width: 0; }
-.cells > *:last-child { border-right: 0; }
+/* split cells inside a row, separated by vertical rules. Every cell draws its
+   own left rule and the grid starts 1px over the frame's left rule, so the
+   first column's rule lands on the frame's instead of doubling beside it. That
+   holds for any number of columns or rows, and a stacked layout needs no reset. */
+.cells { display: grid; margin-left: -1px; border-top: 1px solid var(--line); }
+.cells > * { border-left: 1px solid var(--line); min-width: 0; }
+/* a rail inside cells already gets its divider from the next cell's left rule */
+.cells > .sidebar { border-right: 0; }
 
 /* ============================ TYPE ============================= */
 .h1 { font-size: clamp(40px, 5.6vw, 62px); line-height: 1.02; font-weight: 500; letter-spacing: -0.032em; margin: 0; text-wrap: balance; }
@@ -314,7 +318,7 @@
   .laneLabel { padding: 0 0 5px; }
   .head { flex-direction: column; align-items: flex-start; padding-top: 36px; }
   .cells { grid-template-columns: 1fr !important; }
-  .cells > * { border-right: 0; border-bottom: 1px solid var(--line); }
+  .cells > * { border-bottom: 1px solid var(--line); }
   .cells > *:last-child { border-bottom: 0; }
   .bandIn { padding-block: 56px 60px; }
 }

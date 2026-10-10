@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, type Variants } from "motion/react";
-import b from "../brand.module.css";
 import x from "./certifications.module.css";
 
 /** One issuer group, precomputed on the server so the client gets plain strings. */
@@ -27,35 +26,37 @@ const cell: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE } },
 };
 
-/** The by-issuer grid with a scroll entrance; same markup as the static one. */
+/** The by-issuer grid with a scroll entrance; same markup as the static one
+    (the wrapper is the container the column count is measured from). */
 export function IssuerGroupsMotion({ groups }: { groups: IssuerGroup[] }) {
   return (
-    <motion.div
-      className={b.cells}
-      style={{ gridTemplateColumns: "repeat(3, 1fr)" }}
-      variants={grid}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
-    >
-      {groups.map((g) => (
-        <motion.div key={g.issuer} className={x.issuerCell} variants={cell}>
-          <div className={x.issuerHead}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/logos/${g.logo}.svg`} alt="" className={x.logo} />
-            <span className={x.issuerName}>{g.issuer}</span>
-            <span className={x.issuerCount}>{g.certs.length}</span>
-          </div>
-          <ul className={x.issuerList}>
-            {g.certs.map((c) => (
-              <li key={c.title}>
-                <span className={`${x.title} ${c.gone ? x.muted : ""}`}>{c.title}</span>
-                <small>{c.meta}</small>
-              </li>
-            ))}
-          </ul>
-        </motion.div>
-      ))}
-    </motion.div>
+    <div className={x.issuerWrap}>
+      <motion.div
+        className={x.issuerGrid}
+        variants={grid}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.2 }}
+      >
+        {groups.map((g) => (
+          <motion.div key={g.issuer} className={x.issuerCell} variants={cell}>
+            <div className={x.issuerHead}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/logos/${g.logo}.svg`} alt="" className={x.logo} />
+              <span className={x.issuerName}>{g.issuer}</span>
+              <span className={x.issuerCount}>{g.certs.length}</span>
+            </div>
+            <ul className={x.issuerList}>
+              {g.certs.map((c) => (
+                <li key={c.title}>
+                  <span className={`${x.title} ${c.gone ? x.muted : ""}`}>{c.title}</span>
+                  <small>{c.meta}</small>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
   );
 }

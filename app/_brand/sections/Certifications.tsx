@@ -1,5 +1,5 @@
 import { sample } from "../../samples/sampleContent";
-import { Row, Cells, SectionHead, type BlockColor } from "../kit";
+import { Row, SectionHead, type BlockColor } from "../kit";
 import { BlockTimeline, monthCells, monthIndex, monthLabel, parseMonth, type YM } from "../timeline";
 import b from "../brand.module.css";
 import x from "./certifications.module.css";
@@ -124,26 +124,28 @@ function ByIssuer({ today, animate }: { today: YM; animate: boolean }) {
   const groups = issuerGroups(today);
   if (animate) return <IssuerGroupsMotion groups={groups} />;
   return (
-    <Cells cols="repeat(3, 1fr)">
-      {groups.map((g) => (
-        <div key={g.issuer} className={x.issuerCell}>
-          <div className={x.issuerHead}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/logos/${g.logo}.svg`} alt="" className={x.logo} />
-            <span className={x.issuerName}>{g.issuer}</span>
-            <span className={x.issuerCount}>{g.certs.length}</span>
+    <div className={x.issuerWrap}>
+      <div className={x.issuerGrid}>
+        {groups.map((g) => (
+          <div key={g.issuer} className={x.issuerCell}>
+            <div className={x.issuerHead}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/logos/${g.logo}.svg`} alt="" className={x.logo} />
+              <span className={x.issuerName}>{g.issuer}</span>
+              <span className={x.issuerCount}>{g.certs.length}</span>
+            </div>
+            <ul className={x.issuerList}>
+              {g.certs.map((c) => (
+                <li key={c.title}>
+                  <span className={`${x.title} ${c.gone ? x.muted : ""}`}>{c.title}</span>
+                  <small>{c.meta}</small>
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul className={x.issuerList}>
-            {g.certs.map((c) => (
-              <li key={c.title}>
-                <span className={`${x.title} ${c.gone ? x.muted : ""}`}>{c.title}</span>
-                <small>{c.meta}</small>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </Cells>
+        ))}
+      </div>
+    </div>
   );
 }
 

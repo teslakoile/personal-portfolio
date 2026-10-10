@@ -15,22 +15,41 @@
 .tName { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .tMeta { display: none; }
 
-/* B: by issuer */
-.issuerCell { padding: 26px 28px 22px; border-bottom: 1px solid var(--line); }
+/* B: by issuer. A container query picks 3, 2, or 1 columns from the frame's
+   own width (the rail takes 248px on some pages and none on others), so a name
+   never squeezes into a 180px cell. Cells draw a left and a bottom rule. The
+   grid starts 1px over the frame's left rule and the wrapper ends 1px over the
+   row's bottom rule, so neither doubles, for any number of issuers. */
+.issuerWrap { container-type: inline-size; margin-bottom: -1px; }
+.issuerGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-left: -1px; border-top: 1px solid var(--line); }
+.issuerCell { min-width: 0; padding: 26px 28px 22px; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .issuerCell:nth-child(3n + 1) { padding-left: var(--gutter); }
-.issuerCell:nth-last-child(-n + 3) { border-bottom: 0; }
-.issuerHead { display: flex; align-items: center; gap: 10px; }
-.issuerHead .logo { width: 22px; height: 22px; }
-.issuerName { font-size: 16px; font-weight: 500; }
-.issuerCount { margin-left: auto; font-size: 12.5px; color: var(--ink-3); }
+.issuerCell:nth-child(3n) { padding-right: var(--gutter); }
+.issuerHead { display: flex; align-items: flex-start; gap: 10px; }
+.issuerHead .logo { width: 22px; height: 22px; margin-top: 1px; }
+.issuerName { min-width: 0; font-size: 16px; font-weight: 500; line-height: 24px; }
+.issuerCount { margin-left: auto; font-size: 12.5px; line-height: 24px; color: var(--ink-3); }
 .issuerList { margin: 14px 0 0; padding: 0; list-style: none; }
 .issuerList li { padding: 10px 0; border-top: 1px dashed var(--line); }
 .issuerList small { display: block; margin-top: 2px; font-size: 13px; color: var(--ink-3); }
+
+@container (max-width: 899px) {
+  .issuerGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .issuerCell, .issuerCell:nth-child(3n + 1), .issuerCell:nth-child(3n) { padding-inline: 28px; }
+  .issuerCell:nth-child(odd) { padding-left: var(--gutter); }
+  .issuerCell:nth-child(even) { padding-right: var(--gutter); }
+}
+@container (max-width: 599px) {
+  .issuerGrid { grid-template-columns: minmax(0, 1fr); }
+  .issuerCell, .issuerCell:nth-child(odd), .issuerCell:nth-child(even) { padding-inline: var(--gutter); }
+}
 
 /* C: compact two-column list */
 .compact { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); }
 .cItem { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 16px var(--gutter); border-bottom: 1px dashed var(--line); }
 .cItem:nth-child(odd) { border-right: 1px solid var(--line); }
+/* the last row ends on the row's own rule; the second-to-last item is in it only when the count is even */
+.cItem:nth-last-child(-n + 2) { border-bottom: 0; }
 .cTile { display: grid; place-items: center; width: 40px; height: 40px; background: var(--sunk); }
 .cMeta { display: block; margin-top: 2px; font-size: 13px; color: var(--ink-3); }
 .cStatus { font-size: 13px; color: var(--ink-2); white-space: nowrap; }
@@ -42,8 +61,7 @@
   .tMeta { display: block; padding-left: 30px; font-size: 13px; color: var(--ink-3); }
   .compact { grid-template-columns: minmax(0, 1fr); }
   .cItem:nth-child(odd) { border-right: 0; }
+  .cItem:nth-last-child(2) { border-bottom: 1px dashed var(--line); }
   .cItem { grid-template-columns: 40px minmax(0, 1fr); row-gap: 4px; }
   .cStatus { grid-column: 2; }
-  .issuerCell, .issuerCell:nth-child(3n + 1) { padding: 22px var(--gutter); border-bottom: 1px solid var(--line); }
-  .issuerCell:last-child { border-bottom: 0; }
 }
