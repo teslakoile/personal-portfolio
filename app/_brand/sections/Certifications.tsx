@@ -1,5 +1,5 @@
 import { sample } from "../../samples/sampleContent";
-import { Row, Cells, SectionHead, type BlockColor } from "../kit";
+import { Row, SectionHead, type BlockColor } from "../kit";
 import { BlockTimeline, monthCells, monthIndex, monthLabel, parseMonth, type YM } from "../timeline";
 import b from "../brand.module.css";
 import x from "./certifications.module.css";
@@ -109,28 +109,30 @@ function ByIssuer({ today }: { today: YM }) {
     if (g) g.certs.push(c); else groups.push({ issuer: c.issuer, certs: [c] });
   }
   return (
-    <Cells cols="repeat(3, 1fr)">
-      {groups.map((g) => (
-        <div key={g.issuer} className={x.issuerCell}>
-          <div className={x.issuerHead}>
-            <Logo c={g.certs[0]} />
-            <span className={x.issuerName}>{g.issuer}</span>
-            <span className={x.issuerCount}>{g.certs.length}</span>
+    <div className={x.issuerWrap}>
+      <div className={x.issuerGrid}>
+        {groups.map((g) => (
+          <div key={g.issuer} className={x.issuerCell}>
+            <div className={x.issuerHead}>
+              <Logo c={g.certs[0]} />
+              <span className={x.issuerName}>{g.issuer}</span>
+              <span className={x.issuerCount}>{g.certs.length}</span>
+            </div>
+            <ul className={x.issuerList}>
+              {g.certs.map((c) => {
+                const gone = expired(c, today);
+                return (
+                  <li key={c.title}>
+                    <span className={`${x.title} ${gone ? x.muted : ""}`}>{c.title}</span>
+                    <small>{gone ? `Expired ${c.expires}` : c.expires ? `${c.issued} to ${c.expires}` : `${c.issued}, no expiry`}</small>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-          <ul className={x.issuerList}>
-            {g.certs.map((c) => {
-              const gone = expired(c, today);
-              return (
-                <li key={c.title}>
-                  <span className={`${x.title} ${gone ? x.muted : ""}`}>{c.title}</span>
-                  <small>{gone ? `Expired ${c.expires}` : c.expires ? `${c.issued} to ${c.expires}` : `${c.issued}, no expiry`}</small>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ))}
-    </Cells>
+        ))}
+      </div>
+    </div>
   );
 }
 
