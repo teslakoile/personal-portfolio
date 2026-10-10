@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { BrandRoot, Frame, Rail } from "../../../_brand/kit";
+import { BrandRoot, Frame } from "../../../_brand/kit";
+import { Rail } from "../../../_brand/Rail";
 import { Cursor } from "../../../_brand/Cursor";
 import { MotionRoot } from "../../../_brand/MotionRoot";
 import { AskPanel } from "../../../_brand/sections/AskPanel";

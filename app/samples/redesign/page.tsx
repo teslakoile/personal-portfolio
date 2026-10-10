@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { sample } from "../sampleContent";
-import { BrandRoot, Frame, Rail, Button } from "../../_brand/kit";
+import { BrandRoot, Frame, Button } from "../../_brand/kit";
+import { Rail } from "../../_brand/Rail";
 import { Footer } from "../../_brand/sections/Footer";
 import { Cursor } from "../../_brand/Cursor";
 import { MotionRoot } from "../../_brand/MotionRoot";

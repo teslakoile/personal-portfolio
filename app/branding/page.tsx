@@ -4,10 +4,9 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { sample } from "../samples/sampleContent";
 import {
-  BrandRoot, Frame, Row, Cells, SectionHead, Button, Badge, Chips, Kbd, Blocks, Legend, run,
-  KeyValues, Item, Metric, Stage, Stat, Talk, Rail, Footer, brand as b,
-  type BlockColor,
+  BrandRoot, Frame, Row, Cells, SectionHead, Button, Badge, Chips, Kbd, Blocks, Legend, run, KeyValues, Item, Metric, Stage, Stat, Talk, Footer, brand as b, type BlockColor,
 } from "../_brand/kit";
+import { Rail } from "../_brand/Rail";
 import { BlockTimeline, monthCells, monthIndex, monthLabel, parseMonth, type YM } from "../_brand/timeline";
 import { Pipeline } from "../_brand/Pipeline";
 import { Certifications } from "../_brand/sections/Certifications";
