@@ -3,6 +3,7 @@ import { Row, SectionHead, type BlockColor } from "../kit";
 import { BlockTimeline, monthCells, monthIndex, monthLabel, parseMonth, type YM } from "../timeline";
 import b from "../brand.module.css";
 import x from "./certifications.module.css";
+import { IssuerGroupsMotion, type IssuerGroup } from "./CertificationsIssuerMotion";
 
 /**
  * Certifications, redesign section, fed from sampleContent.ts. Kyle found the
@@ -101,33 +102,45 @@ function Registry({ today }: { today: YM }) {
   );
 }
 
-/** B: grouped by issuer, one cell each, in data order. */
-function ByIssuer({ today }: { today: YM }) {
-  const groups: { issuer: string; certs: Cert[] }[] = [];
+/** Issuer groups in data order, with each credential's status line resolved. */
+function issuerGroups(today: YM): IssuerGroup[] {
+  const groups: IssuerGroup[] = [];
   for (const c of sample.certifications) {
+    const gone = expired(c, today);
+    const item = {
+      title: c.title,
+      gone,
+      meta: gone ? `Expired ${c.expires}` : c.expires ? `${c.issued} to ${c.expires}` : `${c.issued}, no expiry`,
+    };
     const g = groups.find((y) => y.issuer === c.issuer);
-    if (g) g.certs.push(c); else groups.push({ issuer: c.issuer, certs: [c] });
+    if (g) g.certs.push(item); else groups.push({ issuer: c.issuer, logo: c.logo, certs: [item] });
   }
+  return groups;
+}
+
+/** B: grouped by issuer, one cell each, in data order. With `animate`, the
+    cells rise in on scroll. */
+function ByIssuer({ today, animate }: { today: YM; animate: boolean }) {
+  const groups = issuerGroups(today);
+  if (animate) return <IssuerGroupsMotion groups={groups} />;
   return (
     <div className={x.issuerWrap}>
       <div className={x.issuerGrid}>
         {groups.map((g) => (
           <div key={g.issuer} className={x.issuerCell}>
             <div className={x.issuerHead}>
-              <Logo c={g.certs[0]} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/logos/${g.logo}.svg`} alt="" className={x.logo} />
               <span className={x.issuerName}>{g.issuer}</span>
               <span className={x.issuerCount}>{g.certs.length}</span>
             </div>
             <ul className={x.issuerList}>
-              {g.certs.map((c) => {
-                const gone = expired(c, today);
-                return (
-                  <li key={c.title}>
-                    <span className={`${x.title} ${gone ? x.muted : ""}`}>{c.title}</span>
-                    <small>{gone ? `Expired ${c.expires}` : c.expires ? `${c.issued} to ${c.expires}` : `${c.issued}, no expiry`}</small>
-                  </li>
-                );
-              })}
+              {g.certs.map((c) => (
+                <li key={c.title}>
+                  <span className={`${x.title} ${c.gone ? x.muted : ""}`}>{c.title}</span>
+                  <small>{c.meta}</small>
+                </li>
+              ))}
             </ul>
           </div>
         ))}
@@ -166,13 +179,19 @@ const NOTES: Record<CertVariant, string> = {
   timeline: "Validity windows, one block per month. Faded blocks have no expiry date. Grey has expired.",
 };
 
-export function Certifications({ num, variant = "issuer" }: { num?: string; variant?: CertVariant }) {
+/**
+ * `animate` (default true) adds Motion to the issuer variant: a quiet scroll
+ * entrance. `animate={false}` renders the static section,
+ * for before/after comparisons. Other variants ignore it. Reduced motion comes
+ * from the page's <MotionRoot>.
+ */
+export function Certifications({ num, variant = "issuer", animate = true, id = "certifications" }: { num?: string; variant?: CertVariant; animate?: boolean; /** the section anchor; change it when two render on one page */ id?: string }) {
   const today = thisMonth();
   return (
-    <Row id="certifications">
+    <Row id={id}>
       <SectionHead num={num} title="Certifications" note={NOTES[variant]} />
       {variant === "registry" ? <Registry today={today} /> : null}
-      {variant === "issuer" ? <ByIssuer today={today} /> : null}
+      {variant === "issuer" ? <ByIssuer today={today} animate={animate} /> : null}
       {variant === "compact" ? <Compact today={today} /> : null}
       {variant === "timeline" ? (
         <div className={b.pad} style={{ paddingBottom: 34 }}>

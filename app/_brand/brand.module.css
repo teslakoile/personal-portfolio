@@ -277,7 +277,11 @@
 .navItem:hover { color: var(--ink); }
 .navActive { color: var(--ink); font-weight: 500; }
 .navActive span { color: var(--coral-ink); }
-.navActive::before { content: ""; position: absolute; left: 0; top: 9px; width: 2px; height: 16px; background: var(--coral); }
+.navActive::before,
+.navMarker { content: ""; position: absolute; left: 0; top: 9px; width: 2px; height: 16px; background: var(--coral); }
+/* Motion rail: the tick is a real element (.navMarker) that slides between
+   rows, so the static ::before tick is switched off. */
+.navLive .navActive::before { content: none; }
 .sep { margin: 22px 0; border: 0; border-top: 1px dashed var(--line-2); }
 .util {
   display: flex;
