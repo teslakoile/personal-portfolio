@@ -87,10 +87,13 @@
 .ruleList { display: grid; gap: 8px; margin: 12px 0 0; padding-left: 18px; font-size: 14.5px; color: var(--ink-2); list-style: disc; }
 .ruleList li::marker { color: var(--ink-4); }
 
-/* logos */
+/* logos. Cells draw a left and a bottom rule; the grid sits 1px over the
+   frame's left rule and the row's bottom rule, so neither doubles at any
+   column count. */
 .logoGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+  margin: 0 0 -1px -1px;
   border-top: 1px solid var(--line);
 }
 .logoCell {
@@ -99,7 +102,7 @@
   gap: 10px;
   padding: 20px 8px 16px;
   background: var(--surface);
-  border-right: 1px solid var(--line);
+  border-left: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   text-align: center;
 }
