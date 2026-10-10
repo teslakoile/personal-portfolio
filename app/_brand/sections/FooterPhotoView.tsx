@@ -113,7 +113,6 @@ export function FooterPhotoView({ id, src, aspect, tile, onClosed }: {
       <motion.div className={f.viewBack} initial={{ opacity: 0 }} animate={{ opacity: phase === "back" ? 0 : 1 }} transition={FADE} />
       {large ? (
         <motion.div key="large" layoutId={id} className={f.viewPhoto} style={{ "--a": aspect } as CSSProperties} transition={MORPH}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <motion.img layoutId={`${id}-img`} src={src} alt="" className={f.viewImg} style={{ inset: 0, width: "100%", height: "100%" }} transition={MORPH} />
         </motion.div>
       ) : (
@@ -125,7 +124,6 @@ export function FooterPhotoView({ id, src, aspect, tile, onClosed }: {
           transition={MORPH}
           onLayoutAnimationComplete={() => { if (phase === "back") done.current(); }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <motion.img layoutId={`${id}-img`} src={src} alt="" className={f.viewImg} style={cover(box.width, box.height, aspect)} transition={MORPH} />
         </motion.div>
       )}
