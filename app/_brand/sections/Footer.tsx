@@ -43,19 +43,21 @@ function Contact() {
 export type FooterMobile = "strip" | "rows" | "drift";
 const MOBILE = { strip: f.strip, rows: f.rows, drift: f["drift-on"] };
 
-export function Footer({ mobile = "strip" }: { mobile?: FooterMobile }) {
+/** `fullView` (on by default): an open photo gets an expand button that grows
+    it to a large view (FooterPhotoView). Off, the footer is the wall alone. */
+export function Footer({ mobile = "strip", fullView = true }: { mobile?: FooterMobile; fullView?: boolean }) {
   return (
     <footer className={MOBILE[mobile]}>
       <Row>
         <div className={f.mCard}><Contact /></div>
         <FooterWall tiles={TILES}>
-          {TILES.map((t, i) => <FooterTile key={i} {...t} i={i} />)}
+          {TILES.map((t, i) => <FooterTile key={i} {...t} i={i} fullView={fullView} />)}
           <div className={f.card}><Contact /></div>
         </FooterWall>
         {mobile === "drift" ? (
           <div className={f.drift}>
             <div className={f.track}>
-              {[...TILES, ...TILES].map((t, i) => <FooterTile key={i} {...t} />)}
+              {[...TILES, ...TILES].map((t, i) => <FooterTile key={i} {...t} fullView={fullView} />)}
             </div>
           </div>
         ) : null}
