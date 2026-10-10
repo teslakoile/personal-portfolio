@@ -17,7 +17,7 @@ import h from "./hero.module.css";
 
 type Turn = { q: string; steps?: StepData[]; a: ReactNode; sources?: [string, string][]; live?: boolean };
 
-const AGENTS_RUN: StepData[] = [
+export const AGENTS_RUN: StepData[] = [
   { cat: "think", text: "Reading the question", meta: "about agent work", ms: 200 },
   { cat: "tool", text: "Searching the CV", meta: "6 matches", ms: 300 },
   { cat: "tool", text: "Opening Document Intelligence", meta: "In Production", section: "Projects · Document Intelligence", ms: 400 },
@@ -25,13 +25,13 @@ const AGENTS_RUN: StepData[] = [
   { cat: "write", text: "Writing the answer", meta: "2 sentences", ms: 500 },
   { cat: "check", text: "Linking sources", meta: "2 sources", ms: 200 },
 ];
-const TALKS_RUN: StepData[] = [
+export const TALKS_RUN: StepData[] = [
   { cat: "think", text: "Reading the question", meta: "about talks", ms: 200 },
   { cat: "tool", text: "Opening Community", meta: "GDG Davao", section: "Community · Talks", ms: 400 },
   { cat: "write", text: "Writing the answer", meta: "2 sentences", ms: 400 },
   { cat: "check", text: "Linking sources", meta: "1 source", ms: 150 },
 ];
-const OPENING_RUN: StepData[] = [
+export const OPENING_RUN: StepData[] = [
   { cat: "think", text: "Reading the question", meta: "overview", ms: 200 },
   { cat: "tool", text: "Opening every section", meta: "8 sections", ms: 500 },
   { cat: "write", text: "Writing the answer", meta: "4 highlights", ms: 600 },

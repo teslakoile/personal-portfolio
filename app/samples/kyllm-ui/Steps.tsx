@@ -132,15 +132,19 @@ function Row({ v, run, i, state, span, liveMs }: { v: StepsVariant; run: Run; i:
 
 /**
  * One Steps block. `play` runs the live sequence on mount (remount with a new
- * key to replay); `freeze` pins a phase for screenshots.
+ * key to replay); `freeze` pins a phase for screenshots. `rate` below 1 plays
+ * it in slow motion while the bars and seconds still show the run's own time;
+ * a change applies from the next step.
  */
-export function Steps({ v, steps = MCP_RUN, play = 0, loop = false, freeze, defaultOpen = false, onDone }: {
-  v: StepsVariant; steps?: StepData[]; play?: number; loop?: boolean; freeze?: { phase: Phase; shown?: number }; defaultOpen?: boolean; onDone?: () => void;
+export function Steps({ v, steps = MCP_RUN, play = 0, loop = false, freeze, defaultOpen = false, onDone, rate = 1 }: {
+  v: StepsVariant; steps?: StepData[]; play?: number; loop?: boolean; freeze?: { phase: Phase; shown?: number }; defaultOpen?: boolean; onDone?: () => void; rate?: number;
 }) {
   const [run] = useState(() => toRun(steps));
   const STEPS = run.steps;
   const done = useRef(onDone);
   useEffect(() => { done.current = onDone; }, [onDone]);
+  const rateRef = useRef(rate);
+  useEffect(() => { rateRef.current = rate; }, [rate]);
   const [phase, setPhase] = useState<Phase>(freeze?.phase ?? (play ? "working" : "done"));
   const [shown, setShown] = useState(freeze?.shown ?? (play ? 0 : STEPS.length));
   const [open, setOpen] = useState(freeze ? defaultOpen : play ? true : defaultOpen);
@@ -159,15 +163,16 @@ export function Steps({ v, steps = MCP_RUN, play = 0, loop = false, freeze, defa
       if (shown === 0 && !t0.current) t0.current = performance.now();
       stepT0.current = performance.now();
       shownRef.current = shown;
+      const r = rateRef.current;
       const id = shown < STEPS.length
-        ? setTimeout(() => setShown((n) => n + 1), STEPS[shown].ms)
-        : setTimeout(() => { setTook(performance.now() - t0.current); setPhase("done"); done.current?.(); }, 150);
+        ? setTimeout(() => setShown((n) => n + 1), STEPS[shown].ms / r)
+        : setTimeout(() => { setTook((performance.now() - t0.current) * r); setPhase("done"); done.current?.(); }, 150 / r);
       return () => clearTimeout(id);
     }
     // done: a looping demo starts over; otherwise fold unless the visitor opened it
     const id = loop
-      ? setTimeout(() => { t0.current = 0; setShown(0); setPhase("working"); }, 1400)
-      : setTimeout(() => { if (!touched.current) setOpen(false); }, 700);
+      ? setTimeout(() => { t0.current = 0; setShown(0); setPhase("working"); }, 1400 / rateRef.current)
+      : setTimeout(() => { if (!touched.current) setOpen(false); }, 700 / rateRef.current);
     return () => clearTimeout(id);
   }, [phase, shown, play, freeze, STEPS, loop]);
 
@@ -175,7 +180,7 @@ export function Steps({ v, steps = MCP_RUN, play = 0, loop = false, freeze, defa
   useEffect(() => {
     if (freeze || !play || phase !== "working") return;
     let raf = 0;
-    const tick = () => { setClock({ i: shownRef.current, ms: performance.now() - stepT0.current }); raf = requestAnimationFrame(tick); };
+    const tick = () => { setClock({ i: shownRef.current, ms: (performance.now() - stepT0.current) * rateRef.current }); raf = requestAnimationFrame(tick); };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [phase, play, freeze]);
@@ -191,7 +196,7 @@ export function Steps({ v, steps = MCP_RUN, play = 0, loop = false, freeze, defa
       <button type="button" className={t.head} aria-expanded={open} aria-controls={id} disabled={working}
         onClick={() => { touched.current = true; setOpen((o) => !o); }}>
         <span className={t.headSwap}>
-          <span className={t.headWorking} aria-hidden={!working}>{working ? <Loading verbs={ASK_VERBS} timer /> : null}</span>
+          <span className={t.headWorking} aria-hidden={!working}>{working ? <Loading verbs={ASK_VERBS} timer rate={rate} /> : null}</span>
           <span className={t.headDone} aria-hidden={working}>
             <span>Read the CV for {sec(took)}</span>
             <em>{STEPS.length} steps</em>
