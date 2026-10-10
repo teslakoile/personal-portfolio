@@ -1,11 +1,14 @@
 import { Row } from "../kit";
 import { FooterTile } from "./FooterTile";
+import { FooterWall } from "./FooterWall";
 import f from "./footer.module.css";
 
 /**
  * Site footer: everyday photos in an 8 x 3 grid around the email. Tiles rest
  * as four-ink halftones (the bridge's filter, painted with b1 to b4 along the
- * diagonals) and show the original photo on hover. Photos are built by
+ * diagonals). A click opens the original photo in a circle from the click
+ * point; with a mouse on the desktop grid the wall is drawn in WebGL and the
+ * halftone also swells like a lens under the mouse (FooterWall). Photos are built by
  * scripts/hero/build-collage.sh from a curated folder: public/footer/draft/
  * life-NN.webp is the halftone mask, fx-plain/life-NN.webp the original.
  * The 12 there now are placeholders; Kyle curates the final set.
@@ -45,10 +48,10 @@ export function Footer({ mobile = "strip" }: { mobile?: FooterMobile }) {
     <footer className={MOBILE[mobile]}>
       <Row>
         <div className={f.mCard}><Contact /></div>
-        <div className={f.wall}>
-          {TILES.map((t, i) => <FooterTile key={i} {...t} />)}
+        <FooterWall tiles={TILES}>
+          {TILES.map((t, i) => <FooterTile key={i} {...t} i={i} />)}
           <div className={f.card}><Contact /></div>
-        </div>
+        </FooterWall>
         {mobile === "drift" ? (
           <div className={f.drift}>
             <div className={f.track}>
