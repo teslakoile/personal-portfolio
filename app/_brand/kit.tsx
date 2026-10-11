@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import b from "./brand.module.css";
+import { toolLogo } from "./logos";
 
 /**
  * Proposed brand kit, the reusable pieces of the "data blocks" direction
@@ -89,10 +90,21 @@ export function Badge({ children }: { children: ReactNode }) {
   return <span className={b.badge}><i aria-hidden="true" />{children}</span>;
 }
 
-export function Chips({ items }: { items: readonly string[] }) {
+/** Tag chips. With `logos`, a chip whose name has a verified brand mark shows
+    it before the label; any other chip stays text. */
+export function Chips({ items, logos = false }: { items: readonly string[]; logos?: boolean }) {
   return (
     <ul className={b.chips} style={{ listStyle: "none", margin: 0, padding: 0 }}>
-      {items.map((t) => <li key={t} className={b.chip}>{t}</li>)}
+      {items.map((t) => {
+        const src = logos ? toolLogo(t) : null;
+        return (
+          <li key={t} className={b.chip}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {src ? <img className={b.chipLogo} src={src} alt="" width={14} height={14} /> : null}
+            {t}
+          </li>
+        );
+      })}
     </ul>
   );
 }
