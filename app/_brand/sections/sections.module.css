@@ -1,0 +1,110 @@
+/* Layout shared by the redesign's content sections (Hero through GitHub).
+   Tokens (--line, --gutter, --ink-*, --b1..) come from .root in
+   ../brand.module.css; typography and controls come from the kit. */
+
+/* A split row inside a section: every cell draws its own left rule and the
+   grid starts 1px over the frame's rule, so the first rule lands on the
+   frame's. Several grids stacked in one row separate on their top border. */
+.grid { display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); margin-left: -1px; border-top: 1px solid var(--line); }
+.grid > * { min-width: 0; padding: 26px 28px 30px; border-left: 1px solid var(--line); }
+.grid > *:first-child { padding-left: var(--gutter); }
+.two { --cols: 2; }
+
+/* an organization's mark beside its name */
+.orgLogo { display: inline-block; height: 16px; width: auto; max-width: 40px; margin-right: 7px; vertical-align: -2px; object-fit: contain; }
+.orgLabel { display: flex; align-items: center; gap: 8px; height: 24px; }
+.orgLabel img { flex: none; height: 16px; width: auto; max-width: 44px; object-fit: contain; }
+
+/* a second community under the first one's figures */
+.orgRow { display: flex; align-items: center; gap: 14px; margin-top: 8px; padding: 16px 0 0; border-top: 1px dashed var(--line); color: var(--ink); text-decoration: none; }
+.orgRow img { flex: none; height: 30px; width: auto; max-width: 56px; object-fit: contain; }
+.orgRow b { display: block; font-size: 15px; font-weight: 500; }
+.orgRow span { font-size: 13.5px; color: var(--ink-2); }
+.orgRow:hover b { color: var(--coral-ink); }
+
+.cardTitle { margin: 8px 0 0; }
+.lede { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink); }
+.desc { margin: 8px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+.role { margin-top: 12px; font-size: 12.5px; color: var(--ink-3); }
+.chipGap { margin-top: 14px; }
+.ext { display: inline-flex; gap: 6px; margin-top: 16px; font-size: 14px; font-weight: 500; color: var(--coral-ink); text-decoration: none; }
+.ext:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ------------------------------ hero ------------------------------ */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) 420px; min-height: 560px; overflow: hidden; }
+.heroCopy { display: flex; flex-direction: column; align-items: flex-start; padding: 112px 0 56px var(--gutter); }
+.heroSub { margin-top: 22px; }
+.heroCta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+.heroLinks { margin-top: 30px; }
+.heroPortrait { position: relative; }
+.heroPortrait img { position: absolute; right: -30px; bottom: 0; width: 430px; max-width: none; height: auto; }
+
+.strip { display: grid; grid-template-columns: 200px repeat(4, minmax(0, 1fr)); }
+.strip > * { min-width: 0; border-right: 1px solid var(--line); }
+.strip > *:last-child { border-right: 0; }
+.stripLabel { padding: 22px 24px 22px var(--gutter); }
+.stripLabel b { display: block; margin-top: 4px; font-size: 15px; font-weight: 500; line-height: 1.3; }
+
+.tools { display: grid; grid-template-columns: 200px repeat(6, minmax(0, 1fr)); height: 88px; }
+.tools > * { display: flex; align-items: center; justify-content: center; gap: 9px; min-width: 0; font-size: 14px; font-weight: 500; border-right: 1px solid var(--line); }
+.tools > *:last-child { border-right: 0; }
+.tools > *:first-child { justify-content: flex-start; padding-left: var(--gutter); font-weight: 400; color: var(--ink-2); }
+.tools img { height: 20px; width: auto; }
+
+/* ------------------------------ about ----------------------------- */
+.aboutGrid { display: grid; grid-template-columns: minmax(0, 1fr) 330px; border-top: 1px solid var(--line); }
+.aboutCopy { padding: 44px var(--gutter); }
+.aboutCopy p + p { margin-top: 20px; }
+.aboutChips { margin-top: 28px; }
+.aboutFacts { border-left: 1px solid var(--line); }
+
+/* --------------------------- experience --------------------------- */
+.timelineWrap { padding: 8px var(--gutter) 34px; }
+.roleRow { display: grid; grid-template-columns: 180px minmax(0, 1fr) 250px; border-top: 1px solid var(--line); }
+.roleWhen { padding: 26px 28px 26px var(--gutter); font-size: 12.5px; line-height: 1.6; color: var(--ink-3); }
+.roleWhen b { display: block; font-weight: 400; color: var(--ink); }
+.roleBody { padding: 26px 28px; border-left: 1px solid var(--line); }
+.roleBody p { margin: 6px 0 0; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+.roleItems { margin-top: 12px; }
+.roleStack { padding: 26px 28px; border-left: 1px solid var(--line); }
+
+/* ------------------------------ skills ---------------------------- */
+.blurb { margin: 4px 0 0; min-height: 40px; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+
+/* ---------------------------- education --------------------------- */
+.seal { display: block; height: 34px; width: auto; }
+.school { margin: 12px 0 0; font-size: 17px; }
+.degree { font-size: 14px; color: var(--ink-2); }
+
+/* ----------------------------- github ----------------------------- */
+.ghWrap { padding: 6px var(--gutter) 34px; }
+.ghGrid { display: grid; grid-template-columns: repeat(53, minmax(0, 1fr)); grid-template-rows: repeat(7, 10px); grid-auto-flow: column; gap: 3px; }
+.ghGrid i { display: block; background: var(--raw); }
+.ghFoot { display: flex; justify-content: space-between; gap: 16px; margin-top: 12px; font-size: 11.5px; color: var(--ink-3); }
+.ghFallback { padding: 6px var(--gutter) 34px; font-size: 14.5px; color: var(--ink-2); }
+
+@media (max-width: 720px) {
+  .grid { grid-template-columns: minmax(0, 1fr); margin-left: 0; }
+  .grid > *, .grid > *:first-child { padding-inline: var(--gutter); border-left: 0; border-bottom: 1px solid var(--line); }
+  .grid > *:last-child { border-bottom: 0; }
+
+  .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+  .heroCopy { padding: 40px var(--gutter) 0; }
+  .heroPortrait img { position: static; display: block; width: 100%; max-width: 380px; margin: 24px auto 0; }
+
+  .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stripLabel { grid-column: 1 / -1; padding-left: var(--gutter); border-bottom: 1px solid var(--line); }
+  .strip > * { border-bottom: 1px solid var(--line); }
+  .tools { grid-template-columns: repeat(2, minmax(0, 1fr)); height: auto; }
+  .tools > * { min-height: 56px; border-bottom: 1px solid var(--line); }
+  .tools > *:first-child { grid-column: 1 / -1; }
+
+  .aboutGrid { grid-template-columns: minmax(0, 1fr); }
+  .aboutCopy { padding: 32px var(--gutter); }
+  .aboutFacts { border-left: 0; border-top: 1px solid var(--line); }
+
+  .roleRow { grid-template-columns: minmax(0, 1fr); }
+  .roleWhen { padding: 22px var(--gutter) 0; }
+  .roleBody { padding: 8px var(--gutter) 0; border-left: 0; }
+  .roleStack { padding: 14px var(--gutter) 24px; border-left: 0; }
+}

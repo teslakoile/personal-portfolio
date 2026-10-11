@@ -12,12 +12,12 @@ import home from "./home.module.css";
  * alternative inverted-band treatment for the /samples/rework comparison.
  */
 
-type Day = { date: string; level: number; week: number; weekday: number };
+export type Day = { date: string; level: number; week: number; weekday: number };
 
 const CELL = 11; // px square
 const GAP = 3;
 
-async function fetchContributions(): Promise<{ total: number; days: Day[] } | null> {
+export async function fetchContributions(): Promise<{ total: number; days: Day[] } | null> {
   try {
     const res = await fetch(`https://github.com/users/${sample.github.user}/contributions`, {
       next: { revalidate: 43200 },

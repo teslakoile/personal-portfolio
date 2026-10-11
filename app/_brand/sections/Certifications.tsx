@@ -172,9 +172,10 @@ function Compact({ today }: { today: YM }) {
 
 export type CertVariant = "registry" | "issuer" | "compact" | "timeline";
 
-const NOTES: Record<CertVariant, string> = {
+/** Notes that describe a variant for the comparison pages. The shipped issuer
+    layout carries none. */
+const NOTES: Partial<Record<CertVariant, string>> = {
   registry: "Issue and expiry dates for each credential.",
-  issuer: "Grouped by issuer.",
   compact: "Issue dates, and how long each stays valid.",
   timeline: "Validity windows, one block per month. Faded blocks have no expiry date. Grey has expired.",
 };
