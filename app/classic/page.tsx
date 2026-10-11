@@ -271,7 +271,7 @@ const skillGroups = [
     items: [
       "OpenAI API",
       "Vertex AI",
-      "Azure AI Services",
+      "Azure AI Foundry",
       "Snowflake Cortex",
       "LangChain",
       "Keras",
@@ -310,7 +310,7 @@ const skillGroups = [
     items: [
       "Cursor",
       "Claude Code",
-      "Codex CLI",
+      "Codex",
       "GitHub",
       "Azure DevOps",
       "Git",
