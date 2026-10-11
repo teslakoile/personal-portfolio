@@ -12,12 +12,14 @@ import home from "./home.module.css";
  * alternative inverted-band treatment for the /samples/rework comparison.
  */
 
-type Day = { date: string; level: number; week: number; weekday: number };
+/** `count` is the day's contribution count, read from GitHub's tooltip text; it
+    stays 0 for every day if that markup ever changes, and `level` still works. */
+export type Day = { date: string; level: number; week: number; weekday: number; count: number };
 
 const CELL = 11; // px square
 const GAP = 3;
 
-async function fetchContributions(): Promise<{ total: number; days: Day[] } | null> {
+export async function fetchContributions(): Promise<{ total: number; days: Day[] } | null> {
   try {
     const res = await fetch(`https://github.com/users/${sample.github.user}/contributions`, {
       next: { revalidate: 43200 },
@@ -32,13 +34,21 @@ async function fetchContributions(): Promise<{ total: number; days: Day[] } | nu
     // <td … data-date="YYYY-MM-DD" id="contribution-day-component-<weekday>-<week>"
     //   … data-level="N" …>, attribute order can shift, so pull each attr from
     // the tag independently.
+    const counts = new Map<string, number>();
+    for (const m of html.matchAll(/for="contribution-day-component-(\d+-\d+)"[^>]*>\s*(No|[\d,]+) contributions?\b/g)) {
+      counts.set(m[1], m[2] === "No" ? 0 : parseInt(m[2].replaceAll(",", ""), 10));
+    }
+
     const days: Day[] = [];
     for (const tag of html.match(/<td[^>]*ContributionCalendar-day[^>]*>/g) ?? []) {
       const date = tag.match(/data-date="([\d-]+)"/)?.[1];
       const level = tag.match(/data-level="(\d)"/)?.[1];
       const pos = tag.match(/contribution-day-component-(\d+)-(\d+)/);
       if (!date || !level || !pos) continue;
-      days.push({ date, level: Number(level), weekday: Number(pos[1]), week: Number(pos[2]) });
+      days.push({
+        date, level: Number(level), weekday: Number(pos[1]), week: Number(pos[2]),
+        count: counts.get(`${pos[1]}-${pos[2]}`) ?? 0,
+      });
     }
     if (!days.length) return null;
     return { total, days };

@@ -1,0 +1,96 @@
+/* The GitHub section's contribution calendar. Tokens come from .root in
+   ../../brand.module.css. One block color (--b1) in four steps, so the graph
+   never competes with the UI's single coral; --raw is a day with none. */
+
+/* per-level fill */
+.k0 { --c: var(--raw); }
+.k1 { --c: color-mix(in srgb, var(--b1) 28%, var(--paper)); }
+.k2 { --c: color-mix(in srgb, var(--b1) 50%, var(--paper)); }
+.k3 { --c: color-mix(in srgb, var(--b1) 75%, var(--paper)); }
+.k4 { --c: var(--b1); }
+
+.cal { --scan-ease: cubic-bezier(0.5, 0, 0.2, 1); padding: 4px var(--gutter) 0; }
+.calBody { display: grid; grid-template-columns: 30px minmax(0, 1fr); column-gap: 8px; }
+
+.months { grid-column: 2; display: grid; grid-template-columns: repeat(var(--weeks), minmax(0, 1fr)); column-gap: 3px; height: 20px; font-size: 11.5px; color: var(--ink-3); }
+.months span { grid-row: 1; white-space: nowrap; }
+
+/* contain: size keeps the label column from setting the row height */
+.wdays { contain: size; display: grid; grid-template-rows: repeat(7, minmax(0, 1fr)); row-gap: 3px; font-size: 11px; color: var(--ink-3); }
+.wdays span { display: flex; align-items: center; }
+
+.grid { position: relative; cursor: default; }
+.weeks { display: grid; grid-template-columns: repeat(var(--weeks), minmax(0, 1fr)); column-gap: 3px; }
+.week { display: grid; grid-template-rows: repeat(7, auto); row-gap: 3px; }
+.week i { display: block; aspect-ratio: 1; }
+.empty { visibility: hidden; }
+
+/* a day is a key. ::before holds its level color, ::after is the coral flash.
+   Hover lifts it with a lip under it; pressing (data-down) sinks only this
+   square and flattens the lip; letting go (data-up) springs it back with a
+   small overshoot. */
+.cell { position: relative; background: var(--c); cursor: pointer; transition: scale 0.16s cubic-bezier(0.22, 1, 0.36, 1), translate 0.16s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.16s, filter 0.16s; }
+.cell::before, .cell::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+.cell::before { background: var(--c); }
+.cell::after { background: var(--coral); opacity: 0; }
+.cell:hover, .cell[data-kb] { scale: 1.22; z-index: 2; outline: 2px solid var(--coral); outline-offset: 1px; box-shadow: 0 2px 0 rgb(28 25 23 / 0.22); }
+.cell[data-down], .cell[data-down]:hover { scale: 0.74; translate: 0 3px; z-index: 2; box-shadow: 0 0 0 rgb(28 25 23 / 0); filter: brightness(0.9); transition: scale 0.07s ease-out, translate 0.07s ease-out, box-shadow 0.07s, filter 0.07s; }
+.cell[data-up] { transition: scale 0.38s cubic-bezier(0.34, 2.2, 0.5, 1), translate 0.38s cubic-bezier(0.34, 2.2, 0.5, 1), box-shadow 0.2s, filter 0.2s; }
+.grid:focus-visible { outline: none; }
+
+/* hover tooltip, the site's dark label: Motion glides .tip to the day and
+   .tipCard sits above its anchor */
+.tip { position: absolute; left: 0; top: 0; z-index: 20; width: 0; height: 0; pointer-events: none; transform-origin: 0 0; }
+.tipCard { position: absolute; left: 0; bottom: 10px; translate: -50% 0; display: grid; gap: 1px; padding: 7px 10px 8px; border-radius: 6px; background: var(--ink); color: #fff; font-size: 12px; line-height: 1.4; }
+.tipCard b { font-size: 12.5px; font-weight: 500; }
+.tipCard span { color: rgb(255 255 255 / 0.62); }
+.tipCard em { margin-top: 2px; font-size: 11.5px; font-style: normal; font-weight: 500; color: var(--b1); }
+
+/* scan line: a full-width bar slides in from the left, its right edge is the
+   line and its left side a short trail */
+.scan { position: absolute; inset: -6px -2px; overflow: hidden; pointer-events: none; }
+.scan i { position: absolute; inset: 0; display: block; opacity: 0; translate: -100% 0; background: linear-gradient(to right, transparent calc(100% - 120px), rgb(245 72 45 / 0.16)); border-right: 2px solid var(--coral); }
+
+.readout { display: flex; justify-content: space-between; align-items: center; gap: 12px 24px; flex-wrap: wrap; padding: 14px var(--gutter) 24px; min-height: 60px; font-size: 14px; color: var(--ink-2); }
+.readout b { font-weight: 500; color: var(--ink); }
+.legend { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; color: var(--ink-3); }
+.legend span { margin-inline: 4px; }
+.legend i { display: block; width: 11px; height: 11px; background: var(--c); }
+
+/* motion: hidden until the calendar scrolls into view, then the scan runs.
+   Without JS the squares just show. */
+.cal[data-state="armed"] .cell { background: var(--raw); }
+.cal[data-state="armed"] .cell::before { opacity: 0; }
+.cal[data-state="armed"] .months span { opacity: 0; }
+
+.cal[data-state="in"] .cell { background: var(--raw); animation: cellBump 0.6s ease-out var(--d) backwards; }
+.cal[data-state="in"] .cell::before { animation: cellReveal 0.6s cubic-bezier(0.34, 1.4, 0.64, 1) var(--d) backwards; }
+.cal[data-state="in"] .cell::after { animation: cellFlash 0.42s ease-out var(--d) backwards; }
+.cal[data-state="in"] .months span { animation: labelIn 0.45s ease-out var(--d) backwards; }
+.cal[data-state="in"] .scan i { animation: scanX var(--dur) var(--scan-ease) both, scanFade var(--dur) linear both; }
+
+@keyframes cellBump { 0% { scale: 1; } 30% { scale: 1.18; } 100% { scale: 1; } }
+@keyframes cellReveal { from { opacity: 0; scale: 0.5; } to { opacity: 1; scale: 1; } }
+@keyframes cellFlash { 0% { opacity: 0; } 18% { opacity: 0.5; } 100% { opacity: 0; } }
+@keyframes labelIn { from { opacity: 0; translate: 0 4px; } to { opacity: 1; translate: 0 0; } }
+@keyframes scanX { from { translate: -100% 0; } to { translate: 0 0; } }
+@keyframes scanFade { 0% { opacity: 0; } 5% { opacity: 1; } 88% { opacity: 1; } 100% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .cal .cell, .cal .cell::before, .cal .cell::after, .cal .months span, .cal .scan i { animation: none !important; transition: none; }
+  .cal[data-state] .cell { background: var(--c); }
+  .cal[data-state] .cell::before, .cal[data-state] .months span { opacity: 1; }
+  .scan { display: none; }
+}
+
+@media (max-width: 720px) {
+  .cal { padding-inline: 20px; }
+  .calBody { grid-template-columns: minmax(0, 1fr); }
+  .months { grid-column: 1; }
+  .months span:nth-child(even) { visibility: hidden; }
+  .months, .weeks { column-gap: 1px; }
+  .week { row-gap: 1px; }
+  .wdays { display: none; }
+  .readout { padding-inline: 20px; }
+  .cell:hover, .cell[data-kb] { scale: 1.5; outline-width: 1.5px; box-shadow: none; }
+}

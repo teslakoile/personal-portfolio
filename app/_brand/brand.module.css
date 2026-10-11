@@ -150,6 +150,9 @@
 
 .chips { display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; align-items: flex-start; }
 .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12.5px;
   line-height: 1.5;
   padding: 3px 8px;
@@ -158,6 +161,8 @@
   border: 1px dashed var(--line-2);
   border-radius: var(--r-chip);
 }
+
+.chipLogo { flex: none; width: 14px; height: 14px; object-fit: contain; }
 
 .kbd {
   display: inline-block;

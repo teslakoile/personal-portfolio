@@ -2,19 +2,22 @@ import type { ReactNode } from "react";
 import b from "./brand.module.css";
 import { Kbd } from "./kit";
 import { RailNav, type RailNavItem } from "./RailNav";
+import { RailSound } from "./RailSound";
 
 /** Sidebar rail: wordmark, numbered nav with a coral tick on the active row,
     utility launchers, then the reach-me block pinned to the bottom. The nav
     (RailNav, a client component) moves the tick to the section on screen as
     the page scrolls; `active` is the row it starts on. animate={false} keeps
     the original instant tick for before/after comparisons. */
-export function Rail({ wordmark, items, active, utils, foot, animate = true }: {
+export function Rail({ wordmark, items, active, utils, sound = false, foot, animate = true }: {
   wordmark: string;
   /** num pins a row's number to its place on the full page (a partial page
       keeps "06 Certifications"); without it rows number from 01. */
   items: RailNavItem[];
   active?: string;
   utils?: { label: string; keys: string[] }[];
+  /** Add the site-wide Sound on/off switch under the utilities. */
+  sound?: boolean;
   foot?: ReactNode;
   /** Slide the tick between rows with a Motion spring (default true). */
   animate?: boolean;
@@ -23,15 +26,16 @@ export function Rail({ wordmark, items, active, utils, foot, animate = true }: {
     <aside className={b.sidebar}>
       <a href="#" className={b.wordmark}>{wordmark}</a>
       <RailNav items={items} active={active} animate={animate} />
-      {utils?.length ? (
+      {utils?.length || sound ? (
         <>
           <hr className={b.sep} />
-          {utils.map((u) => (
+          {utils?.map((u) => (
             <button key={u.label} type="button" className={b.util} data-util={u.label}>
               {u.label}
               <span>{u.keys.map((k) => <Kbd key={k}>{k}</Kbd>)}</span>
             </button>
           ))}
+          {sound ? <RailSound /> : null}
         </>
       ) : null}
       {foot ? <div style={{ marginTop: 28 }}>{foot}</div> : null}
