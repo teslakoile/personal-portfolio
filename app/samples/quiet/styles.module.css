@@ -345,7 +345,8 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 16px;
+  flex-wrap: wrap; /* a long note drops under the title instead of spilling past the column */
+  gap: 6px 16px;
   margin-bottom: 28px;
 }
 .sectionHeadRow .h2 { margin: 0; }
@@ -546,7 +547,7 @@
 }
 
 /* =========================== CERTIFICATIONS (clickable badges) ==== */
-.certGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.certGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .certBadge {
   position: relative;
   display: flex;
@@ -712,6 +713,7 @@
   .skillsGrid { grid-template-columns: 1fr; gap: 24px; }
   .postCard { grid-template-columns: 1fr; }
   .recGrid { grid-template-columns: 1fr; }
+  .certGrid { grid-template-columns: minmax(0, 1fr); }
   .outcomeStrip { grid-template-columns: repeat(2, 1fr); }
   .certRow { grid-template-columns: 1fr auto; }
   .certTitle { grid-column: 1 / -1; }

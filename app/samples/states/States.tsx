@@ -145,8 +145,8 @@ export function Verb({ text, effect }: { text: string; effect: Effect }) {
  * chat, where a wait is open-ended), the slot instead eases to the current
  * verb's width so the seconds stay close to the word.
  */
-export function Loading({ verbs = PIPELINE_VERBS, effect = "shimmerSync", running = true, ms = 3400, timer = false }: {
-  verbs?: string[]; effect?: Effect; running?: boolean; ms?: number; timer?: boolean;
+export function Loading({ verbs = PIPELINE_VERBS, effect = "shimmerSync", running = true, ms = 3400, timer = false, rate = 1 }: {
+  verbs?: string[]; effect?: Effect; running?: boolean; ms?: number; timer?: boolean; rate?: number;
 }) {
   const { verb, prev } = useVerb(verbs, ms, running);
   const t = useElapsed(running);
@@ -166,7 +166,7 @@ export function Loading({ verbs = PIPELINE_VERBS, effect = "shimmerSync", runnin
           {prev ? <span key={`out-${prev}`} className={s.wordOut}><Verb text={prev} effect={effect} />…</span> : null}
           <span key={`in-${verb}`} className={prev ? s.wordIn : s.wordOn}><Verb text={verb} effect={effect} />…</span>
         </span>
-        {timer ? <span className={s.elapsed}>{t.toFixed(1)}s</span> : null}
+        {timer ? <span className={s.elapsed}>{(t * rate).toFixed(1)}s</span> : null}
       </span>
     </span>
   );

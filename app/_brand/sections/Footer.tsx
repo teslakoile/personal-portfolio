@@ -1,11 +1,14 @@
 import { Row } from "../kit";
 import { FooterTile } from "./FooterTile";
+import { FooterWall } from "./FooterWall";
 import f from "./footer.module.css";
 
 /**
  * Site footer: everyday photos in an 8 x 3 grid around the email. Tiles rest
  * as four-ink halftones (the bridge's filter, painted with b1 to b4 along the
- * diagonals) and show the original photo on hover. Photos are built by
+ * diagonals). A click opens the original photo in a circle from the click
+ * point; with a mouse on the desktop grid the wall is drawn in WebGL and the
+ * halftone also swells like a lens under the mouse (FooterWall). Photos are built by
  * scripts/hero/build-collage.sh from a curated folder: public/footer/draft/
  * life-NN.webp is the halftone mask, fx-plain/life-NN.webp the original.
  * The 12 there now are placeholders; Kyle curates the final set.
@@ -40,19 +43,21 @@ function Contact() {
 export type FooterMobile = "strip" | "rows" | "drift";
 const MOBILE = { strip: f.strip, rows: f.rows, drift: f["drift-on"] };
 
-export function Footer({ mobile = "strip" }: { mobile?: FooterMobile }) {
+/** `fullView` (on by default): an open photo gets an expand button that grows
+    it to a large view (FooterPhotoView). Off, the footer is the wall alone. */
+export function Footer({ mobile = "strip", fullView = true }: { mobile?: FooterMobile; fullView?: boolean }) {
   return (
     <footer className={MOBILE[mobile]}>
       <Row>
         <div className={f.mCard}><Contact /></div>
-        <div className={f.wall}>
-          {TILES.map((t, i) => <FooterTile key={i} {...t} />)}
+        <FooterWall tiles={TILES}>
+          {TILES.map((t, i) => <FooterTile key={i} {...t} i={i} fullView={fullView} />)}
           <div className={f.card}><Contact /></div>
-        </div>
+        </FooterWall>
         {mobile === "drift" ? (
           <div className={f.drift}>
             <div className={f.track}>
-              {[...TILES, ...TILES].map((t, i) => <FooterTile key={i} {...t} />)}
+              {[...TILES, ...TILES].map((t, i) => <FooterTile key={i} {...t} fullView={fullView} />)}
             </div>
           </div>
         ) : null}

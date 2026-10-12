@@ -71,10 +71,14 @@
 .xr { right: -6px; bottom: -6px; }
 .pad { padding-inline: var(--gutter); }
 
-/* split cells inside a row, separated by vertical rules */
-.cells { display: grid; border-top: 1px solid var(--line); }
-.cells > * { border-right: 1px solid var(--line); min-width: 0; }
-.cells > *:last-child { border-right: 0; }
+/* split cells inside a row, separated by vertical rules. Every cell draws its
+   own left rule and the grid starts 1px over the frame's left rule, so the
+   first column's rule lands on the frame's instead of doubling beside it. That
+   holds for any number of columns or rows, and a stacked layout needs no reset. */
+.cells { display: grid; margin-left: -1px; border-top: 1px solid var(--line); }
+.cells > * { border-left: 1px solid var(--line); min-width: 0; }
+/* a rail inside cells already gets its divider from the next cell's left rule */
+.cells > .sidebar { border-right: 0; }
 
 /* ============================ TYPE ============================= */
 .h1 { font-size: clamp(40px, 5.6vw, 62px); line-height: 1.02; font-weight: 500; letter-spacing: -0.032em; margin: 0; text-wrap: balance; }
@@ -146,6 +150,9 @@
 
 .chips { display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; align-items: flex-start; }
 .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12.5px;
   line-height: 1.5;
   padding: 3px 8px;
@@ -154,6 +161,10 @@
   border: 1px dashed var(--line-2);
   border-radius: var(--r-chip);
 }
+
+/* height-led so a wordmark (AWS, SQLAlchemy) keeps its width instead of
+   shrinking into a 14px square */
+.chipLogo { flex: none; height: 14px; width: auto; max-width: 34px; object-fit: contain; }
 
 .kbd {
   display: inline-block;
@@ -273,7 +284,11 @@
 .navItem:hover { color: var(--ink); }
 .navActive { color: var(--ink); font-weight: 500; }
 .navActive span { color: var(--coral-ink); }
-.navActive::before { content: ""; position: absolute; left: 0; top: 9px; width: 2px; height: 16px; background: var(--coral); }
+.navActive::before,
+.navMarker { content: ""; position: absolute; left: 0; top: 9px; width: 2px; height: 16px; background: var(--coral); }
+/* Motion rail: the tick is a real element (.navMarker) that slides between
+   rows, so the static ::before tick is switched off. */
+.navLive .navActive::before { content: none; }
 .sep { margin: 22px 0; border: 0; border-top: 1px dashed var(--line-2); }
 .util {
   display: flex;
@@ -310,7 +325,7 @@
   .laneLabel { padding: 0 0 5px; }
   .head { flex-direction: column; align-items: flex-start; padding-top: 36px; }
   .cells { grid-template-columns: 1fr !important; }
-  .cells > * { border-right: 0; border-bottom: 1px solid var(--line); }
+  .cells > * { border-bottom: 1px solid var(--line); }
   .cells > *:last-child { border-bottom: 0; }
   .bandIn { padding-block: 56px 60px; }
 }

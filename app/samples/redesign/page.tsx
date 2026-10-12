@@ -1,46 +1,81 @@
 import type { Metadata } from "next";
 import { sample } from "../sampleContent";
-import { BrandRoot, Frame, Rail, Button } from "../../_brand/kit";
+import { BrandRoot, Frame, Button } from "../../_brand/kit";
+import { Rail } from "../../_brand/Rail";
 import { Footer } from "../../_brand/sections/Footer";
 import { Cursor } from "../../_brand/Cursor";
+import { MotionRoot } from "../../_brand/MotionRoot";
+import { Hero } from "../../_brand/sections/Hero";
+import { About } from "../../_brand/sections/About";
+import { Projects } from "../../_brand/sections/Projects";
+import { Experience } from "../../_brand/sections/Experience";
+import { Skills } from "../../_brand/sections/Skills";
+import { Education } from "../../_brand/sections/Education";
 import { Certifications } from "../../_brand/sections/Certifications";
+import { Community } from "../../_brand/sections/Community";
+import { Recognition } from "../../_brand/sections/Recognition";
+import { GitHub } from "../../_brand/sections/GitHub";
+import { AskPanel } from "../../_brand/sections/AskPanel";
 import s from "./redesign.module.css";
 
 /**
- * The redesign, rebuilt one section at a time from app/_brand (the review copy
- * lives on the Claude Design canvas "Portfolio Redesign"). Sections keep their
- * final numbers, so this partial page reads "06 Certifications". Add each new
- * section to SECTIONS and to the frame in page order.
+ * The redesign, the whole page: every section rebuilt from app/_brand in the
+ * order and numbering of the "Portfolio Redesign" canvas (About 01 through
+ * GitHub 09), with the closing photo-wall footer, the rail, the drawn cursor,
+ * and the Ask KYLLM panel. Writing, Recommendations, and Resources stay off
+ * the page until their content is real, as on the landing page's flags. The
+ * single-section view of Certifications lives at /samples/redesign/certifications.
  */
 export const metadata: Metadata = {
   title: "Redesign | Kyle Naranjo",
   robots: { index: false, follow: false },
 };
 
-const SECTIONS = [{ id: "certifications", label: "Certifications", num: "06" }];
+const SECTIONS = [
+  { id: "about", label: "About", num: "01" },
+  { id: "projects", label: "Projects", num: "02" },
+  { id: "experience", label: "Experience", num: "03" },
+  { id: "skills", label: "Skills", num: "04" },
+  { id: "education", label: "Education", num: "05" },
+  { id: "certifications", label: "Certifications", num: "06" },
+  { id: "community", label: "Community", num: "07" },
+  { id: "recognition", label: "Recognition", num: "08" },
+  { id: "github", label: "GitHub", num: "09" },
+];
 
 export default function RedesignPage() {
   return (
     <BrandRoot>
-      <Cursor />
-      <div className={s.page}>
-        <div className={s.railWrap}>
-          <Rail
-            wordmark={sample.wordmark}
-            items={SECTIONS}
-            active="certifications"
-            utils={[{ label: "Ask KYLLM", keys: ["⌘", "K"] }]}
-            foot={<Button href={sample.hero.primaryCta.href}>Get in Touch</Button>}
-          />
+      <MotionRoot>
+        <Cursor />
+        <AskPanel />
+        <div className={s.page}>
+          <div className={s.railWrap}>
+            <Rail
+              wordmark={sample.wordmark}
+              items={SECTIONS}
+              active="about"
+              utils={[{ label: "Ask KYLLM", keys: ["⌘", "K"] }]}
+              foot={<Button href={sample.hero.primaryCta.href}>Get in Touch</Button>}
+            />
+          </div>
+          <main className={s.main}>
+            <Frame>
+              <Hero />
+              <About num="01" />
+              <Projects num="02" />
+              <Experience num="03" />
+              <Skills num="04" />
+              <Education num="05" />
+              <Certifications num="06" />
+              <Community num="07" />
+              <Recognition num="08" />
+              <GitHub num="09" />
+              <Footer />
+            </Frame>
+          </main>
         </div>
-        <main className={s.main}>
-          <Frame>
-            <Certifications num="06" />
-            <p className={s.pending}>Next: the remaining sections, added one at a time.</p>
-            <Footer />
-          </Frame>
-        </main>
-      </div>
+      </MotionRoot>
     </BrandRoot>
   );
 }

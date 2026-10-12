@@ -230,7 +230,7 @@ export const sample = {
       title: "AI & Machine Learning",
       blurb: "Agentic systems, RAG, and probabilistic matching, from prototype to production.",
       general: ["RAG", "Embeddings", "Document Extraction", "LLM Evals", "Prompt Engineering", "Computer Vision", "NLP", "AI Agents", "MLOps"],
-      tools: ["OpenAI API", "Vertex AI", "Azure AI Services", "Snowflake Cortex", "LangChain", "Keras", "TensorFlow", "Splink"],
+      tools: ["OpenAI API", "Vertex AI", "Azure AI Foundry", "Snowflake Cortex", "LangChain", "Keras", "TensorFlow", "Splink"],
     },
     {
       title: "Cloud & Infrastructure",
@@ -254,7 +254,7 @@ export const sample = {
       title: "Developer Tools",
       blurb: "AI-assisted development and the collaboration stack that ships it.",
       general: ["AI-Assisted Development", "Agentic Workflows"],
-      tools: ["Cursor", "Claude Code", "Codex CLI", "GitHub", "Azure DevOps", "Git", "Bitbucket", "Jira", "Confluence", "Postman", "Jenkins"],
+      tools: ["Cursor", "Claude Code", "Codex", "GitHub", "Azure DevOps", "Git", "Bitbucket", "Jira", "Confluence", "Postman", "Jenkins"],
     },
   ],
 

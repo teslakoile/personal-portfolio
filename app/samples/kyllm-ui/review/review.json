@@ -1,0 +1,207 @@
+{
+  "Answer actions": {
+    "verdict": "approve",
+    "note": "only copy",
+    "at": "2026-10-11T13:37:18.412Z"
+  },
+  "Career timeline": {
+    "verdict": "drop",
+    "note": "drop this. seems to be over specialized where we can probably have standard ui",
+    "at": "2026-10-11T12:49:22.550Z"
+  },
+  "Citation": {
+    "verdict": "approve",
+    "note": "this but should still have hover cursor effects",
+    "pick": "A",
+    "at": "2026-10-11T12:40:06.388Z"
+  },
+  "Citation peek": {
+    "verdict": "approve",
+    "note": "feels a bit much explore othre designs",
+    "pick": "B",
+    "at": "2026-10-11T13:40:05.368Z"
+  },
+  "Color": {
+    "verdict": "approve",
+    "note": "",
+    "at": "2026-10-11T12:38:04.681Z"
+  },
+  "Composer": {
+    "verdict": "approve",
+    "note": "",
+    "at": "2026-10-11T12:45:52.188Z"
+  },
+  "Countdown ring": {
+    "verdict": "approve",
+    "note": "to add, if a state is uninteractable it should be greyed out to look inactive like the user cant input it",
+    "pick": "B",
+    "at": "2026-10-12T04:07:23.274Z"
+  },
+  "Dock pill": {
+    "verdict": "approve",
+    "note": "l",
+    "pick": "A",
+    "at": "2026-10-12T04:07:05.435Z"
+  },
+  "Email handoff": {
+    "verdict": "approve",
+    "note": "check if this is still aligned w our branding",
+    "pick": "A",
+    "at": "2026-10-11T13:41:21.373Z"
+  },
+  "First visit": {
+    "verdict": "drop",
+    "note": "weird to put disclaimer",
+    "at": "2026-10-11T13:03:46.545Z"
+  },
+  "Flow diagram": {
+    "verdict": "drop",
+    "note": "drop this. but lets iterate later on diagramming skill or visualization skill",
+    "at": "2026-10-11T12:49:17.461Z"
+  },
+  "Follow-ups": {
+    "verdict": "approve",
+    "note": "go will pill earlier",
+    "at": "2026-10-11T13:37:10.431Z"
+  },
+  "Hero panel": {
+    "verdict": "change",
+    "note": "lets iterate on this in chat",
+    "at": "2026-10-11T13:05:39.411Z"
+  },
+  "Highlights grid": {
+    "verdict": "drop",
+    "note": "drop this. seems to be over specialized where we can probably have standard ui",
+    "at": "2026-10-11T12:48:39.185Z"
+  },
+  "Icon button": {
+    "verdict": "approve",
+    "note": "c",
+    "pick": "C",
+    "at": "2026-10-11T12:40:48.191Z"
+  },
+  "Icons": {
+    "verdict": "approve",
+    "note": "",
+    "at": "2026-10-11T13:34:07.512Z"
+  },
+  "In progress": {
+    "verdict": "approve",
+    "note": "",
+    "pick": "A",
+    "at": "2026-10-12T04:06:58.790Z"
+  },
+  "Key hint": {
+    "verdict": "approve",
+    "note": "the cursor should morph and change as with hover or clickable effects",
+    "pick": "D",
+    "at": "2026-10-12T04:07:20.831Z"
+  },
+  "Loading line": {
+    "verdict": "approve",
+    "note": "",
+    "at": "2026-10-11T12:37:59.526Z"
+  },
+  "Messages": {
+    "verdict": "approve",
+    "note": "",
+    "at": "2026-10-11T12:45:59.622Z"
+  },
+  "Off-topic": {
+    "verdict": "approve",
+    "note": "can we have options for offtopic ones.",
+    "pick": "A",
+    "at": "2026-10-11T13:03:21.602Z"
+  },
+  "Offline fallback": {
+    "verdict": "approve",
+    "note": "see if we can explore alternates for email kyle",
+    "pick": "A",
+    "at": "2026-10-11T13:45:24.939Z"
+  },
+  "Panel header": {
+    "verdict": "approve",
+    "note": "lets make it so thres no chat history to make this simple and not overcomplicate. so user can create new chat which would create a new fresh memory etc. \n\nbut remove stuff like answers from my .... etc.",
+    "pick": "A",
+    "at": "2026-10-11T12:45:28.508Z"
+  },
+  "Pill": {
+    "verdict": "approve",
+    "note": "seems to be using different icons? can u decide on 1 icon library for the rest of the stuff?  id go with c but the arrow icon looks so different from rest. lets see if we can standardize",
+    "pick": "A",
+    "at": "2026-10-11T13:34:13.769Z"
+  },
+  "Project card": {
+    "verdict": "drop",
+    "note": "drop this. seems to be over specialized where we can probably have standard ui",
+    "at": "2026-10-11T12:48:52.312Z"
+  },
+  "Rate limit": {
+    "verdict": "approve",
+    "note": "see above",
+    "at": "2026-10-11T13:44:52.390Z"
+  },
+  "Section highlight": {
+    "verdict": "drop",
+    "note": "seems a bit too much work now. lets drop this for now. clicking on cited link should just take u there via scroll effect but no need for the special ui",
+    "at": "2026-10-11T13:05:15.346Z"
+  },
+  "Segmented control": {
+    "verdict": "drop",
+    "note": "we should just have a standard Q&A input user ui field that can be reused by others",
+    "at": "2026-10-11T12:43:23.308Z"
+  },
+  "Send button": {
+    "verdict": "approve",
+    "note": "",
+    "at": "2026-10-11T09:02:30.431Z"
+  },
+  "Shape": {
+    "verdict": "approve",
+    "note": "",
+    "at": "2026-10-11T12:38:00.837Z"
+  },
+  "Sorry": {
+    "verdict": "approve",
+    "note": "",
+    "pick": "D",
+    "at": "2026-10-12T05:28:18.000Z"
+  },
+  "Source chips": {
+    "verdict": "approve",
+    "note": "",
+    "pick": "A",
+    "at": "2026-10-12T04:07:27.661Z"
+  },
+  "Starter tiles": {
+    "verdict": "approve",
+    "note": "what if just make similar to followups",
+    "pick": "A",
+    "at": "2026-10-11T13:45:46.406Z"
+  },
+  "Status": {
+    "verdict": "approve",
+    "note": "",
+    "at": "2026-10-11T09:03:25.002Z"
+  },
+  "Steps": {
+    "verdict": "approve",
+    "note": "",
+    "at": "2026-10-11T09:04:49.955Z"
+  },
+  "Thinking": {
+    "verdict": "change",
+    "note": "the animations here arent animating. also it doesnt seem to be using the other claude session where it was working on favicon animation + motion design skill and standards. we can reuse a lot of that. i think here are states:\n\n1. idle\n2. visitor is typing. just similar to idle but lets make the eyees or pupil look down at the keyboard bar \n3. combine think and read etc. into 1 - in progress. it should be working or thinking. use proper animation. it should look like its mostly working or processing etc.\n4. answered is good when its done and has hashed out the response. make this happen after the streamed response is done \n5. sorry is also good. for off topic offline or rate limit.\n\nin general for all states, follow standards and motion design skill in the other chat",
+    "at": "2026-10-11T13:44:40.660Z"
+  },
+  "Type": {
+    "verdict": "approve",
+    "note": "",
+    "at": "2026-10-11T12:38:03.331Z"
+  },
+  "Waterfall": {
+    "verdict": "approve",
+    "note": "",
+    "at": "2026-10-11T12:46:49.829Z"
+  }
+}

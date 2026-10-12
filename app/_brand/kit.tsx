@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import b from "./brand.module.css";
+import { toolLogo } from "./logos";
 
 /**
  * Proposed brand kit, the reusable pieces of the "data blocks" direction
@@ -89,10 +90,21 @@ export function Badge({ children }: { children: ReactNode }) {
   return <span className={b.badge}><i aria-hidden="true" />{children}</span>;
 }
 
-export function Chips({ items }: { items: readonly string[] }) {
+/** Tag chips. With `logos`, a chip whose name has a verified brand mark shows
+    it before the label; any other chip stays text. */
+export function Chips({ items, logos = false }: { items: readonly string[]; logos?: boolean }) {
   return (
     <ul className={b.chips} style={{ listStyle: "none", margin: 0, padding: 0 }}>
-      {items.map((t) => <li key={t} className={b.chip}>{t}</li>)}
+      {items.map((t) => {
+        const src = logos ? toolLogo(t) : null;
+        return (
+          <li key={t} className={b.chip}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {src ? <img className={b.chipLogo} src={src} alt="" width={14} height={14} /> : null}
+            {t}
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -208,43 +220,9 @@ export function Talk({ title, desc, meta }: { title: string; desc: string; meta:
 
 /* ---------------------------- navigation --------------------------- */
 
-/** Sidebar rail: wordmark, numbered nav with a coral tick on the active row,
-    utility launchers, then the reach-me block pinned to the bottom. */
-export function Rail({ wordmark, items, active, utils, foot }: {
-  wordmark: string;
-  /** num pins a row's number to its place on the full page (a partial page
-      keeps "06 Certifications"); without it rows number from 01. */
-  items: { id: string; label: string; num?: string }[];
-  active?: string;
-  utils?: { label: string; keys: string[] }[];
-  foot?: ReactNode;
-}) {
-  return (
-    <aside className={b.sidebar}>
-      <a href="#" className={b.wordmark}>{wordmark}</a>
-      <nav className={b.nav} aria-label="Sections">
-        {items.map((x, i) => (
-          <a key={x.id} href={`#${x.id}`} className={`${b.navItem} ${x.id === active ? b.navActive : ""}`}
-            aria-current={x.id === active ? "true" : undefined}>
-            <span>{x.num ?? String(i + 1).padStart(2, "0")}</span>{x.label}
-          </a>
-        ))}
-      </nav>
-      {utils?.length ? (
-        <>
-          <hr className={b.sep} />
-          {utils.map((u) => (
-            <button key={u.label} type="button" className={b.util}>
-              {u.label}
-              <span>{u.keys.map((k) => <Kbd key={k}>{k}</Kbd>)}</span>
-            </button>
-          ))}
-        </>
-      ) : null}
-      {foot ? <div style={{ marginTop: 28 }}>{foot}</div> : null}
-    </aside>
-  );
-}
+/* The sidebar rail lives in ./Rail.tsx: its nav is a client component with
+   Motion, so keeping it out of this file keeps Motion off pages that only use
+   the kit's static pieces (the blog, for one). */
 
 export function Footer({ left, right }: { left: ReactNode; right?: ReactNode }) {
   return <footer className={b.footer}><span>{left}</span>{right ? <span>{right}</span> : null}</footer>;
