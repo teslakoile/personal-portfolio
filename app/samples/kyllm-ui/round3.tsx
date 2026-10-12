@@ -259,7 +259,7 @@ export function CountdownR3() {
 const MOODS: [Mood, string, string][] = [
   ["idle", "Idle", "Breathes, blinks, the leaf sways"],
   ["typing", "Visitor is typing", "Looks down at the composer and follows the text"],
-  ["working", "In progress", "Looks up at a thought bubble of dots, pondering"],
+  ["working", "In progress", "Looks up and ponders, three dots rising beside it"],
   ["answered", "Answered", "After the stream ends: one hop, happy eyes"],
   ["sorry", "Sorry", "Sighs, slumps, shakes its head; ears fold"],
 ];
@@ -312,7 +312,6 @@ const WORK: [WorkStyle, string, string, boolean?][] = [
   ["ponder", "Pondering with dots", "Eyes up, glancing between spots, a slow sway; three dots rise in turn beside it, no bubble.", true],
   ["orbit", "Eyes circling", "The pupils circle the top of the lenses like a slow spinner."],
   ["leaf", "Leaf ticking", "Eyes up and still; the leaf flicks every 0.6 s like a metronome."],
-  ["bubble", "Thought bubble", "A small bubble of dots in the sky, inside the circle (the last round)."],
 ];
 
 /** In progress, four ways, each at chat size and large. */
