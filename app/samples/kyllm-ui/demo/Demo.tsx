@@ -1,7 +1,8 @@
 "use client";
 
+import { ArrowUp } from "lucide-react";
 import { useEffect, useEffectEvent, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from "react";
-import { AnswerActions, Avatar, Cite, Highlights, Kbd, PanelHeader, Pill } from "../kit";
+import { AnswerActions, Avatar, Cite, Highlights, Kbd, PanelHeader, Pill, LatestIcon } from "../kit";
 import { AGENTS_RUN, OPENING_RUN, TALKS_RUN } from "../HeroChat";
 import { MCP_RUN, Steps, type StepData } from "../Steps";
 import s from "../kyllm.module.css";
@@ -184,7 +185,7 @@ function TurnView({ q, script, pace, rate, onBeat, onFinish, onMeter }: {
                 {script.sources ? (
                   <div className={`${h.sources} ${d.srcs}`} style={{ "--d": `${srcAt}ms` } as CSSProperties}>
                     <span>Sources</span>
-                    {script.sources.map(([sec, name]) => <Pill key={name} kind="source"><b>{sec}</b>{name} ↗</Pill>)}
+                    {script.sources.map(([sec, name]) => <Pill key={name} kind="source"><b>{sec}</b>{name}</Pill>)}
                   </div>
                 ) : null}
                 <div className={d.actions} style={{ "--d": `${actAt}ms` } as CSSProperties}><AnswerActions /></div>
@@ -338,7 +339,7 @@ function Chat({ auto, pace, rate, controls, onTakeOver, onReplay }: {
             </div>
           </div>
           <button type="button" className={h.latest} data-show={away ? "" : undefined} onClick={() => { follow.current = true; scroller.current?.scrollTo({ top: scroller.current.scrollHeight, behavior: "smooth" }); }}>
-            ↓ Latest
+            <LatestIcon />Latest
           </button>
         </div>
         <div className={h.foot}>
@@ -365,7 +366,7 @@ function Chat({ auto, pace, rate, controls, onTakeOver, onReplay }: {
             {!draft && !busy ? <Kbd>⌘K</Kbd> : null}
             <button type="submit" aria-label={sendState} data-press={pressed === "send" ? "" : undefined}
               className={[s.send, d.send, sendState === "stop" && s.sendStop, sendState === "wait" && s.sendWait].filter(Boolean).join(" ")}>
-              {sendState === "stop" ? null : "↑"}
+              {sendState === "stop" ? null : <ArrowUp size={18} strokeWidth={2.25} aria-hidden="true" />}
             </button>
           </form>
         </div>

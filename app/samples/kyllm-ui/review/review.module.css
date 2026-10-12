@@ -1,0 +1,72 @@
+/* Review mode on /samples/kyllm-ui. Tokens come from the page root. */
+
+.buttons { margin-left: auto; display: inline-flex; gap: 4px; flex: none; }
+.buttons button {
+  display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px 0 8px;
+  border: 1px solid var(--line-2); border-radius: 999px; background: var(--surface);
+  font: inherit; font-size: 12.5px; color: var(--ink-2); cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s var(--ease);
+}
+.buttons button:hover { background: var(--sunk); color: var(--ink); }
+.buttons button:active { transform: scale(0.95); }
+.buttons button:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+.buttons svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.buttons button[data-v="approve"][aria-pressed="true"] { background: #e2efe7; border-color: var(--b2); color: #2f6b4f; }
+.buttons button[data-v="change"][aria-pressed="true"] { background: #fbf0dc; border-color: var(--b4); color: #8a5a10; }
+.buttons button[data-v="drop"][aria-pressed="true"] { background: var(--coral-tint); border-color: var(--coral); color: var(--coral-ink); }
+
+.note {
+  display: block; width: calc(100% - 36px); margin: 10px 18px 0; padding: 8px 11px; resize: vertical;
+  border: 1px solid var(--line-2); border-radius: 8px; background: var(--paper);
+  font: inherit; font-size: 13.5px; line-height: 1.45; color: var(--ink);
+}
+.note::placeholder { color: var(--ink-3); }
+.note:focus { outline: none; border-color: var(--ink-3); background: var(--surface); }
+.note[data-v="change"] { border-color: var(--b4); }
+.note[data-v="drop"] { border-color: color-mix(in srgb, var(--coral) 50%, var(--line-2)); }
+
+.revised { display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; background: #e3ecf5; color: #3d5f80; font-size: 12px; font-weight: 500; white-space: nowrap; }
+
+/* option picker under the note of parts that show options */
+.pick { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 18px 0; }
+.pick > span { font-size: 12.5px; color: var(--ink-3); margin-right: 2px; }
+.pick button {
+  display: inline-flex; align-items: center; gap: 7px; height: 28px; padding: 0 11px 0 4px; border-radius: 999px;
+  border: 1px solid var(--line-2); background: var(--surface); font: inherit; font-size: 12.5px; color: var(--ink-2); cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.pick button b { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--sunk); font-size: 11px; font-weight: 600; color: var(--ink-2); }
+.pick button:hover { background: var(--sunk); color: var(--ink); }
+.pick button[aria-pressed="true"] { background: #e2efe7; border-color: var(--b2); color: #2f6b4f; }
+.pick button[aria-pressed="true"] b { background: var(--b2); color: #fff; }
+
+/* progress bar, bottom right, out of the way of Next's dev badge */
+.bar {
+  position: fixed; right: 20px; bottom: 20px; z-index: 30;
+  display: flex; align-items: center; gap: 14px; padding: 10px 10px 10px 16px;
+  background: var(--ink); color: #fff; border-radius: 999px; box-shadow: 0 12px 32px -12px rgb(28 25 23 / 0.5);
+  font-size: 13px;
+}
+.bar b { font-weight: 500; white-space: nowrap; }
+.progress { width: 64px; height: 6px; background: rgb(255 255 255 / 0.18); overflow: hidden; flex: none; }
+.progress i { display: block; height: 100%; background: var(--b2); transition: width 0.3s var(--ease); }
+.counts { display: inline-flex; gap: 10px; }
+.counts em { font-style: normal; white-space: nowrap; color: rgb(255 255 255 / 0.7); }
+.counts em::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 6px; vertical-align: 0; }
+.counts em[data-v="approve"]::before { background: var(--b2); }
+.counts em[data-v="change"]::before { background: var(--b4); }
+.counts em[data-v="drop"]::before { background: var(--coral); }
+.filter {
+  height: 28px; padding: 0 12px; border-radius: 999px; border: 0; background: rgb(255 255 255 / 0.12);
+  font: inherit; font-size: 12.5px; color: #fff; cursor: pointer;
+}
+.filter:hover, .filter[aria-pressed="true"] { background: rgb(255 255 255 / 0.22); }
+.bar small { min-width: 54px; font-size: 12px; color: rgb(255 255 255 / 0.55); }
+.bar small[data-state="error"] { color: #ffb4a6; }
+
+@media (max-width: 760px) {
+  .bar { left: 12px; right: 12px; bottom: 12px; border-radius: 14px; flex-wrap: wrap; gap: 8px 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .buttons button, .progress i { transition: none; }
+}

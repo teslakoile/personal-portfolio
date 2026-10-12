@@ -1,5 +1,9 @@
 import type { ReactNode } from "react";
+import { ArrowDown, ArrowRight, ArrowUp, ArrowUpRight, Copy, Link, ThumbsDown, ThumbsUp } from "lucide-react";
 import s from "./kyllm.module.css";
+
+/** One icon set for every KYLLM part: Lucide, drawn at a 2px stroke. */
+export const ICON = { size: 14, strokeWidth: 2 } as const;
 
 /*
  * KYLLM parts, static and server-safe, for the inventory. Interactive pieces
@@ -7,47 +11,54 @@ import s from "./kyllm.module.css";
  * /samples/states, where they were decided.
  */
 
-export const AVATAR = "/samples/kyllm-ui/kyllm-avatar.svg";
+export const AVATAR = "/kyllm/kyllm-avatar.svg";
 
 export function Avatar({ size = 36 }: { size?: number }) {
   // eslint-disable-next-line @next/next/no-img-element
   return <img className={s.av} src={AVATAR} width={size} height={size} alt="" />;
 }
 
-export const Kbd = ({ children }: { children: ReactNode }) => <kbd className={s.kbd}>{children}</kbd>;
+/** Dashed key hint (round 3 pick D). With a `tip` it is a shortcut you can also click: the tip shows above it on hover, and the site cursor turns to a hand. */
+export const Kbd = ({ children, tip, open }: { children: ReactNode; tip?: string; open?: boolean }) => (
+  <kbd className={open ? `${s.kbd} ${s.kbdOpen}` : s.kbd} data-tip={tip} data-clickable={tip ? "" : undefined}>{children}</kbd>
+);
 
-export function Pill({ children, dot, kind }: { children: ReactNode; dot?: string; kind?: "primary" | "source" }) {
-  const cls = [s.pill, kind === "primary" && s.pillPrimary, kind === "source" && s.pillSource].filter(Boolean).join(" ");
+/** `arrow` marks a suggestion (follow-ups, starters): outline pill, Lucide arrow at the end. */
+export function Pill({ children, dot, kind, arrow }: { children: ReactNode; dot?: string; kind?: "primary" | "source"; arrow?: boolean }) {
+  const cls = [s.pill, kind === "primary" && s.pillPrimary, kind === "source" && s.pillSource, arrow && s.pillArrow].filter(Boolean).join(" ");
   return (
     <button type="button" className={cls}>
       {dot ? <i style={{ background: `var(--${dot})` }} /> : null}
       {children}
+      {arrow ? <ArrowRight className={s.pillIcon} size={ICON.size} strokeWidth={ICON.strokeWidth} aria-hidden="true" /> : null}
+      {kind === "source" ? <ArrowUpRight className={s.pillIcon} size={13} strokeWidth={ICON.strokeWidth} aria-hidden="true" /> : null}
     </button>
   );
 }
 
+export const LatestIcon = () => <ArrowDown size={ICON.size} strokeWidth={ICON.strokeWidth} aria-hidden="true" />;
+
 export function SendButton({ state = "send" }: { state?: "send" | "stop" | "wait" }) {
   const cls = [s.send, state === "stop" && s.sendStop, state === "wait" && s.sendWait].filter(Boolean).join(" ");
-  return <button type="button" className={cls} aria-label={state}>{state === "stop" ? null : "↑"}</button>;
+  return <button type="button" className={cls} aria-label={state}>{state === "stop" ? null : <ArrowUp size={18} strokeWidth={2.25} aria-hidden="true" />}</button>;
 }
 
-const ICONS = {
-  copy: <><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V6a2 2 0 0 1 2-2h8" /></>,
-  link: <><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></>,
-  up: <path d="M7 11v9H4v-9zM7 11l4-8a2 2 0 0 1 2 2v4h5a2 2 0 0 1 2 2.3l-1.3 7A2 2 0 0 1 16.7 20H7" />,
-  down: <path d="M17 13V4h3v9zM17 13l-4 8a2 2 0 0 1-2-2v-4H6a2 2 0 0 1-2-2.3l1.3-7A2 2 0 0 1 7.3 4H17" />,
-};
+const ICONS = { copy: Copy, link: Link, up: ThumbsUp, down: ThumbsDown };
 
 export function IconButton({ icon, label, on }: { icon: keyof typeof ICONS; label?: string; on?: boolean }) {
+  const I = ICONS[icon];
   return (
     <button type="button" className={on ? `${s.iconBtn} ${s.iconBtnOn}` : s.iconBtn} aria-label={label ?? icon}>
-      <svg viewBox="0 0 24 24">{ICONS[icon]}</svg>
+      <I size={ICON.size} strokeWidth={ICON.strokeWidth} aria-hidden="true" />
       {label}
     </button>
   );
 }
 
-export const Cite = ({ n, on }: { n: number; on?: boolean }) => <sup className={on ? `${s.cite} ${s.citeOn}` : s.cite}>{n}</sup>;
+/** Citation, round 3 pick A: a spaced chip and a real button, so it gets the hand cursor; coral on hover. */
+export const Cite = ({ n, on }: { n: number; on?: boolean }) => (
+  <button type="button" className={on ? `${s.cite} ${s.citeOn}` : s.cite} aria-label={`Source ${n}`}>{n}</button>
+);
 
 export function Status({ kind }: { kind: "live" | "poc" | "done" }) {
   const map = { live: [s.statusLive, "In Production"], poc: [s.statusPoc, "Proof of Concept"], done: [s.statusDone, "Delivered"] } as const;
@@ -185,7 +196,7 @@ export function Highlights() {
   );
 }
 
-export const Dock = () => <span className={s.dock}><Avatar size={32} />Ask KYLLM<Kbd>⌘K</Kbd></span>;
+export const Dock = () => <span className={s.dock}><Avatar size={32} />Ask KYLLM<Kbd tip="Open KYLLM">⌘K</Kbd></span>;
 
 export function CitedHighlight() {
   return (
