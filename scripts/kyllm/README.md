@@ -104,5 +104,5 @@ python3 favicon_anim.py           # static icons: app/icon.png, favicon.ico, app
 python3 favicon_anim_options.py   # animation frames, the options page data, and the shipped module
 ```
 
-`favicon_anim_options.py` renders frames with Chromium (`render_svgs.mjs`), so run it where Playwright is installed. `check-favicon-rhythm.mts` and `check-favicon-runtime.mjs` verify the result.
+`favicon_anim_options.py` renders frames with Chromium (`render_svgs.mjs`), so run it where Playwright is installed. `check-favicon-rhythm.mjs` and `check-favicon-runtime.mjs` verify the result.
 

@@ -60,7 +60,7 @@ Kyle judges feel in his own tab strip, so say what you verified (frames, numbers
 ## Check before calling it done
 
 ```bash
-node --experimental-strip-types scripts/kyllm/check-favicon-rhythm.mts
+node --experimental-strip-types scripts/kyllm/check-favicon-rhythm.mjs
 node scripts/kyllm/check-favicon-runtime.mjs http://localhost:3120
 npx eslint app/_brand app/samples/favicon-kyllm-anim && npx tsc --noEmit && npm run build
 ```

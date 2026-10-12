@@ -3,7 +3,7 @@
  * runRing) on a virtual clock. The shipped loop starts a bounce at every opening, so every gap should be
  * exactly 3000 ms.
  *
- *   node --experimental-strip-types scripts/kyllm/check-favicon-rhythm.mts
+ *   node --experimental-strip-types scripts/kyllm/check-favicon-rhythm.mjs
  */
 import { runRing } from "../../app/_brand/faviconControl.ts";
 import { FAVICON_RING } from "../../app/_brand/faviconFrames.ts";
@@ -23,8 +23,8 @@ const beatOnly = new Set(ring.beats.flatMap((b) => b.frames.map(([f]) => f)).fil
 
 let now = 0;
 let inBeat = false;
-const queue: { t: number; fn: () => void }[] = [];
-const starts: number[] = [];
+const queue = [];
+const starts = [];
 runRing(
   ring,
   (f) => {
@@ -37,7 +37,7 @@ runRing(
 );
 while (queue.length) {
   queue.sort((a, b) => a.t - b.t);
-  const e = queue.shift()!;
+  const e = queue.shift();
   now = e.t;
   if (now > HOURS * 3600 * 1000) break;
   e.fn();
