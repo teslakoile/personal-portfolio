@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { fontVars } from "./fonts";
+import { AnimatedFavicon } from "./_brand/AnimatedFavicon";
 import "./globals.css";
 
 // --font-geist-sans/--font-geist-mono feed globals.css (body default).
@@ -76,7 +77,10 @@ export default function RootLayout({
       lang="en-PH"
       className={`${geistSans.variable} ${geistMono.variable} ${fontVars} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <AnimatedFavicon />
+        {children}
+      </body>
     </html>
   );
 }
