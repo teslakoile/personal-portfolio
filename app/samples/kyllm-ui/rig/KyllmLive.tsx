@@ -31,7 +31,7 @@ import l from "./live.module.css";
  *          shape always agrees with where it looks
  *
  * Moods follow the chat: idle; typing looks down at the composer and follows
- * the text as it grows; working looks up at a thought bubble of dots and
+ * the text as it grows; working looks up and
  * ponders with three dots rising in the sky beside it, no bubble; answered (after the stream ends) does the big hop with happy eyes;
  * sorry keeps its ears as drawn and acts with body, leaf, glasses, and eyes, in one of
  * four styles (SorryStyle); hover looks up at the cursor. Each `poke` change fires a small hop. Reduced motion holds each
@@ -39,8 +39,8 @@ import l from "./live.module.css";
  */
 
 export type Mood = "idle" | "typing" | "working" | "answered" | "sorry" | "hover";
-/** How "working" shows: a thought bubble of dots, pondering glances, eyes circling, or the leaf ticking. */
-export type WorkStyle = "bubble" | "ponder" | "orbit" | "leaf";
+/** How "working" shows: pondering glances beside three rising dots, eyes circling, or the leaf ticking. */
+export type WorkStyle = "ponder" | "orbit" | "leaf";
 /** How "sorry" shows: a sigh, a head shake, shrinking back sheepishly, or an apologetic bow. Ears never change. */
 export type SorryStyle = "sigh" | "shake" | "shrink" | "bow";
 
@@ -220,7 +220,7 @@ export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avata
           if (n !== lastTick) { lastTick = n; thv += n % 2 ? 220 : -220; }
           u += -0.008 * Math.exp(-((since % 0.6) / 0.08));
         } else {
-          // ponder (and bubble): eyes up, small glances between three spots, a slow sway
+          // ponder: eyes up, small glances between three spots, a slow sway
           const n = Math.floor(since / 1.4);
           const spots = [[0.55, -0.85], [0.35, -0.95], [0.65, -0.7]];
           gaze = look(spots[n % 3][0], spots[n % 3][1]);
@@ -346,9 +346,23 @@ export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avata
     <span ref={wrap} className={l.wrap} style={{ fontSize: size }}>
       <Kyllm still variant={variant} size={size} state="idle" />
       <span className={variant === "avatar" ? `${l.layer} ${l.round}` : l.layer} aria-hidden="true">
-        <span className={l.bubble} data-on={mood === "working" && work === "bubble" ? "" : undefined}><i /><i /><i /></span>
-        <span className={l.dots} data-on={mood === "working" && work === "ponder" ? "" : undefined}><i /><i /><i /></span>
+        <span className={l.dots} data-on={mood === "working" && work === "ponder" ? "" : undefined}><Dots /></span>
       </span>
     </span>
+  );
+}
+
+/**
+ * Three dots as SVG circles. HTML boxes with border-radius are snapped to whole device pixels, so at avatar
+ * sizes a 2 px dot came out as a 2 x 2 or 3 x 2 block and read as a square; an SVG circle is drawn at its
+ * true size with antialiased edges, so it stays round at every size and pixel ratio.
+ */
+function Dots() {
+  return (
+    <svg viewBox="0 0 11 3" aria-hidden="true">
+      <circle cx="1.5" cy="1.5" r="1.5" />
+      <circle cx="5.5" cy="1.5" r="1.5" />
+      <circle cx="9.5" cy="1.5" r="1.5" />
+    </svg>
   );
 }
