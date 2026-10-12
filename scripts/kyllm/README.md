@@ -94,3 +94,15 @@ codex exec --skip-git-repo-check -m gpt-5.6-sol -s workspace-write -i master.png
 ```
 
 Ask it to "use your built-in image generation tool" and to save the result to a path in the prompt. `master.png` itself was made this way from the concept sheet in `design-explorations/2026-10-kyllm-avatar/16-other-characters.png`.
+
+## Favicon animation
+
+The tab icon plays a strict 3 s idle with a bounce (`app/_brand/AnimatedFavicon.tsx`, frames in `app/_brand/faviconFrames.ts`). The rules, the budgets, and the list of what was tried and rejected are in `.claude/skills/avatar-animation/SKILL.md`.
+
+```bash
+python3 favicon_anim.py           # static icons: app/icon.png, favicon.ico, apple-icon.png, public/icons/
+python3 favicon_anim_options.py   # animation frames, the options page data, and the shipped module
+```
+
+`favicon_anim_options.py` renders frames with Chromium (`render_svgs.mjs`), so run it where Playwright is installed. `check-favicon-rhythm.mjs` and `check-favicon-runtime.mjs` verify the result.
+
