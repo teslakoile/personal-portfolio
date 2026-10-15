@@ -5,7 +5,7 @@
 .row h2 { margin: 0 0 4px; font-size: 20px; font-weight: 500; letter-spacing: -0.01em; }
 .note { margin: 0 0 16px; max-width: 78ch; font-size: 14px; color: var(--ink-2); }
 .tag { margin: 0 0 8px; font-size: 13px; font-weight: 500; color: var(--ink-3); }
-.after { color: var(--coral-ink, #d2381f); }
+.after { color: var(--coral); }
 .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
 .stack { display: grid; gap: 28px; }
 .side { min-width: 0; }

@@ -37,7 +37,7 @@ const T = ({ t }: { t: Tag }) => <span className={`${s.tag} ${TAGS[t][0]}`}>{TAG
 /** When round 4 changed parts Kyle had already marked; they stay visible until marked again. */
 const ROUND_4 = "2026-10-11T13:50:00Z";
 const ROUND_5 = "2026-10-11T14:10:00Z";
-const ROUND_6 = "2026-10-11T14:20:00Z";
+const ROUND_11 = "2026-10-12T09:51:00Z";
 const ROUND_9 = "2026-10-11T14:49:00Z";
 
 function Item({ name, tag, note, used, source, wide, col, options, take, revised, children }: {
@@ -213,7 +213,7 @@ export default async function KyllmParts() {
         </Section>
 
         <Section id="blocks" n="04" title="Answer blocks" note="Attached only when a question calls for one">
-          <Item wide name="Source chips" revised={ROUND_6} tag="new" note="Round 6: one chip for every source; the mark tells where it lives, a right arrow means this page, the diagonal arrow another site. Hover shows where it goes, the chip lifts with a coral edge, and the cursor turns to a hand." used="Answers with citations" source="Round 3 pick A"
+          <Item wide name="Source chips" revised={ROUND_11} tag="new" note="Round 11: the tab icon is now KYLLM, so this site's sections need their own mark. Other sites use the logo files from public/logos, as the brand chips do." options={["KN monogram", "Section sign", "No mark"]} used="Answers with citations" source="Round 3 pick A"
             take={<>KYLLM should cite only your own material: sections of this site, plus your own GitHub, LinkedIn, and IEEE paper. No general web search; it can&apos;t vouch for other people&apos;s pages, and it&apos;s where wrong facts would come from.</>}>
             <SourceR3 />
           </Item>

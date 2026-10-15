@@ -70,7 +70,7 @@ const PROJECTS: Project[] = [
 
 function Card({ p }: { p: Project }) {
   return (
-    <article style={{ display: "flex", flexDirection: "column" }}>
+    <article className={s.project}>
       <span className={b.label}>{p.kind} · {p.year}</span>
       <h3 className={`${b.h3} ${s.cardTitle}`}>{p.name}</h3>
       <p className={s.lede}>{p.lede}</p>
@@ -87,8 +87,7 @@ export function Projects({ num }: { num?: string }) {
   return (
     <Row id="projects">
       <SectionHead num={num} title="Projects" />
-      <div className={s.grid}>{sorted.slice(0, 3).map((p) => <Card key={p.name} p={p} />)}</div>
-      <div className={s.grid}>{sorted.slice(3).map((p) => <Card key={p.name} p={p} />)}</div>
+      <div className={`${s.grid} ${s.projGrid}`}>{sorted.map((p) => <Card key={p.name} p={p} />)}</div>
     </Row>
   );
 }

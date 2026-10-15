@@ -24,10 +24,10 @@ export const Kbd = ({ children, tip, open }: { children: ReactNode; tip?: string
 );
 
 /** `arrow` marks a suggestion (follow-ups, starters): outline pill, Lucide arrow at the end. */
-export function Pill({ children, dot, kind, arrow }: { children: ReactNode; dot?: string; kind?: "primary" | "source"; arrow?: boolean }) {
+export function Pill({ children, dot, kind, arrow, onClick }: { children: ReactNode; dot?: string; kind?: "primary" | "source"; arrow?: boolean; onClick?: () => void }) {
   const cls = [s.pill, kind === "primary" && s.pillPrimary, kind === "source" && s.pillSource, arrow && s.pillArrow].filter(Boolean).join(" ");
   return (
-    <button type="button" className={cls}>
+    <button type="button" className={cls} onClick={onClick}>
       {dot ? <i style={{ background: `var(--${dot})` }} /> : null}
       {children}
       {arrow ? <ArrowRight className={s.pillIcon} size={ICON.size} strokeWidth={ICON.strokeWidth} aria-hidden="true" /> : null}
@@ -38,9 +38,9 @@ export function Pill({ children, dot, kind, arrow }: { children: ReactNode; dot?
 
 export const LatestIcon = () => <ArrowDown size={ICON.size} strokeWidth={ICON.strokeWidth} aria-hidden="true" />;
 
-export function SendButton({ state = "send" }: { state?: "send" | "stop" | "wait" }) {
+export function SendButton({ state = "send", onClick }: { state?: "send" | "stop" | "wait"; onClick?: () => void }) {
   const cls = [s.send, state === "stop" && s.sendStop, state === "wait" && s.sendWait].filter(Boolean).join(" ");
-  return <button type="button" className={cls} aria-label={state}>{state === "stop" ? null : <ArrowUp size={18} strokeWidth={2.25} aria-hidden="true" />}</button>;
+  return <button type="button" className={cls} aria-label={state} onClick={onClick}>{state === "stop" ? null : <ArrowUp size={18} strokeWidth={2.25} aria-hidden="true" />}</button>;
 }
 
 const ICONS = { copy: Copy, link: Link, up: ThumbsUp, down: ThumbsDown };
