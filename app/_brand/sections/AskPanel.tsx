@@ -375,7 +375,8 @@ function Answer({ asked, stream, shown, animate, onAsk, onNavigate }: {
 
 /* ------------------------------ focus trap ------------------------------ */
 
-function trapTab(e: ReactKeyboardEvent<HTMLElement>) {
+/** Keeps Tab inside a modal: wraps from the last focusable to the first and back. */
+export function trapTab(e: ReactKeyboardEvent<HTMLElement>) {
   if (e.key !== "Tab") return;
   const focusables = Array.from(
     e.currentTarget.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])'),
