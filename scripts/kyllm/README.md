@@ -74,16 +74,81 @@ python3 generate.py blink "eyes closed as short, gently curved black arcs"
 
 Each pose still drifts slightly in body shape and glasses size, which is fine for a still but jumps when frames swap in an animation. For animated states such as the blink, paste only the changed region (the eyes) from the pose onto `master.png` with a feathered mask.
 
-Planned poses, by chat state:
+The poses in `poses/`, by chat state:
 
 | Pose | Change | Chat state |
 |---|---|---|
-| Blink | Eyes as short closed arcs | Every few seconds |
-| Thinking | Eyes look up | Before the first word |
-| Reading | Eyes look down, soft glint on the lenses | Reading a source |
-| Answered | Happy upside-down U eyes, ears perked up | Answer finished |
-| Curious | Glasses slid down, eyes peeking over | Asking to clarify |
-| Can't answer | Eyes as downward arcs, ears flat | Off-topic question |
+| `blink` | Eyes as short closed arcs | Reference only; the rig blinks by squashing the eyes |
+| `think` | Eyes look up and right | Before the first word |
+| `read` | Eyes look down and left, slightly narrowed | Reading a source |
+| `happy` | Upside-down U eyes | Answer finished |
+| `curious` | Glasses slid down, eyes peeking over | Asking to clarify |
+| `sorry` | Eyes as short lines slanting down outward, ears folded | Off-topic question |
+| `sorry-b` | Eyes look down, ears folded | Alternative to `sorry` |
+
+## Animated rig
+
+```bash
+for p in think read happy curious sorry; do
+  KYLLM_SRC=poses/$p.png KYLLM_WORK=build/$p uv run --with rembg --with onnxruntime --with pillow --with numpy python flatten.py
+  KYLLM_WORK=build/$p uv run --with scikit-image --with scipy --with pillow --with numpy python vectorize.py
+done
+uv run --with numpy python rig.py
+```
+
+Run them one pose at a time: rembg loads a large model, and several at once run out of memory. Each pose goes through the same flat steps as the master into `build/<pose>/` (gitignored), which writes the pose's parts to `flat.json`. `rig.py` then writes `public/kyllm/kyllm-rig.svg` and `kyllm-avatar-rig.svg` (the avatar's circle on sky).
+
+The rig is one flat KYLLM whose parts are separate elements: the bean, each ear, the leaf, the glasses, and the eyes. Inline it in the page and set `data-state` on the `<svg>`: `idle`, `think`, `read`, `answered`, `curious`, or `sorry`. Its own CSS moves the parts. The body never swaps, so it never jumps between states.
+
+| State | Motion | Measured from |
+|---|---|---|
+| `idle` | Blinks every 4.8s; leaf sways | Master |
+| `think` | Eyes glide up and right; leaf flutters; slower blink | `think` eyes, mapped into the master's lenses |
+| `read` | Eyes glide down and left, then scan side to side | `read` eyes |
+| `answered` | Eyes cross-fade to happy arcs; a small hop; ears perk | `happy` arcs |
+| `curious` | Glasses slip down a third of the pose's slide; eyes open wider and higher; head tilts 4 degrees | `curious` glasses, by whole-body alignment |
+| `sorry` | Eyes turn into slanted ovals; ears droop 14 degrees; leaf droops; body sinks a little | `sorry` eyes and ear tips |
+
+A few states don't copy their pose exactly, because the exact copy didn't read at chat size:
+
+- **Curious:** the render's eyes sit on the rims, which reads as bumps on the frame. The rig keeps the eyes inside the lenses, so the glasses slide only a third of the way.
+- **Sorry:** the measured ear turn (36 to 40 degrees) bends the ears into fins, so the rig caps it at 14.
+
+With `prefers-reduced-motion`, the rig switches straight to each state's pose with no motion. `data-still` on the `<svg>` does the same on demand.
+
+`rig.py` also writes the app's copy to `app/_brand/kyllm/`: `rig.ts` (the markup and frames) and `kyllm.module.css` (the motion, with the part classes wrapped in `:global`). Don't edit either by hand. Use the component in the site:
+
+```tsx
+import { Kyllm } from "@/app/_brand/kyllm/Kyllm";
+
+<Kyllm state={streaming ? "read" : "idle"} size={36} />
+<Kyllm variant="full" state="answered" size={240} />
+```
+
+`/samples/kyllm` shows every state live, a scripted chat, and the exported files.
+
+`rig.py` also writes `app/_brand/kyllm/rig-data.ts`: the same parts as data, with each eye in each state as a 48-point outline that starts at the same point and runs the same way, so a script can blend any two shapes. `/samples/kyllm/motion` compares four ways to move the same rig: the CSS version, Motion and GSAP (both reading `rig-data.ts`), and Lottie.
+
+```bash
+uv run python scripts/kyllm/lottie.py
+```
+
+`lottie.py` rebuilds the rig as Lottie layers and writes `public/kyllm/kyllm.lottie.json`, with a named marker for each clip: `loop_idle`, `loop_think`, `loop_read`, and `enter_<state>` for the rest. It reads `build/rig.json`, which `rig.py` writes.
+
+## Motion files
+
+For places that can't run the inline rig, such as a README, an email, or a social card:
+
+```bash
+node scripts/kyllm/motion.mjs
+uv run --with pillow python scripts/kyllm/motion.py
+```
+
+`motion.mjs` loads `kyllm-avatar-rig.svg` in headless Chromium, pauses its CSS animations, and steps their clocks frame by frame, so each frame is exact. `motion.py` writes to `public/kyllm/motion/`:
+
+- `kyllm-{idle,think,read}.webp`: seamless 4.8s loops at 192px and 20fps. Every loop in the rig repeats every 4.8s, so these line up.
+- `kyllm-{answered,curious,sorry}.webp`: one-second clips from idle into the state, at 30fps, played once.
+- `kyllm-{state}.png`: one still per state at 192px.
 
 ## Without API credits
 

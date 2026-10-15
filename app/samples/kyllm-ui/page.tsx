@@ -13,7 +13,7 @@ import { HeroChat } from "./HeroChat";
 import { Legend, Steps, StepsOption } from "./Steps";
 import { ReviewButtons, ReviewCard, ReviewNote, ReviewPick, ReviewProvider, RevisedTag } from "./review/Review";
 import { HeaderOptions, OffTopicOptions } from "./options";
-import { CitationStates, CopyStates, CountdownR3, DockR3, EmailR3, IconSet, InProgressR3, KeyHintStates, SorryR3, LiveAvatar, OfflineR3, PeekR3, PillR3, SourceR3, StarterR3, ThinkingR3 } from "./round3";
+import { CitationStates, CopyStates, CountdownR3, DockR3, EmailR3, IconSet, InProgressR3, KeyHintStates, SorryR3, LiveAvatar, OfflineR3, PeekR3, PillR3, SourceR3, StarterR3, ThinkingR3, TouchR3 } from "./round3";
 import { isDev, readReviews } from "./review/store";
 import s from "./kyllm.module.css";
 
@@ -148,6 +148,9 @@ export default async function KyllmParts() {
         <Section id="primitives" n="02" title="Primitives" note="Single-purpose parts">
           <Item name="Avatar" tag="have" note="The cat in a sky circle, the latest locked avatar. Answers at 36px, header at 32, small tags at 20." used="Header, answers, dock, tags" source="public/kyllm, built by scripts/kyllm">
             <St label="20"><Avatar size={20} /></St><St label="32"><Avatar size={32} /></St><St label="36"><Avatar size={36} /></St><St label="64"><Avatar size={64} /></St><St label="96"><Avatar size={96} /></St><St label="Animated, idle"><LiveAvatar size={64} /></St>
+          </Item>
+          <Item name="Pet and Boop" tag="new" note="Click, tap, or press Enter on KYLLM to boop it: a quick squash that springs back into a stretch, eyes squeezed shut, then happy. Quick boops press deeper, and the fourth in a row giggles. Hover to have it look at the pointer; stroke across it to pet it." used="Every live avatar; the dock boops it on click" source="KyllmLive touch, avatar-animation rules">
+            <TouchR3 />
           </Item>
           <Item name="Send button" tag="new" note="Coral to send, ink square to stop a stream, sunk grey while rate limited." used="Composer" source="Boards">
             <St label="Send"><SendButton /></St><St label="Stop"><SendButton state="stop" /></St><St label="Waiting"><SendButton state="wait" /></St>

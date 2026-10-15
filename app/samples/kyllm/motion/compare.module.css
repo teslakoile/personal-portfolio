@@ -1,0 +1,38 @@
+.controls { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px var(--gutter) 16px; }
+.chip {
+  all: unset; cursor: pointer; padding: 7px 14px; border-radius: var(--r-pill); background: var(--surface);
+  box-shadow: 0 0 0 1px var(--line); font-size: 13.5px; font-weight: 500;
+}
+.chip:hover { box-shadow: 0 0 0 1px var(--line-2); }
+.chip[aria-pressed="true"] { box-shadow: 0 0 0 1.5px var(--coral); }
+.stress { all: unset; cursor: pointer; margin-left: auto; padding: 7px 14px; border-radius: var(--r-pill); background: var(--coral-ink); color: #fff; font-size: 13.5px; font-weight: 500; }
+.stress:hover { background: var(--coral-press); }
+.stress:disabled { cursor: default; background: var(--ink-4); }
+
+.pair { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding: 0 var(--gutter) 16px; }
+.side { margin: 0; display: grid; justify-items: center; gap: 10px; padding: 28px 20px 18px; background: var(--surface); border-radius: var(--r-float); box-shadow: var(--float); }
+.side figcaption { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.side b { font-weight: 600; }
+.side span, .sizes figcaption { font-size: 12.5px; color: var(--ink-3); }
+
+.sizes { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-end; margin: 0 var(--gutter) 36px; padding: 16px 18px; background: var(--surface); border-radius: var(--r-float); box-shadow: 0 0 0 1px var(--line); }
+.sizes figure { margin: 0; text-align: center; }
+.duo { display: flex; gap: 6px; align-items: flex-end; margin-bottom: 6px; }
+
+.table { margin: 8px var(--gutter) 36px; font-size: 13.5px; }
+.thead, .trow { display: grid; grid-template-columns: 0.8fr 1.2fr 1.4fr 1.4fr; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.thead { font-size: 12.5px; font-weight: 500; color: var(--ink-3); }
+.trow span { color: var(--ink-2); }
+.trow b { font-weight: 600; }
+
+@media (max-width: 1100px) {
+  .pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .pair { grid-template-columns: minmax(0, 1fr); }
+  .thead { display: none; }
+  .trow { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}
+@media (max-width: 520px) {
+  .stress { margin-left: 0; }
+}

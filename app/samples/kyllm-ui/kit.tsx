@@ -71,10 +71,10 @@ export function Segmented({ options, on }: { options: string[]; on: string }) {
 
 export const Ring = () => <span className={s.ring} aria-hidden="true" />;
 
-export function PanelHeader({ right }: { right?: ReactNode }) {
+export function PanelHeader({ right, avatar }: { right?: ReactNode; avatar?: ReactNode }) {
   return (
     <div className={s.panelHead}>
-      <Avatar size={32} />KYLLM
+      {avatar ?? <Avatar size={32} />}KYLLM
       <span className={s.r}>
         {right ?? "Answers from my CV, powered by Claude"}
       </span>
