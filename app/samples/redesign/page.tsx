@@ -56,6 +56,7 @@ export default function RedesignPage() {
               items={SECTIONS}
               active="about"
               utils={[{ label: "Ask KYLLM", keys: ["⌘", "K"] }]}
+              sound
               foot={<Button href={sample.hero.primaryCta.href}>Get in Touch</Button>}
             />
           </div>

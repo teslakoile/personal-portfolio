@@ -58,14 +58,15 @@ function blip(freq: number, dur: number, vol: number, type: OscillatorType = "tr
   osc.stop(t + dur + 0.02);
 }
 
-/** Nav hover / keystroke, a faint mechanical tick. */
-export function tick() {
-  blip(1850, 0.045, 0.028);
+/** Nav hover / keystroke, a faint mechanical tick. `rate` scales the pitch
+    (1 is the site's tick), for callers that play a scale. */
+export function tick(rate = 1) {
+  blip(1850 * rate, 0.045, 0.028);
 }
 
-/** Click / confirm, slightly rounder. */
-export function click() {
-  blip(940, 0.07, 0.04, "triangle", 660);
+/** Click / confirm, slightly rounder. `rate` scales the pitch as in tick(). */
+export function click(rate = 1) {
+  blip(940 * rate, 0.07, 0.04, "triangle", 660 * rate);
 }
 
 /** Modal open, soft rising pop. */
