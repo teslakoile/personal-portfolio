@@ -1,0 +1,55 @@
+/* The ruled rail (Rail variant="ruled"): the rail cut into ruled rows like the
+   page frame. One rule under the wordmark row, one under every section, and
+   the launchers and the foot pinned to the bottom as ruled rows, so the rail
+   never ends in a blank half. The active row is lifted onto surface with a
+   full-height coral tick. The classic rail uses none of this. */
+
+.rail { min-height: 100%; padding: 0; }
+
+/* wordmark row, with the sound icon at its right */
+.top { display: flex; align-items: center; justify-content: space-between; height: 72px; padding: 0 14px 0 22px; border-bottom: 1px solid var(--line); }
+
+/* one ruled row per section */
+.rail nav { margin-top: 0; }
+.rail nav > a { height: 42px; padding-left: 22px; border-bottom: 1px solid var(--line); transition: background 0.15s, color 0.15s; }
+.rail nav > a:hover { background: var(--sunk); }
+.rail nav > a[aria-current] { background: var(--surface); }
+.rail nav > a[aria-current] span { color: var(--coral); }
+.rail nav > a > i, .rail nav > a[aria-current]::before { top: -1px; bottom: -1px; height: auto; }
+
+/* the foot: launcher rows, then the call to action */
+.foot { margin-top: auto; border-top: 1px solid var(--line); }
+.util {
+  display: flex; align-items: center; gap: 10px; width: 100%; height: 48px; padding: 0 16px 0 18px; border: 0; border-bottom: 1px solid var(--line);
+  background: none; font: inherit; font-size: 14px; color: var(--ink); cursor: pointer; transition: background 0.15s;
+}
+.util:hover { background: var(--sunk); }
+.util > b { flex: 1; text-align: left; font-weight: 500; }
+.util > span:last-child { display: inline-flex; gap: 3px; }
+.avatar { display: grid; place-items: center; width: 30px; height: 30px; flex: none; margin-left: -4px; }
+.cta { padding: 18px 22px 22px; }
+.cta > * { width: 100%; justify-content: center; }
+
+/* sound as an icon button beside the wordmark, its tip hanging below it,
+   right-aligned so it never pokes past the rail's edge */
+.soundIcon {
+  position: relative; display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%;
+  background: none; color: var(--ink-3); cursor: pointer; transition: background 0.15s, color 0.15s;
+}
+.soundIcon:hover { background: var(--sunk); color: var(--ink); }
+.soundIcon[aria-pressed="false"] { color: var(--ink-4); }
+.soundIcon::after {
+  content: attr(data-tip); position: absolute; top: calc(100% + 6px); right: 0; z-index: 5; padding: 3px 8px; border-radius: 6px;
+  background: var(--ink); color: #fff; font-size: 11.5px; white-space: nowrap; pointer-events: none;
+  opacity: 0; transform: translateY(-3px); transition: opacity 0.15s, transform 0.15s;
+}
+.soundIcon:hover::after { opacity: 1; transform: none; }
+
+/* phones: the redesign folds the rail into a header bar (redesign.module.css
+   hides the nav and launchers); drop the ruled rows' rules and heights there */
+@media (max-width: 760px) {
+  .rail { min-height: 0; padding: 14px 20px; }
+  .top { height: auto; padding: 0; border: 0; }
+  .foot { margin-top: 0; border: 0; }
+  .cta { padding: 0; }
+}
