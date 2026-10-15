@@ -1,0 +1,81 @@
+/* KYLLM motion review. Tokens come from BrandRoot (app/_brand/brand.module.css). */
+.main { padding: 40px 24px 80px; }
+
+.intro { padding: 36px var(--gutter) 32px; }
+.title { font-size: clamp(34px, 4.4vw, 48px); line-height: 1.04; font-weight: 500; letter-spacing: -0.03em; margin: 0; }
+.lede { margin-top: 10px; max-width: 62ch; color: var(--ink-2); }
+.lede code, .files code { font: 13px var(--mono); color: var(--ink); }
+
+/* 01 Playground */
+.play { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 24px; padding: 8px var(--gutter) 36px; }
+.stage { display: grid; place-items: center; background: var(--surface); border-radius: var(--r-float); box-shadow: var(--float); padding: 28px; }
+.stage svg { width: 100%; max-width: 300px; height: auto; }
+.side { display: flex; flex-direction: column; gap: 16px; }
+.states { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.state {
+  all: unset; box-sizing: border-box; cursor: pointer; padding: 10px 12px; border-radius: var(--r-chip);
+  background: var(--surface); box-shadow: 0 0 0 1px var(--line); display: flex; flex-direction: column; gap: 1px;
+  transition: box-shadow 0.15s;
+}
+.state:hover { box-shadow: 0 0 0 1px var(--line-2); }
+.state[aria-pressed="true"] { box-shadow: 0 0 0 1.5px var(--coral); }
+.state b { font-weight: 600; font-size: 14px; }
+.state span { font-size: 13px; color: var(--ink-2); }
+.state small { font-size: 12px; color: var(--ink-3); }
+.toggle { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink-2); cursor: pointer; }
+.toggle input { accent-color: var(--coral); }
+.sizes { display: flex; align-items: flex-end; gap: 22px; padding: 16px 18px; background: var(--surface); border-radius: var(--r-float); box-shadow: 0 0 0 1px var(--line); }
+.sizes figure { margin: 0; text-align: center; }
+.sizes svg { display: block; margin: 0 auto 6px; }
+.sizes figcaption, .cell span, .export figcaption { font-size: 12px; color: var(--ink-3); }
+
+/* 02 In the Chat */
+.chat { margin: 8px var(--gutter) 36px; background: var(--surface); border-radius: var(--r-float); box-shadow: var(--float); overflow: hidden; }
+.chatHead { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.chatHead b { font-weight: 600; }
+.chatHead span { font-size: 13px; color: var(--ink-3); }
+.playBtn {
+  all: unset; cursor: pointer; margin-left: auto; padding: 7px 14px; border-radius: var(--r-pill);
+  background: var(--coral-ink); color: #fff; font-size: 13.5px; font-weight: 500;
+}
+.playBtn:hover { background: var(--coral-press); }
+.playBtn:disabled { cursor: default; background: var(--ink-4); }
+.thread { height: 340px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.empty { margin: auto; font-size: 14px; color: var(--ink-3); }
+.user { align-self: flex-end; max-width: 70%; background: var(--ink); color: #fff; border-radius: 14px 14px 4px 14px; padding: 8px 14px; font-size: 14px; }
+.answer { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 12px; font-size: 14.5px; line-height: 1.55; max-width: 80%; }
+.answer svg { margin-top: -4px; }
+.meta { font-size: 13px; color: var(--ink-3); }
+
+/* 03 Every State */
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding: 8px var(--gutter) 36px; }
+.cell { margin: 0; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 10px; padding: 16px; background: var(--surface); border-radius: var(--r-float); box-shadow: 0 0 0 1px var(--line); }
+.cell svg:first-child { width: 100%; max-width: 160px; height: auto; }
+.cell figcaption { grid-column: 1 / -1; display: flex; flex-direction: column; }
+.cell b { font-weight: 600; font-size: 14px; }
+
+/* 04 Exported Files */
+.exports { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; padding: 8px var(--gutter) 16px; }
+.export { margin: 0; padding: 12px; text-align: center; background: var(--surface); border-radius: var(--r-float); box-shadow: 0 0 0 1px var(--line); }
+.export img { display: block; margin: 0 auto 8px; }
+.export figcaption { display: flex; flex-direction: column; gap: 2px; }
+.export b { font-weight: 600; font-size: 13px; color: var(--ink); }
+.export a { color: var(--coral-ink); text-decoration: none; }
+.export a:hover { text-decoration: underline; }
+.files { list-style: none; margin: 0; padding: 8px var(--gutter) 0; display: grid; gap: 8px; }
+.files li { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 16px; font-size: 13.5px; color: var(--ink-2); padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.code { margin: 16px var(--gutter) 36px; padding: 14px 16px; background: var(--sunk); border-radius: var(--r-chip); font: 13px/1.6 var(--mono); overflow-x: auto; }
+
+@media (max-width: 860px) {
+  .play { grid-template-columns: minmax(0, 1fr); }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .exports { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .files li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}
+@media (max-width: 520px) {
+  .main { padding: 16px 0 48px; }
+  .states { grid-template-columns: minmax(0, 1fr); }
+  .sizes { gap: 14px; }
+  .answer, .user { max-width: 100%; }
+}
+.lede a { color: var(--coral-ink); }
