@@ -4,19 +4,70 @@
 /* Hiding the OS cursor while this one is mounted lives in app/globals.css
    (:root[data-kc]), since a CSS module cannot hold bare global rules. */
 
-.cursor { position: fixed; top: 0; left: 0; z-index: 2147483647; pointer-events: none; opacity: 0; transition: opacity 0.15s ease-out; will-change: transform; filter: drop-shadow(0 0.5px 0.5px rgb(28 25 23 / 0.18)); }
+/* Two durations run every change in this file, and Cursor.tsx holds the same
+   two (MS and FOLD): --m is a shape melting into another shape, --x is
+   anything fading or folding on its own. A state with an overlay (the
+   loader, the prohibit sign's hole and bar) starts it 40% of the way through the
+   melt (OVERLAY_AT), in --x; leaving folds it away in --x, and the next melt
+   starts a little before that ends. */
+.cursor { --m: 180ms; --x: 80ms; position: fixed; top: 0; left: 0; z-index: 2147483647; pointer-events: none; opacity: 0; transition: opacity 0.1s ease-out; will-change: transform; filter: drop-shadow(0 0.5px 0.5px rgb(28 25 23 / 0.18)); }
 .cursor[data-shown] { opacity: 1; }
-.press { transform-origin: 0 0; transition: transform 0.18s cubic-bezier(0.33, 1, 0.68, 1); }
-.cursor[data-down] .press { transform: scale(0.86); transition-duration: 0.08s; }
+.press { transform-origin: 0 0; transition: transform 0.12s cubic-bezier(0.33, 1, 0.68, 1); }
+.cursor[data-down] .press { transform: scale(0.86); transition-duration: 0.06s; }
 /* click spark (clickFx.ts): eight rays centred on the click point, each
    with a paper edge so it reads on photos and on coral */
 .ray { position: fixed; z-index: 2147483646; width: 8px; height: 2.4px; border-radius: 2.4px; background: #f5482d; box-shadow: 0 0 0 1px #faf9f7; pointer-events: none; transform: translate(-50%, -50%); opacity: 0; }
 /* one shape, morphed point by point in Cursor.tsx; (0, 0) is the click point */
 .shape { position: absolute; left: -12px; top: -5px; overflow: visible; }
 
-/* text fields: the system text cursor takes over */
-.cursor[data-state="text"] .press { opacity: 0; }
+/* blocked: the pointer morphs into a coral disc (shape set in Cursor.tsx),
+   then a paper hole and a coral slash fade in, which reads as the familiar
+   prohibit sign: a ring with a bar. No shake. */
+/* the hole is an iris: it opens from the middle and closes back into it */
+.hole { fill: #faf9f7; opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(0.3); transition: opacity var(--x) ease-in, transform var(--x) ease-in; }
+.slash { fill: none; stroke: #f5482d; stroke-width: 2.6; stroke-linecap: butt; stroke-dasharray: 17.6; stroke-dashoffset: 17.6; opacity: 0; transition: stroke-dashoffset var(--x) ease-out, opacity 0s var(--x); }
+.cursor[data-state="blocked"][data-live] .hole { opacity: 1; transform: none; transition: opacity var(--x) ease-out, transform var(--x) ease-out; }
+.cursor[data-state="blocked"][data-live] .slash { stroke-dashoffset: 0; opacity: 1; transition: stroke-dashoffset var(--x) ease-out, opacity 0s; }
+
+/* busy: the pointer is replaced by the site's loader, the chevron and a verb
+   with the synced shimmer (app/samples/states). The chevron's centre is the
+   click point and the verbs are stacked hidden, so the line keeps one width.
+   No chip and no outline: the word is coral. */
+/* entering busy: the pointer melts into a square (Cursor.tsx), then at data-live
+   the square and the loader's cells crossfade on the same footprint, so the
+   block reads as breaking up into pixels, and the verb unrolls out of the
+   chevron. Leaving reverses it: verb in, cells back to a square, square melts
+   into the next shape. */
+.shape { transition: opacity var(--x); }
+.cursor[data-state="busy"][data-live] .shape { opacity: 0; }
+.tag { --coral: #f5482d; position: absolute; left: -7px; top: -7px; display: inline-flex; align-items: center; gap: 6px; height: 14px; opacity: 0; visibility: hidden; transform-origin: 7px 7px; transform: scale(0.8); transition: opacity var(--x) ease-in, transform var(--x) ease-in, visibility 0s var(--x); font: 400 13px/1 var(--font-geist-sans), var(--font-geist), system-ui, sans-serif; font-variant-numeric: tabular-nums; white-space: nowrap; color: #d2381f; }
+/* the loader grows out of the square and condenses back into it */
+.cursor[data-state="busy"][data-live] .tag { opacity: 1; visibility: visible; transform: none; transition: opacity var(--x) ease-out, transform var(--x) ease-out; }
+/* not busy: nothing in the loader runs, so the cursor costs no frames. Without
+   this the chevron's pulse and the verb's shimmer would animate forever. */
+.cursor:not([data-state="busy"]) .tag, .cursor:not([data-state="busy"]) .tag * { animation-play-state: paused; }
+.tagChevron { display: inline-flex; font-size: 14px; }
+.tagWord { display: inline-grid; justify-items: start; clip-path: inset(-4px 100% -4px 0); transition: clip-path var(--x) ease-in; }
+.cursor[data-state="busy"][data-live] .tagWord { clip-path: inset(-4px -6px -4px 0); transition: clip-path var(--m) cubic-bezier(0.22, 1, 0.36, 1); }
+.tagWord > * { grid-area: 1 / 1; }
+.tagSizer { visibility: hidden; }
+/* busy over text, two options. outline: the word is drawn twice, a paper copy
+   with a 2.2px stroke (half shows, the same edge as the pointer) under the coral one, and each chevron cell gets the same paper
+   edge, visible only while the cell is lit. glow: the whole line gets a soft paper glow. Both are off by default. */
+.tagHalo { display: none; color: #faf9f7; -webkit-text-stroke: 2.2px #faf9f7; paint-order: stroke fill; animation: wordIn 0.42s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.cursor[data-busy-style="outline"] .tagHalo { display: block; }
+/* the chevron's edge is per cell: each cell carries a 1.1px paper edge that fades
+   with the cell, so a resting (15%) cell has no visible edge and a lit one does */
+.cursor[data-busy-style="outline"] .tagChevron i { box-shadow: 0 0 0 1.1px #faf9f7; }
+.cursor[data-busy-style="glow"] .tag { filter: drop-shadow(0 0 1px #faf9f7) drop-shadow(0 0 2px #faf9f7) drop-shadow(0 0 3px #faf9f7); }
+/* small coral text is #D2381F (4.6:1 on paper); the light pass is the brand coral */
+.tagLive { background: linear-gradient(90deg, #d2381f 0%, #d2381f 38%, #f5482d 50%, #d2381f 62%, #d2381f 100%); background-size: 260% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: wordIn 0.42s cubic-bezier(0.22, 1, 0.36, 1) both, shine 1.1s linear infinite; }
+@keyframes wordIn { from { opacity: 0; transform: translateY(0.3em); filter: blur(2px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes shine { from { background-position: 100% 0; } to { background-position: -60% 0; } }
 
 @media (prefers-reduced-motion: reduce) {
   .cursor, .press { transition: none !important; }
-}
+  .tag, .tagWord, .shape, .hole, .slash { transition: none !important; }
+.tagLive { animation: none; color: #d2381f; background: none; }
+  .tagHalo { animation: none; }
+  }

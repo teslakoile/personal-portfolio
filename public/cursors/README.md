@@ -11,7 +11,12 @@ weight, MIT) in the same coral and paper edge, shown over links, buttons, and
 anything marked `data-clickable`. It sits on a 30px canvas with the fingertip
 at (12, 4).
 
-The redesign draws its own animated cursor instead (`app/_brand/Cursor.tsx`),
-which springs from the pointer into the same hand.
+The redesign draws its own animated cursor instead (`app/_brand/Cursor.tsx`).
+It is one coral shape that melts between states: the arrow, the hand over
+anything clickable, an I-beam over text fields and selectable text, a prohibit
+sign over disabled controls (`:disabled`, `aria-disabled`, `data-blocked`), and
+the site's chevron loader with a verb while something is busy (`aria-busy`,
+`data-busy`). Every state is chosen from the element's own attributes. All
+states are on `/samples/cursor-states`.
 
 The options it was picked from live at `/samples/rework/cursor`.

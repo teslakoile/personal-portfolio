@@ -33,6 +33,14 @@ export function spark(x: number, y: number) {
   }
 }
 
+/** the cursor arriving after it leaves busy or blocked: it lands a touch small,
+    swells past rest, and settles, the same spring as a click's release */
+export const LAND: Keyframe[] = [
+  { transform: "scale(0.88)", easing: "cubic-bezier(0.33, 1, 0.68, 1)" },
+  { transform: "scale(1.07)", offset: 0.5, easing: "cubic-bezier(0.45, 0, 0.55, 1)" },
+  { transform: "scale(1)" },
+];
+
 /** the cursor's release after a click: springs a touch past rest, settles */
 export const RELEASE: Keyframe[] = [
   { transform: "scale(0.86)", easing: "cubic-bezier(0.33, 1, 0.68, 1)" },

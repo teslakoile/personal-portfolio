@@ -34,7 +34,7 @@ body {
    Only for a mouse or trackpad; touch screens never show a cursor. One
    pointer everywhere; over links, buttons, and other clickable things it
    becomes a coral hand. Text fields keep the text cursor and
-   drag areas keep the grab hand. The url() line is the fallback for browsers
+   drag areas keep the grab hand (the drawn cursor draws these too). The url() line is the fallback for browsers
    without image-set(). */
 @media (pointer: fine) {
   html,
@@ -52,9 +52,8 @@ body {
     cursor: text !important;
   }
   /* a page that mounts the drawn cursor (app/_brand/Cursor.tsx) hides the
-     OS one; text fields still get the system text cursor */
+     OS one and draws every state itself, the text cursor included */
   :root[data-kc], :root[data-kc] * { cursor: none !important; }
-  :root[data-kc] :is(input:not([type="button"], [type="submit"], [type="checkbox"], [type="radio"]), textarea, [contenteditable="true"]) { cursor: text !important; }
   html [class*="fsGrab"] { cursor: grab !important; }
   html [class*="fsGrab"]:active { cursor: grabbing !important; }
 }
