@@ -97,3 +97,6 @@
 @media (prefers-reduced-motion: reduce) {
   .userIn, .tok, .citeIn, .caret, .tiles > div > div, .srcs > *, .actions, .chipIn, .typeCaret, .beat[data-state="now"] .dot { animation: none; }
 }
+
+/* live KYLLM in the answers: sits where the static avatar did */
+.av { display: block; margin-top: -2px; line-height: 0; }

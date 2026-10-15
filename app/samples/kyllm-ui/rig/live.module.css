@@ -1,6 +1,10 @@
 /* KyllmLive. Sizes are in em of the avatar (font-size is set to its width). */
 
 .wrap { position: relative; display: inline-flex; flex: none; line-height: 0; }
+/* touch: KYLLM as a button (hover to pet, press to boop) */
+.wrap[data-touch] { cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; outline: none; }
+.wrap[data-touch]:focus-visible { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #d2381f; }
+.roundFocus { border-radius: 50%; }
 
 .layer { position: absolute; inset: 0; pointer-events: none; }
 .round { border-radius: 50%; overflow: hidden; }
