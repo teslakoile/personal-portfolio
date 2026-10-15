@@ -87,23 +87,25 @@ def check_ico(path: Path) -> None:
     print(f"favicon.ico: {n} frames, all RGBA")
 
 
-# Crops in source.png pixels (1024x1536). Favicons crop tighter on the face;
-# the maskable icon pads out so Android's circle crop never reaches him.
-fav = ink_icon(256, 410, 45).convert("RGBA")
-ico = ROOT / "app/favicon.ico"
-fav.save(ico, format="ICO", sizes=[(16, 16), (32, 32), (48, 48)])
-check_ico(ico)
+def build_icons() -> None:
+    # Crops in source.png pixels (1024x1536). Favicons crop tighter on the face;
+    # the maskable icon pads out so Android's circle crop never reaches him.
+    fav = ink_icon(256, 410, 45).convert("RGBA")
+    ico = ROOT / "app/favicon.ico"
+    fav.save(ico, format="ICO", sizes=[(16, 16), (32, 32), (48, 48)])
+    check_ico(ico)
 
-(ROOT / "public/icons").mkdir(exist_ok=True)
-for path, size, side, headroom in [
-    ("app/icon.png", 512, 575, 85),
-    ("app/apple-icon.png", 180, 575, 85),
-    ("public/icons/icon-192.png", 192, 575, 85),
-    ("public/icons/icon-512.png", 512, 575, 85),
-    ("public/icons/maskable-512.png", 512, 750, 165),
-]:
-    ink_icon(size, side, headroom).save(ROOT / path, optimize=True)
-    print(f"wrote {path}")
+    (ROOT / "public/icons").mkdir(exist_ok=True)
+    for path, size, side, headroom in [
+        ("app/icon.png", 512, 575, 85),
+        ("app/apple-icon.png", 180, 575, 85),
+        ("public/icons/icon-192.png", 192, 575, 85),
+        ("public/icons/icon-512.png", 512, 575, 85),
+        ("public/icons/maskable-512.png", 512, 750, 165),
+    ]:
+        ink_icon(size, side, headroom).save(ROOT / path, optimize=True)
+        print(f"wrote {path}")
+
 
 # Share-image photo, framed like the hero card (330x384) at 2x: Kyle in true
 # colour over a dither of the photo in its own colours (red bridge, blue-green
@@ -174,15 +176,21 @@ def photo_dither(img: Image.Image, cell: int = 3, cloud: float = 0.7, mix: float
     return Image.fromarray(arr).resize((sw * cell, sh * cell), Image.NEAREST).resize(img.size, Image.NEAREST)
 
 
-W = 750
-H = round(W * 384 / 330)
-sub, m, raw = crop(W, HEAD_TOP - 435, H)
-out = (660, 768)
-card = Image.composite(
-    sub.resize(out, Image.LANCZOS),
-    photo_dither(raw.resize(out, Image.LANCZOS)),
-    m.resize(out, Image.LANCZOS),
-)
-(ROOT / "app/_og").mkdir(exist_ok=True)
-card.save(ROOT / "app/_og/kyle-card.png", optimize=True)
-print("wrote app/_og/kyle-card.png")
+def build_card() -> None:
+    W = 750
+    H = round(W * 384 / 330)
+    sub, m, raw = crop(W, HEAD_TOP - 435, H)
+    out = (660, 768)
+    card = Image.composite(
+        sub.resize(out, Image.LANCZOS),
+        photo_dither(raw.resize(out, Image.LANCZOS)),
+        m.resize(out, Image.LANCZOS),
+    )
+    (ROOT / "app/_og").mkdir(exist_ok=True)
+    card.save(ROOT / "app/_og/kyle-card.png", optimize=True)
+    print("wrote app/_og/kyle-card.png")
+
+
+if __name__ == "__main__":
+    build_icons()
+    build_card()

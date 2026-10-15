@@ -60,6 +60,13 @@ and deck are kept), and the cloud tone mixes the true sky's broad light
 (blurred about 10 cells, sampled from sky cells only) with fixed-seed noise.
 Sharper cloud detail brings the cable lines back, so it stays broad.
 
+    uv run --with pillow --with numpy python build_hero_color.py
+
+builds the same treatment framed for the redesign's hero cell (440x520, so
+750x886): `public/hero/portrait-hero-color.webp`. It imports
+from `build_brand.py`, which only writes the icons and the share image when run
+directly.
+
 It uses `subject-matte-birefnet.png`, rembg `birefnet-general-lite` run on the
 2048x3072 master and downscaled to `source.png`. The u2net matte below leaves a
 grey-blue sky halo round the hair and hood; this one, choked 1px with the edge
