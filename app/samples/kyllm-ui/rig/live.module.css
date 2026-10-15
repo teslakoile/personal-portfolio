@@ -1,40 +1,27 @@
 /* KyllmLive. Sizes are in em of the avatar (font-size is set to its width). */
 
 .wrap { position: relative; display: inline-flex; flex: none; line-height: 0; }
+/* touch: KYLLM as a button (hover to pet, press to boop) */
+.wrap[data-touch] { cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; outline: none; }
+.wrap[data-touch]:focus-visible { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #d2381f; }
+.roundFocus { border-radius: 50%; }
 
-/* thought bubble while working: three dots in a white pill in the sky at the
-   top right, inside the avatar's circle (the round layer clips to it) */
 .layer { position: absolute; inset: 0; pointer-events: none; }
 .round { border-radius: 50%; overflow: hidden; }
-.bubble {
-  position: absolute; left: 0.6em; top: 0.13em; display: flex; align-items: center; justify-content: center; gap: 0.035em;
-  width: 0.27em; height: 0.15em; border-radius: 999px; background: #fff;
-  box-shadow: 0 0.02em 0.05em -0.02em rgb(28 25 23 / 0.3);
-  opacity: 0; transform: scale(0.4); transform-origin: 10% 90%;
-  transition: opacity 0.2s, transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.bubble::after {
-  content: ""; position: absolute; left: -0.035em; bottom: -0.03em; width: 0.045em; height: 0.045em; border-radius: 50%; background: #fff;
-}
-.bubble[data-on] { opacity: 1; transform: none; }
-.bubble i { display: block; width: 0.04em; height: 0.04em; min-width: 2px; min-height: 2px; border-radius: 50%; background: #57534e; animation: dot 1.1s ease-in-out infinite; }
-.bubble i:nth-child(2) { animation-delay: 0.15s; }
-.bubble i:nth-child(3) { animation-delay: 0.3s; }
-@keyframes dot { 0%, 60%, 100% { opacity: 0.35; transform: none; } 30% { opacity: 1; transform: translateY(-0.025em); } }
 
-/* pondering: the same three dots, on their own in the sky at the top right (no bubble), each
-   rising and fading in turn like an ellipsis being thought */
+/* pondering: three dots on their own in the sky at the top right (no bubble), each rising and
+   fading in turn like an ellipsis being thought. SVG circles, so they stay round at any size. */
 .dots {
-  position: absolute; left: 0.58em; top: 0.2em; display: flex; gap: 0.04em;
+  position: absolute; left: 0.58em; top: 0.2em; display: block;
   opacity: 0; transition: opacity 0.25s;
 }
 .dots[data-on] { opacity: 1; }
-.dots i { display: block; width: 0.045em; height: 0.045em; min-width: 2px; min-height: 2px; border-radius: 50%; background: #1c1917; animation: think 1.4s ease-in-out infinite; }
-.dots i:nth-child(2) { animation-delay: 0.2s; }
-.dots i:nth-child(3) { animation-delay: 0.4s; }
-@keyframes think { 0%, 70%, 100% { opacity: 0.2; transform: none; } 35% { opacity: 0.85; transform: translateY(-0.03em); } }
+.dots svg { display: block; width: 0.275em; height: 0.075em; overflow: visible; }
+.dots circle { fill: #1c1917; animation: think 1.4s ease-in-out infinite; }
+.dots circle:nth-child(2) { animation-delay: 0.2s; }
+.dots circle:nth-child(3) { animation-delay: 0.4s; }
+@keyframes think { 0%, 70%, 100% { opacity: 0.2; transform: none; } 35% { opacity: 0.85; transform: translateY(-1.5px); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .bubble { transition: opacity 0.2s; transform: none; }
-  .bubble i, .dots i { animation: none; opacity: 0.7; }
+  .dots circle { animation: none; opacity: 0.7; }
 }

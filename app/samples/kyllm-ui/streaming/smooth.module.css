@@ -1,0 +1,8 @@
+/* SmoothText's caret: a thin coral bar that fades in, then blinks. */
+.pipe {
+  display: inline-block; width: 2px; height: 1.05em; margin-left: 2px; vertical-align: -0.15em; border-radius: 1px; background: var(--coral, #f5482d);
+  animation: fade 0.15s ease-out both, blink 1s steps(2, start) 0.5s infinite;
+}
+@keyframes fade { from { opacity: 0; } }
+@keyframes blink { to { visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .pipe { animation: none; } }

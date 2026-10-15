@@ -272,7 +272,7 @@ export function CountdownR3() {
 const MOODS: [Mood, string, string][] = [
   ["idle", "Idle", "Breathes, blinks, the leaf sways"],
   ["typing", "Visitor is typing", "Looks down at the composer and follows the text"],
-  ["working", "In progress", "Looks up at a thought bubble of dots, pondering"],
+  ["working", "In progress", "Looks up and ponders, three dots rising beside it"],
   ["answered", "Answered", "After the stream ends: one hop, happy eyes"],
   ["sorry", "Sorry", "Sighs, slumps, shakes its head; ears fold"],
 ];
@@ -309,7 +309,7 @@ export function ThinkingR3() {
   return (
     <div className={r.thinking}>
       <div className={r.turn}>
-        <KyllmLive mood={mood} size={64} />
+        <KyllmLive mood={mood} size={64} touch />
         <div><small>One turn, on a loop</small><b>{label}</b><em>{MOODS.find(([m]) => m === mood)?.[1]}</em></div>
       </div>
       <div className={r.moods}>
@@ -325,7 +325,6 @@ const WORK: [WorkStyle, string, string, boolean?][] = [
   ["ponder", "Pondering with dots", "Eyes up, glancing between spots, a slow sway; three dots rise in turn beside it, no bubble.", true],
   ["orbit", "Eyes circling", "The pupils circle the top of the lenses like a slow spinner."],
   ["leaf", "Leaf ticking", "Eyes up and still; the leaf flicks every 0.6 s like a metronome."],
-  ["bubble", "Thought bubble", "A small bubble of dots in the sky, inside the circle (the last round)."],
 ];
 
 /** In progress, four ways, each at chat size and large. */
@@ -370,18 +369,30 @@ export function SorryR3() {
 }
 
 /** The animated avatar for server-rendered parts of the page. */
-export const LiveAvatar = ({ mood = "idle", size = 64 }: { mood?: Mood; size?: number }) => <KyllmLive mood={mood} size={size} />;
+export const LiveAvatar = ({ mood = "idle", size = 64, touch = true }: { mood?: Mood; size?: number; touch?: boolean }) => <KyllmLive mood={mood} size={size} touch={touch} />;
+
+/** Pet and boop at the sizes KYLLM appears, plus the full figure; the dock's button boops it on click. */
+export function TouchR3() {
+  return (
+    <>
+      {[32, 36, 64, 96].map((px) => <div key={px} className={r.touch}><KyllmLive touch size={px} /><small>{px}px</small></div>)}
+      <div className={r.touch}><KyllmLive touch variant="full" size={120} /><small>Full</small></div>
+    </>
+  );
+}
 
 /* ---------------------------------- dock --------------------------------- */
 /** Pick A: idle while it waits; on hover it hops and looks up at the cursor, and the site cursor turns to a hand. */
 function DockA() {
   const [hover, setHover] = useState(false);
   const [poke, setPoke] = useState(0);
+  const [boop, setBoop] = useState(0);
   const on = hover;
   return (
     <button type="button" className={r.dock} data-hover={on ? "" : undefined}
-      onMouseEnter={() => { setHover(true); setPoke((p) => p + 1); }} onMouseLeave={() => setHover(false)}>
-      <KyllmLive mood={on ? "hover" : "idle"} size={32} poke={poke} />Ask KYLLM<Kbd tip="Open KYLLM">⌘K</Kbd>
+      onMouseEnter={() => { setHover(true); setPoke((p) => p + 1); }} onMouseLeave={() => setHover(false)}
+      onPointerDown={() => setBoop((b) => b + 1)}>
+      <KyllmLive mood={on ? "hover" : "idle"} size={32} poke={poke} boop={boop} />Ask KYLLM<Kbd tip="Open KYLLM">⌘K</Kbd>
     </button>
   );
 }

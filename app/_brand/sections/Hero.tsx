@@ -36,7 +36,7 @@ export function Hero({ portrait, aligned, extra, strip, tools }: { portrait?: Re
             <h1 className={b.h1}>I build <span className={b.accent}>AI agents</span>, data pipelines, and cloud infrastructure.</h1>
             <p className={`${b.sub} ${s.heroSub}`}>{sample.hero.subhead}</p>
             <div className={s.heroCta}>
-              <Button href={sample.hero.primaryCta.href}>Get in Touch →</Button>
+              <Button href={sample.hero.primaryCta.href} contact>Get in Touch →</Button>
               <Button variant="secondary" href={sample.cvUrl} download>↓ Download CV</Button>
             </div>
             <div className={`${b.contact} ${s.heroLinks}`}>

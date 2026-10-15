@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type KeyboardEvent, type PointerEvent } from "react";
 import { Kyllm } from "./Kyllm";
 import l from "./live.module.css";
 
@@ -39,16 +39,31 @@ import l from "./live.module.css";
  *          shape always agrees with where it looks
  *
  * Moods follow the chat: idle; typing looks down at the composer and follows
- * the text as it grows; working looks up at a thought bubble of dots and
+ * the text as it grows; working looks up and
  * ponders with three dots rising in the sky beside it, no bubble; answered (after the stream ends) does the big hop with happy eyes;
  * sorry keeps its ears as drawn and acts with body, leaf, glasses, and eyes, in one of
  * four styles (SorryStyle); hover looks up at the cursor. Each `poke` change fires a small hop. Reduced motion holds each
  * mood's pose, with no motion.
+ *
+ * Touch (`touch`, or a `boop` counter from a parent button), in any mood, inside the
+ * avatar-animation skill's rules: squash and lean only, the body never moves in the circle.
+ *   boop   a click, tap, Enter, or Space presses KYLLM: 60 ms squash, held 60 ms, released
+ *          into the body spring, which overshoots into a stretch. The spring is stiffer during
+ *          the press, so the squash answers the click at once, and damped harder after the
+ *          release, so it settles in about 0.5 s instead of ringing. The eyes go happy
+ *          (squeezed shut) for 0.85 s, or 0.5 s in a busy mood (typing, working, sorry).
+ *          The press tips it away from where it was pressed, so it wobbles back. Quick boops press a little
+ *          deeper each time; the fourth in a row gets a giggle (a quick side-to-side wobble).
+ *   pet    with the pointer over it, the eyes glance at the pointer (180 ms glances). A
+ *          stroke across it turns the eyes happy, relaxes the body a little lower with a
+ *          slow content breath, and leans it the way the stroke goes.
+ * The mood keeps running underneath, so when a boop settles KYLLM is back in its mood
+ * (still pondering, still sorry). Reduced motion keeps only the happy eyes.
  */
 
 export type Mood = "idle" | "typing" | "working" | "answered" | "sorry" | "hover";
-/** How "working" shows: a thought bubble of dots, pondering glances, eyes circling, or the leaf ticking. */
-export type WorkStyle = "bubble" | "ponder" | "orbit" | "leaf";
+/** How "working" shows: pondering glances beside three rising dots, eyes circling, or the leaf ticking. */
+export type WorkStyle = "ponder" | "orbit" | "leaf";
 /** How "sorry" shows: a sigh, a head shake, shrinking back sheepishly, or an apologetic bow. Ears never change. */
 export type SorryStyle = "sigh" | "shake" | "shrink" | "bow";
 
@@ -108,6 +123,16 @@ const GLANCE = 0.18;
 const BLINK = [0.033, 0.067, 0.033];
 
 
+/** The boop: a quick press (60 ms in, 60 ms held, 80 ms out); the body spring makes the overshoot. */
+function press(d: number, depth: number) {
+  if (d < 0) return 0;
+  if (d < 0.06) return -depth * ease(d / 0.06);
+  if (d < 0.12) return -depth;
+  if (d < 0.2) return lerp(-depth, 0, ease((d - 0.12) / 0.08));
+  return 0;
+}
+const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
+
 /** BEAT_30's command at `d` seconds in: crouch 160 ms, hold 30, rise 50, push 30, fall 80. */
 function beat(d: number, crouch = 0.105, push = 0.055, k = 1) {
   const T = [0.16, 0.03, 0.05, 0.03, 0.08].map((x) => x * k);
@@ -152,8 +177,12 @@ function addGlint(glasses: SVGGraphicsElement): SVGGraphicsElement {
   return g;
 }
 
-export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avatar", work = "ponder", sorry = "bow", hold = false }: {
+export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avatar", work = "ponder", sorry = "bow", hold = false, touch = false, boop = 0 }: {
   mood?: Mood; size?: number; poke?: number; variant?: "avatar" | "full"; work?: WorkStyle; sorry?: SorryStyle; hold?: boolean;
+  /** KYLLM itself is a button: hover to pet, click, tap, Enter, or Space to boop. */
+  touch?: boolean;
+  /** Each change boops KYLLM, for when a parent button owns the click. */
+  boop?: number;
 }) {
   const holdRef = useRef(hold);
   useEffect(() => { holdRef.current = hold; }, [hold]);
@@ -168,6 +197,43 @@ export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avata
 
   useEffect(() => { moodRef.current = mood; moodAt.current = performance.now() / 1000; }, [mood]);
   useEffect(() => { if (poke) pokeAt.current = performance.now() / 1000; }, [poke]);
+
+  // touch state, read by the frame loop: the last boop, how many in a row, and the pointer over it
+  const tap = useRef({ at: -10, combo: 0, depth: 0.085, joy: 0.86, kick: 0, over: false, gx: 0, gy: 0, energy: 0, vx: 0, px: -1, py: -1 });
+  const pressKyllm = (side: number) => {
+    const t = tap.current, now = performance.now() / 1000;
+    t.combo = now - t.at < 0.9 ? t.combo + 1 : 1;
+    t.at = now;
+    t.depth = Math.min(0.13, 0.085 + 0.015 * (t.combo - 1));
+    const calm = moodRef.current === "idle" || moodRef.current === "hover" || moodRef.current === "answered";
+    t.joy = t.combo >= 4 ? 1.5 : calm ? 0.86 : 0.5;
+    // pressed left of centre it tips right, and the other way round; a centre press alternates
+    t.kick += (Math.abs(side) < 0.2 ? (t.combo % 2 ? 0.6 : -0.6) : -side) * 160;
+  };
+  useEffect(() => { if (boop) pressKyllm(0); }, [boop]);
+  const where = (e: PointerEvent<HTMLSpanElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    return [(e.clientX - (r.left + r.width / 2)) / (r.width / 2), (e.clientY - (r.top + r.height / 2)) / (r.height / 2)];
+  };
+  const touchProps = touch ? {
+    role: "button", tabIndex: 0, "aria-label": "KYLLM. Press to boop.", "data-touch": "",
+    onPointerEnter: (e: PointerEvent<HTMLSpanElement>) => { if (e.pointerType !== "touch") tap.current.over = true; },
+    onPointerLeave: () => { const t = tap.current; t.over = false; t.px = -1; },
+    onPointerMove: (e: PointerEvent<HTMLSpanElement>) => {
+      const t = tap.current, [x, y] = where(e);
+      t.gx = clamp(x, -1, 1); t.gy = clamp(y, -1, 1);
+      if (t.px >= 0) {
+        const dx = e.clientX - t.px, dy = e.clientY - t.py;
+        t.energy = Math.min(2, t.energy + (Math.hypot(dx, dy) / size) * 0.6);
+        t.vx = lerp(t.vx, clamp((dx / size) * 8, -1, 1), 0.3);
+      }
+      t.px = e.clientX; t.py = e.clientY;
+    },
+    onPointerDown: (e: PointerEvent<HTMLSpanElement>) => pressKyllm(where(e)[0]),
+    onKeyDown: (e: KeyboardEvent<HTMLSpanElement>) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (!e.repeat) pressKyllm(0); }
+    },
+  } : {};
 
   useEffect(() => {
     // the rig's markup is set as inner HTML, which hydration can replace after this
@@ -264,7 +330,7 @@ export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avata
           if (n !== lastTick) { lastTick = n; thv += n % 2 ? 220 : -220; }
           u += -0.008 * Math.exp(-((since % 0.6) / 0.08));
         } else {
-          // ponder (and bubble): eyes up, small glances between three spots, a slow sway
+          // ponder: eyes up, small glances between three spots, a slow sway
           const n = Math.floor(since / 1.4);
           const spots = [[0.55, -0.85], [0.35, -0.95], [0.65, -0.7]];
           gaze = look(spots[n % 3][0], spots[n % 3][1]);
@@ -316,21 +382,46 @@ export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avata
       }
       u += beat(now - pokeAt.current, 0.07, 0.045, 0.8);
 
+      // ---- touch: the boop presses and wobbles; a stroke pets
+      const tp = tap.current;
+      let settle = 0, stiff = 1;
+      const db = now - tp.at;
+      if (db >= 0 && db < 1.6) {
+        u += press(db, tp.depth);
+        if (db > 0.02 && db < tp.joy) happy = true;
+        if (db < 0.2) stiff = 1.7; // a press answers the click at once
+        else if (db < 1.2) settle = 0.2;
+        if (tp.combo >= 4 && db < 0.7) rockTo += 4 * Math.sin((2 * Math.PI * db) / 0.35) * (1 - db / 0.7);
+      }
+      tp.energy *= Math.exp(-dt / 0.35);
+      tp.vx *= Math.exp(-dt / 0.2);
+      if (tp.over) {
+        gaze = look(tp.gx, tp.gy);
+        key = `pet:${Math.round(tp.gx * 3)},${Math.round(tp.gy * 3)}`;
+        if (tp.energy > 0.5) {
+          happy = true;
+          u += -0.015 + 0.006 * Math.sin((2 * Math.PI * t) / 0.9);
+          rockTo += tp.vx * 5;
+        }
+      }
+
       if (key !== toKey) { from = [[...eyes[0]], [...eyes[1]]]; to = gaze; toKey = key; glanceAt = now; }
 
       const frozen = still.matches || holdRef.current;
       if (frozen) {
+        tap.current.kick = 0;
         s = m === "sorry" ? -0.03 : 0; sv = 0; th = m === "sorry" ? -14 : 0; gy = 0; gd = m === "sorry" && sorryRef.current === "shrink" ? 16 : 0; rock = 0;
         eyes[0] = [...gaze[0]]; eyes[1] = [...gaze[1]];
       } else {
-        const sa = BODY.w ** 2 * (u - s) - 2 * BODY.z * BODY.w * sv;
+        const bw = BODY.w * stiff;
+        const sa = bw ** 2 * (u - s) - 2 * (BODY.z + settle) * bw * sv;
         sv += sa * dt; s += sv * dt;
         const tha = LEAF.w ** 2 * (leafRest - th) - 2 * LEAF.z * LEAF.w * thv - LEAF.push * sa;
         thv += tha * dt; th += thv * dt;
         if (th < LEAF.stop) { th = LEAF.stop; thv = Math.abs(thv) * 0.3; }
         const rw = 2 * Math.PI * 3;
         const ra = rw ** 2 * (rockTo - rock) - 2 * 0.45 * rw * rockv;
-        rockv += ra * dt; rock += rockv * dt;
+        rockv += ra * dt + tap.current.kick; tap.current.kick = 0; rock += rockv * dt;
         const ga = GLASS.w ** 2 * (-GLASS.lag * s - gy) - 2 * GLASS.z * GLASS.w * gyv;
         gyv += ga * dt; gy += gyv * dt;
         const gda = (2 * Math.PI * 3) ** 2 * (glassDrop - gd) - 2 * 0.5 * (2 * Math.PI * 3) * gdv;
@@ -387,12 +478,26 @@ export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avata
   }, []);
 
   return (
-    <span ref={wrap} className={l.wrap} style={{ fontSize: size }}>
+    <span ref={wrap} className={variant === "avatar" ? `${l.wrap} ${l.roundFocus}` : l.wrap} style={{ fontSize: size }} {...touchProps}>
       <Kyllm still variant={variant} size={size} state="idle" />
       <span className={variant === "avatar" ? `${l.layer} ${l.round}` : l.layer} aria-hidden="true">
-        <span className={l.bubble} data-on={mood === "working" && work === "bubble" ? "" : undefined}><i /><i /><i /></span>
-        <span className={l.dots} data-on={mood === "working" && work === "ponder" ? "" : undefined}><i /><i /><i /></span>
+        <span className={l.dots} data-on={mood === "working" && work === "ponder" ? "" : undefined}><Dots /></span>
       </span>
     </span>
+  );
+}
+
+/**
+ * Three dots as SVG circles. HTML boxes with border-radius are snapped to whole device pixels, so at avatar
+ * sizes a 2 px dot came out as a 2 x 2 or 3 x 2 block and read as a square; an SVG circle is drawn at its
+ * true size with antialiased edges, so it stays round at every size and pixel ratio.
+ */
+function Dots() {
+  return (
+    <svg viewBox="0 0 11 3" aria-hidden="true">
+      <circle cx="1.5" cy="1.5" r="1.5" />
+      <circle cx="5.5" cy="1.5" r="1.5" />
+      <circle cx="9.5" cy="1.5" r="1.5" />
+    </svg>
   );
 }

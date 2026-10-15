@@ -90,10 +90,6 @@
 .degree { font-size: 14px; color: var(--ink-2); }
 
 /* ----------------------------- github ----------------------------- */
-.ghWrap { padding: 6px var(--gutter) 34px; }
-.ghGrid { display: grid; grid-template-columns: repeat(53, minmax(0, 1fr)); grid-template-rows: repeat(7, 10px); grid-auto-flow: column; gap: 3px; }
-.ghGrid i { display: block; background: var(--raw); }
-.ghFoot { display: flex; justify-content: space-between; gap: 16px; margin-top: 12px; font-size: 11.5px; color: var(--ink-3); }
 .ghFallback { padding: 6px var(--gutter) 34px; font-size: 14.5px; color: var(--ink-2); }
 
 /* A page that names its content column `content` (a container) gets these

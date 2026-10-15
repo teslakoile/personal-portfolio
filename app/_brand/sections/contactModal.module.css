@@ -1,0 +1,51 @@
+/* The Get in Touch modal (ContactModal.tsx): a floating layer on radius-float
+   with shadow-float. One ruled row per channel: its icon and the address as
+   the link, the handle in ink and the generic rest in ink-3. */
+
+.layer { position: fixed; inset: 0; z-index: 1000; display: flex; justify-content: center; align-items: flex-start; padding: 18vh 16px 16px; }
+.backdrop { position: absolute; inset: 0; background: rgb(28 25 23 / 0.26); backdrop-filter: blur(2px); }
+.shell { position: relative; width: min(400px, 100%); transform-origin: 50% 0; }
+.panel { overflow: hidden; background: var(--surface); border-radius: 14px; box-shadow: var(--float); color: var(--ink); }
+/* the panel takes focus on open only to start the reading order; it draws no ring */
+.panel:focus, .panel:focus-visible, .shell .panel:focus-visible { outline: none; }
+
+.title { margin: 0; padding: 18px 20px 14px; font-size: 16px; font-weight: 500; letter-spacing: -0.015em; }
+
+/* ---------------------------------- rows --------------------------------- */
+.rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.row { position: relative; display: flex; align-items: center; }
+.row + .row { border-top: 1px solid var(--line); }
+.row > a {
+  flex: 1; min-width: 0; display: flex; align-items: center; gap: 13px; height: 50px; padding: 0 50px 0 20px;
+  color: var(--ink); text-decoration: none; transition: background 0.15s;
+}
+.row > a:hover { background: var(--sunk); }
+/* plain glyphs in ink-3, like the page's contact icons; logos keep their colours */
+.icon { display: grid; place-items: center; width: 18px; height: 18px; flex: none; color: var(--ink-3); }
+.icon svg { width: 16px; height: 16px; }
+.icon img { width: 16px; height: 16px; }
+.text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; font-variant-numeric: tabular-nums; }
+.text [data-muted] { color: var(--ink-3); transition: color 0.15s; }
+.row > a:hover .text [data-muted] { color: var(--ink-2); }
+
+/* the open arrow waits for hover or focus; the copy icons stay */
+.end { position: absolute; right: 19px; color: var(--ink-3); opacity: 0; transition: opacity 0.15s, transform 0.15s, color 0.15s; }
+.row > a:hover .end, .row > a:focus-visible .end { opacity: 1; color: var(--ink); transform: translate(1px, -1px); }
+.copy {
+  position: absolute; right: 12px; top: 50%; display: grid; place-items: center; width: 30px; height: 30px; padding: 0; border: 0;
+  border-radius: 50%; background: none; color: var(--ink-4); cursor: pointer; transform: translateY(-50%); transition: background 0.15s, color 0.15s;
+}
+.copy:hover { background: var(--line); color: var(--ink); }
+.copy[data-on] { color: var(--coral); }
+.copy::after {
+  content: attr(data-tip); position: absolute; bottom: calc(100% + 6px); left: 50%; z-index: 5; padding: 3px 8px; border-radius: 6px;
+  background: var(--ink); color: #fff; font-size: 11.5px; white-space: nowrap; pointer-events: none;
+  opacity: 0; transform: translate(-50%, 3px); transition: opacity 0.15s, transform 0.15s;
+}
+.copy:hover::after, .copy[data-on]::after { opacity: 1; transform: translate(-50%, 0); }
+
+@media (max-width: 480px) {
+  .layer { align-items: flex-end; padding: 0; }
+  .shell { width: 100%; }
+  .panel { border-radius: 14px 14px 0 0; padding-bottom: env(safe-area-inset-bottom); }
+}

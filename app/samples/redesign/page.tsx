@@ -16,6 +16,7 @@ import { Community } from "../../_brand/sections/Community";
 import { Recognition } from "../../_brand/sections/Recognition";
 import { GitHub } from "../../_brand/sections/GitHub";
 import { AskPanel } from "../../_brand/sections/AskPanel";
+import { ContactModal } from "../../_brand/sections/ContactModal";
 import s from "./redesign.module.css";
 
 /**
@@ -25,6 +26,8 @@ import s from "./redesign.module.css";
  * and the Ask KYLLM panel. Writing, Recommendations, and Resources stay off
  * the page until their content is real, as on the landing page's flags. The
  * single-section view of Certifications lives at /samples/redesign/certifications.
+ * The rail is the ruled one (picked 2026-10-15), and both Get in Touch buttons
+ * open the contact modal.
  */
 export const metadata: Metadata = {
   title: "Redesign | Kyle Naranjo",
@@ -49,6 +52,7 @@ export default function RedesignPage() {
       <MotionRoot>
         <Cursor />
         <AskPanel />
+        <ContactModal />
         <div className={s.page}>
           <div className={s.railWrap}>
             <Rail
@@ -56,7 +60,9 @@ export default function RedesignPage() {
               items={SECTIONS}
               active="about"
               utils={[{ label: "Ask KYLLM", keys: ["⌘", "K"] }]}
-              foot={<Button href={sample.hero.primaryCta.href}>Get in Touch</Button>}
+              sound
+              variant="ruled"
+              foot={<Button href={sample.hero.primaryCta.href} contact>Get in Touch</Button>}
             />
           </div>
           <main className={s.main}>
