@@ -2,9 +2,10 @@
 
 import { ArrowUp } from "lucide-react";
 import { useEffect, useEffectEvent, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from "react";
-import { AnswerActions, Avatar, Cite, Highlights, Kbd, PanelHeader, Pill, LatestIcon } from "../kit";
+import { AnswerActions, Cite, Highlights, Kbd, PanelHeader, Pill, LatestIcon } from "../kit";
 import { AGENTS_RUN, OPENING_RUN, TALKS_RUN } from "../HeroChat";
 import { MCP_RUN, Steps, type StepData } from "../Steps";
+import { KyllmLive, type Mood } from "../rig/KyllmLive";
 import s from "../kyllm.module.css";
 import h from "../hero.module.css";
 import d from "./demo.module.css";
@@ -19,6 +20,12 @@ import d from "./demo.module.css";
  *   next     follow-up chips rise in
  * Autoplay types the first question, then picks a follow-up chip, then loops.
  * Typing or clicking anything hands control to the visitor.
+ *
+ * Every KYLLM in the panel is live and clickable (KyllmLive touch): the header,
+ * the greeting, and each answer. The newest answer's KYLLM follows its turn
+ * (working through the steps, answered once the reply is in); a boop plays on top
+ * of whatever it is doing, and the mood carries on underneath, so it resumes as
+ * soon as the boop settles. Booping never takes over the autoplay.
  */
 
 type Seg = string | { cite: number };
@@ -26,6 +33,10 @@ type Tok = { w: string } | { cite: number };
 type Script = { steps: StepData[]; text: Seg[]; tiles?: boolean; sources?: [string, string][]; next: string[] };
 type Stage = "sent" | "steps" | "fold" | "stream" | "blocks" | "done";
 type Beat = "idle" | "typing" | "sent" | "steps" | "stream" | "blocks" | "next";
+
+/** The answer avatar's mood: working through the steps, answered once the reply is in; older turns idle. */
+const turnMood = (stage: Stage, latest: boolean): Mood =>
+  !latest ? "idle" : stage === "steps" || stage === "fold" ? "working" : stage === "blocks" || stage === "done" ? "answered" : "idle";
 
 const OPEN = "Give me the 30-second version of Kyle.";
 const MCP = "How does the MCP server work?";
@@ -107,8 +118,8 @@ const BEATS: [Beat, string, string][] = [
   ["next", "Follow-ups", "Suggested questions rise in. Autoplay picks one, and you can too."],
 ];
 
-function TurnView({ q, script, pace, rate, onBeat, onFinish, onMeter }: {
-  q: string; script: Script; pace: Pace; rate: number; onBeat: (b: Beat) => void; onFinish: () => void; onMeter: (m: Meter) => void;
+function TurnView({ q, script, pace, rate, latest, onBeat, onFinish, onMeter }: {
+  q: string; script: Script; pace: Pace; rate: number; latest: boolean; onBeat: (b: Beat) => void; onFinish: () => void; onMeter: (m: Meter) => void;
 }) {
   const [stage, setStage] = useState<Stage>("sent");
   const [toks] = useState(() => tokenize(script.text));
@@ -168,7 +179,7 @@ function TurnView({ q, script, pace, rate, onBeat, onFinish, onMeter }: {
       <div className={`${s.user} ${d.userIn}`}>{q}</div>
       {stage === "sent" ? null : (
         <div className={h.answer}>
-          <Avatar size={36} />
+          <span className={d.av}><KyllmLive touch size={36} mood={turnMood(stage, latest)} /></span>
           <div className={h.answerBody}>
             <Steps v="waterfall" steps={script.steps} play={1} rate={rate} onDone={() => setStage("fold")} />
             {showText ? (
@@ -325,16 +336,16 @@ function Chat({ auto, pace, rate, controls, onTakeOver, onReplay }: {
   return (
     <>
       <div ref={panel} className={h.panel} style={{ height: 680, alignSelf: "start" }}>
-        <PanelHeader />
+        <PanelHeader avatar={<KyllmLive touch size={32} />} />
         <div className={h.scrollWrap} data-scrolled={scrolled ? "" : undefined}>
           <div ref={scroller} className={h.scroll} onScroll={onScroll} onWheel={(e) => { if (e.deltaY < 0) leave(); }} onTouchMove={leave}>
             <div ref={thread} className={h.thread}>
               <div className={h.answer}>
-                <Avatar size={36} />
+                <span className={d.av}><KyllmLive touch size={36} mood={!turns.length && beat === "typing" ? "typing" : "idle"} /></span>
                 <div className={h.answerBody}><p>Hi, I&apos;m KYLLM. Ask me about Kyle&apos;s work, and I&apos;ll answer from his CV and link where each fact comes from.</p></div>
               </div>
-              {turns.map((t) => (
-                <TurnView key={t.id} q={t.q} script={SCRIPTS[t.key]} pace={pace} rate={rate} onBeat={setBeat} onFinish={finished} onMeter={setMeter} />
+              {turns.map((t, i) => (
+                <TurnView key={t.id} q={t.q} script={SCRIPTS[t.key]} pace={pace} rate={rate} latest={i === turns.length - 1} onBeat={setBeat} onFinish={finished} onMeter={setMeter} />
               ))}
             </div>
           </div>
