@@ -34,7 +34,7 @@ const TECH_TO_KEY: Record<string, string> = {
   Terraform: "terraform",
   AWS: "aws",
   Azure: "azure",
-  "Azure AI Services": "azure",
+  "Azure AI Foundry": "azure",
   GCP: "googlecloud",
   "Vertex AI": "googlecloud",
   // extended

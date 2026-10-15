@@ -162,7 +162,9 @@
   border-radius: var(--r-chip);
 }
 
-.chipLogo { flex: none; width: 14px; height: 14px; object-fit: contain; }
+/* height-led so a wordmark (AWS, SQLAlchemy) keeps its width instead of
+   shrinking into a 14px square */
+.chipLogo { flex: none; height: 14px; width: auto; max-width: 34px; object-fit: contain; }
 
 .kbd {
   display: inline-block;

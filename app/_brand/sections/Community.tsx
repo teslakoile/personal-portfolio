@@ -6,7 +6,7 @@ import s from "./sections.module.css";
 /** Community and Speaking: the GDG Davao figures as plain numbers (no blocks,
     per Kyle on 2026-10-05) beside the talks. Both read from sampleContent.ts. */
 export function Community({ num }: { num?: string }) {
-  const gdg = sample.community[0];
+  const [gdg, shapers] = sample.community;
   const stats = gdg.stats ?? [];
   return (
     <Row id="community">
@@ -21,6 +21,11 @@ export function Community({ num }: { num?: string }) {
           <div className={b.stats} style={{ marginTop: 10 }}>
             {stats.map((x) => <Stat key={x.label} figure={x.fig} label={x.label} />)}
           </div>
+          <a className={s.orgRow} href={shapers.url} target="_blank" rel="noreferrer">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={shapers.logo} alt="" />
+            <span><b>{shapers.name}</b>{shapers.role} · {shapers.period}</span>
+          </a>
         </div>
         <div>
           <span className={b.label}>Talks</span>

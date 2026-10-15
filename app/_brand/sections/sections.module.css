@@ -12,8 +12,15 @@
 
 /* an organization's mark beside its name */
 .orgLogo { display: inline-block; height: 16px; width: auto; max-width: 40px; margin-right: 7px; vertical-align: -2px; object-fit: contain; }
-.orgLabel { display: flex; align-items: center; gap: 8px; }
-.orgLabel img { flex: none; height: 16px; width: auto; max-width: 40px; object-fit: contain; }
+.orgLabel { display: flex; align-items: center; gap: 8px; height: 24px; }
+.orgLabel img { flex: none; height: 16px; width: auto; max-width: 44px; object-fit: contain; }
+
+/* a second community under the first one's figures */
+.orgRow { display: flex; align-items: center; gap: 14px; margin-top: 8px; padding: 16px 0 0; border-top: 1px dashed var(--line); color: var(--ink); text-decoration: none; }
+.orgRow img { flex: none; height: 30px; width: auto; max-width: 56px; object-fit: contain; }
+.orgRow b { display: block; font-size: 15px; font-weight: 500; }
+.orgRow span { font-size: 13.5px; color: var(--ink-2); }
+.orgRow:hover b { color: var(--coral-ink); }
 
 .cardTitle { margin: 8px 0 0; }
 .lede { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink); }

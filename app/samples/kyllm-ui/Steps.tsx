@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
+import { ArrowUpRight, BookOpen, Check, PenLine, Terminal, type LucideIcon } from "lucide-react";
 import { Loading } from "../states/States";
 import { ASK_VERBS } from "../states/verbs";
 import t from "./steps.module.css";
@@ -27,11 +28,11 @@ type Phase = "working" | "done";
 type Cat = "think" | "tool" | "write" | "check";
 type RowState = "done" | "live" | "wait";
 
-export const CATS: Record<Cat, { label: string; icon: string }> = {
-  think: { label: "Thinking", icon: "M2 5h6a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H2zM22 5h-6a3 3 0 0 0-3 3v11a2 2 0 0 1 2-2h7z" },
-  tool: { label: "Tool use", icon: "M4 17l6-6-6-6M12 19h8" },
-  write: { label: "Writing", icon: "M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" },
-  check: { label: "Checking", icon: "M20 6L9 17l-5-5" },
+export const CATS: Record<Cat, { label: string; icon: LucideIcon }> = {
+  think: { label: "Thinking", icon: BookOpen },
+  tool: { label: "Tool use", icon: Terminal },
+  write: { label: "Writing", icon: PenLine },
+  check: { label: "Checking", icon: Check },
 };
 
 export type StepData = { cat: Cat; text: string; meta: string; section?: string; ms: number };
@@ -54,9 +55,10 @@ const toRun = (steps: StepData[]): Run => ({
 const sec = (ms: number) => `${(ms / 1000).toFixed(1)}s`;
 
 export function CatIcon({ cat, state = "done", size = 22 }: { cat: Cat; state?: RowState; size?: number }) {
+  const Icon = CATS[cat].icon;
   return (
     <span className={t.cat} data-cat={cat} data-state={state} style={{ "--s": `${size}px` } as CSSProperties} title={CATS[cat].label}>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d={CATS[cat].icon} /></svg>
+      <Icon aria-hidden="true" />
     </span>
   );
 }
@@ -121,7 +123,7 @@ function Row({ v, run, i, state, span, liveMs }: { v: StepsVariant; run: Run; i:
         </>
       ) : v === "sources" ? (
         s.section && state !== "wait"
-          ? <a className={t.src} href="#" onClick={(e) => e.preventDefault()}>{s.section}<span aria-hidden="true">↗</span></a>
+          ? <a className={t.src} href="#" onClick={(e) => e.preventDefault()}>{s.section}<ArrowUpRight size={13} strokeWidth={2} aria-hidden="true" /></a>
           : <em>{state === "done" ? s.meta : ""}</em>
       ) : (
         <em>{state === "done" ? s.meta : ""}</em>
