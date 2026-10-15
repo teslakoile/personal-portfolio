@@ -28,6 +28,7 @@ from scipy.interpolate import splev, splprep
 from skimage import measure, morphology
 
 HERE = Path(__file__).parent
+WORK = HERE / os.environ.get("KYLLM_WORK", ".")   # labels in, flat.* out; build/<pose> for a pose
 COL = {"body": "#f5482d", "leaf": "#7fb99a", "ink": "#1c1917"}
 
 # Small refinements on top of the leaf fit: width (x the measured width), bow
@@ -37,7 +38,7 @@ if os.environ.get("LEAF"):                    # e.g. LEAF="0.9,0.05,6,-12,4" to 
     _v = [float(x) for x in os.environ["LEAF"].split(",")]
     LEAF_WIDTH, LEAF_BOW, LEAF_TURN, LEAF_NUDGE = _v[0], _v[1], _v[2], (_v[3], _v[4])
 
-lab = np.asarray(Image.open(HERE / "labels.png"))
+lab = np.asarray(Image.open(WORK / "labels.png"))
 H, W = lab.shape
 body0, leaf0, ink = lab == 0, lab == 1, lab == 3
 _l = measure.label(morphology.opening(leaf0, morphology.disk(6)))
@@ -147,13 +148,30 @@ def bean_cat(M, open_r=70, k=4, fillet=36, tip=18, belly=BELLY):
     extra = measure.label(morphology.opening(M & ~bean, morphology.disk(4)))
     ears = np.argsort(np.bincount(extra.ravel())[1:])[::-1][:2] + 1
     U = bean.copy()
+    hulls = []
     for i in ears:
         e = extra == i
         hull = morphology.convex_hull_image(e | (morphology.dilation(e, morphology.disk(20)) & bean))
-        U |= morphology.opening(hull, morphology.disk(tip))
+        hulls.append(morphology.opening(hull, morphology.disk(tip)))
+        U |= hulls[-1]
     U = morphology.closing(U, morphology.disk(fillet))
     U = ndi.gaussian_filter(U.astype(float), 3) > 0.5
+    # The same body as separate parts, for animation (rig.py): the bean, and
+    # each ear with its fillet and a little of the bean under it, so an ear can
+    # turn about its base without opening a gap. Bean and ears together cover
+    # exactly the body above.
+    PARTS["bean"] = smooth_outline(ndi.gaussian_filter(bean.astype(float), 3) > 0.5)
+    for hull in sorted(hulls, key=lambda h: np.nonzero(h)[1].mean()):   # left ear first
+        part = U & morphology.dilation(hull, morphology.disk(fillet + 8))
+        ys, xs = np.nonzero(hull & bean)
+        base = np.array([xs.mean(), ys.min()], float)
+        ys, xs = np.nonzero(hull & ~bean)
+        tip_pt = np.array([xs, ys], float).T[np.argmax(np.hypot(xs - base[0], ys - base[1]))]
+        PARTS.setdefault("ears", []).append(dict(path=smooth_outline(part, n=300), base=base, tip=tip_pt))
     return smooth_outline(U)
+
+
+PARTS = {}
 
 
 def leaf_shape(mask, into, width=LEAF_WIDTH, bow=LEAF_BOW, turn=LEAF_TURN, nudge=LEAF_NUDGE):
@@ -229,8 +247,29 @@ for L in lenses:
     im = Image.new("1", (W, H))
     ImageDraw.Draw(im).polygon([tuple(p) for p in big], fill=1)
     rim_zone |= np.asarray(im)
+# Eyes that peek over the top rims (the curious pose) sit outside the lenses.
+# They are the compact ink pieces above a lens, once the rims are taken away.
+outer = np.zeros_like(ink)
+for L in lenses:
+    im = Image.new("1", (W, H))
+    ImageDraw.Draw(im).polygon([tuple(p) for p in ellipse_pts(L["c"], L["a"] + RIM + 2, L["b"] + RIM + 2, L["ang"])], fill=1)
+    outer |= np.asarray(im)
+peek = measure.label(morphology.opening(ink & ~outer, morphology.disk(3)))
+for i in range(1, peek.max() + 1):
+    m = peek == i
+    ys, xs = np.nonzero(m)
+    if m.sum() < 100 or max(np.ptp(xs), np.ptp(ys)) > RIM * 3.5:
+        continue
+    if any(ys.mean() < L["c"][1] - L["b"] * 0.5 and abs(xs.mean() - L["c"][0]) < L["a"] for L in lenses):
+        eyes.append(m)
+        inside |= morphology.dilation(m, morphology.disk(4))
 rest = morphology.remove_small_objects(ink & ~rim_zone & ~inside, max_size=60)
 sticks = [measure.label(rest) == i for i in range(1, measure.label(rest).max() + 1)]
+# The only stick besides the bridge is the temple arm, out past the left lens;
+# anything else (a stray shadow) is dropped.
+_left = min(L["c"][0] - L["a"] for L in lenses)
+sticks = [m for m in sticks if np.nonzero(m)[1].mean() < _left + RIM or
+          min(np.linalg.norm(np.array(ndi.center_of_mass(m))[::-1] - L["c"]) for L in lenses) < max(L["a"] for L in lenses) * 1.4]
 
 # Where the leaf's tip rests on the head, the head's top edge is hidden. In
 # each column, the head's top is the first coral pixel; if leaf sits right on
@@ -279,6 +318,7 @@ def nearest_on(L, p):
     return q[np.argmin(np.linalg.norm(q - p, axis=1))]
 
 
+EYES = []
 SHAPES = [
     ("body", "poly", bean_cat(body)),
     ("leaf", "poly", leaf_shape(leaf0 | under, 14)),
@@ -310,9 +350,30 @@ for m in sticks:
         b_ = nearest_on(L, b_)
     SHAPES.append(("ink", "cap", (a_, b_, RIM * 0.85)))
 # Eyes: filled ovals with the eye's own moments; the highlight is filled in.
+# A capsule eye is solid; an arc eye (a blink, a smile) is not, so it keeps
+# its own outline, smoothed, instead of being fitted as an oval.
 for m in eyes:
-    c, a, b, ang = ellipse(ndi.binary_fill_holes(m))
-    SHAPES.append(("ink", "oval", (c, a * 1.1, b * 1.1, ang)))   # same ~10% the rims lose to their soft shading
+    m = ndi.binary_fill_holes(m)
+    if m.sum() / morphology.convex_hull_image(m).sum() > 0.85:
+        c, a, b, ang = ellipse(m)
+        SHAPES.append(("ink", "oval", (c, a * 1.1, b * 1.1, ang)))   # same ~10% the rims lose to their soft shading
+    else:
+        # An arc: fit its centreline (the skeleton) with a parabola in the
+        # eye's own frame, and draw it as one round-capped stroke of the
+        # measured thickness.
+        sk = morphology.skeletonize(m)
+        pts, c, u, n, _ = pca(m)
+        ys, xs = np.nonzero(sk)
+        q = np.stack([xs, ys], 1) - c
+        sx, tx = q @ u, q @ n
+        if np.ptp(tx) > np.ptp(sx):          # the arc runs across the major axis of a squat eye
+            u, n, sx, tx = n, u, tx, sx
+        coef = np.polyfit(sx, tx, 2)
+        ss = np.linspace(np.percentile(sx, 1), np.percentile(sx, 99), 48)
+        line = c + np.outer(ss, u) + np.outer(np.polyval(coef, ss), n)
+        width = 2 * np.median(ndi.distance_transform_edt(m)[sk]) * 1.1
+        SHAPES.append(("ink", "arc", (line, width)))
+    EYES.append(SHAPES[-1])
 
 
 # ---------------------------------------------------------------- output
@@ -339,13 +400,18 @@ for name, kind, g in SHAPES:
         dr.polygon([tuple(p * SS) for p in cap_pts(*g)], fill=col)
     elif kind == "oval":
         dr.polygon([tuple(p * SS) for p in ellipse_pts(*g)], fill=col)
+    elif kind == "arc":
+        line, w = g
+        dr.line([tuple(p * SS) for p in line], fill=col, width=round(w * SS), joint="curve")
+        for p in (line[0], line[-1]):
+            dr.ellipse([*(p * SS - w * SS / 2), *(p * SS + w * SS / 2)], fill=col)
     else:
         c, a, b, ang, t = g
         dr.polygon([tuple(p * SS) for p in ellipse_pts(c, a + t / 2, b + t / 2, ang)], fill=col)
         dr.polygon([tuple(p * SS) for p in ellipse_pts(c, a - t / 2, b - t / 2, ang)], fill=(0, 0, 0, 0))
     canvas.alpha_composite(layer)
 flat = canvas.resize((W, H), Image.LANCZOS)
-flat.save(HERE / "flat.png", optimize=True)
+flat.save(WORK / "flat.png", optimize=True)
 
 
 def path(pts):
@@ -361,6 +427,9 @@ for name, kind, g in SHAPES:
     elif kind == "cap":
         a, b, w = g
         svg.append(f'<line x1="{a[0]:.1f}" y1="{a[1]:.1f}" x2="{b[0]:.1f}" y2="{b[1]:.1f}" stroke="{col}" stroke-width="{w:.1f}" stroke-linecap="round"/>')
+    elif kind == "arc":
+        line, w = g
+        svg.append(f'<path d="M{" L".join(f"{x:.1f} {y:.1f}" for x, y in line)}" fill="none" stroke="{col}" stroke-width="{w:.1f}" stroke-linecap="round" stroke-linejoin="round"/>')
     elif kind == "oval":
         c, a, b, ang = g
         svg.append(f'<ellipse cx="{c[0]:.1f}" cy="{c[1]:.1f}" rx="{a:.1f}" ry="{b:.1f}" transform="rotate({np.degrees(ang):.2f} {c[0]:.1f} {c[1]:.1f})" fill="{col}"/>')
@@ -368,5 +437,25 @@ for name, kind, g in SHAPES:
         c, a, b, ang, t = g
         svg.append(f'<ellipse cx="{c[0]:.1f}" cy="{c[1]:.1f}" rx="{a:.1f}" ry="{b:.1f}" transform="rotate({np.degrees(ang):.2f} {c[0]:.1f} {c[1]:.1f})" fill="none" stroke="{col}" stroke-width="{t:.1f}"/>')
 svg.append("</g></svg>")
-(HERE / "flat.svg").write_text("\n".join(svg))
+(WORK / "flat.svg").write_text("\n".join(svg))
 print(f"rim {RIM:.1f}px, bridge {BRIDGE:.1f}px, {len(eyes)} eyes, {len(sticks)} sticks; wrote flat.png, flat.svg")
+
+
+# Parts for rig.py, in the master's own pixel frame.
+import json
+
+
+def _j(g):
+    return [_j(x) for x in g] if isinstance(g, (tuple, list)) else (np.asarray(g).tolist() if hasattr(g, "tolist") else g)
+
+
+(WORK / "flat.json").write_text(json.dumps(dict(
+    size=[W, H],
+    bean=PARTS["bean"].tolist(),
+    ears=[dict(path=e["path"].tolist(), base=e["base"].tolist(), tip=e["tip"].tolist()) for e in PARTS["ears"]],
+    leaf=[_j(g) for n, k, g in SHAPES if n == "leaf"][0],
+    leaf_base=(np.asarray([_j(g) for n, k, g in SHAPES if n == "leaf"][0][0])).tolist(),
+    lenses=[dict(c=L["c"].tolist(), a=float(L["a"]), b=float(L["b"]), ang=float(L["ang"]), rim=RIM) for L in lenses],
+    sticks=[_j(g) for n, k, g in SHAPES if k == "cap"],
+    eyes=[dict(kind=k, g=_j(g)) for n, k, g in EYES],
+)))

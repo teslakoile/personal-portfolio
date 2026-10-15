@@ -1,0 +1,45 @@
+.controls { display: flex; padding: 8px var(--gutter) 16px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding: 0 var(--gutter) 36px; }
+.card { margin: 0; display: flex; flex-direction: column; gap: 14px; padding: 22px 20px 18px; background: var(--surface); border-radius: var(--r-float); box-shadow: var(--float); }
+.pair { display: flex; align-items: flex-end; justify-content: center; gap: 18px; }
+.card figcaption { display: flex; flex-direction: column; gap: 6px; }
+.head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.head b { font-weight: 600; }
+.when { font-size: 13.5px; color: var(--ink-2); }
+.rule { font-size: 12.5px; color: var(--ink-3); }
+.replay {
+  all: unset; cursor: pointer; align-self: flex-start; padding: 5px 12px; border-radius: var(--r-pill); background: var(--surface);
+  box-shadow: 0 0 0 1px var(--line); font-size: 13px; font-weight: 500;
+}
+.replay:hover { box-shadow: 0 0 0 1px var(--line-2); }
+.replay:focus-visible, .input:focus-visible { box-shadow: 0 0 0 1.5px var(--coral); }
+
+.input {
+  box-sizing: border-box; width: 100%; padding: 8px 12px; border: 0; border-radius: var(--r-chip); background: var(--bg, #fff);
+  box-shadow: 0 0 0 1px var(--line); font: inherit; font-size: 13.5px; color: var(--ink); outline: none;
+}
+.reply { min-height: 3.2em; font-size: 13.5px; color: var(--ink); }
+
+.stage {
+  position: relative; display: grid; place-items: center; height: 300px; margin: 0 var(--gutter) 36px; overflow: hidden;
+  background: var(--surface); border-radius: var(--r-float); box-shadow: 0 0 0 1px var(--line); touch-action: none;
+}
+.buddy { transform-origin: 50% 100%; pointer-events: none; }
+.stageNote { position: absolute; left: 16px; bottom: 12px; font-size: 12.5px; color: var(--ink-3); }
+
+.flow { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 24px; padding: 8px var(--gutter) 36px; }
+.flowStage { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 28px 24px 20px; background: var(--surface); border-radius: var(--r-float); box-shadow: var(--float); }
+.flowAvatar { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 360px; }
+.flowAvatar .input { color: var(--ink-3); }
+.flowSide { display: flex; flex-direction: column; gap: 14px; }
+.steps { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
+.steps li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 10px; border-radius: var(--r-chip); font-size: 13.5px; transition: background 0.15s; }
+.steps li span { font: 12.5px var(--mono); color: var(--ink-3); }
+.steps li[aria-current="step"] { background: var(--surface); box-shadow: 0 0 0 1.5px var(--coral); }
+
+@media (max-width: 1100px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .grid, .flow { grid-template-columns: minmax(0, 1fr); }
+}
