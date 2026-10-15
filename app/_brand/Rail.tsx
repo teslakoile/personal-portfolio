@@ -9,8 +9,9 @@ import { RailSound } from "./RailSound";
 /** Rail layouts. classic is the original. ruled (picked for the redesign on
     2026-10-15) cuts the rail into ruled rows like the page frame: the
     wordmark with the sound icon, one row per section with the active row
-    lifted onto surface, and the launchers and the foot pinned to the bottom
-    as ruled rows. Styles for ruled are in rail.module.css. */
+    lifted onto surface (it fills as a ripple from the click point), and the
+    launchers and the foot pinned to the bottom as ruled rows. Styles for
+    ruled are in rail.module.css. */
 export type RailVariant = "classic" | "ruled";
 
 /** Sidebar rail: wordmark, numbered nav with a coral tick on the active row,
@@ -40,7 +41,7 @@ export function Rail({ wordmark, items, active, utils, sound = false, foot, anim
         <a href="#" className={b.wordmark}>{wordmark}</a>
         {sound ? <RailSound icon /> : null}
       </div>
-      <RailNav items={items} active={active} animate={animate} />
+      <RailNav items={items} active={active} animate={animate} move="ripple" />
       <div className={r.foot}>
         {utils?.map((u) => (
           <button key={u.label} type="button" className={r.util} data-util={u.label}>
