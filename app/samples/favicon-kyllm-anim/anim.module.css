@@ -255,6 +255,8 @@
 
 .heroWrap {
   max-width: 720px;
+  display: grid;
+  gap: 16px;
 }
 
 .hero .stage {

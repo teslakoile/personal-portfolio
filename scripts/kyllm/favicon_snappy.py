@@ -141,6 +141,9 @@ class Snappy:
     face: bool = False         # play the beat's face script (beat_face) instead of the frozen-then-blend gaze
     eye_scale: float = 1.0     # scales every idle fixation offset, so 0.5 halves how far the eyes glance
     gaze_scale: float = 1.0    # scales the face script's gaze positions in a bounce (face=True)
+    zoom: float = 1.0          # circle diameter relative to the avatar frame; below 1 closes in on the glasses
+    focus: float = 0.0         # how far the tighter circle's centre moves from the avatar frame's toward the glasses
+    bold: float = 0.0          # flat px added to every glasses stroke, so the rings survive 16 px
 
 
 def ease(x: float) -> float:
@@ -359,6 +362,11 @@ def make_pose(a: Snappy, t: float, y, squint: float = 1.0, glint=None, face: tup
         p.update(glint=round(glint[0], 4), glint_op=round(glint[1], 3), glint_smear=round(glint[2], 1))
         if a.beat.glint_width != 1.0:
             p["glint_w"] = a.beat.glint_width
+    # framing keys only when set, so the shipped loop's poses (and frame names) stay exactly as they were
+    if a.zoom != 1.0:
+        p.update(zoom=a.zoom, focus=a.focus)
+    if a.bold:
+        p["bold"] = a.bold
     return p
 
 
@@ -619,7 +627,28 @@ IDLE = Snappy(
     shifts=(),
     starts=(0.60, 3.60), chance=1.0, max_loops=0.5,
 )
-SNAPPY = [IDLE]
+# Framing options: the same loop with the circle closed in on the glasses, for the 16 px tab and the
+# search-result icon. Everything moves 1/zoom larger in icon px, so the checks run on each option's own frame.
+FRAMING_NOTE = ("The same 3 s loop, the circle closed in to 78% of the shipped width and centred on the glasses, "
+                "so the lenses are 28% larger at 16 px. The sky is a crescent and the cat's left arm "
+                "and lower body crop more.")
+TIGHT_ZOOM = 0.78
+TIGHT = dataclasses.replace(
+    IDLE, id="idle-3s-tight", label="Tight", name="Closer on the Glasses", group="framing",
+    note=FRAMING_NOTE + " The bounce is scaled by the same 0.78, so it covers the same pixels as the shipped one "
+                        "and stays inside the 2 px step budget.",
+    zoom=TIGHT_ZOOM, focus=0.7,
+    # a tighter circle magnifies every move by 1/zoom (the shipped bounce peaks at 1.74 px, this would be 2.22)
+    beat=dataclasses.replace(alive.BEAT_30, crouch=round(alive.BEAT_30.crouch * TIGHT_ZOOM, 4),
+                             push=round(alive.BEAT_30.push * TIGHT_ZOOM, 4)),
+)
+TIGHT_BOLD = dataclasses.replace(
+    TIGHT, id="idle-3s-tight-bold", label="Tight +", name="Closer, Heavier Rings",
+    note=FRAMING_NOTE + " The glasses rings are 8.5 flat px heavier, about 0.2 px at 16 px, so they stay two "
+                        "rings instead of one smudge.",
+    bold=8.5,
+)
+SNAPPY = [IDLE, TIGHT, TIGHT_BOLD]
 
 
 # ---- pictures ------------------------------------------------------------------

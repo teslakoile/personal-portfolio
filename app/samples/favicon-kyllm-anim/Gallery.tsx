@@ -140,6 +140,8 @@ export function Gallery() {
   };
   const live = OPTIONS.find((o) => o.id === pickedId);
   const shipped = OPTIONS.find((o) => o.id === SHIPPED_ID);
+  // the same loop in a tighter circle: sharper at 16 px, never shipped until one is named
+  const framing = OPTIONS.filter((o) => o.group === "framing");
 
   return (
     <>
@@ -160,6 +162,17 @@ export function Gallery() {
           <h2>The Shipped Loop</h2>
           <div className={s.heroWrap}>
             <Card option={shipped} live={shipped.id === pickedId} motion={motion} shipped onTry={() => tryOption(shipped)} />
+          </div>
+        </section>
+      ) : null}
+
+      {framing.length ? (
+        <section className={s.section}>
+          <h2>Tighter Framing</h2>
+          <div className={s.heroWrap}>
+            {framing.map((o) => (
+              <Card key={o.id} option={o} live={o.id === pickedId} motion={motion} onTry={() => tryOption(o)} />
+            ))}
           </div>
         </section>
       ) : null}

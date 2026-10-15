@@ -75,14 +75,22 @@ def eye_svg(openness) -> str:
     return "".join(one_eye(spec, v) for spec, v in zip(EYES, o))
 
 
-GLASSES = (
-    f'<ellipse cx="492.5" cy="498.5" rx="153.1" ry="129.9" transform="rotate(81.66 492.5 498.5)" '
-    f'fill="none" stroke="{INK}" stroke-width="41.8"/>'
-    f'<ellipse cx="780.7" cy="486.0" rx="150.2" ry="112.6" transform="rotate(75.30 780.7 486.0)" '
-    f'fill="none" stroke="{INK}" stroke-width="41.8"/>'
-    f'<line x1="622.0" y1="487.7" x2="666.3" y2="483.8" stroke="{INK}" stroke-width="31.4" stroke-linecap="round"/>'
-    f'<line x1="362.3" y1="498.8" x2="269.1" y2="510.1" stroke="{INK}" stroke-width="35.5" stroke-linecap="round"/>'
-)
+def glasses_svg(bold: float = 0.0) -> str:
+    """The frames of the glasses. `bold` adds flat px to every stroke (0 is the shipped drawing, byte for
+    byte), for the framing options whose rings need to survive 16 px."""
+    return (
+        f'<ellipse cx="492.5" cy="498.5" rx="153.1" ry="129.9" transform="rotate(81.66 492.5 498.5)" '
+        f'fill="none" stroke="{INK}" stroke-width="{41.8 + bold:.1f}"/>'
+        f'<ellipse cx="780.7" cy="486.0" rx="150.2" ry="112.6" transform="rotate(75.30 780.7 486.0)" '
+        f'fill="none" stroke="{INK}" stroke-width="{41.8 + bold:.1f}"/>'
+        f'<line x1="622.0" y1="487.7" x2="666.3" y2="483.8" stroke="{INK}" stroke-width="{31.4 + bold:.1f}" '
+        f'stroke-linecap="round"/>'
+        f'<line x1="362.3" y1="498.8" x2="269.1" y2="510.1" stroke="{INK}" stroke-width="{35.5 + bold:.1f}" '
+        f'stroke-linecap="round"/>'
+    )
+
+
+GLASSES = glasses_svg()
 
 # the lens openings, inside the 41.8 px rims, for clipping the glint
 LENS_CLIP = (
@@ -169,7 +177,7 @@ def frame_svg(cx, cy, D, p: dict) -> str:
         bx, by = LEAF_BASE
         leaf_tf = f"translate({bx} {by}) scale({1 / sx:.5f} {1 / sy:.5f}) translate({-bx} {-by}) {leaf_tf}"
     leaf = f'<g transform="{leaf_tf}"><path d="{LEAF}" fill="{SAGE}"/></g>'
-    glasses = f'<g transform="translate(0 {p.get("gy", 0)})">{GLASSES}</g>'
+    glasses = f'<g transform="translate(0 {p.get("gy", 0)})">{glasses_svg(p["bold"]) if p.get("bold") else GLASSES}</g>'
     eyes = f'<g transform="translate({p.get("ex", 0)} {p.get("ey", 0)})">{eye_svg(p.get("eye", 1))}</g>'
     glint = ""
     if p.get("glint") is not None:
@@ -218,10 +226,12 @@ def geometry(cx, cy, D) -> phys.Geom:
 # ---- Round 5: snappy idle ------------------------------------------------------
 
 
-def round5(g: phys.Geom):
-    """A held pose with quick accents (favicon_snappy.py), the Round 4 X beat on top."""
+def round5(cx, cy, D, gx, gy):
+    """A held pose with quick accents (favicon_snappy.py), the Round 4 X beat on top. Each option is built
+    and checked on its own frame: a tighter circle makes every move larger in icon px."""
     seen, opts, runs = {}, [], []
     for a in snappy.SNAPPY:
+        g = geometry(*d.reframe(cx, cy, D, gx, gy, a.zoom, a.focus))
         built = snappy.build(a, g, seen)
         frames = built["frames"]
         rn = built["ring_names"]
@@ -232,9 +242,9 @@ def round5(g: phys.Geom):
         opts.append(dict(id=a.id, label=a.label, name=a.name, role="Always on", note=a.note, frames=frames,
                          beats=[], rest=[0, 0], group=a.group, base=rn[0], keys=list(dict.fromkeys(keys)),
                          ring=ring))
-        runs.append((a, built))
+        runs.append((a, built, g))
     for o in opts:
-        if o["group"] == "r6":
+        if o["group"] in ("r6", "framing"):
             s = rhythm_stats(o["ring"])
             every = (f"every {s['mean']:.3f} s exactly" if s["max"] - s["min"] < 0.01
                      else f"every {s['min']:.1f} to {s['max']:.1f} s, {s['mean']:.1f} s on average")
@@ -270,9 +280,10 @@ def rhythm_stats(ring, hours=3, seed=7):
                 share=mid / end)
 
 
-def report5(runs, small, g):
+def report5(runs, small):
+    PHYS_OUT.mkdir(parents=True, exist_ok=True)
     out = {}
-    for a, built in runs:
+    for a, built, g in runs:
         m = snappy.metrics(a, built, g)
         rn = built["ring_names"]
         holds = [ms for _, ms in built["loop"]]
@@ -352,8 +363,8 @@ def write_shipped(meta, data) -> None:
 def main() -> None:
     flat = Image.open(d.SRC).convert("RGBA")
     cx, cy, D = d.avatar_frame(flat)
-    g = geometry(cx, cy, D)
-    r5, runs5 = round5(g)
+    gx, gy = d.ink_centroid(flat)
+    r5, runs5 = round5(cx, cy, D, gx, gy)
     opts = r5
 
     frames = {"open": {}, "half": dict(eye=0.5), "closed": dict(eye=0.0)}
@@ -366,7 +377,8 @@ def main() -> None:
     for old in svgs.glob("*.svg"):
         old.unlink()
     for name, pose in frames.items():
-        (svgs / f"{name}.svg").write_text(frame_svg(cx, cy, D, pose))
+        fcx, fcy, fD = d.reframe(cx, cy, D, gx, gy, pose.get("zoom", 1.0), pose.get("focus", 0.0))
+        (svgs / f"{name}.svg").write_text(frame_svg(fcx, fcy, fD, pose))
     subprocess.run(["node", str(ROOT / "scripts/kyllm/render_svgs.mjs"), str(svgs), str(pngs), "1024"],
                    cwd=ROOT, check=True)
 
@@ -399,7 +411,7 @@ def main() -> None:
             small.quantize(64, method=Image.Quantize.FASTOCTREE).save(buf, format="PNG", optimize=True)
         data[name] = base64.b64encode(buf.getvalue()).decode()
         smalls[name] = Image.open(io.BytesIO(buf.getvalue())).convert("RGBA")  # exactly what the tab gets
-    report5(runs5, smalls, g)
+    report5(runs5, smalls)
 
     meta = []
     for o in opts:
@@ -417,7 +429,7 @@ def main() -> None:
              'import type { FaviconRing } from "../../_brand/faviconControl";', "",
              "export type Option = {", "  id: string;", "  label: string;", "  name: string;",
              "  /** what the loop is for: Idle, Thinking, Answer ready, On return, Loop */",
-             "  role: string;", '  group: "r6";', "  note: string;",
+             "  role: string;", '  group: "r6" | "framing";', "  note: string;",
              "  /** the frame shown between beats */", "  base: string;",
              "  /** each beat is a list of [frame, hold in ms] */",
              "  beats: [string, number][][];", "  /** wait between beats: [min, extra random ms] */",
