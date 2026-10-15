@@ -4,6 +4,11 @@
     "note": "only copy",
     "at": "2026-10-11T13:37:18.412Z"
   },
+  "Avatar": {
+    "verdict": "approve",
+    "note": "",
+    "at": "2026-10-12T10:28:58.193Z"
+  },
   "Career timeline": {
     "verdict": "drop",
     "note": "drop this. seems to be over specialized where we can probably have standard ui",
@@ -170,8 +175,7 @@
   "Source chips": {
     "verdict": "approve",
     "note": "",
-    "pick": "A",
-    "at": "2026-10-12T04:07:27.661Z"
+    "at": "2026-10-12T10:28:54.724Z"
   },
   "Starter tiles": {
     "verdict": "approve",

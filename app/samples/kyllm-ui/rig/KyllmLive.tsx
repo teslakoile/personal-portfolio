@@ -20,9 +20,17 @@ import l from "./live.module.css";
  *          it never lies on the head; counter-scaled so it never bends
  *   eyes   glances take 180 ms on a minimum-jerk curve, then hold; they
  *          squint with the crouch but never close past 0.75
- *   blink  33 ms half, 67 ms closed, 33 ms half
- *   idle   never fully still: a 2 s drift in the body with the leaf a quarter
- *          period behind, breath pops, glances, and a hop now and then
+ *   blink  33 ms half, 67 ms closed, 33 ms half; one per 3 s cycle at a fixed
+ *          phase, never at random
+ *   idle   the shipped tab-icon loop (.claude/skills/avatar-animation, which
+ *          rules over this file): a strict 3.000 s cycle, a moving hold. A
+ *          small breath bed, one breath pop, one leaf flick, and one bounce
+ *          at 0.6 s with the face script: squint and pupils drop in the
+ *          crouch, pupils lift in the stretch, a glint across the lenses at
+ *          the first stretch peak, one blink 0.12 s after it, then the eyes
+ *          settle. No idle glances, no randomness.
+ *   hold   `hold` freezes an avatar in its pose (past answers in a thread),
+ *          so only the live one moves
  *
  *   gaze   the pupils sit on a sphere behind each lens: a look is a gaze
  *          direction (gx, gy in -1..1), and each pupil moves that way and
@@ -59,7 +67,7 @@ const mj = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * t * (10 - 15 * t + 
    short together. */
 const REST_R = [82.72, 80.42];
 const HALF = { long: 60, short: 31 };
-const MARGIN = 14;
+const MARGIN = 15;
 const TRAVEL = { x: 52, y: 46 };
 /** Each eye's offset from its lens centre at rest, and that lens's inner semi-axes, in rig units (measured from the rig). */
 const LENS = [
@@ -113,9 +121,42 @@ function beat(d: number, crouch = 0.105, push = 0.055, k = 1) {
   return 0;
 }
 
-export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avatar", work = "ponder", sorry = "bow" }: {
-  mood?: Mood; size?: number; poke?: number; variant?: "avatar" | "full"; work?: WorkStyle; sorry?: SorryStyle;
+/* The glint lives on the glasses (so it rides their lag) and is clipped to the two lens
+   openings, inset from the inner rims so it never paints over the black frames. */
+const LENS_OPENINGS = [[495, 499, 96, 124], [781, 486, 86, 116]];
+let glintIds = 0;
+function addGlint(glasses: SVGGraphicsElement): SVGGraphicsElement {
+  const ns = "http://www.w3.org/2000/svg";
+  const old = glasses.querySelector<SVGGraphicsElement>(":scope > .k-glint");
+  if (old) return old;
+  const id = `k-glint-clip-${++glintIds}-${Math.round(Math.random() * 1e6)}`;
+  const clip = document.createElementNS(ns, "clipPath");
+  clip.setAttribute("id", id);
+  for (const [cx, cy, rx, ry] of LENS_OPENINGS) {
+    const e = document.createElementNS(ns, "ellipse");
+    e.setAttribute("cx", String(cx)); e.setAttribute("cy", String(cy)); e.setAttribute("rx", String(rx)); e.setAttribute("ry", String(ry));
+    clip.appendChild(e);
+  }
+  const g = document.createElementNS(ns, "g") as SVGGraphicsElement;
+  g.setAttribute("class", "k-glint");
+  g.setAttribute("clip-path", `url(#${id})`);
+  g.style.opacity = "0";
+  const bar = document.createElementNS(ns, "g");
+  const rect = document.createElementNS(ns, "rect");
+  rect.setAttribute("x", "-22"); rect.setAttribute("y", "-260"); rect.setAttribute("width", "44"); rect.setAttribute("height", "520");
+  rect.setAttribute("rx", "22"); rect.setAttribute("fill", "#fff");
+  bar.appendChild(rect);
+  g.appendChild(bar);
+  glasses.appendChild(clip);
+  glasses.appendChild(g);
+  return g;
+}
+
+export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avatar", work = "ponder", sorry = "bow", hold = false }: {
+  mood?: Mood; size?: number; poke?: number; variant?: "avatar" | "full"; work?: WorkStyle; sorry?: SorryStyle; hold?: boolean;
 }) {
+  const holdRef = useRef(hold);
+  useEffect(() => { holdRef.current = hold; }, [hold]);
   const workRef = useRef(work);
   useEffect(() => { workRef.current = work; }, [work]);
   const sorryRef = useRef(sorry);
@@ -131,8 +172,8 @@ export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avata
   useEffect(() => {
     // the rig's markup is set as inner HTML, which hydration can replace after this
     // effect runs, so the parts are looked up again whenever they leave the page
-    type Parts = Record<"all" | "leaf" | "blink" | "glasses" | "open" | "arcs" | "eyeL" | "eyeR", SVGGraphicsElement>;
-    const NAMES: Record<keyof Parts, string> = {
+    type Parts = Record<"all" | "leaf" | "blink" | "glasses" | "open" | "arcs" | "eyeL" | "eyeR" | "glint", SVGGraphicsElement>;
+    const NAMES: Record<Exclude<keyof Parts, "glint">, string> = {
       all: "k-all", leaf: "k-leaf", blink: "k-blink", glasses: "k-glasses", open: "k-open",
       arcs: "k-arcs", eyeL: "k-eye-l", eyeR: "k-eye-r",
     };
@@ -142,24 +183,23 @@ export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avata
       const root = wrap.current?.querySelector("svg");
       if (!root) return null;
       const found = {} as Parts;
-      for (const [k, cls] of Object.entries(NAMES) as [keyof Parts, string][]) {
+      for (const [k, cls] of Object.entries(NAMES) as [Exclude<keyof Parts, "glint">, string][]) {
         const el = root.querySelector<SVGGraphicsElement>(`.${cls}`);
         if (!el) return null;
         found[k] = el;
       }
+      found.glint = addGlint(found.glasses);
       return (parts = found);
     };
     const still = matchMedia("(prefers-reduced-motion: reduce)");
 
-    let s = 0, sv = 0, th = 0, thv = 0, gy = 0, gyv = 0;
+    let s = 0, sv = 0, th = 0, thv = 0, gy = 0, gyv = 0, lastFlick = -1;
     // each glance tweens from where the eyes are to the new pose, then holds
     let from: [Eye, Eye] = [[...REST[0]], [...REST[1]]];
     let to: [Eye, Eye] = from;
     let toKey = "idle:0";
     let glanceAt = -1;
     const eyes: [Eye, Eye] = [[...REST[0]], [...REST[1]]];
-    let blinkAt = -1, nextBlink = 0.8 + Math.random() * 2, double = false;
-    let nextHop = 3 + Math.random() * 3, idleHopAt = -10;
     let keyAt = -10, nextKey = 0, typed = 0;
     let rock = 0, rockv = 0, lastTick = -1, gd = 0, gdv = 0;
     const seed = Math.random() * 10; // so several avatars on a page don't move in step
@@ -175,8 +215,11 @@ export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avata
       const t = now + seed;
 
       // ---- command for the body, the leaf's rest angle, and the gaze, by mood
-      let u = 0.024 * Math.sin((2 * Math.PI * t) / 2); // drift bed, AB idle
-      let leafRest = 4.2 * Math.sin((2 * Math.PI * (t - 0.5)) / 2); // a quarter period behind
+      const c3 = t % 3; // every period divides the strict 3 s cycle
+      let u = 0.012 * Math.sin((2 * Math.PI * t) / 3); // the breath bed: small, never a drift
+      let leafRest = 0;
+      let glintU = -1; // 0..1 while the glint crosses the lenses
+      let blinkStart = 2.4; // where in the 3 s cycle this mood blinks
       let gaze: [Eye, Eye] = REST;
       let key: string = m;
       let happy = false;
@@ -186,18 +229,19 @@ export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avata
       let sadLid = 1;
 
       if (m === "idle") {
-        // breath pops: 80 ms rise, 750 ms eased fall, twice a 6 s ring
-        const ring = t % 6;
-        for (const [at, a] of [[2.1, 0.022], [4.95, 0.018]] as const) {
-          const d = ring - at;
-          if (d >= 0 && d < 0.08) u += a * ease(d / 0.08);
-          else if (d >= 0.08 && d < 0.83) u += a * (1 - ease((d - 0.08) / 0.75));
-        }
-        // glances that hold, then a hop now and then
-        const g = ring < 0.4 ? null : ring < 2.9 ? [0.36, -0.55] : ring < 4.7 ? [-0.08, 0.2] : [0.24, -0.15];
-        if (g) { gaze = look(g[0], g[1]); key = `idle:${g.join(",")}`; }
-        if (now > nextHop) { idleHopAt = now; nextHop = now + 5 + Math.random() * 4; }
-        u += beat(now - idleHopAt, 0.07, 0.04);
+        // one breath pop (80 ms in, 750 ms out) and one leaf flick per cycle
+        const dp = c3 - 2.1;
+        if (dp >= 0 && dp < 0.08) u += 0.02 * ease(dp / 0.08);
+        else if (dp >= 0.08 && dp < 0.83) u += 0.02 * (1 - ease((dp - 0.08) / 0.75));
+        const cycle = Math.floor(t / 3);
+        if (c3 > 1.3 && lastFlick !== cycle) { lastFlick = cycle; thv -= 140; }
+        // the bounce at 0.6 s, with the face script (gaze scale 0.6)
+        const bd = c3 - 0.6;
+        u += beat(bd, 0.105, 0.055);
+        if (bd > 0 && bd < 0.19) { gaze = look(0, 0.25 * 0.6); key = "crouch"; }
+        else if (bd >= 0.19 && bd < 0.85) { gaze = look(0, -0.4 * 0.6); key = "lift"; }
+        if (bd > 0.27 && bd < 0.57) glintU = (bd - 0.27) / 0.3;
+        blinkStart = 0.6 + 0.69;
       } else if (m === "typing") {
         // eyes on the composer, following the text left to right as it grows
         if (now > nextKey) { keyAt = now; nextKey = now + 0.11 + Math.random() * 0.16; typed = (typed + 1) % 18; }
@@ -274,7 +318,8 @@ export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avata
 
       if (key !== toKey) { from = [[...eyes[0]], [...eyes[1]]]; to = gaze; toKey = key; glanceAt = now; }
 
-      if (still.matches) {
+      const frozen = still.matches || holdRef.current;
+      if (frozen) {
         s = m === "sorry" ? -0.03 : 0; sv = 0; th = m === "sorry" ? -14 : 0; gy = 0; gd = m === "sorry" && sorryRef.current === "shrink" ? 16 : 0; rock = 0;
         eyes[0] = [...gaze[0]]; eyes[1] = [...gaze[1]];
       } else {
@@ -300,25 +345,24 @@ export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avata
         }
       }
 
-      // ---- lids: the crouch squints (never past 0.75), blinks close them
+      // ---- lids: the crouch squints (never past 0.75); one blink per cycle at a fixed phase
       let lid = Math.min(sadLid, m === "sorry" ? SORRY_LID : 1, Math.max(0.75, 1 + Math.min(0, s) * 2.4));
-      if (!still.matches && !happy && m !== "sorry") {
-        if (blinkAt < 0 && now > nextBlink) { blinkAt = now; double = Math.random() < 0.2; }
-        if (blinkAt >= 0) {
-          const total = BLINK[0] + BLINK[1] + BLINK[2];
-          const d = now - blinkAt, one = d % (total + 0.08);
-          if (d < (double ? total * 2 + 0.08 : total)) {
-            if (one < BLINK[0]) lid = Math.min(lid, 0.5);
-            else if (one < BLINK[0] + BLINK[1]) lid = 0.1;
-            else if (one < total) lid = Math.min(lid, 0.5);
-          } else { blinkAt = -1; nextBlink = now + 2.5 + Math.random() * 3.5; }
-        }
+      if (!frozen && !happy && m !== "sorry") {
+        const d = c3 - blinkStart;
+        if (d >= 0 && d < BLINK[0]) lid = Math.min(lid, 0.5);
+        else if (d >= BLINK[0] && d < BLINK[0] + BLINK[1]) lid = 0.1;
+        else if (d >= BLINK[0] + BLINK[1] && d < BLINK[0] + BLINK[1] + BLINK[2]) lid = Math.min(lid, 0.5);
       }
 
       // ---- write the pose (transform and opacity only)
       const p = find();
       if (!p) { raf = requestAnimationFrame(frame); return; }
-      const { all, leaf, blink, glasses, open, arcs } = p;
+      const { all, leaf, blink, glasses, open, arcs, glint } = p;
+      // the glint: a soft bar sweeping left to right, opacity on a specular lobe sin(pi u)^0.6
+      if (!frozen && glintU >= 0) {
+        glint.style.opacity = (0.75 * Math.sin(Math.PI * glintU) ** 0.6).toFixed(3);
+        glint.firstElementChild?.setAttribute("transform", `translate(${(380 + glintU * 520).toFixed(1)} 470) rotate(24)`);
+      } else glint.style.opacity = "0";
       const eyeEls = [p.eyeL, p.eyeR];
       const sy = 1 + s, sx = 1 / sy;
       all.style.transform = `rotate(${rock.toFixed(2)}deg) scale(${sx.toFixed(4)}, ${sy.toFixed(4)})`;

@@ -6,7 +6,7 @@ import {
   Terminal, type LucideIcon,
 } from "lucide-react";
 import { Avatar, Cite, ICON, Kbd, Pill, SendButton } from "./kit";
-import { SourceMark, type SourceKind } from "./brandIcons";
+import { SourceMark, type SiteMark, type SourceKind } from "./brandIcons";
 import { Opt, Opts } from "./options";
 import { KyllmLive, type Mood, type SorryStyle, type WorkStyle } from "./rig/KyllmLive";
 import s from "./kyllm.module.css";
@@ -90,7 +90,7 @@ export function StarterR3() {
 }
 
 /* --------------------------------- sources ------------------------------- */
-type Src = { kind: SourceKind; label: string; name: string; host?: string };
+export type Src = { kind: SourceKind; label: string; name: string; host?: string };
 const SRC: Src[] = [
   { kind: "site", label: "Projects", name: "MCP Server" },
   { kind: "site", label: "Community", name: "Talks" },
@@ -100,23 +100,36 @@ const SRC: Src[] = [
 const onSite = (src: Src) => src.kind === "site";
 
 /** One chip for every source: its mark tells where it lives; a right arrow stays on this page, the diagonal one leaves it; hover says where it goes. */
-function SrcChip({ src }: { src: Src }) {
+export function SrcChip({ src, site = "kn" }: { src: Src; site?: SiteMark }) {
   const tip = onSite(src) ? `Scrolls to ${src.label} · ${src.name}` : `Opens ${src.host}/${src.name}`;
   return (
     <a href="#" className={r.chip} data-where={onSite(src) ? "site" : "web"} data-tip={tip} onClick={(e) => e.preventDefault()}>
-      <SourceMark kind={src.kind} />
+      <SourceMark kind={src.kind} site={site} />
       <b>{src.label}</b>{src.name}
       <I icon={onSite(src) ? ArrowRight : ArrowUpRight} size={13} />
     </a>
   );
 }
 
+const SITE_MARKS: [SiteMark, string, string, boolean?][] = [
+  ["kn", "KN monogram", "A small ink square with your initials, like a favicon for your own sections.", true],
+  ["hash", "Section sign", "A coral # (Lucide Hash): it points to a section of this page."],
+  ["none", "No mark", "Only other sites get a logo; the right arrow says it stays here."],
+];
+
+/** The open call: what marks this site's own sections, now that the tab icon is KYLLM. */
 export function SourceR3() {
   return (
-    <div className={r.srcBlock}>
-      <div className={o.row}>{SRC.map((src) => <SrcChip key={src.name} src={src} />)}</div>
-      <small className={r.legend}>Hover a chip: this site&apos;s sections scroll into view; GitHub and LinkedIn open in a new tab.</small>
-    </div>
+    <Opts>
+      {SITE_MARKS.map(([m, name, how, rec], i) => (
+        <Opt key={m} id={String.fromCharCode(65 + i)} name={name} rec={rec}>
+          <div className={r.srcBlock}>
+            <div className={o.row}>{SRC.map((src) => <SrcChip key={src.name} src={src} site={m} />)}</div>
+            <small className={r.legend}>{how}</small>
+          </div>
+        </Opt>
+      ))}
+    </Opts>
   );
 }
 
@@ -162,7 +175,7 @@ export function KeyHintStates() {
 }
 
 /* ------------------------------ copy button (C) -------------------------- */
-function CopyButton({ forced }: { forced?: "hover" | "done" }) {
+export function CopyButton({ forced }: { forced?: "hover" | "done" }) {
   const [done, setDone] = useState(false);
   useEffect(() => {
     if (!done) return;
