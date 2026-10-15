@@ -73,15 +73,6 @@
 @keyframes sent { from { opacity: 0; transform: translateY(18px) scale(0.94); } }
 
 .stream { margin: 0; }
-.tok { animation: tok 0.34s ease-out both; }
-@keyframes tok { from { opacity: 0; filter: blur(3px); } }
-.citeIn { display: inline-block; animation: pop 0.4s cubic-bezier(0.3, 1.6, 0.5, 1) both; }
-@keyframes pop { from { opacity: 0; transform: scale(0.3); } }
-.caret {
-  display: inline-block; width: 8px; height: 15px; margin-left: 3px; vertical-align: -2px; border-radius: 1.5px;
-  background: var(--coral); animation: breathe 0.8s ease-in-out infinite;
-}
-@keyframes breathe { 50% { opacity: 0.35; } }
 
 .tiles > div > div { animation: rise 0.4s var(--ease) both; }
 .tiles > div > div:nth-child(2) { animation-delay: 90ms; }
@@ -95,7 +86,7 @@
 @keyframes fade { from { opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .userIn, .tok, .citeIn, .caret, .tiles > div > div, .srcs > *, .actions, .chipIn, .typeCaret, .beat[data-state="now"] .dot { animation: none; }
+  .userIn, .tiles > div > div, .srcs > *, .actions, .chipIn, .typeCaret, .beat[data-state="now"] .dot { animation: none; }
 }
 
 /* live KYLLM in the answers: sits where the static avatar did */
