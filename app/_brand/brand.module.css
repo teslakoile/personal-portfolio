@@ -41,6 +41,24 @@
   --r-pill: 999px;
   --float: 0 0 0 1px rgb(28 25 23 / 0.06), 0 24px 48px -22px rgb(28 25 23 / 0.22);
   --frame: 1080px;
+
+  /* the site's one tooltip: chip and certification notes (ChipFx), the GitHub
+     calendar, and the Sound and Copy labels. Two forms only: a label (the
+     title line alone) or a note (title, then a dimmer description). A dark ink
+     box, no caret (the hovered element marks itself), and a short fade that
+     slides it 3px toward the anchor. Picked 2026-10-15: ink, no caret, no
+     third line. The padding is 1px heavier on top so a one-line label's
+     letters sit optically centred (Geist's line box carries its descender
+     room below the baseline). The font shorthands reset numerals, so every
+     user sets tabular-nums after them. */
+  --tip-bg: var(--ink);
+  --tip-pad: 7px 10px 6px;
+  --tip-radius: 6px;
+  --tip-title: 500 12.5px/1.35 var(--sans);
+  --tip-text: 400 12px/1.45 var(--sans);
+  --tip-dim: rgb(255 255 255 / 0.78);
+  --tip-shift: 3px;
+  --tip-in: 0.15s cubic-bezier(0.33, 1, 0.68, 1);
   --gutter: 44px;
 
   min-height: 100vh;
@@ -161,6 +179,32 @@
   background: var(--surface);
   border: 1px dashed var(--line-2);
   border-radius: var(--r-chip);
+}
+
+/* an organization's name as a link (OrgLink): plain at rest, coral underline
+   and a small arrow on hover or focus. The arrow is the link's own text at the
+   same size, so the underline runs unbroken to it. */
+.orgLink { color: inherit; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px; transition: text-decoration-color 0.14s ease; }
+.orgLink:hover, .orgLink:focus-visible { text-decoration-color: var(--coral); }
+.orgLink:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+.orgOut { font: inherit; color: var(--ink-3); opacity: 0; transition: opacity 0.14s ease; }
+.orgLink:hover .orgOut, .orgLink:focus-visible .orgOut { opacity: 1; color: var(--coral); }
+@media (prefers-reduced-motion: reduce) { .orgLink, .orgOut { transition: none; } }
+
+/* a chip with a note (ChipFx shows it): the dashed edge turns solid coral and
+   the chip lifts 1px, the one coral accent on an interactive element */
+.chipLive { cursor: default; transition: border-color 0.14s ease, color 0.14s ease, transform 0.14s cubic-bezier(0.33, 1, 0.68, 1), box-shadow 0.14s ease; }
+.chipLive:hover,
+.chipLive:focus-visible,
+.chipLive[data-open] { border-style: solid; border-color: var(--coral); color: var(--ink); transform: translateY(-1px); box-shadow: 0 2px 0 -1px rgb(245 72 45 / 0.28); }
+.chipLive:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+.chipLive:hover .chipLogo,
+.chipLive:focus-visible .chipLogo { transform: scale(1.12); }
+.chipLogo { transition: transform 0.16s cubic-bezier(0.33, 1, 0.68, 1); }
+@media (prefers-reduced-motion: reduce) {
+  .chipLive, .chipLogo { transition: none; }
+  .chipLive:hover, .chipLive:focus-visible, .chipLive[data-open] { transform: none; }
+  .chipLive:hover .chipLogo, .chipLive:focus-visible .chipLogo { transform: none; }
 }
 
 /* height-led so a wordmark (AWS, SQLAlchemy) keeps its width instead of

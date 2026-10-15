@@ -42,7 +42,7 @@ const ALL_QAS: QA[] = [
   {
     q: "What certifications do you hold?",
     keywords: ["cert", "certs", "certified", "certifications", "credentials", "gcp", "azure", "aws"],
-    a: "Ten across the stack, including Google Cloud Professional Machine Learning Engineer, Databricks Certified Data Engineer Associate, Azure AI Engineer Associate, and OpenAI AI Technical Practitioner.",
+    a: "Twelve across the stack, including Google Cloud Professional Machine Learning Engineer, Databricks Certified Data Engineer Associate, Azure AI Engineer Associate, and OpenAI AI Technical Practitioner.",
     link: { label: "See All Certifications", href: "#certifications" },
   },
   {

@@ -51,20 +51,29 @@ export function toolLogo(name: string): string | null {
 }
 
 /** Employers, communities, schools, and publishers, keyed by the start of the
-    name as sampleContent.ts writes it. */
-const ORGS: [prefix: string, file: string][] = [
-  ["Thinking Machines", "thinking-machines.png"],
-  ["Global Shapers", "global-shapers.svg"],
-  ["Ingenuity Software", "ingenuity.png"],
-  ["UP Diliman", "up-diliman.png"],
-  ["University of the Philippines Diliman", "up-diliman.png"],
-  ["GCash", "gcash.svg"],
-  ["Google Developer Group", "gdg.svg"],
-  ["IEEE", "ieee.svg"],
-  ["Apache Software Foundation", "apache.svg"],
+    name as sampleContent.ts writes it: the logo file in /public/logos and the
+    organization's own site. Ingenuity Software has no url yet, so it shows as
+    text until one is checked. */
+const ORGS: [prefix: string, file: string | null, url: string | null][] = [
+  ["Thinking Machines", "thinking-machines.png", "https://thinkingmachin.es/"],
+  ["Global Shapers", "global-shapers.svg", "https://www.globalshapers.org/hubs/davao-hub/"],
+  ["Ingenuity Software", "ingenuity.png", null],
+  ["UP Diliman", "up-diliman.png", "https://eee.upd.edu.ph/"],
+  ["University of the Philippines Diliman", "up-diliman.png", "https://upd.edu.ph/"],
+  ["Philippine Science High School", null, "https://www.pshs.edu.ph/"],
+  ["GCash", "gcash.svg", "https://www.gcash.com/"],
+  ["Google Developer Group", "gdg.svg", "https://gdg.community.dev/gdg-davao/"],
+  ["IEEE", "ieee.svg", "https://www.ieee.org/"],
+  ["Apache Software Foundation", "apache.svg", "https://www.apache.org/"],
 ];
 
+const orgOf = (name: string) => ORGS.find(([prefix]) => name.startsWith(prefix));
+
 export function orgLogo(name: string): string | null {
-  const hit = ORGS.find(([prefix]) => name.startsWith(prefix));
-  return hit ? `/logos/${hit[1]}` : null;
+  const file = orgOf(name)?.[1];
+  return file ? `/logos/${file}` : null;
+}
+
+export function orgUrl(name: string): string | null {
+  return orgOf(name)?.[2] ?? null;
 }

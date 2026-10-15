@@ -19,7 +19,7 @@ import { spark, RELEASE } from "./clickFx";
  * then springs back. Text fields keep the system text cursor; touch screens never
  * mount it.
  */
-const CLICKABLE = 'a[href], button:not(:disabled), select, summary, label[for], [role="button"], [role="link"], [role="tab"], [data-clickable], input[type="button"], input[type="submit"], input[type="checkbox"], input[type="radio"]';
+const CLICKABLE = 'a[href], button:not(:disabled), select, summary, label[for], [role="button"], [role="link"], [role="tab"], [data-clickable], [data-chip], input[type="button"], input[type="submit"], input[type="checkbox"], input[type="radio"]';
 const TEXT = 'input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]';
 
 /** lucide mouse-pointer-2, as in public/cursors/pointer.svg */

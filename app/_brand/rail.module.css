@@ -69,10 +69,14 @@
 .soundIcon[aria-pressed="false"] { color: var(--ink-4); }
 /* the ring that pulses out behind the speaker when sound turns on */
 .soundRing { position: absolute; inset: 3px; border-radius: 50%; border: 1.5px solid var(--coral); pointer-events: none; }
+/* the label, in the site's tooltip look (--tip-* on BrandRoot) */
 .soundIcon::after {
-  content: attr(data-tip); position: absolute; top: calc(100% + 6px); right: 0; z-index: 5; padding: 3px 8px; border-radius: 6px;
-  background: var(--ink); color: #fff; font-size: 11.5px; white-space: nowrap; pointer-events: none;
-  opacity: 0; transform: translateY(-3px); transition: opacity 0.15s, transform 0.15s;
+  position: absolute; z-index: 5; pointer-events: none; background: var(--tip-bg);
+  opacity: 0; transform: translateY(calc(-1 * var(--tip-shift))); transition: opacity var(--tip-in), transform var(--tip-in);
+}
+.soundIcon::after {
+  content: attr(data-tip); top: calc(100% + 6px); right: 0; padding: var(--tip-pad); border-radius: var(--tip-radius);
+  color: #fff; font: var(--tip-title); font-variant-numeric: tabular-nums; white-space: nowrap;
 }
 .soundIcon:hover::after { opacity: 1; transform: none; }
 
