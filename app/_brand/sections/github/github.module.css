@@ -31,7 +31,9 @@
    small overshoot. */
 .cell { position: relative; background: var(--c); cursor: pointer; transition: scale 0.16s cubic-bezier(0.22, 1, 0.36, 1), translate 0.16s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.16s, filter 0.16s; }
 .cell::before, .cell::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
-.cell::before { background: var(--c); }
+/* --gloss is the idle sweep's own channel (0 to 1, set by Motion): it lightens
+   the tile and draws a diagonal glint across it */
+.cell::before { background: linear-gradient(135deg, rgb(255 255 255 / calc(var(--gloss, 0) * 0.6)) 0%, rgb(255 255 255 / 0) 62%), color-mix(in srgb, var(--c), white calc(var(--gloss, 0) * 28%)); }
 .cell::after { background: var(--coral); opacity: 0; }
 .cell:hover, .cell[data-kb] { scale: 1.22; z-index: 2; outline: 2px solid var(--coral); outline-offset: 1px; box-shadow: 0 2px 0 rgb(28 25 23 / 0.22); }
 .cell[data-down], .cell[data-down]:hover { scale: 0.74; translate: 0 3px; z-index: 2; box-shadow: 0 0 0 rgb(28 25 23 / 0); filter: brightness(0.9); transition: scale 0.07s ease-out, translate 0.07s ease-out, box-shadow 0.07s, filter 0.07s; }

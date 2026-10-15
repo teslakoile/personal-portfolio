@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useInView } from "motion/react";
+import { AnimatePresence, animate, motion, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
 import { click, tick } from "../../../_home/sound";
 import { fullDate, type Cell, type Year } from "./year";
@@ -23,6 +23,11 @@ import g from "./github.module.css";
  * release. Pitch follows the day's contributions up a pentatonic scale, so a
  * sweep across the year rises with the busy stretches. The site's global
  * toggle controls it.
+ * Idle: once the entrance is done, a chevron of light travels across the grid
+ * every ~11 seconds. It is made of the tiles themselves: Motion animates each
+ * tile's own --gloss (0 to 1 to 0), which lightens its color and draws a glint
+ * across it, with each tile's delay set by its distance to a ">" shaped front.
+ * It stops while the pointer is on the grid and is off under reduced motion.
  */
 
 const DURATION = 1.7; // s, scan line end to end
@@ -53,6 +58,14 @@ function rateFor(count: number, max: number) {
   return 0.62 * 2 ** (SCALE[step] / 12);
 }
 
+// idle sweep: the front crosses the grid in SWEEP s; each tile glows for GLOW s,
+// so the lit chevron is about GLOW / SWEEP of the grid thick. LEAD is how many
+// columns each row steps back from the middle row, which sets the ">" angle.
+const SWEEP = 3.4;
+const GLOW = 0.42;
+const LEAD = 1.8;
+const REST = 8000; // ms between sweeps
+
 const noop = () => () => {};
 const useMounted = () => useSyncExternalStore(noop, () => true, () => false);
 
@@ -61,6 +74,10 @@ const plural = (n: number) => (n === 1 ? "1 contribution" : `${n.toLocaleString(
 type Tip = { i: number; x: number; y: number };
 
 export function ContributionCalendar({ year }: { year: Year }) {
+  const reduce = useReducedMotion();
+  const hovering = useRef(false);
+  const sweep = useRef<ReturnType<typeof animate> | null>(null);
+  const [ready, setReady] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const grid = useRef<HTMLDivElement>(null);
   const els = useRef<HTMLElement[]>([]);
@@ -69,6 +86,7 @@ export function ContributionCalendar({ year }: { year: Year }) {
   const down = useRef<{ el: HTMLElement; at: number; rate: number } | null>(null);
   const lifting = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inView = useInView(root, { once: true, amount: 0.4 });
+  const visible = useInView(root, { amount: 0.2 });
   const mounted = useMounted();
   const [tip, setTip] = useState<Tip | null>(null);
 
@@ -89,6 +107,42 @@ export function ContributionCalendar({ year }: { year: Year }) {
     grid.current?.querySelectorAll<HTMLElement>("i[data-i]").forEach((el) => { list[Number(el.dataset.i)] = el; });
     els.current = list;
   }, [year]);
+
+  // the idle sweep starts once the entrance scan has finished
+  useEffect(() => {
+    if (!inView) return;
+    const t = setTimeout(() => setReady(true), (DURATION + 1) * 1000);
+    return () => clearTimeout(t);
+  }, [inView]);
+
+  // idle: one Motion animation over every tile, delayed by its distance to a
+  // ">" front, then a rest, again and again
+  useEffect(() => {
+    if (!ready || !visible || reduce) return;
+    const tiles: HTMLElement[] = [];
+    const order: number[] = [];
+    els.current.forEach((el, i) => { if (el) { tiles.push(el); order.push(i); } });
+    const delayOf = (k: number) => {
+      const w = Math.floor(order[k] / 7);
+      const d = order[k] % 7;
+      const front = w - (3 - Math.abs(d - 3)) * LEAD; // middle row leads
+      return ((front + 3 * LEAD) / (year.weeks + 3 * LEAD)) * SWEEP;
+    };
+    let stopped = false;
+    let wait: ReturnType<typeof setTimeout>;
+    const pass = () => {
+      if (stopped) return;
+      if (document.hidden || hovering.current) { wait = setTimeout(pass, 1500); return; }
+      sweep.current = animate(tiles, { "--gloss": [0, 1, 0] }, { duration: GLOW, ease: "easeInOut", delay: (k: number) => delayOf(k) });
+      sweep.current.then(() => { if (!stopped) wait = setTimeout(pass, REST); });
+    };
+    wait = setTimeout(pass, 700);
+    return () => {
+      stopped = true;
+      clearTimeout(wait);
+      sweep.current?.stop();
+    };
+  }, [ready, visible, reduce, year.weeks]);
 
   const show = (i: number) => {
     const el = els.current[i];
@@ -145,6 +199,7 @@ export function ContributionCalendar({ year }: { year: Year }) {
   };
 
   const onLeave = () => {
+    hovering.current = false;
     lastOver.current = -1;
     if (kb.current < 0) setTip(null);
     else show(kb.current);
@@ -219,7 +274,13 @@ export function ContributionCalendar({ year }: { year: Year }) {
 
   return (
     <>
-      <div ref={root} className={g.cal} data-state={state} style={{ "--dur": `${DURATION}s` } as CSSProperties}>
+      <div
+        ref={root}
+        className={g.cal}
+        data-state={state}
+        data-idle-on={ready ? "" : undefined}
+        style={{ "--dur": `${DURATION}s` } as CSSProperties}
+      >
         <div className={g.calBody}>
           <div className={g.months} style={{ "--weeks": year.weeks } as CSSProperties} aria-hidden="true">
             {year.monthStarts.map((m, k) => (
@@ -235,6 +296,15 @@ export function ContributionCalendar({ year }: { year: Year }) {
             role="group"
             tabIndex={0}
             aria-label={`Contribution calendar, ${year.total.toLocaleString("en-US")} contributions in the last year. Use the arrow keys to move between days and Enter to press one.`}
+            onPointerEnter={() => {
+              // an idle sweep in flight gives way to the pointer
+              hovering.current = true;
+              if (sweep.current) {
+                sweep.current.stop();
+                sweep.current = null;
+                animate(els.current.filter(Boolean), { "--gloss": 0 }, { duration: 0.25 });
+              }
+            }}
             onPointerOver={onOver}
             onPointerLeave={onLeave}
             onPointerDown={onPointerDown}
@@ -254,6 +324,7 @@ export function ContributionCalendar({ year }: { year: Year }) {
                         key={d}
                         className={`${g.cell} ${LEVEL[c.level]}`}
                         data-i={w * 7 + d}
+                        data-clickable=""
                         style={{ "--d": `${delays[w].toFixed(3)}s` } as CSSProperties}
                       />
                     );
