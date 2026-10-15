@@ -2,10 +2,11 @@
 
 import { ArrowUp } from "lucide-react";
 import { useEffect, useEffectEvent, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from "react";
-import { AnswerActions, Cite, Highlights, Kbd, PanelHeader, Pill, LatestIcon } from "../kit";
+import { AnswerActions, Highlights, Kbd, PanelHeader, Pill, LatestIcon } from "../kit";
 import { AGENTS_RUN, OPENING_RUN, TALKS_RUN } from "../HeroChat";
 import { MCP_RUN, Steps, type StepData } from "../Steps";
 import { KyllmLive, type Mood } from "../rig/KyllmLive";
+import { SmoothText } from "../streaming/SmoothText";
 import s from "../kyllm.module.css";
 import h from "../hero.module.css";
 import d from "./demo.module.css";
@@ -15,7 +16,8 @@ import d from "./demo.module.css";
  *   typing   the question types into the composer; Send lights up
  *   sent     the bubble rises; Send becomes Stop; the chips hide
  *   steps    the loading line, then the live waterfall
- *   stream   Steps fold; words fade in behind a caret; citations pop in
+ *   stream   Steps fold; the text flows in at an even pace (SmoothText); a thin
+ *            coral caret blinks only when the stream pauses
  *   blocks   tiles, then sources, then actions, staggered
  *   next     follow-up chips rise in
  * Autoplay types the first question, then picks a follow-up chip, then loops.
@@ -113,7 +115,7 @@ const BEATS: [Beat, string, string][] = [
   ["typing", "Typing", "The question types into the composer. Send turns coral once there is text."],
   ["sent", "Sent", "The bubble rises from the composer. Send becomes Stop and the chips hide."],
   ["steps", "Steps", "The loading line heads the block, then each bar grows on the waterfall while its seconds count."],
-  ["stream", "Streaming", "Steps fold to one line. Words fade in behind a coral caret, and citations pop in as they land."],
+  ["stream", "Streaming", "Steps fold to one line. The text flows in at an even pace, each character fading in, and a thin coral caret blinks only if the stream pauses."],
   ["blocks", "Blocks and sources", "Highlight tiles, then source pills, then the actions, each one staggered."],
   ["next", "Follow-ups", "Suggested questions rise in. Autoplay picks one, and you can too."],
 ];
@@ -182,14 +184,7 @@ function TurnView({ q, script, pace, rate, latest, onBeat, onFinish, onMeter }: 
           <span className={d.av}><KyllmLive touch size={36} mood={turnMood(stage, latest)} /></span>
           <div className={h.answerBody}>
             <Steps v="waterfall" steps={script.steps} play={1} rate={rate} onDone={() => setStage("fold")} />
-            {showText ? (
-              <p className={d.stream}>
-                {toks.slice(0, n).map((t, i) => ("w" in t
-                  ? <span key={i} className={d.tok}>{t.w}</span>
-                  : <span key={i} className={d.citeIn}><Cite n={t.cite} /></span>))}
-                {stage === "stream" ? <span className={d.caret} aria-hidden="true" /> : null}
-              </p>
-            ) : null}
+            {showText ? <SmoothText className={d.stream} toks={toks} n={n} done={stage !== "stream"} rate={rate} /> : null}
             {showAfter ? (
               <>
                 {script.tiles ? <div className={`${h.block} ${d.tiles}`}><Highlights /></div> : null}
