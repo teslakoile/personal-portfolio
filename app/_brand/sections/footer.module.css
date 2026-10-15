@@ -33,7 +33,7 @@
 }
 .expand::after { content: ""; position: absolute; inset: -6px; }   /* a 40px target */
 .tile:hover .expand, .expand:focus-visible { opacity: 1; }
-.expand:hover { color: var(--coral-ink); }
+.expand:hover { color: var(--coral); }
 @media (hover: none) { .expand { opacity: 1; } }
 @starting-style { .tile:hover .expand { opacity: 0; } }
 
@@ -47,7 +47,7 @@
 .card { grid-column: 3 / span 4; grid-row: 2; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line-2); text-align: center; }
 .cardLine { margin: 0; font-size: 15px; color: var(--ink-2); }
 .cardMail { font-size: 30px; font-weight: 500; letter-spacing: -0.025em; line-height: 1.15; color: var(--ink); text-decoration: none; background-image: linear-gradient(var(--coral), var(--coral)); background-repeat: no-repeat; background-position: 0 100%; background-size: 100% 2px; padding-bottom: 2px; }
-.cardMail:hover { color: var(--coral-ink); }
+.cardMail:hover { color: var(--coral); }
 
 .quiet { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 24px; padding: 20px var(--gutter); font-size: 13px; color: var(--ink-3); }
 .quiet nav { display: flex; gap: 20px; }

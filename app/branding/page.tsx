@@ -48,7 +48,7 @@ const num = (id: string) => String(SECTIONS.findIndex((x) => x.id === id) + 1).p
 
 const PRINCIPLES = [
   { k: "Shape", rule: "Square structure, round controls", why: "Rows, cells, and panels have square corners. Buttons are pills, chips use 6px, and only floating layers use 14px with a shadow." },
-  { k: "Color", rule: "One coral for the interface", why: "Coral marks what is live or clickable and is never a large fill. coral-ink carries small text and the primary button; coral is for marks and large type." },
+  { k: "Color", rule: "One coral for the interface", why: "Coral marks what is live or clickable and is never a large fill. One value at every size: marks, type, links, and the primary button." },
   { k: "Data color", rule: "Four block colors, for data only", why: "Block colors group series inside diagrams and never style the interface. Grey means raw or expired." },
   { k: "Blocks", rule: "Blocks only where time or a metric matters", why: "Use blocks for the career timeline, certification validity, a measured before-and-after, and the GitHub graph, each with its unit stated. Never for skills, tool lists, or community stats." },
   { k: "Type", rule: "Geist only, tabular numerals", why: "Size and weight carry hierarchy. Geist Mono appears only as code identifiers inside diagrams. No eyebrows and no all-caps." },
@@ -64,8 +64,7 @@ const UI_COLORS = [
   { token: "ink", use: "Headings and primary text" },
   { token: "ink-2", use: "Body copy" },
   { token: "ink-3", use: "Labels and metadata" },
-  { token: "coral", use: "Marks and large type: ticks, today lines, focus rings" },
-  { token: "coral-ink", use: "Small coral text and the primary button" },
+  { token: "coral", use: "Marks, type, links, and the primary button" },
 ];
 const DATA_COLORS = [
   { token: "b1", use: "Series 1: current role, Databricks" },
@@ -200,7 +199,7 @@ export default function BrandingPage() {
               <Spec name="Display" spec="62px · 500 · -2px">
                 <p className={b.h1}>I build <span className={b.accent}>AI agents</span>, data pipelines, and cloud infrastructure.</p>
               </Spec>
-              <Spec name="Section heading" spec="42px · 500 · coral-ink number 16px">
+              <Spec name="Section heading" spec="42px · 500 · coral number 16px">
                 <p className={b.h2}><span className={b.num}>06</span>Community &amp; <span className={b.accent}>Speaking</span></p>
               </Spec>
               <Spec name="Title" spec="20px · 500 · muted context">
@@ -312,7 +311,7 @@ export default function BrandingPage() {
                 <span className={s.keys}><Kbd>⌘</Kbd><Kbd>K</Kbd></span>
                 <span className={s.keys}><Kbd>⌘</Kbd><Kbd>J</Kbd></span>
               </Spec>
-              <Spec name="Text link" spec="14px · 500 · coral-ink">
+              <Spec name="Text link" spec="14px · 500 · coral">
                 <a className={b.link} href={sample.achievements[0].href} target="_blank" rel="noreferrer">Read the Paper ›</a>
               </Spec>
               <Spec name="Contact row" spec="14px · ink-3 icons">

@@ -2,7 +2,7 @@
    hero). Tokens from app/_brand. */
 .label { max-width: 1080px; margin: 0 auto 12px; font-size: 14px; font-weight: 500; }
 .mail { color: var(--ink); text-decoration: none; background-image: linear-gradient(var(--coral), var(--coral)); background-repeat: no-repeat; background-position: 0 100%; background-size: 100% 2px; padding-bottom: 2px; transition: color 0.15s ease-out; }
-.mail:hover { color: var(--coral-ink); }
+.mail:hover { color: var(--coral); }
 .quiet { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 24px; padding: 20px var(--gutter); font-size: 13px; color: var(--ink-3); }
 .quiet nav { display: flex; gap: 20px; }
 .quiet a { color: var(--ink-2); text-decoration: none; }
