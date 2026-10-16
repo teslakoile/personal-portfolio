@@ -43,20 +43,6 @@ def avatar_frame(flat: Image.Image) -> tuple[float, float, float]:
     return cx, cy, D
 
 
-def ink_centroid(flat: Image.Image) -> tuple[float, float]:
-    """Centre of the dark ink (the glasses and eyes) in flat px, the point a tighter frame closes in on."""
-    px = np.asarray(flat).astype(int)
-    ink = (px[..., 3] > 128) & (px[..., :3].max(-1) < 45)
-    ys, xs = np.nonzero(ink)
-    return float(xs.mean()), float(ys.mean())
-
-
-def reframe(cx: float, cy: float, D: float, gx: float, gy: float, zoom: float, focus: float):
-    """A tighter circle for small sizes: diameter D * zoom, its centre moved `focus` of the way from the
-    avatar frame's centre to the glasses (gx, gy). zoom 1 and focus 0 return the avatar frame unchanged."""
-    return cx + focus * (gx - cx), cy + focus * (gy - cy), D * zoom
-
-
 def cut(flat: Image.Image, box: tuple[float, float, float, float], bg) -> Image.Image:
     """Cut `box` from the 1024 flat render, composite on `bg`, return SIDE x SIDE."""
     x0, y0, x1, y1 = box

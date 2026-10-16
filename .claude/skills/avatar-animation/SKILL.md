@@ -48,15 +48,13 @@ Kyle judges feel in his own tab strip, so say what you verified (frames, numbers
 - Frames are 32 px data URIs, 64-colour palette shared by the loop and computed from the shipped loop's own frames. Payload today: about 110 KB, loaded after hydration by dynamic import. At 16 px a move under 0.5 px is invisible, so amplitude is judged at 16 px.
 - Poses are SVG transforms of `public/kyllm/kyllm-flat.svg` (scale, rotate, leaf rotation, eye ovals, a glint overlay). The mascot is never redrawn and the body is never translated inside the circle: that reads as sliding in a porthole.
 
-## Framing
+## Stroke weight
 
-The circle is the avatar frame (`avatar_frame` in `favicon_frame.py`), which leaves a quarter of the circle as sky. For 16 px and the search-result icon, `Snappy` takes `zoom` (circle diameter relative to the avatar frame), `focus` (how far its centre moves toward the glasses), and `bold` (flat px added to every glasses stroke). The poses carry those keys only when set, so the shipped frames stay byte-identical.
+The crop is fixed: it is the avatar frame (`avatar_frame` in `favicon_frame.py`), and Kyle does not want it changed. A tighter circle (78% of the width, centred on the glasses) lifted 16 px contrast by 28% but was rejected for the crop change, so the only lever left for 16 px is stroke weight.
 
-- A tighter circle magnifies every move by 1/zoom. Scale the beat's `crouch` and `push` by `zoom` to keep the bounce inside the 2 px step budget (the shipped bounce peaks at 1.74 px, 0.78 unscaled would be 2.22).
-- Each option is built and checked on its own frame, so `metrics` reports its real icon px.
-- Measured on 16 px renders: 0.78 zoom lifts dark pixels from 30 to 52 and edge contrast by 28%. Adding about 0.2 px of stroke (8.5 flat px) adds a little more at 16 px and nothing at 32 px. Bolder than that crowds the pupils.
-- Costs of 0.78: the leaf tip touches the circle edge, the left glasses arm and lower body crop, and the sky becomes a crescent.
-- The static icons (`app/icon.png`, `favicon.ico`, `apple-icon.png`) come from `favicon_anim.py` and must switch to the same framing as the loop, or the icon jumps when the animation starts.
+`Snappy.bold` adds flat px to every glasses stroke (`glasses_svg` in `favicon_anim_options.py`). At 16 px one icon px is about 58 flat px, so 11.6 adds 0.2 px and 23.1 adds 0.4 px. Poses carry the key only when set, so the shipped frames stay byte-identical. `rim_gap` and `safe_gaze` take the same value, so the pupils keep their 15 flat px from the heavier rim.
+
+Measured on 16 px renders of the open frame (dark pixels, edge contrast): shipped 31 and 28.6, +0.2 px 36 and 31.7, +0.4 px 41 and 34.2. At 32 px the gain is small, and at 48 px +0.4 px starts to look heavy.
 
 ## Runtime
 

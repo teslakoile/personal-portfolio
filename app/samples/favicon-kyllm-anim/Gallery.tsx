@@ -140,8 +140,8 @@ export function Gallery() {
   };
   const live = OPTIONS.find((o) => o.id === pickedId);
   const shipped = OPTIONS.find((o) => o.id === SHIPPED_ID);
-  // the same loop in a tighter circle: sharper at 16 px, never shipped until one is named
-  const framing = OPTIONS.filter((o) => o.group === "framing");
+  // the same loop on the same crop with heavier glasses rings, for 16 px; never shipped until one is named
+  const stroke = OPTIONS.filter((o) => o.group === "stroke");
 
   return (
     <>
@@ -166,11 +166,11 @@ export function Gallery() {
         </section>
       ) : null}
 
-      {framing.length ? (
+      {stroke.length ? (
         <section className={s.section}>
-          <h2>Tighter Framing</h2>
+          <h2>Heavier Rings</h2>
           <div className={s.heroWrap}>
-            {framing.map((o) => (
+            {stroke.map((o) => (
               <Card key={o.id} option={o} live={o.id === pickedId} motion={motion} onTry={() => tryOption(o)} />
             ))}
           </div>
