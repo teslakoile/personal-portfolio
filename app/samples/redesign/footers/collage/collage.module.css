@@ -7,7 +7,7 @@
 .ph { position: relative; overflow: hidden; background: var(--tile-bg, transparent); }
 .ph i { position: absolute; inset: 0; background: var(--tile-ink, var(--coral)); -webkit-mask: var(--src) center / cover no-repeat; mask: var(--src) center / cover no-repeat; }
 .mail { color: var(--ink); text-decoration: none; background-image: linear-gradient(var(--coral), var(--coral)); background-repeat: no-repeat; background-position: 0 100%; background-size: 100% 2px; padding-bottom: 2px; }
-.mail:hover { color: var(--coral-ink); }
+.mail:hover { color: var(--coral); }
 .quiet { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 24px; padding: 20px var(--gutter); font-size: 13px; color: var(--ink-3); }
 .quiet nav { display: flex; gap: 20px; }
 .quiet a { color: var(--ink-2); text-decoration: none; }

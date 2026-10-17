@@ -1,0 +1,90 @@
+/* The ruled rail (Rail variant="ruled"): the rail cut into ruled rows like the
+   page frame. One rule under the wordmark row, one under every section, and
+   the launchers and the foot pinned to the bottom as ruled rows, so the rail
+   never ends in a blank half. The active row is lifted onto surface with a
+   full-height coral tick. The classic rail uses none of this. */
+
+.rail { min-height: 100%; padding: 0; }
+
+/* wordmark row, with the sound icon at its right */
+.top { display: flex; align-items: center; justify-content: space-between; height: 72px; padding: 0 14px 0 22px; border-bottom: 1px solid var(--line); }
+
+/* one ruled row per section */
+/* z-index 0 makes the nav its own stacking context, so the marker's -1 sits
+   above the rail's background and below the rows' text */
+.rail nav { position: relative; z-index: 0; margin-top: 0; }
+.rail nav > a { height: 42px; padding-left: 22px; border-bottom: 1px solid var(--line); }
+.rail nav > a:hover { background: var(--sunk); }
+.rail nav > a[aria-current] span { color: var(--coral); }
+/* the active row's lift is the marker itself: the whole row in surface with
+   the coral tick down its left edge, filling in as a ripple from the click
+   point (RailNav move="ripple"). It sits at z-index -1 in the nav's stacking
+   context, behind the row's text. Without motion, the static ::before draws
+   the same. The active row keeps its white on hover. */
+.rail nav > a[aria-current]:hover { background: transparent; }
+.rail nav > a > i, .rail nav > a[aria-current]::before {
+  top: -1px; bottom: -1px; left: 0; right: 0; width: auto; height: auto; z-index: -1;
+  background: var(--surface); box-shadow: inset 2px 0 0 var(--coral);
+}
+
+/* hover and press: the label nudges right, the number darkens, a faint coral
+   tick previews where the marker would go, and a press flashes the row */
+.rail nav > a { transition: background 0.15s, color 0.15s; }
+.rail nav > a > span { transition: color 0.15s; }
+.rail nav > a::after {
+  content: ""; position: absolute; left: 0; top: -1px; bottom: -1px; width: 2px; background: var(--coral);
+  opacity: 0; transform: scaleY(0.4); transition: opacity 0.18s, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rail nav > a:not([aria-current]):hover::after { opacity: 0.35; transform: none; }
+.rail nav > a:not([aria-current]):hover > span { color: var(--ink-3); }
+.rail nav > a:active:not([aria-current]) { background: var(--line); }
+@media (prefers-reduced-motion: no-preference) {
+  .rail nav > a { transition: background 0.15s, color 0.15s, padding-left 0.2s cubic-bezier(0.22, 1, 0.36, 1); }
+  .rail nav > a:not([aria-current]):hover { padding-left: 25px; }
+}
+
+/* the foot: launcher rows, then the call to action */
+.foot { margin-top: auto; border-top: 1px solid var(--line); }
+.util {
+  display: flex; align-items: center; gap: 10px; width: 100%; height: 48px; padding: 0 16px 0 18px; border: 0; border-bottom: 1px solid var(--line);
+  background: none; font: inherit; font-size: 14px; color: var(--ink); cursor: pointer; transition: background 0.15s;
+}
+.util:hover { background: var(--sunk); }
+.util > b { flex: 1; text-align: left; font-weight: 500; }
+.util > span:last-child { display: inline-flex; gap: 3px; }
+.avatar { display: grid; place-items: center; width: 30px; height: 30px; flex: none; margin-left: -4px; }
+.cta { padding: 18px 22px 22px; }
+.cta > * { width: 100%; justify-content: center; }
+
+/* sound as an icon button beside the wordmark, its tip hanging below it,
+   right-aligned so it never pokes past the rail's edge */
+.soundIcon {
+  position: relative; display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%;
+  background: none; color: var(--ink-3); cursor: pointer; transition: background 0.15s, color 0.15s;
+}
+.soundIcon:hover { background: var(--sunk); color: var(--ink); }
+/* coral while sound is on, the one live control in the row; grey when off */
+.soundIcon[aria-pressed="true"] { color: var(--coral); }
+.soundIcon[aria-pressed="true"]:hover { color: var(--coral-press); }
+.soundIcon[aria-pressed="false"] { color: var(--ink-4); }
+/* the ring that pulses out behind the speaker when sound turns on */
+.soundRing { position: absolute; inset: 3px; border-radius: 50%; border: 1.5px solid var(--coral); pointer-events: none; }
+/* the label, in the site's tooltip look (--tip-* on BrandRoot) */
+.soundIcon::after {
+  position: absolute; z-index: 5; pointer-events: none; background: var(--tip-bg);
+  opacity: 0; transform: translateY(calc(-1 * var(--tip-shift))); transition: opacity var(--tip-in), transform var(--tip-in);
+}
+.soundIcon::after {
+  content: attr(data-tip); top: calc(100% + 6px); right: 0; padding: var(--tip-pad); border-radius: var(--tip-radius);
+  color: #fff; font: var(--tip-title); font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.soundIcon:hover::after { opacity: 1; transform: none; }
+
+/* phones: the redesign folds the rail into a header bar (redesign.module.css
+   hides the nav and launchers); drop the ruled rows' rules and heights there */
+@media (max-width: 760px) {
+  .rail { min-height: 0; padding: 14px 20px; }
+  .top { height: auto; padding: 0; border: 0; }
+  .foot { margin-top: 0; border: 0; }
+  .cta { padding: 0; }
+}

@@ -1,0 +1,83 @@
+/* Answer streaming options. Tokens come from the parts page root (.root in kyllm.module.css). */
+
+.page { max-width: 1180px; margin: 0 auto; padding: 36px 32px 96px; }
+.intro h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.6px; margin: 0; }
+.intro p { margin: 6px 0 0; max-width: 70ch; color: var(--ink-2); font-size: 15px; }
+
+.controls {
+  position: sticky; top: 56px; z-index: 2; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  margin: 22px 0 18px; padding: 8px 0; background: var(--paper);
+}
+.replay { height: 34px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--coral-ink); color: #fff; font: inherit; font-size: 13.5px; font-weight: 500; cursor: pointer; }
+.replay:hover { background: var(--ink); }
+.toggle { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--sunk); }
+.toggle button { height: 28px; padding: 0 12px; border: 0; border-radius: 999px; background: none; font: inherit; font-size: 13px; color: var(--ink-2); cursor: pointer; transition: background 0.2s, color 0.2s, box-shadow 0.2s; }
+.toggle button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(28 25 23 / 0.12); }
+
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } .page { padding: 28px 16px 72px; } }
+
+.card { margin: 0; display: grid; grid-template-rows: auto 1fr; gap: 14px; padding: 18px; border-radius: 16px; background: var(--surface); box-shadow: var(--float); }
+.card figcaption { display: grid; gap: 4px; }
+.card figcaption p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+.card figcaption small { font-size: 12.5px; line-height: 1.45; color: var(--ink-3); }
+.cardHead { display: flex; align-items: center; gap: 8px; }
+.cardHead b { font-size: 15.5px; font-weight: 600; }
+.tagNow, .tagNew { padding: 2px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 500; }
+.tagNow { background: var(--sunk); color: var(--ink-2); }
+[data-option="B"] .tagNew { background: var(--coral); color: #fff; }
+.tagNew { background: var(--coral-tint); color: var(--coral-ink); }
+
+/* the answer, sized so the card never grows while it streams */
+.mock { display: flex; flex-direction: column; gap: 14px; min-height: 290px; padding: 16px; border-radius: 12px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); }
+.av { display: block; margin-top: -2px; line-height: 0; }
+.p { margin: 0; }
+.srcs > * { animation: rise 0.35s var(--ease) both; }
+.srcs > :nth-child(2) { animation-delay: 90ms; }
+.srcs > :nth-child(3) { animation-delay: 180ms; }
+.grow { overflow: hidden; transition: height 0.22s var(--ease); }
+
+/* A: current, as in the demo */
+.blurIn { animation: blurIn 0.34s ease-out both; }
+@keyframes blurIn { from { opacity: 0; filter: blur(3px); } }
+.pop { display: inline-block; animation: pop 0.4s cubic-bezier(0.3, 1.6, 0.5, 1) both; }
+@keyframes pop { from { opacity: 0; transform: scale(0.3); } }
+.block { display: inline-block; width: 8px; height: 15px; margin-left: 3px; vertical-align: -2px; border-radius: 1.5px; background: var(--coral); animation: breathe 0.8s ease-in-out infinite; }
+@keyframes breathe { 50% { opacity: 0.35; } }
+
+/* B: smooth characters */
+.fadeIn { display: inline-block; animation: fade 0.25s ease-out both; }
+
+.opt { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.opt small { font-size: 12.5px; color: var(--ink-3); }
+
+/* C: phrase rise */
+.rise { position: relative; animation: phrase 0.22s var(--ease) both; }
+@keyframes phrase { from { opacity: 0; top: 0.2em; } to { top: 0; } }
+.citeSoft { display: inline-block; animation: soft 0.22s var(--ease) both; }
+@keyframes soft { from { opacity: 0; transform: scale(0.85); } }
+.bar { display: inline-block; width: 2px; height: 1.05em; margin-left: 2px; vertical-align: -0.15em; border-radius: 1px; background: var(--coral); animation: blink 1s steps(2, start) infinite; }
+@keyframes blink { to { visibility: hidden; } }
+
+/* D: quiet words */
+.fade { animation: fade 0.18s ease-out both; }
+.lit { border-radius: 3px; }
+.fade.lit { animation: lit 1.4s ease-out both; }
+@keyframes lit { 0%, 30% { background: var(--coral-tint); } 100% { background: transparent; } }
+.dots { display: inline-flex; gap: 3px; margin-left: 5px; vertical-align: 2px; }
+.dots i { width: 4px; height: 4px; border-radius: 50%; background: var(--ink-3); animation: dot 1.2s ease-in-out infinite; }
+.dots i:nth-child(2) { animation-delay: 0.15s; }
+.dots i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes dot { 0%, 70%, 100% { opacity: 0.3; } 35% { opacity: 1; } }
+
+@keyframes fade { from { opacity: 0; } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+
+.review { margin-top: 22px; padding: 18px; border-radius: 16px; background: var(--surface); box-shadow: var(--float); display: grid; gap: 10px; }
+.reviewHead { display: flex; align-items: center; gap: 10px; }
+.reviewHead h3 { margin: 0 auto 0 0; font-size: 15.5px; font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  .blurIn, .pop, .block, .fadeIn, .rise, .citeSoft, .bar, .fade, .lit, .dots i, .srcs > * { animation: none; }
+  .grow { transition: none; }
+}

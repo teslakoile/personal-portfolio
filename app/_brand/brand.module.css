@@ -4,9 +4,9 @@
    on app/samples/quiet/styles.module.css. Rules in one line each:
      shape   square structure (0 radius), 6px chips, 14px floating layers,
              999px buttons
-     color   warm paper, stone greys, one coral for UI (coral-ink for small
-             text and fills); four block colors for data only, grey (--raw)
-             means raw or expired
+     color   warm paper, stone greys, one coral for UI (marks, type, links,
+             and the primary button); four block colors for data only, grey
+             (--raw) means raw or expired
      type    Geist everywhere with tabular numerals; Geist Mono only for code
              identifiers inside diagrams
      blocks  only where a timeline or a real metric matters, and every block
@@ -22,8 +22,9 @@
   --ink-2: #57534e;
   --ink-3: #78716c;
   --ink-4: #c3bcb5;
-  --coral: #f5482d;      /* marks and large type: ticks, today lines, focus rings, 24px+ words */
-  --coral-ink: #d2381f;  /* small coral text and the primary button: 4.6:1 on paper */
+  --coral: #f5482d;      /* the one coral, at every size: marks, type, links, the primary button.
+                            3.4:1 on paper and 3.6:1 under white text, below AA for small text;
+                            Kyle's call on 2026-10-15 over a darker coral-ink for small sizes */
   --coral-press: #b5301a;
 
   --b1: #f26a4b;
@@ -40,6 +41,24 @@
   --r-pill: 999px;
   --float: 0 0 0 1px rgb(28 25 23 / 0.06), 0 24px 48px -22px rgb(28 25 23 / 0.22);
   --frame: 1080px;
+
+  /* the site's one tooltip: chip and certification notes (ChipFx), the GitHub
+     calendar, and the Sound and Copy labels. Two forms only: a label (the
+     title line alone) or a note (title, then a dimmer description). A dark ink
+     box, no caret (the hovered element marks itself), and a short fade that
+     slides it 3px toward the anchor. Picked 2026-10-15: ink, no caret, no
+     third line. The padding is 1px heavier on top so a one-line label's
+     letters sit optically centred (Geist's line box carries its descender
+     room below the baseline). The font shorthands reset numerals, so every
+     user sets tabular-nums after them. */
+  --tip-bg: var(--ink);
+  --tip-pad: 7px 10px 6px;
+  --tip-radius: 6px;
+  --tip-title: 500 12.5px/1.35 var(--sans);
+  --tip-text: 400 12px/1.45 var(--sans);
+  --tip-dim: rgb(255 255 255 / 0.78);
+  --tip-shift: 3px;
+  --tip-in: 0.15s cubic-bezier(0.33, 1, 0.68, 1);
   --gutter: 44px;
 
   min-height: 100vh;
@@ -106,7 +125,7 @@
   padding: 48px var(--gutter) 28px;
 }
 .head p { margin: 0; max-width: 380px; font-size: 15.5px; color: var(--ink-2); }
-.num { display: inline-block; vertical-align: top; margin: 6px 16px 0 0; font-size: 16px; font-weight: 500; letter-spacing: 0; color: var(--coral-ink); }
+.num { display: inline-block; vertical-align: top; margin: 6px 16px 0 0; font-size: 16px; font-weight: 500; letter-spacing: 0; color: var(--coral); }
 
 /* ========================== CONTROLS =========================== */
 .btn {
@@ -125,7 +144,7 @@
   transition: background 0.16s ease, transform 0.12s ease, box-shadow 0.16s ease, color 0.16s ease;
 }
 .btn:active { transform: scale(0.97); }
-.btnPrimary { background: var(--coral-ink); color: #fff; box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.16), 0 1px 2px rgb(245 72 45 / 0.3); }
+.btnPrimary { background: var(--coral); color: #fff; box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.16), 0 1px 2px rgb(245 72 45 / 0.3); }
 .btnPrimary:hover { background: var(--coral-press); }
 .btnSecondary { background: var(--surface); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-2); }
 .btnSecondary:hover { box-shadow: inset 0 0 0 1px var(--ink-3); }
@@ -169,7 +188,7 @@
 .orgLink:hover, .orgLink:focus-visible { text-decoration-color: var(--coral); }
 .orgLink:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
 .orgOut { font: inherit; color: var(--ink-3); opacity: 0; transition: opacity 0.14s ease; }
-.orgLink:hover .orgOut, .orgLink:focus-visible .orgOut { opacity: 1; color: var(--coral-ink); }
+.orgLink:hover .orgOut, .orgLink:focus-visible .orgOut { opacity: 1; color: var(--coral); }
 @media (prefers-reduced-motion: reduce) { .orgLink, .orgOut { transition: none; } }
 
 /* a chip with a note (ChipFx shows it): the dashed edge turns solid coral and
@@ -205,12 +224,16 @@
   border-radius: var(--r-chip);
 }
 
-.link { color: var(--coral-ink); font-size: 14px; font-weight: 500; text-decoration: none; }
+.link { display: inline-flex; align-items: center; gap: 6px; color: var(--coral); font-size: 14px; font-weight: 500; text-decoration: none; }
 .link:hover { text-decoration: underline; text-underline-offset: 3px; }
 .contact { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: var(--ink-2); }
 .contact a { display: inline-flex; align-items: center; gap: 7px; color: inherit; text-decoration: none; }
 .contact a:hover { color: var(--ink); }
-.contact svg { color: var(--ink-3); }
+.contact svg { flex: none; color: var(--ink-3); transition: color 0.16s ease; }
+/* on hover each icon takes its own colour: coral for email, LinkedIn's blue, GitHub's black */
+.contact a[data-kind="email"]:hover svg { color: var(--coral); }
+.contact a[data-kind="linkedin"]:hover svg { color: #0a66c2; }
+.contact a[data-kind="github"]:hover svg { color: #181717; }
 
 /* ============================ ROWS ============================= */
 .kv { padding: 20px 26px; border-bottom: 1px dashed var(--line); }
@@ -286,12 +309,12 @@
 .laneLabel img { height: 15px; width: auto; }
 .lane .blocks { flex-wrap: nowrap; }
 .today { position: absolute; top: -6px; bottom: -6px; border-left: 1px dashed var(--coral); }
-.today span { position: absolute; bottom: -20px; right: 4px; font-size: 10.5px; color: var(--coral-ink); white-space: nowrap; }
+.today span { position: absolute; bottom: -20px; right: 4px; font-size: 10.5px; color: var(--coral); white-space: nowrap; }
 /* the flag form: one solid bar through every lane, its label plain text at the foot */
 .lanes { position: relative; }
 .lanesFlag { margin-right: 28px; }
 .todayBar { position: absolute; top: -4px; bottom: -4px; width: 0; border-left: 1px solid var(--coral); z-index: 1; pointer-events: none; }
-.todayBar span { position: absolute; top: 100%; left: 0.5px; transform: translateX(-50%); margin-top: 4px; font-size: 10.5px; line-height: 1.5; color: var(--coral-ink); white-space: nowrap; }
+.todayBar span { position: absolute; top: 100%; left: 0.5px; transform: translateX(-50%); margin-top: 4px; font-size: 10.5px; line-height: 1.5; color: var(--coral); white-space: nowrap; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 26px; font-size: 11.5px; color: var(--ink-2); }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .legend i { display: inline-block; width: 12px; height: 6px; }
@@ -314,7 +337,7 @@
 .navItem span { width: 22px; font-size: 11.5px; color: var(--ink-4); }
 .navItem:hover { color: var(--ink); }
 .navActive { color: var(--ink); font-weight: 500; }
-.navActive span { color: var(--coral-ink); }
+.navActive span { color: var(--coral); }
 .navActive::before,
 .navMarker { content: ""; position: absolute; left: 0; top: 9px; width: 2px; height: 16px; background: var(--coral); }
 /* Motion rail: the tick is a real element (.navMarker) that slides between

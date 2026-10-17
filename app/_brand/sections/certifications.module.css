@@ -11,7 +11,7 @@
 .titleLink:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
 /* same size and weight as the title so the underline runs unbroken to the arrow */
 .out { font: inherit; color: var(--ink-3); opacity: 0; transition: opacity 0.14s ease; }
-.titleLink:hover .out, .titleLink:focus-visible .out { opacity: 1; color: var(--coral-ink); }
+.titleLink:hover .out, .titleLink:focus-visible .out { opacity: 1; color: var(--coral); }
 @media (prefers-reduced-motion: reduce) { .titleLink, .out { transition: none; } }
 .tag { display: inline-block; margin-left: 8px; padding: 1px 7px; font-size: 11.5px; font-weight: 500; color: var(--ink-3); border: 1px dashed var(--line-2); border-radius: var(--r-chip); vertical-align: 2px; }
 

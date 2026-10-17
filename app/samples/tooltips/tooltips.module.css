@@ -1,0 +1,79 @@
+/* Tooltip designs (page.tsx). Each tip's box styles are copied from the file
+   named in its cell, with the hover condition removed so it shows open. */
+.page { padding: 40px 0 80px; }
+
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-left: -1px; border-top: 1px solid var(--line); }
+.cell { display: grid; grid-template-rows: auto auto 1fr auto; min-width: 0; padding: 26px 28px 22px; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.cell:nth-child(odd) { padding-left: var(--gutter); }
+.idea { margin: 6px 0 0; max-width: 440px; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+.where { margin-top: 14px; font: 400 11.5px var(--mono); color: var(--ink-4); }
+.stage { display: flex; align-items: flex-end; justify-content: center; min-height: 190px; padding-bottom: 8px; }
+.pair { display: flex; gap: 90px; align-items: flex-end; }
+
+.anchor, .anchorLeft, .anchorRight { position: relative; display: inline-grid; }
+.chip { cursor: default; }
+.copyBtn { display: block; width: 30px; height: 30px; border-radius: 50%; background: var(--line); }
+.day { display: block; width: 14px; height: 14px; border-radius: 2px; background: var(--coral); box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--coral); }
+
+/* 1: chip note (chipFx.module.css .card, before the tokens) */
+.note { position: absolute; bottom: calc(100% + 10px); left: 50%; translate: -50% 0; display: grid; gap: 1px; width: max-content; max-width: 252px; padding: 6px 10px 7px; border-radius: 6px; background: var(--ink); color: #fff; }
+.note::after { content: ""; position: absolute; left: 50%; bottom: -4px; width: 8px; height: 8px; background: var(--ink); transform: translateX(-50%) rotate(45deg); }
+.note b { font-size: 12.5px; font-weight: 500; line-height: 1.35; }
+.note span { margin: 2px 0 0; font-size: 12px; line-height: 1.45; color: rgb(255 255 255 / 0.78); }
+
+/* 2: GitHub calendar (github.module.css .tipCard on main) */
+.gh { position: absolute; left: 50%; bottom: calc(100% + 10px); translate: -50% 0; display: grid; gap: 1px; width: 176px; padding: 7px 10px 8px; border-radius: 6px; background: var(--ink); color: #fff; font-size: 12px; line-height: 1.4; }
+.gh b { font-size: 12.5px; font-weight: 500; }
+.gh span { color: rgb(255 255 255 / 0.62); }
+.gh em { margin-top: 2px; font-size: 11.5px; font-style: normal; font-weight: 500; color: var(--b1); }
+
+/* 3, 4, 8: KYLLM key hint (kyllm.module.css .kbd[data-tip]::after) */
+.kbd { position: relative; font: 500 11.5px var(--sans); padding: 1px 6px; border-radius: 4px; border: 1px dashed var(--ink-3); color: var(--ink); background: none; }
+.kbdTip { position: absolute; left: 50%; bottom: calc(100% + 8px); translate: -50% 0; padding: 3px 8px; border-radius: 6px; background: var(--ink); color: #fff; font-size: 11.5px; font-weight: 400; white-space: nowrap; }
+.srcChip { display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: var(--r-chip); background: var(--surface); border: 1px solid var(--coral); font-size: 12.5px; color: var(--ink); transform: translateY(-1px); }
+
+/* 5: KYLLM copy (round3.module.css .copyTip) and step timing (steps.module.css .bar::after) */
+.copyTip { position: absolute; left: 50%; bottom: calc(100% + 6px); translate: -50% 0; padding: 2px 7px; border-radius: 6px; background: var(--ink); color: #fff; font-size: 11.5px; white-space: nowrap; }
+.stepTip { position: absolute; bottom: calc(100% + 7px); left: 0; padding: 2px 7px; border-radius: 6px; background: var(--ink); color: #fff; font-size: 11.5px; white-space: nowrap; }
+.stepBar { display: block; width: 120px; height: 8px; border-radius: 2px; background: var(--b3); }
+
+/* 6: round 3 callout (round3.module.css .tip) */
+.r3Tip { position: absolute; left: 50%; bottom: calc(100% + 10px); translate: -50% 0; padding: 4px 9px; border-radius: 6px; background: var(--ink); color: #fff; font-size: 12px; white-space: nowrap; }
+.r3Tip::after { content: ""; position: absolute; left: 50%; bottom: -4px; width: 8px; height: 8px; background: var(--ink); transform: translateX(-50%) rotate(45deg); }
+
+/* a citation marker */
+.cite { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--coral); color: #fff; font-size: 11px; font-weight: 500; }
+
+/* 7: States tool chip (states.module.css .tip) */
+.statesChip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: var(--r-chip); border: 1px solid var(--ink-3); background: var(--surface); font-size: 13px; color: var(--ink); }
+.statesTip { position: absolute; left: 50%; bottom: calc(100% + 8px); translate: -50% 0; display: grid; gap: 6px; justify-items: start; width: max-content; max-width: 240px; padding: 10px 12px; font-size: 12.5px; font-weight: 500; color: var(--ink); background: var(--surface); border-radius: 14px; box-shadow: var(--float); }
+.statesTip > span:last-child { font-weight: 400; color: var(--ink-3); }
+.statesBlocks { display: flex; gap: 2px; }
+.statesBlocks i { width: 7px; height: 5px; background: var(--raw); }
+.statesBlocks i[data-on] { background: var(--coral); }
+
+/* 8: Sound label (rail.module.css .soundIcon::after on main) */
+.soundTip { position: absolute; top: calc(100% + 6px); right: 0; padding: 3px 8px; border-radius: 6px; background: var(--ink); color: #fff; font-size: 11.5px; white-space: nowrap; }
+.anchorRight { margin-bottom: 40px; }
+
+/* content variations: every tip reads the site's --tip-* tokens (ink, no caret) */
+.tiers { border-top: 1px solid var(--line); margin-left: -1px; }
+.tierRow { display: grid; grid-template-columns: 200px minmax(0, 1fr); border-bottom: 1px solid var(--line); }
+.tierHead { display: grid; gap: 4px; align-content: start; padding: 24px 20px 24px var(--gutter); border-left: 1px solid var(--line); }
+.tierHead b { font-size: 15px; font-weight: 500; }
+.tierHead span { font-size: 13px; line-height: 1.45; color: var(--ink-3); }
+.tierItems { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.vCell { display: grid; grid-template-rows: 1fr auto auto; gap: 3px; min-width: 0; padding: 0 22px 22px; border-left: 1px solid var(--line); }
+.vStage { display: flex; align-items: flex-end; justify-content: space-around; gap: 16px; min-height: 230px; padding-bottom: 18px; }
+.vName { font-size: 13.5px; font-weight: 500; }
+.vIdea { font-size: 12.5px; line-height: 1.45; color: var(--ink-3); }
+
+.v { position: absolute; bottom: calc(100% + 8px); left: 50%; translate: -50% 0; display: grid; gap: 1px; width: max-content; max-width: 252px; padding: var(--tip-pad); border-radius: var(--tip-radius); background: var(--tip-bg); color: #fff; }
+.v > b { font: var(--tip-title); font-variant-numeric: tabular-nums; }
+.v > span { margin: 2px 0 0; font: var(--tip-text); font-variant-numeric: tabular-nums; color: var(--tip-dim); }
+
+@media (max-width: 760px) {
+  .tierRow { grid-template-columns: minmax(0, 1fr); }
+  .grid { grid-template-columns: minmax(0, 1fr); }
+  .cell { padding-left: var(--gutter); }
+}

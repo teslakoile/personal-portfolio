@@ -6,7 +6,6 @@ import { Footer } from "../../_brand/sections/Footer";
 import { Cursor } from "../../_brand/Cursor";
 import { MotionRoot } from "../../_brand/MotionRoot";
 import { ChipFx } from "../../_brand/ChipFx";
-import { SoundToggle } from "../../_brand/SoundToggle";
 import { Hero } from "../../_brand/sections/Hero";
 import { About } from "../../_brand/sections/About";
 import { Projects } from "../../_brand/sections/Projects";
@@ -18,6 +17,7 @@ import { Community } from "../../_brand/sections/Community";
 import { Recognition } from "../../_brand/sections/Recognition";
 import { GitHub } from "../../_brand/sections/GitHub";
 import { AskPanel } from "../../_brand/sections/AskPanel";
+import { ContactModal } from "../../_brand/sections/ContactModal";
 import s from "./redesign.module.css";
 
 /**
@@ -27,6 +27,8 @@ import s from "./redesign.module.css";
  * and the Ask KYLLM panel. Writing, Recommendations, and Resources stay off
  * the page until their content is real, as on the landing page's flags. The
  * single-section view of Certifications lives at /samples/redesign/certifications.
+ * The rail is the ruled one (picked 2026-10-15), and both Get in Touch buttons
+ * open the contact modal.
  */
 export const metadata: Metadata = {
   title: "Redesign | Kyle Naranjo",
@@ -52,6 +54,7 @@ export default function RedesignPage() {
         <Cursor />
         <ChipFx />
         <AskPanel />
+        <ContactModal />
         <div className={s.page}>
           <div className={s.railWrap}>
             <Rail
@@ -59,12 +62,9 @@ export default function RedesignPage() {
               items={SECTIONS}
               active="about"
               utils={[{ label: "Ask KYLLM", keys: ["⌘", "K"] }]}
-              foot={(
-                <>
-                  <SoundToggle />
-                  <div style={{ marginTop: 14 }}><Button href={sample.hero.primaryCta.href}>Get in Touch</Button></div>
-                </>
-              )}
+              sound
+              variant="ruled"
+              foot={<Button href={sample.hero.primaryCta.href} contact>Get in Touch</Button>}
             />
           </div>
           <main className={s.main}>

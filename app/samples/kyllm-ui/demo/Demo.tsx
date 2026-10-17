@@ -1,9 +1,12 @@
 "use client";
 
+import { ArrowUp } from "lucide-react";
 import { useEffect, useEffectEvent, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from "react";
-import { AnswerActions, Avatar, Cite, Highlights, Kbd, PanelHeader, Pill } from "../kit";
+import { AnswerActions, Highlights, Kbd, PanelHeader, Pill, LatestIcon } from "../kit";
 import { AGENTS_RUN, OPENING_RUN, TALKS_RUN } from "../HeroChat";
 import { MCP_RUN, Steps, type StepData } from "../Steps";
+import { KyllmLive, type Mood } from "../rig/KyllmLive";
+import { SmoothText } from "../streaming/SmoothText";
 import s from "../kyllm.module.css";
 import h from "../hero.module.css";
 import d from "./demo.module.css";
@@ -13,11 +16,18 @@ import d from "./demo.module.css";
  *   typing   the question types into the composer; Send lights up
  *   sent     the bubble rises; Send becomes Stop; the chips hide
  *   steps    the loading line, then the live waterfall
- *   stream   Steps fold; words fade in behind a caret; citations pop in
+ *   stream   Steps fold; the text flows in at an even pace (SmoothText); a thin
+ *            coral caret blinks only when the stream pauses
  *   blocks   tiles, then sources, then actions, staggered
  *   next     follow-up chips rise in
  * Autoplay types the first question, then picks a follow-up chip, then loops.
  * Typing or clicking anything hands control to the visitor.
+ *
+ * Every KYLLM in the panel is live and clickable (KyllmLive touch): the header,
+ * the greeting, and each answer. The newest answer's KYLLM follows its turn
+ * (working through the steps, answered once the reply is in); a boop plays on top
+ * of whatever it is doing, and the mood carries on underneath, so it resumes as
+ * soon as the boop settles. Booping never takes over the autoplay.
  */
 
 type Seg = string | { cite: number };
@@ -25,6 +35,10 @@ type Tok = { w: string } | { cite: number };
 type Script = { steps: StepData[]; text: Seg[]; tiles?: boolean; sources?: [string, string][]; next: string[] };
 type Stage = "sent" | "steps" | "fold" | "stream" | "blocks" | "done";
 type Beat = "idle" | "typing" | "sent" | "steps" | "stream" | "blocks" | "next";
+
+/** The answer avatar's mood: working through the steps, answered once the reply is in; older turns idle. */
+const turnMood = (stage: Stage, latest: boolean): Mood =>
+  !latest ? "idle" : stage === "steps" || stage === "fold" ? "working" : stage === "blocks" || stage === "done" ? "answered" : "idle";
 
 const OPEN = "Give me the 30-second version of Kyle.";
 const MCP = "How does the MCP server work?";
@@ -101,13 +115,13 @@ const BEATS: [Beat, string, string][] = [
   ["typing", "Typing", "The question types into the composer. Send turns coral once there is text."],
   ["sent", "Sent", "The bubble rises from the composer. Send becomes Stop and the chips hide."],
   ["steps", "Steps", "The loading line heads the block, then each bar grows on the waterfall while its seconds count."],
-  ["stream", "Streaming", "Steps fold to one line. Words fade in behind a coral caret, and citations pop in as they land."],
+  ["stream", "Streaming", "Steps fold to one line. The text flows in at an even pace, each character fading in, and a thin coral caret blinks only if the stream pauses."],
   ["blocks", "Blocks and sources", "Highlight tiles, then source pills, then the actions, each one staggered."],
   ["next", "Follow-ups", "Suggested questions rise in. Autoplay picks one, and you can too."],
 ];
 
-function TurnView({ q, script, pace, rate, onBeat, onFinish, onMeter }: {
-  q: string; script: Script; pace: Pace; rate: number; onBeat: (b: Beat) => void; onFinish: () => void; onMeter: (m: Meter) => void;
+function TurnView({ q, script, pace, rate, latest, onBeat, onFinish, onMeter }: {
+  q: string; script: Script; pace: Pace; rate: number; latest: boolean; onBeat: (b: Beat) => void; onFinish: () => void; onMeter: (m: Meter) => void;
 }) {
   const [stage, setStage] = useState<Stage>("sent");
   const [toks] = useState(() => tokenize(script.text));
@@ -167,24 +181,17 @@ function TurnView({ q, script, pace, rate, onBeat, onFinish, onMeter }: {
       <div className={`${s.user} ${d.userIn}`}>{q}</div>
       {stage === "sent" ? null : (
         <div className={h.answer}>
-          <Avatar size={36} />
+          <span className={d.av}><KyllmLive touch size={36} mood={turnMood(stage, latest)} /></span>
           <div className={h.answerBody}>
             <Steps v="waterfall" steps={script.steps} play={1} rate={rate} onDone={() => setStage("fold")} />
-            {showText ? (
-              <p className={d.stream}>
-                {toks.slice(0, n).map((t, i) => ("w" in t
-                  ? <span key={i} className={d.tok}>{t.w}</span>
-                  : <span key={i} className={d.citeIn}><Cite n={t.cite} /></span>))}
-                {stage === "stream" ? <span className={d.caret} aria-hidden="true" /> : null}
-              </p>
-            ) : null}
+            {showText ? <SmoothText className={d.stream} toks={toks} n={n} done={stage !== "stream"} rate={rate} /> : null}
             {showAfter ? (
               <>
                 {script.tiles ? <div className={`${h.block} ${d.tiles}`}><Highlights /></div> : null}
                 {script.sources ? (
                   <div className={`${h.sources} ${d.srcs}`} style={{ "--d": `${srcAt}ms` } as CSSProperties}>
                     <span>Sources</span>
-                    {script.sources.map(([sec, name]) => <Pill key={name} kind="source"><b>{sec}</b>{name} ↗</Pill>)}
+                    {script.sources.map(([sec, name]) => <Pill key={name} kind="source"><b>{sec}</b>{name}</Pill>)}
                   </div>
                 ) : null}
                 <div className={d.actions} style={{ "--d": `${actAt}ms` } as CSSProperties}><AnswerActions /></div>
@@ -324,21 +331,21 @@ function Chat({ auto, pace, rate, controls, onTakeOver, onReplay }: {
   return (
     <>
       <div ref={panel} className={h.panel} style={{ height: 680, alignSelf: "start" }}>
-        <PanelHeader />
+        <PanelHeader avatar={<KyllmLive touch size={32} />} />
         <div className={h.scrollWrap} data-scrolled={scrolled ? "" : undefined}>
           <div ref={scroller} className={h.scroll} onScroll={onScroll} onWheel={(e) => { if (e.deltaY < 0) leave(); }} onTouchMove={leave}>
             <div ref={thread} className={h.thread}>
               <div className={h.answer}>
-                <Avatar size={36} />
+                <span className={d.av}><KyllmLive touch size={36} mood={!turns.length && beat === "typing" ? "typing" : "idle"} /></span>
                 <div className={h.answerBody}><p>Hi, I&apos;m KYLLM. Ask me about Kyle&apos;s work, and I&apos;ll answer from his CV and link where each fact comes from.</p></div>
               </div>
-              {turns.map((t) => (
-                <TurnView key={t.id} q={t.q} script={SCRIPTS[t.key]} pace={pace} rate={rate} onBeat={setBeat} onFinish={finished} onMeter={setMeter} />
+              {turns.map((t, i) => (
+                <TurnView key={t.id} q={t.q} script={SCRIPTS[t.key]} pace={pace} rate={rate} latest={i === turns.length - 1} onBeat={setBeat} onFinish={finished} onMeter={setMeter} />
               ))}
             </div>
           </div>
           <button type="button" className={h.latest} data-show={away ? "" : undefined} onClick={() => { follow.current = true; scroller.current?.scrollTo({ top: scroller.current.scrollHeight, behavior: "smooth" }); }}>
-            ↓ Latest
+            <LatestIcon />Latest
           </button>
         </div>
         <div className={h.foot}>
@@ -365,7 +372,7 @@ function Chat({ auto, pace, rate, controls, onTakeOver, onReplay }: {
             {!draft && !busy ? <Kbd>⌘K</Kbd> : null}
             <button type="submit" aria-label={sendState} data-press={pressed === "send" ? "" : undefined}
               className={[s.send, d.send, sendState === "stop" && s.sendStop, sendState === "wait" && s.sendWait].filter(Boolean).join(" ")}>
-              {sendState === "stop" ? null : "↑"}
+              {sendState === "stop" ? null : <ArrowUp size={18} strokeWidth={2.25} aria-hidden="true" />}
             </button>
           </form>
         </div>

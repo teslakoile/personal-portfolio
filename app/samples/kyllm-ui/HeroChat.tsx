@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
-import { AnswerActions, Avatar, Cite, Composer, Highlights, PanelHeader, Pill, UserMsg } from "./kit";
+import { AnswerActions, Avatar, Cite, Composer, Highlights, PanelHeader, Pill, UserMsg, LatestIcon } from "./kit";
 import { MCP_RUN, Steps, type StepData } from "./Steps";
 import h from "./hero.module.css";
 
@@ -80,7 +80,7 @@ function TurnView({ turn, onAnswered }: { turn: Turn; onAnswered?: () => void })
               {turn.sources ? (
                 <div className={h.sources}>
                   <span>Sources</span>
-                  {turn.sources.map(([sec, name]) => <Pill key={name} kind="source"><b>{sec}</b>{name} ↗</Pill>)}
+                  {turn.sources.map(([sec, name]) => <Pill key={name} kind="source"><b>{sec}</b>{name}</Pill>)}
                 </div>
               ) : null}
               <AnswerActions />
@@ -146,7 +146,7 @@ export function HeroChat() {
           </div>
         </div>
         <button type="button" className={h.latest} data-show={away ? "" : undefined} onClick={() => { follow.current = true; toBottom(true); }}>
-          ↓ Latest
+          <LatestIcon />Latest
         </button>
       </div>
       <div className={h.foot}>

@@ -10,11 +10,15 @@
     "shot": "node scripts/screenshot.mjs"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@tiptap/extension-image": "^3.31.4",
     "@tiptap/extensions": "^3.31.4",
     "@tiptap/pm": "^3.31.4",
     "@tiptap/react": "^3.31.4",
     "@tiptap/starter-kit": "^3.31.4",
+    "gsap": "^3.15.0",
+    "lottie-web": "^5.13.0",
+    "lucide-react": "1.48.0",
     "motion": "^14.1.0",
     "next": "16.2.1",
     "react": "19.2.4",

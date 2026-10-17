@@ -65,24 +65,27 @@ const BTN: Record<ButtonVariant, string> = {
 };
 
 /** Pill button, rendered as a link when it has an href. */
-export function Button({ variant = "primary", size, href, download, children }: {
+export function Button({ variant = "primary", size, href, download, contact, children }: {
   variant?: ButtonVariant;
   size?: "sm";
   href?: string;
   download?: boolean;
+  /** Opens the Get in Touch modal (ContactModal) when the page renders one;
+      the href still works where it does not. */
+  contact?: boolean;
   children: ReactNode;
 }) {
   const cls = `${b.btn} ${BTN[variant]} ${size === "sm" ? b.btnSm : ""}`;
   if (href) {
     const external = href.startsWith("http");
     return (
-      <a className={cls} href={href} download={download || undefined}
+      <a className={cls} href={href} download={download || undefined} data-contact={contact ? "" : undefined}
         target={external ? "_blank" : undefined} rel={external ? "noreferrer" : undefined}>
         {children}
       </a>
     );
   }
-  return <button type="button" className={cls}>{children}</button>;
+  return <button type="button" className={cls} data-contact={contact ? "" : undefined}>{children}</button>;
 }
 
 /** Status pill with a sage key, used once at the top of the hero. */

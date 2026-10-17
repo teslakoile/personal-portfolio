@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { fontVars } from "./fonts";
+import { AnimatedFavicon } from "./_brand/AnimatedFavicon";
 import "./globals.css";
 
 // --font-geist-sans/--font-geist-mono feed globals.css (body default).
@@ -18,11 +19,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// One title and description for the search result, the Open Graph card, and
+// the Twitter card, so every surface says the same thing.
+const siteTitle = "Kyle Naranjo | Data, AI/ML, and Software Engineering";
+const siteDescription =
+  "Kyle Naranjo has 4+ years of experience in data, AI/ML, and software engineering for enterprises and startups in various industries. Kyle has earned 10 certifications across OpenAI, AWS, Azure, Google Cloud, and Databricks.";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://kylenaranjo.cv"),
-  title: "Kyle Naranjo | Data Engineer",
-  description:
-    "Kyle Nathan G. Naranjo is a Data Engineer II building AI agents, data pipelines, cloud infrastructure, MLOps systems, and backend platforms.",
+  title: siteTitle,
+  description: siteDescription,
   keywords: [
     "Kyle Naranjo",
     "Data Engineer",
@@ -45,9 +51,8 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Kyle Naranjo | Data Engineer",
-    description:
-      "Data Engineer II at Thinking Machines Data Science focused on AI agents, data pipelines, cloud infrastructure, MLOps, and backend engineering.",
+    title: siteTitle,
+    description: siteDescription,
     url: "/",
     siteName: "Kyle Naranjo",
     locale: "en_PH",
@@ -55,9 +60,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kyle Naranjo | Data Engineer",
-    description:
-      "Data and AI infrastructure, GenAI systems, MLOps, backend engineering, and cloud delivery across enterprise engagements.",
+    title: siteTitle,
+    description: siteDescription,
   },
 };
 
@@ -76,7 +80,10 @@ export default function RootLayout({
       lang="en-PH"
       className={`${geistSans.variable} ${geistMono.variable} ${fontVars} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <AnimatedFavicon />
+        {children}
+      </body>
     </html>
   );
 }

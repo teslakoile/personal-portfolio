@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
 
 /**
- * Web app manifest, so an "Add to Home Screen" install shows the portrait icon
- * (Kyle in brand ink #1c1917 on brand cream #faf9f7, matching the favicon)
- * instead of a screenshot.
- * The maskable variant keeps the face inside the central 80% safe zone so
- * Android's circle and squircle crops never clip it.
+ * Web app manifest, so an "Add to Home Screen" install shows the KYLLM icon
+ * (the flat cat on a sky circle, matching the favicon) instead of a screenshot.
+ * The maskable variant is a full-bleed sky square with the avatar circle held
+ * inside the central 80% safe zone so Android's circle and squircle crops
+ * never clip the glasses.
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {

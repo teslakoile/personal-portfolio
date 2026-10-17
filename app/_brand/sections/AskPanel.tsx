@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useReducer, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion, type Transition, type Variants } from "motion/react";
+import { ArrowRight, Mail } from "lucide-react";
 import { bestMatch, emailQuestionHref, SUGGESTIONS, type QA } from "./askContent";
 import b from "../brand.module.css";
 import s from "./askPanel.module.css";
@@ -350,12 +351,12 @@ function Answer({ asked, stream, shown, animate, onAsk, onNavigate }: {
                     href={link.href}
                     onClick={link.external ? undefined : onNavigate}
                   >
-                    {link.label} <span aria-hidden="true">→</span>
+                    <ArrowRight size={14} strokeWidth={2} aria-hidden="true" />{link.label}
                   </a>
                 ) : null
               ) : (
                 <a className={b.link} href={emailQuestionHref(asked.q)}>
-                  Email Me This Question <span aria-hidden="true">→</span>
+                  <Mail size={14} strokeWidth={2} aria-hidden="true" />Email Me This Question
                 </a>
               )}
               <div className={s.followUps}>
@@ -375,7 +376,8 @@ function Answer({ asked, stream, shown, animate, onAsk, onNavigate }: {
 
 /* ------------------------------ focus trap ------------------------------ */
 
-function trapTab(e: ReactKeyboardEvent<HTMLElement>) {
+/** Keeps Tab inside a modal: wraps from the last focusable to the first and back. */
+export function trapTab(e: ReactKeyboardEvent<HTMLElement>) {
   if (e.key !== "Tab") return;
   const focusables = Array.from(
     e.currentTarget.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])'),

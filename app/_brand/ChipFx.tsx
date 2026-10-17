@@ -22,7 +22,7 @@ import f from "./chipFx.module.css";
 /** Major-pentatonic steps above the base note, so any two chips sound friendly. */
 const STEPS = [0, 2, 4, 7, 9, 12, 14, 16];
 const BASE = 620;
-const GAP = 10;
+const GAP = 8;
 const EDGE = 12;
 
 function pitch(name: string): number {
@@ -51,9 +51,6 @@ export function ChipFx() {
       const below = above < EDGE;
       box.dataset.side = below ? "below" : "above";
       box.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(below ? r.bottom + GAP : above)}px, 0)`;
-      // the caret points at the chip's centre, kept inside the card's corners
-      const caret = Math.min(Math.max(r.left + r.width / 2 - x, 12), w - 12);
-      box.style.setProperty("--caret", `${Math.round(caret)}px`);
     };
 
     const show = (chip: HTMLElement, sound: boolean) => {

@@ -1,0 +1,27 @@
+/* KyllmLive. Sizes are in em of the avatar (font-size is set to its width). */
+
+.wrap { position: relative; display: inline-flex; flex: none; line-height: 0; }
+/* touch: KYLLM as a button (hover to pet, press to boop) */
+.wrap[data-touch] { cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; outline: none; }
+.wrap[data-touch]:focus-visible { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #d2381f; }
+.roundFocus { border-radius: 50%; }
+
+.layer { position: absolute; inset: 0; pointer-events: none; }
+.round { border-radius: 50%; overflow: hidden; }
+
+/* pondering: three dots on their own in the sky at the top right (no bubble), each rising and
+   fading in turn like an ellipsis being thought. SVG circles, so they stay round at any size. */
+.dots {
+  position: absolute; left: 0.58em; top: 0.2em; display: block;
+  opacity: 0; transition: opacity 0.25s;
+}
+.dots[data-on] { opacity: 1; }
+.dots svg { display: block; width: 0.275em; height: 0.075em; overflow: visible; }
+.dots circle { fill: #1c1917; animation: think 1.4s ease-in-out infinite; }
+.dots circle:nth-child(2) { animation-delay: 0.2s; }
+.dots circle:nth-child(3) { animation-delay: 0.4s; }
+@keyframes think { 0%, 70%, 100% { opacity: 0.2; transform: none; } 35% { opacity: 0.85; transform: translateY(-1.5px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .dots circle { animation: none; opacity: 0.7; }
+}

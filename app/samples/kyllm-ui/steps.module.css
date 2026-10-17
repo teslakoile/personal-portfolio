@@ -16,7 +16,7 @@
 .cat svg { width: 60%; height: 60%; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .cat[data-cat="think"], .bar[data-cat="think"], .strip i[data-cat="think"], .row[data-cat="think"] { --c: var(--b3); --tint: #e3ecf5; --deep: #3d5f80; }
 .cat[data-cat="tool"], .bar[data-cat="tool"], .strip i[data-cat="tool"], .row[data-cat="tool"] { --c: var(--b4); --tint: #fbf0dc; --deep: #8a5a10; }
-.cat[data-cat="write"], .bar[data-cat="write"], .strip i[data-cat="write"], .row[data-cat="write"] { --c: var(--b1); --tint: #fde4dc; --deep: #c2381f; }
+.cat[data-cat="write"], .bar[data-cat="write"], .strip i[data-cat="write"], .row[data-cat="write"] { --c: var(--b1); --tint: #fde4dc; --deep: var(--coral); }
 .cat[data-cat="check"], .bar[data-cat="check"], .strip i[data-cat="check"], .row[data-cat="check"] { --c: var(--b2); --tint: #e2efe7; --deep: #2f6b4f; }
 .cat[data-state="wait"] { background: var(--sunk); color: var(--ink-4); }
 .cat[data-state="live"] { position: relative; }

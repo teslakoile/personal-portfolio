@@ -45,3 +45,4 @@ next-env.d.ts
 
 # KYLLM style references (third-party images, local only)
 /scripts/kyllm/ref-*.png
+/scripts/kyllm/build/
