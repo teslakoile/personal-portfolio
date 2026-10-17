@@ -113,9 +113,6 @@
 .answerBody { min-width: 0; display: grid; gap: 10px; align-content: start; }
 .text { margin: 0; font-size: 15px; line-height: 1.6; }
 .userIn { animation: sent 0.38s var(--ease) both; transform-origin: 100% 100%; }
-.tok { animation: tok 0.34s ease-out both; }
-.citeIn { display: inline-block; animation: pop 0.4s cubic-bezier(0.3, 1.6, 0.5, 1) both; }
-.caret { display: inline-block; width: 8px; height: 15px; margin-left: 3px; vertical-align: -2px; border-radius: 1.5px; background: var(--coral); animation: breathe 0.8s ease-in-out infinite; }
 .after { display: grid; gap: 8px; justify-items: start; }
 .after > * { animation: rise 0.35s var(--ease) both; }
 .after > :nth-child(2) { animation-delay: 0.12s; }
@@ -141,8 +138,6 @@
 @keyframes sheetIn { from { opacity: 0; transform: translateY(16px) scale(0.98); } }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
 @keyframes sent { from { opacity: 0; transform: translateY(18px) scale(0.94); } }
-@keyframes tok { from { opacity: 0; filter: blur(3px); } }
-@keyframes pop { from { opacity: 0; transform: scale(0.3); } }
 @keyframes breathe { 50% { opacity: 0.35; } }
 
 @media (max-width: 720px) {
@@ -162,5 +157,5 @@
   .sheet .panel { border-radius: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .workImg, .promoCaret, .sheet, .rowFlat, .userIn, .tok, .citeIn, .caret, .after > *, .next > span, .newChat { animation: none; }
+  .workImg, .promoCaret, .sheet, .rowFlat, .userIn, .after > *, .next > span, .newChat { animation: none; }
 }

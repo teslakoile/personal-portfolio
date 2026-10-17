@@ -20,7 +20,7 @@ type Unit = { ch: string } | { cite: number };
 const FADE = 0.18; // seconds each character takes to fade in
 const PAUSE = 0.4; // seconds without new text before the bar shows
 
-export function SmoothText({ toks, n, done, rate = 1, always = false, className }: {
+export function SmoothText({ toks, n, done, rate = 1, always = false, instant = false, catchUp = 0.15, onSettled, onRelease, className }: {
   /** the whole answer, split into words and citations */
   toks: StreamTok[];
   /** how many tokens have arrived */
@@ -30,6 +30,14 @@ export function SmoothText({ toks, n, done, rate = 1, always = false, className 
   /** slow motion for demos: 0.5 runs everything at half speed */
   rate?: number;
   always?: boolean;
+  /** seconds a backlog takes to close; a larger value spreads text that arrived early over more time */
+  catchUp?: number;
+  /** an answer that was already finished: show every character at once, no fade */
+  instant?: boolean;
+  /** called once the stream has ended and every character has been shown */
+  onSettled?: () => void;
+  /** called as characters are released, with how many are shown so far */
+  onRelease?: (shown: number) => void;
   className?: string;
 }) {
   const { units, ends } = useMemo(() => {
@@ -46,16 +54,17 @@ export function SmoothText({ toks, n, done, rate = 1, always = false, className 
   useEffect(() => { tgt.current = target; }, [target]);
 
   // c: characters released so far; clock: stream time; seen: when each character was released
-  const [frame, setFrame] = useState<{ c: number; clock: number; seen: number[] }>({ c: 0, clock: 0, seen: [] });
+  const [frame, setFrame] = useState<{ c: number; clock: number; seen: number[] }>(() =>
+    instant ? { c: target, clock: 1, seen: Array<number>(target).fill(-1) } : { c: 0, clock: 0, seen: [] });
   useEffect(() => {
-    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const still = instant || matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf = 0, last = performance.now();
     const tick = (now: number) => {
       const dt = Math.min(0.25, (now - last) / 1000) * rate; // a slow frame still releases its share
       last = now;
       setFrame(({ c, clock, seen }) => {
         const t = clock + dt, back = tgt.current - c;
-        const next = back <= 0 ? c : still ? tgt.current : Math.min(tgt.current, c + Math.max(55, back / 0.15) * dt);
+        const next = back <= 0 ? c : still ? tgt.current : Math.min(tgt.current, c + Math.max(55, back / catchUp) * dt);
         const fresh = Math.ceil(next) - Math.ceil(c);
         return { c: next, clock: t, seen: fresh > 0 ? [...seen, ...Array<number>(fresh).fill(still ? -1 : t)] : seen };
       });
@@ -63,18 +72,22 @@ export function SmoothText({ toks, n, done, rate = 1, always = false, className 
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [rate]);
+  }, [rate, instant, catchUp]);
 
-  // a pause: no new tokens for PAUSE seconds (of stream time)
+  // a pause: no new text for PAUSE seconds (of stream time)
   const [pausedAt, setPausedAt] = useState(-1);
   useEffect(() => {
-    if (done || !n) return;
-    const id = window.setTimeout(() => setPausedAt(n), (PAUSE * 1000) / rate);
+    if (done || !target) return;
+    const id = window.setTimeout(() => setPausedAt(target), (PAUSE * 1000) / rate);
     return () => clearTimeout(id);
-  }, [n, done, rate]);
+  }, [target, done, rate]);
 
   const shown = Math.ceil(frame.c);
   const settled = done && shown >= units.length;
+  const hooks = useRef({ onSettled, onRelease });
+  useEffect(() => { hooks.current = { onSettled, onRelease }; });
+  useEffect(() => { hooks.current.onRelease?.(shown); }, [shown]);
+  useEffect(() => { if (settled) hooks.current.onSettled?.(); }, [settled]);
   const out: ReactNode[] = [];
   let run = "";
   const flush = () => { if (run) { out.push(run); run = ""; } };
@@ -91,7 +104,7 @@ export function SmoothText({ toks, n, done, rate = 1, always = false, className 
     }
   }
   flush();
-  const paused = pausedAt === n && shown >= target;
+  const paused = pausedAt === target && shown >= target;
   return (
     <p className={className}>
       {out}
