@@ -1,3 +1,4 @@
+import { ArrowUpRight } from "lucide-react";
 import { readdirSync } from "node:fs";
 import path from "node:path";
 import type { Metadata } from "next";
@@ -312,7 +313,7 @@ export default function BrandingPage() {
                 <span className={s.keys}><Kbd>⌘</Kbd><Kbd>J</Kbd></span>
               </Spec>
               <Spec name="Text link" spec="14px · 500 · coral">
-                <a className={b.link} href={sample.achievements[0].href} target="_blank" rel="noreferrer">Read the Paper ›</a>
+                <a className={b.link} href={sample.achievements[0].href} target="_blank" rel="noreferrer"><ArrowUpRight size={15} strokeWidth={2} aria-hidden="true" />Read the Paper</a>
               </Spec>
               <Spec name="Contact row" spec="14px · ink-3 icons">
                 <div className={b.contact}>

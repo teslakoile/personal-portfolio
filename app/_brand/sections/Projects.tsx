@@ -1,3 +1,4 @@
+import { ArrowUpRight } from "lucide-react";
 import { Chips, Row, SectionHead } from "../kit";
 import b from "../brand.module.css";
 import s from "./sections.module.css";
@@ -77,7 +78,7 @@ function Card({ p }: { p: Project }) {
       <p className={s.desc}>{p.detail}</p>
       <span className={s.role}>{p.role}</span>
       <div className={s.chipGap}><Chips items={p.stack} logos /></div>
-      {p.link ? <a className={s.ext} href={p.link.href} target="_blank" rel="noreferrer">{p.link.label} <span aria-hidden="true">↗</span></a> : null}
+      {p.link ? <a className={s.ext} href={p.link.href} target="_blank" rel="noreferrer"><ArrowUpRight size={15} strokeWidth={2} aria-hidden="true" />{p.link.label}</a> : null}
     </article>
   );
 }

@@ -1,3 +1,4 @@
+import { ArrowUpRight } from "lucide-react";
 import { sample } from "../../samples/sampleContent";
 import { fetchContributions } from "../../_home/Contributions";
 import { Row, SectionHead } from "../kit";
@@ -18,7 +19,7 @@ export async function GitHub({ num, id = "github" }: { num?: string; /** the sec
     return (
       <Row id={id}>
         <SectionHead num={num} title="GitHub" />
-        <p className={s.ghFallback}>The contribution graph is unavailable right now. <a href={sample.github.url} target="_blank" rel="noreferrer">View it on GitHub ↗</a></p>
+        <p className={s.ghFallback}>The contribution graph is unavailable right now. <a className={s.ghLink} href={sample.github.url} target="_blank" rel="noreferrer"><ArrowUpRight size={14} strokeWidth={2} aria-hidden="true" />View it on GitHub</a></p>
       </Row>
     );
   }
