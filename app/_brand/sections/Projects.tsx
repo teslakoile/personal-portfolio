@@ -3,11 +3,18 @@ import { Chips, Row, SectionHead } from "../kit";
 import { describe } from "../chipNotes";
 import b from "../brand.module.css";
 import s from "./sections.module.css";
-import { PROJECTS, type Project } from "./projectsData";
+import { PROJECTS, type Project, type ProjectKind } from "./projectsData";
 
 /** Projects, alphabetical with no featured case study. The entries live in
-    projectsData.ts. Each card leads with the project's mark in a tile: its own
-    logo where it has one, a document icon for the Financial Services Site. */
+    projectsData.ts. Each card leads with the project's mark in a tile (its own
+    logo where it has one, a document icon for the Financial Services Site),
+    its name, and its kind as a rounded tag with a colour key, a different
+    shape from the dashed stack chips. Then what it does, the engineering
+    behind it, its stack, and links for the public ones. */
+
+const KIND_KEY: Record<ProjectKind, string> = {
+  Product: "var(--b1)", "AI Agents": "var(--b2)", "Developer Tool": "var(--b3)", Game: "var(--b4)",
+};
 
 function Mark({ p }: { p: Project }) {
   return (
@@ -25,12 +32,13 @@ function Card({ p }: { p: Project }) {
     <article className={s.project}>
       <div className={s.projHead}>
         <Mark p={p} />
-        <span className={b.label}>{p.kind} · {p.year}</span>
+        <div className={s.projTitle}>
+          <h3 className={b.h3}>{p.name}</h3>
+          <span className={s.kind}><i style={{ background: KIND_KEY[p.kind] }} aria-hidden="true" />{p.kind}</span>
+        </div>
       </div>
-      <h3 className={`${b.h3} ${s.cardTitle}`}>{p.name}</h3>
-      <p className={s.lede}>{p.lede}</p>
-      <p className={s.desc}>{p.detail}</p>
-      <span className={s.role}>{p.role}</span>
+      <p className={s.lede}>{p.about}</p>
+      <p className={s.desc}>{p.tech}</p>
       <div className={s.chipGap}><Chips items={p.stack} logos notes={describe(p.stack)} /></div>
       {p.links?.length ? (
         <div className={s.extRow}>

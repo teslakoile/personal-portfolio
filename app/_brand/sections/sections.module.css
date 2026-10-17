@@ -28,14 +28,19 @@
 .projGrid > :nth-child(3n + 1) { padding-left: var(--gutter); }
 .projGrid > :not(:nth-child(3n + 1)) { padding-left: 28px; }
 
-/* the project's mark in a 44px tile, then its kind and year */
-.projHead { display: flex; align-items: center; gap: 12px; }
+/* the project's mark in a 44px tile beside its name and kind */
+.projHead { display: flex; align-items: center; gap: 14px; }
+.projTitle { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
+.projTitle h3 { margin: 0; }
+/* the kind: a rounded tag with a colour key, solid where the stack chips are dashed */
+.kind { display: inline-flex; align-items: center; gap: 6px; padding: 1px 9px 1px 7px; font-size: 12px; font-weight: 500; line-height: 1.6; color: var(--ink-2); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; }
+.kind i { width: 7px; height: 7px; border-radius: 2px; }
 .projMark { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-2); overflow: hidden; }
 .projMark img { width: 30px; height: 30px; object-fit: contain; }
 .projMark img[src$=".svg"] { width: 22px; height: 22px; }  /* Huly's solid mark reads heavier than the others */
 .projMark[data-fill] { box-shadow: none; }
 .projMark[data-fill] img { width: 100%; height: 100%; }
-.projHead + .cardTitle { margin-top: 14px; }
+.projHead + .lede { margin-top: 16px; }
 
 .cardTitle { margin: 8px 0 0; }
 .lede { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink); }
