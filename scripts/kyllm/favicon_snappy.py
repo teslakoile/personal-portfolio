@@ -72,11 +72,13 @@ _LENS_OPENINGS = ((780.7, 486.0, 129.3, 91.7, 75.30), (492.5, 498.5, 132.2, 109.
 _RING = np.linspace(0.0, 2 * np.pi, 72, endpoint=False)
 
 
-def rim_gap(ex: float, ey: float) -> float:
+def rim_gap(ex: float, ey: float, bold: float = 0.0) -> float:
     """Distance in flat px from the nearest pupil edge to the nearest lens rim at gaze offset (ex, ey);
-    negative when the pupil overlaps the rim."""
+    negative when the pupil overlaps the rim. `bold` is the extra stroke on the glasses: half of it
+    narrows each lens opening."""
     worst = 1e9
     for (cx, cy, rx, ry, deg), (lx, ly, lrx, lry, ldeg) in zip(_EYE_OVALS, _LENS_OPENINGS):
+        lrx, lry = lrx - bold / 2, lry - bold / 2
         a, b = math.radians(deg), math.radians(ldeg)
         px, py = rx * np.cos(_RING), ry * np.sin(_RING)
         x = cx + ex + px * math.cos(a) - py * math.sin(a) - lx
@@ -86,16 +88,16 @@ def rim_gap(ex: float, ey: float) -> float:
     return worst
 
 
-def safe_gaze(ex: float, ey: float) -> tuple[float, float]:
+def safe_gaze(ex: float, ey: float, bold: float = 0.0) -> tuple[float, float]:
     """Pull a fixation back toward the rest gaze, along the straight line to it, until the pupils keep
     EYE_RIM_GAP from the rims. The set of allowed offsets is convex, so any glance between two allowed
     fixations also stays allowed."""
-    if rim_gap(ex, ey) >= EYE_RIM_GAP:
+    if rim_gap(ex, ey, bold) >= EYE_RIM_GAP:
         return ex, ey
     lo, hi = 0.0, 1.0
     for _ in range(24):
         mid = (lo + hi) / 2
-        if rim_gap(ex * mid, ey * mid) >= EYE_RIM_GAP:
+        if rim_gap(ex * mid, ey * mid, bold) >= EYE_RIM_GAP:
             lo = mid
         else:
             hi = mid
@@ -141,6 +143,8 @@ class Snappy:
     face: bool = False         # play the beat's face script (beat_face) instead of the frozen-then-blend gaze
     eye_scale: float = 1.0     # scales every idle fixation offset, so 0.5 halves how far the eyes glance
     gaze_scale: float = 1.0    # scales the face script's gaze positions in a bounce (face=True)
+    bold: float = 0.0          # flat px added to every glasses stroke, so the rings survive 16 px; the pupils
+                               # keep their rim gap from the heavier rim
 
 
 def ease(x: float) -> float:
@@ -208,7 +212,7 @@ def lean(a: Snappy, t: float) -> float:
 def eyes(a: Snappy, t: float) -> tuple[float, float]:
     if not a.saccades:
         return 0.0, 0.0
-    fixations = [(t0, *safe_gaze(ex * a.eye_scale, ey * a.eye_scale)) for t0, ex, ey in a.saccades]
+    fixations = [(t0, *safe_gaze(ex * a.eye_scale, ey * a.eye_scale, a.bold)) for t0, ex, ey in a.saccades]
     return held(fixations, t, EYE_TRAVEL_S, lambda p, v, x: (p[0] + (v[0] - p[0]) * minjerk(x),
                                                               p[1] + (v[1] - p[1]) * minjerk(x)))
 
@@ -318,7 +322,7 @@ def beat_face(a: Snappy, t0: float, x: float, m: dict) -> tuple[float, float, fl
     position to wherever the idle's gaze has got to, so there is no jump at the joint."""
     frozen = eyes(a, t0 % RING_S)
     live = eyes(a, (t0 + x) % RING_S)
-    brace, look, settle = (safe_gaze(p[0] * a.gaze_scale, p[1] * a.gaze_scale)
+    brace, look, settle = (safe_gaze(p[0] * a.gaze_scale, p[1] * a.gaze_scale, a.bold)
                            for p in (GAZE_BRACE, GAZE_LOOK, GAZE_SETTLE))
 
     def lerp(p, q, w):
@@ -359,6 +363,9 @@ def make_pose(a: Snappy, t: float, y, squint: float = 1.0, glint=None, face: tup
         p.update(glint=round(glint[0], 4), glint_op=round(glint[1], 3), glint_smear=round(glint[2], 1))
         if a.beat.glint_width != 1.0:
             p["glint_w"] = a.beat.glint_width
+    # only when set, so the shipped loop's poses (and frame names) stay exactly as they were
+    if a.bold:
+        p["bold"] = a.bold
     return p
 
 
@@ -619,7 +626,20 @@ IDLE = Snappy(
     shifts=(),
     starts=(0.60, 3.60), chance=1.0, max_loops=0.5,
 )
-SNAPPY = [IDLE]
+# Stroke options: the same loop on the same crop, with the glasses rings heavier so they stay two rings at
+# 16 px (the ring is about 0.6 px thick there, which blends into a grey smudge). Bold is in flat px; at 16 px
+# one icon px is about 58 flat px, so 11.6 adds 0.2 px and 23.1 adds 0.4 px.
+STROKE_NOTE = ("The same 3 s loop on the same crop. The glasses rings are heavier so they stay two rings instead "
+               "of one smudge at 16 px; the pupils keep their gap from the heavier rim.")
+BOLD = dataclasses.replace(
+    IDLE, id="idle-3s-bold", label="Bold", name="Heavier Rings", group="stroke",
+    note=f"{STROKE_NOTE} Rings are 0.2 px heavier at 16 px.", bold=11.6,
+)
+BOLDER = dataclasses.replace(
+    IDLE, id="idle-3s-bolder", label="Bolder", name="Heaviest Rings", group="stroke",
+    note=f"{STROKE_NOTE} Rings are 0.4 px heavier at 16 px.", bold=23.1,
+)
+SNAPPY = [IDLE, BOLD, BOLDER]
 
 
 # ---- pictures ------------------------------------------------------------------

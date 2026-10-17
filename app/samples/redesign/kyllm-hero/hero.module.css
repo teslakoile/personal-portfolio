@@ -10,21 +10,21 @@
 .photoCell { position: absolute; inset: 0 0 0 -1px; border-left: 1px solid var(--line); overflow: hidden; }
 .photoCell img { position: static; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: 50% 0; }
 /* the strip's label, on the same line as the card names */
-.hlLabel.hlLabel { padding-top: 18px; padding-right: 14px; }
-.hlLabel b { margin-top: 0; }
+/* the label set like the tools band's: 14 px, regular, ink-2, centred in its cell */
+.hlLabel { display: flex; align-items: center; padding: 0 14px 0 var(--gutter); font-size: 14px; color: var(--ink-2); }
 /* Highlights: the strip's columns, stat boxes and project cards as cells */
 .hl { display: grid; grid-template-columns: 200px repeat(4, minmax(0, 1fr)); }
 .hl > * { min-width: 0; border-right: 1px solid var(--line); }
-.hl { grid-template-rows: 220px; }
+.hl { grid-template-rows: 196px; }
 /* the strip's projects as cards, each toned in its own colour (--ground), white text on it */
-.workCard { position: relative; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; min-height: 220px; overflow: hidden; background: var(--ground); color: #fff; }
+.workCard { position: relative; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; min-height: 196px; overflow: hidden; background: var(--ground); color: #fff; }
 .workImg { position: absolute; inset: 0; background-size: cover; background-position: 50% 50%; transition: transform 0.5s var(--ease, cubic-bezier(0.3, 0.7, 0.2, 1)); }
 .workCard:hover .workImg { transform: scale(1.04); }
 /* fades of the ground behind the name (top) and the description (bottom); the image shows between */
 .workCard::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(to bottom, var(--ground) 0%, transparent 16%), linear-gradient(to top, var(--ground) 36%, transparent 52%); }
-.workName { position: relative; z-index: 2; padding: 18px 22px 0; font-size: 12.5px; font-weight: 500; color: rgb(255 255 255 / 0.85); }
+.workName { position: relative; z-index: 2; padding: 16px 20px 0; font-size: 14px; font-weight: 500; color: #fff; }
 /* a fixed height for four lines, so the descriptions start on one line across the row */
-.workBody { position: relative; z-index: 2; height: 94px; margin: 0; padding: 0 22px 18px; font-size: 13.5px; line-height: 1.4; color: #fff; }
+.workBody { position: relative; z-index: 2; height: 92px; margin: 0; padding: 0 20px 16px; font-size: 14px; line-height: 1.35; color: rgb(255 255 255 / 0.88); }
 
 /* KYLLM promoted under the contact links */
 .promo { margin-top: 26px; width: 100%; max-width: 480px; }
@@ -40,38 +40,29 @@
 .promoBar:hover .promoGo { background: var(--coral-press); }
 .promoBar > :first-child { flex: none; }
 
-/* the tools band, moving (?tools=flip|marquee) */
-.toolsFlip > :not(:first-child) { position: relative; overflow: hidden; }
-.toolsFlip > :not(:first-child) > span { display: inline-flex; align-items: center; gap: 9px; white-space: nowrap; }
-.flipIn { animation: flipIn 0.55s var(--ease, cubic-bezier(0.3, 0.7, 0.2, 1)) both; }
-.flipOut { position: absolute; animation: flipOut 0.45s var(--ease, cubic-bezier(0.3, 0.7, 0.2, 1)) both; }
-@keyframes flipIn { from { opacity: 0; transform: translateY(70%); } }
-@keyframes flipOut { to { opacity: 0; transform: translateY(-70%); } }
-
-/* groups: the label names the group, a block per group marks the one showing */
-.toolsNamed > :first-child { align-items: center; }
-.groupLabel { display: grid; gap: 3px; }
-.groupLabel small { font-size: 12px; color: var(--ink-3); }
-.groupLabel b { display: block; font-size: 13.5px; font-weight: 500; color: var(--ink); white-space: nowrap; }
-.groupBlocks { display: flex; gap: 3px; margin-top: 4px; }
-.groupBlocks i { width: 9px; height: 6px; background: var(--raw, #e7e5e4); transition: background 0.3s; }
-.groupBlocks i[data-on] { background: var(--coral); }
-/* slot: a reel of five tools that spins up to its last */
-.toolsSlot > :not(:first-child) { height: 88px; align-items: flex-start; }
-.toolsSlot > :not(:first-child) > .slotReel { display: flex; flex-direction: column; gap: 0; align-items: center; }
-.slotReel { animation: slot 0.8s cubic-bezier(0.2, 0.75, 0.25, 1.04) both; }
-.slotReel > span { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 88px; white-space: nowrap; }
-@keyframes slot { from { transform: translateY(0); } to { transform: translateY(-352px); } }
-
-.marquee { display: grid; grid-template-columns: 200px minmax(0, 1fr); height: 88px; }
-.marqueeLabel { display: flex; align-items: center; padding-left: var(--gutter); font-size: 14px; color: var(--ink-2); border-right: 1px solid var(--line); }
-.marqueeView { container-type: inline-size; overflow: hidden; mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent); }
-.marqueeTrack { display: flex; width: max-content; height: 100%; animation: marquee 48s linear infinite; }
-.marquee:hover .marqueeTrack { animation-play-state: paused; }
-.marqueeCell { display: flex; align-items: center; justify-content: center; width: calc(100cqw / 6); flex: none; border-right: 1px solid var(--line); font-size: 14px; font-weight: 500; }
-.marqueeCell span { display: inline-flex; align-items: center; gap: 9px; white-space: nowrap; }
-.marqueeCell img, .toolsFlip img { height: 20px; width: auto; }
-@keyframes marquee { to { transform: translateX(-50%); } }
+/* the tools band, moving; the motion lives in ToolsBand.tsx */
+/* each cell sizes its tool to its own width. A long name breaks at its marked
+   point, and the name block shrinks to its longest line, so logo and name stay
+   centred as a group: "wide" names ("Azure AI Foundry") break when the cell has
+   under 150 px, "narrow" ones ("Google Cloud") under 115 px. Under 120 px the
+   logo and name step down a size; under 90 px (a 1024px screen) the logo stacks
+   over the name. */
+.toolsMotion > :not(:first-child) { position: relative; overflow: hidden; container-type: inline-size; padding: 0 12px; }
+.swap { display: inline-flex; align-items: center; gap: 9px; }
+.swap img { flex: none; height: 20px; width: auto; }
+.swap > span { display: inline-block; white-space: nowrap; line-height: 1.2; text-align: left; }
+.swap br { display: none; }
+@container (max-width: 150px) { .swap .brWide { display: inline; } .swap .brWide + .brSpace { display: none; } }
+@container (max-width: 120px) {
+  .swap { gap: 7px; }
+  .swap img { height: 18px; }
+  .swap > span { font-size: 13px; }
+}
+@container (max-width: 115px) { .swap .brNarrow { display: inline; } .swap .brNarrow + .brSpace { display: none; } }
+@container (max-width: 90px) {
+  .swap { flex-direction: column; gap: 6px; }
+  .swap > span { font-size: 12px; text-align: center; }
+}
 
 /* the content column is a container, so the sections reflow on its width */
 .content { container: content / inline-size; }
@@ -160,15 +151,11 @@
   .photoCell img { position: static; width: 100%; max-width: none; height: 100%; margin: 0; }
 }
 @media (max-width: 720px) {
-  .marquee { grid-template-columns: minmax(0, 1fr); height: auto; }
-  .marqueeLabel { min-height: 56px; border-right: 0; border-bottom: 1px solid var(--line); }
-  .marqueeView { height: 64px; }
-  .marqueeCell { width: calc(100cqw / 3); }
 }
 @media (max-width: 760px) {
   .sheet { inset: 0; width: 100%; height: 100%; }
   .sheet .panel { border-radius: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .workImg, .flipIn, .flipOut, .slotReel, .marqueeTrack, .promoCaret, .sheet, .rowFlat, .userIn, .tok, .citeIn, .caret, .after > *, .next > span, .newChat { animation: none; }
+  .workImg, .promoCaret, .sheet, .rowFlat, .userIn, .tok, .citeIn, .caret, .after > *, .next > span, .newChat { animation: none; }
 }
