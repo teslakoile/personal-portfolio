@@ -101,7 +101,7 @@ const SRC: Src[] = [
 const onSite = (src: Src) => src.kind === "site";
 
 /** One chip for every source: its mark tells where it lives; a right arrow stays on this page, the diagonal one leaves it; hover says where it goes. */
-export function SrcChip({ src, site = "kn" }: { src: Src; site?: SiteMark }) {
+export function SrcChip({ src, site = "favicon" }: { src: Src; site?: SiteMark }) {
   const here = src.href ? src.href.startsWith("#") : onSite(src);
   const tip = here ? `Scrolls to ${src.label}${src.name ? ` · ${src.name}` : ""}` : `Opens ${src.host}/${src.name}`;
   const go = (e: MouseEvent<HTMLAnchorElement>) => {

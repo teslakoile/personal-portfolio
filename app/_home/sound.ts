@@ -95,3 +95,14 @@ export function chime() {
   blip(660, 0.14, 0.045, "sine");
   setTimeout(() => blip(990, 0.2, 0.045, "sine"), 110);
 }
+
+/** KYLLM boop: a soft rising squeak that climbs a step with each quick boop in
+    a row (`combo`); the fourth adds a little giggle trill. */
+export function boopSound(combo = 1) {
+  const step = Math.min(combo - 1, 4);
+  const base = 520 * Math.pow(1.12, step);
+  blip(base, 0.09, 0.045, "sine", base * 1.5);
+  if (combo >= 4) {
+    [0, 1, 2].forEach((i) => setTimeout(() => blip(base * (1.6 + i * 0.12), 0.05, 0.03, "sine"), 90 + i * 55));
+  }
+}

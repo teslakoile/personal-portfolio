@@ -104,6 +104,11 @@
 .scrollWrap { position: relative; flex: 1; min-height: 0; }
 .scroll { height: 100%; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
 .thread { display: flex; flex-direction: column; gap: 16px; padding: 18px 18px 10px; }
+/* the empty chat: KYLLM (boop it), one line, the starters, centred in the thread */
+.threadEmpty { min-height: 100%; justify-content: center; }
+.empty { display: grid; justify-items: center; gap: 12px; padding: 0 12px 24px; text-align: center; animation: rise 0.35s var(--ease) both; }
+.empty p { margin: 0; font-size: 15px; color: var(--ink-2); }
+.empty .next { justify-content: center; margin-top: 4px; }
 .rowFlat { display: grid; grid-template-columns: minmax(0, 1fr); animation: rise 0.3s var(--ease) both; }
 .answerBody { min-width: 0; display: grid; gap: 10px; align-content: start; }
 .text { margin: 0; font-size: 15px; line-height: 1.6; }
