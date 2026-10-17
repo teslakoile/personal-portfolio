@@ -27,6 +27,8 @@ const INFO: Record<string, string> = {
   Dataflow: "Google Cloud's managed service for batch and streaming pipelines built on Apache Beam.",
   "Delta Lake": "An open storage layer that adds ACID transactions to data lakes.",
   "Looker Studio": "Google's free tool for building dashboards and reports from data sources.",
+  "Power BI": "Microsoft's tool for building interactive dashboards and reports.",
+  "Cloud Composer": "Google Cloud's managed service for running Apache Airflow.",
 
   // AI and machine learning
   "OpenAI API": "OpenAI's API for calling its language, vision, and speech models.",
@@ -82,6 +84,8 @@ const INFO: Record<string, string> = {
   Jira: "Atlassian's issue and project tracker.",
   Confluence: "Atlassian's wiki for team documentation.",
   Postman: "A tool for designing, testing, and documenting APIs.",
+  Kibana: "A dashboard and search tool for exploring logs stored in Elasticsearch.",
+  Grafana: "An open-source tool for dashboards and alerts on metrics and logs.",
   Jenkins: "An open-source automation server for building, testing, and deploying software.",
 
   // focus areas
@@ -94,6 +98,7 @@ const INFO: Record<string, string> = {
   MLOps: "Practices for deploying, monitoring, and maintaining machine learning in production.",
   "Backend Engineering": "Building the services and APIs behind an application.",
   "Cloud Infrastructure": "Provisioning and running systems on cloud platforms.",
+  "Curriculum Design": "Planning courses, exercises, and assessments that take learners from beginner to advanced.",
 };
 
 /** The notes for the chips in `names`, keyed by chip. A chip with no entry is

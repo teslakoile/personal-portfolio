@@ -1,13 +1,19 @@
 import type { YM } from "../timeline";
-import { BlockTimeline, monthCells, monthIndex, monthLabel } from "../timeline";
+import { BlockTimeline, monthCells, monthIndex } from "../timeline";
 import s from "./sections.module.css";
-import { FROM, LEGEND, type RoleView } from "./experienceData";
+import { FROM, type RoleView } from "./experienceData";
 
-/** The career timeline: one lane per role, one block per month. Shared by the
-    Experience section and the layout options under app/samples/experience. */
+/** The career timeline: one lane per employer, one block per month, the
+    employer's logo before its name. The dashed line is the present. */
 export function ExperienceTimeline({ roles, today }: { roles: RoleView[]; today: YM }) {
   const lanes = roles.map((r) => ({
-    label: <>{r.title} <em>· {r.short}</em></>,
+    label: (
+      <>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        {r.mark ? <img src={r.mark} alt="" /> : null}
+        <span>{r.title} <em>· {r.short}</em></span>
+      </>
+    ),
     cells: monthCells({ from: FROM, to: today, start: r.start, end: r.end, c: r.c, today }),
   }));
   const ticks = Array.from({ length: today[0] - FROM[0] + 1 }, (_, i) => FROM[0] + i)
@@ -17,10 +23,10 @@ export function ExperienceTimeline({ roles, today }: { roles: RoleView[]; today:
       <BlockTimeline
         lanes={lanes}
         ticks={ticks}
-        today={{ at: monthIndex(today) - monthIndex(FROM), label: `Today · ${monthLabel(today)}` }}
-        legend={LEGEND}
+        today={{ at: monthIndex(today) - monthIndex(FROM), label: "Present" }}
+        flag
         blockW={9}
-        labelW={300}
+        labelW={320}
       />
     </div>
   );

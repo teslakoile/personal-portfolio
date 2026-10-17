@@ -1,21 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { Chips, Item } from "../kit";
+import { Chips } from "../kit";
 import type { RoleView } from "./experienceData";
 import b from "../brand.module.css";
 import s from "./sections.module.css";
 
 /**
- * The roles as a stack of drawers. Each row shows when, what, and where; the
- * chevron (or a click on the row) opens the description, the engagements, and
- * the stack. The current role starts open. The detail is always in the page
- * and is only folded away (grid rows 0fr to 1fr, no height maths), so it is
- * there for search and print, and `inert` keeps a folded drawer out of the
- * tab order. "Expand All" and "Collapse All" run the whole list.
+ * The roles as a stack of drawers. Each row shows when, what, and where, plus
+ * the role's headline when it has one, whether the drawer is open or not. The
+ * chevron (or a click on the row) opens the projects: the work and its result
+ * on the left, that project's own tools on the right. The current role starts
+ * open. The detail is always in the page and is only folded away (grid rows 0fr
+ * to 1fr, no height maths), so it is there for search and print, and `inert`
+ * keeps a folded drawer out of the tab order. "Expand All" and "Collapse All"
+ * run the whole list.
  */
-export function ExperienceRoles({ roles }: { roles: RoleView[] }) {
-  const [open, setOpen] = useState<Set<string>>(() => new Set(roles.slice(0, 1).map((r) => r.id)));
+/** `initial` is which drawers start open: the current role (default), all, or none. */
+export function ExperienceRoles({ roles, initial = "first" }: { roles: RoleView[]; initial?: "first" | "all" | "none" }) {
+  const [open, setOpen] = useState<Set<string>>(() => new Set(roles.slice(0, initial === "all" ? roles.length : initial === "first" ? 1 : 0).map((r) => r.id)));
   const all = open.size === roles.length;
 
   const toggle = (id: string) =>
@@ -28,7 +31,7 @@ export function ExperienceRoles({ roles }: { roles: RoleView[] }) {
   return (
     <div>
       <div className={s.roleBar}>
-        <span>{roles.length} roles</span>
+        <span>{roles.length} Roles</span>
         <button type="button" className={s.roleAll} onClick={() => setOpen(all ? new Set() : new Set(roles.map((r) => r.id)))}>
           {all ? "Collapse All" : "Expand All"}
         </button>
@@ -59,6 +62,7 @@ export function ExperienceRoles({ roles }: { roles: RoleView[] }) {
                     </a>
                   ) : r.employer}
                 </div>
+                <p className={s.drawerSummary}>{r.summary}</p>
               </div>
               <button
                 type="button"
@@ -76,13 +80,17 @@ export function ExperienceRoles({ roles }: { roles: RoleView[] }) {
             <div id={panel} className={s.drawerClip} inert={!isOpen}>
               <div className={s.drawerFold}>
                 <div className={s.drawerBody}>
-                  <p>{r.description}</p>
-                  {r.engagements ? (
-                    <div className={s.roleItems}>
-                      {r.engagements.map((x) => <Item key={x.title} c="b1" title={x.title} context={x.context} figure={x.figure} />)}
-                    </div>
-                  ) : null}
-                  <div className={s.drawerStack}><Chips items={r.stack} logos notes={r.notes} /></div>
+                  <div className={s.projects}>
+                    {r.projects.map((p, n) => (
+                      <div key={n} className={s.proj}>
+                        <div className={s.projMain}>
+                          <h4 className={s.projTitle}>{p.title}{p.context ? <em> · {p.context}</em> : null}</h4>
+                          <ul className={s.projPoints}>{p.points.map((pt) => <li key={pt}>{pt}</li>)}</ul>
+                        </div>
+                        <div className={s.projStack}><Chips items={p.stack} logos notes={p.notes} /></div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

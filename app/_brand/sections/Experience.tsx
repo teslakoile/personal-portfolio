@@ -11,14 +11,14 @@ import { buildRoles, today as now } from "./experienceData";
  * equal rows (Kyle's call on 2026-10-05), each with the one number that
  * defines it.
  */
-export function Experience({ num }: { num?: string }) {
+export function Experience({ num, initial }: { num?: string; initial?: "first" | "all" | "none" }) {
   const today = now();
   const roles = buildRoles(today);
   return (
     <Row id="experience">
       <SectionHead num={num} title="Experience" />
       <ExperienceTimeline roles={roles} today={today} />
-      <ExperienceRoles roles={roles} />
+      <ExperienceRoles roles={roles} initial={initial} />
     </Row>
   );
 }
