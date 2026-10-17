@@ -140,6 +140,8 @@ export function Gallery() {
   };
   const live = OPTIONS.find((o) => o.id === pickedId);
   const shipped = OPTIONS.find((o) => o.id === SHIPPED_ID);
+  // the same loop on the same crop with heavier glasses rings, for 16 px; never shipped until one is named
+  const stroke = OPTIONS.filter((o) => o.group === "stroke");
 
   return (
     <>
@@ -160,6 +162,17 @@ export function Gallery() {
           <h2>The Shipped Loop</h2>
           <div className={s.heroWrap}>
             <Card option={shipped} live={shipped.id === pickedId} motion={motion} shipped onTry={() => tryOption(shipped)} />
+          </div>
+        </section>
+      ) : null}
+
+      {stroke.length ? (
+        <section className={s.section}>
+          <h2>Heavier Rings</h2>
+          <div className={s.heroWrap}>
+            {stroke.map((o) => (
+              <Card key={o.id} option={o} live={o.id === pickedId} motion={motion} onTry={() => tryOption(o)} />
+            ))}
           </div>
         </section>
       ) : null}

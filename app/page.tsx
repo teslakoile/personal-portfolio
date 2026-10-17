@@ -44,12 +44,26 @@ const personJsonLd = {
   ],
 };
 
+// WebSite structured data so Google can show "Kyle Naranjo" as the site name
+// above the title instead of the bare domain.
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Kyle Naranjo",
+  alternateName: ["Kyle Nathan G. Naranjo", "kylenaranjo.cv"],
+  url: "https://kylenaranjo.cv",
+};
+
 export default function Home() {
   return (
     <div className={`${fontVars} min-h-screen w-full`}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
       <HomeShell />
     </div>
