@@ -50,10 +50,12 @@ export function monthCells({ from, to, start, end, c, today, expires = false }: 
 
 export type Lane = { label: ReactNode; cells: Cell[] };
 
-export function BlockTimeline({ lanes, ticks, today, legend, blockW = 10, blockH = 9, labelW = 260, gap = 2 }: {
+export function BlockTimeline({ lanes, ticks, today, flag = false, legend, blockW = 10, blockH = 9, labelW = 260, gap = 2 }: {
   lanes: Lane[];
   ticks: { at: number; label: string }[];
   today?: { at: number; label: string };
+  /** draw `today` as one solid bar through every lane, with its label as a flag, instead of a dashed mark in each lane */
+  flag?: boolean;
   legend?: { c: BlockColor; label: string }[];
   blockW?: number;
   blockH?: number;
@@ -67,6 +69,12 @@ export function BlockTimeline({ lanes, ticks, today, legend, blockW = 10, blockH
         <div className={b.axis} style={{ marginLeft: labelW }} aria-hidden="true">
           {ticks.map((t) => <span key={t.label} style={{ left: t.at * step }}>{t.label}</span>)}
         </div>
+        <div className={flag ? `${b.lanes} ${b.lanesFlag}` : b.lanes}>
+        {today && flag ? (
+          <div className={b.todayBar} style={{ left: labelW + today.at * step + blockW + 1 }} aria-hidden="true">
+            <span>{today.label}</span>
+          </div>
+        ) : null}
         {lanes.map((lane, li) => (
           <div key={li} className={b.lane} style={{ gridTemplateColumns: `${labelW}px auto` }}>
             <div className={b.laneLabel}>{lane.label}</div>
@@ -74,7 +82,7 @@ export function BlockTimeline({ lanes, ticks, today, legend, blockW = 10, blockH
               {lane.cells.map((x, i) => (
                 <i key={i} style={{ width: blockW, height: blockH, background: x.c ? `var(--${x.c})` : "transparent", opacity: x.o }} />
               ))}
-              {today ? (
+              {today && !flag ? (
                 <div className={b.today} style={{ left: today.at * step + blockW + 1 }}>
                   {li === lanes.length - 1 ? <span>{today.label}</span> : null}
                 </div>
@@ -82,6 +90,7 @@ export function BlockTimeline({ lanes, ticks, today, legend, blockW = 10, blockH
             </div>
           </div>
         ))}
+        </div>
         {legend ? <div className={b.legendWrap} style={{ marginLeft: labelW }}><Legend items={legend} /></div> : null}
       </div>
     </div>
