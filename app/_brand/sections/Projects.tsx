@@ -3,18 +3,15 @@ import { Chips, Row, SectionHead } from "../kit";
 import { describe } from "../chipNotes";
 import b from "../brand.module.css";
 import s from "./sections.module.css";
-import { PROJECTS, type Project, type ProjectKind } from "./projectsData";
+import { PROJECTS, type Project } from "./projectsData";
 
 /** Projects, alphabetical with no featured case study. The entries live in
     projectsData.ts. Each card leads with the project's mark in a tile (its own
-    logo where it has one, a document icon for the Financial Services Site),
-    its name, and its kind as a rounded tag with a colour key, a different
-    shape from the dashed stack chips. Then what it does, the engineering
-    behind it, its stack, and links for the public ones. */
-
-const KIND_KEY: Record<ProjectKind, string> = {
-  Product: "var(--b1)", "AI Agents": "var(--b2)", "Developer Tool": "var(--b3)", Game: "var(--b4)",
-};
+    logo where it has one, a document icon for the Financial Services Site)
+    beside its name, with links to the live site or repo under the name for
+    the public ones. Then two short paragraphs in one style (what it does, the
+    engineering behind it), its tags as rounded pills, and its stack as the
+    dashed tool chips. */
 
 function Mark({ p }: { p: Project }) {
   return (
@@ -34,19 +31,21 @@ function Card({ p }: { p: Project }) {
         <Mark p={p} />
         <div className={s.projTitle}>
           <h3 className={b.h3}>{p.name}</h3>
-          <span className={s.kind}><i style={{ background: KIND_KEY[p.kind] }} aria-hidden="true" />{p.kind}</span>
+          {p.links?.length ? (
+            <div className={s.projLinks}>
+              {p.links.map((l) => (
+                <a key={l.href} className={s.ext} href={l.href} target="_blank" rel="noreferrer"><ArrowUpRight size={14} strokeWidth={2} aria-hidden="true" />{l.label}</a>
+              ))}
+            </div>
+          ) : null}
         </div>
       </div>
-      <p className={s.lede}>{p.about}</p>
-      <p className={s.desc}>{p.tech}</p>
-      <div className={s.chipGap}><Chips items={p.stack} logos notes={describe(p.stack)} /></div>
-      {p.links?.length ? (
-        <div className={s.extRow}>
-          {p.links.map((l) => (
-            <a key={l.href} className={s.ext} href={l.href} target="_blank" rel="noreferrer"><ArrowUpRight size={15} strokeWidth={2} aria-hidden="true" />{l.label}</a>
-          ))}
-        </div>
-      ) : null}
+      <div className={s.projBody}>
+        <p>{p.about}</p>
+        <p>{p.tech}</p>
+      </div>
+      <ul className={s.tags}>{p.tags.map((t) => <li key={t}>{t}</li>)}</ul>
+      <div className={s.cardTools}><Chips items={p.stack} logos notes={describe(p.stack)} /></div>
     </article>
   );
 }

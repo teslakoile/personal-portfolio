@@ -17,7 +17,7 @@ const json = (v: unknown) => JSON.stringify(v, null, 1);
 
 const site = {
   about: { headline: sample.hero.headline, subhead: sample.hero.subhead, paragraphs: sample.about, focusAreas: sample.focusAreas },
-  projects: PROJECTS.map(({ kind, name, about, tech, stack, links }) => ({ kind, name, about, tech, stack, links: links?.map((l) => l.href) })),
+  projects: PROJECTS.map(({ name, tags, about, tech, stack, links }) => ({ name, tags, about, tech, stack, links: links?.map((l) => l.href) })),
   experience: sample.experience,
   skills: sample.skills,
   education: sample.education,

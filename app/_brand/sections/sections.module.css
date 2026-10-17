@@ -28,27 +28,30 @@
 .projGrid > :nth-child(3n + 1) { padding-left: var(--gutter); }
 .projGrid > :not(:nth-child(3n + 1)) { padding-left: 28px; }
 
-/* the project's mark in a 44px tile beside its name and kind */
+/* the project's mark in a 44px tile beside its name, with its links under the name */
 .projHead { display: flex; align-items: center; gap: 14px; }
-.projTitle { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
+.projTitle { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .projTitle h3 { margin: 0; }
-/* the kind: a rounded tag with a colour key, solid where the stack chips are dashed */
-.kind { display: inline-flex; align-items: center; gap: 6px; padding: 1px 9px 1px 7px; font-size: 12px; font-weight: 500; line-height: 1.6; color: var(--ink-2); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; }
-.kind i { width: 7px; height: 7px; border-radius: 2px; }
+.projLinks { display: flex; flex-wrap: wrap; gap: 2px 14px; }
+.projLinks .ext { margin-top: 0; gap: 4px; font-size: 13px; }
 .projMark { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-2); overflow: hidden; }
 .projMark img { width: 30px; height: 30px; object-fit: contain; }
 .projMark img[src$=".svg"] { width: 22px; height: 22px; }  /* Huly's solid mark reads heavier than the others */
 .projMark[data-fill] { box-shadow: none; }
 .projMark[data-fill] img { width: 100%; height: 100%; }
-.projHead + .lede { margin-top: 16px; }
+/* two short paragraphs, one style */
+.projBody { margin-top: 16px; display: grid; gap: 8px; }
+.projBody p { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+/* tags: rounded pills with a solid edge, where the stack chips below are dashed squares */
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 0; padding: 0; list-style: none; }
+.tags li { padding: 1px 10px; font-size: 12px; font-weight: 500; line-height: 1.6; color: var(--ink-2); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; }
+.cardTools { margin-top: 10px; }
 
 .cardTitle { margin: 8px 0 0; }
 .lede { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink); }
 .desc { margin: 8px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
 .role { margin-top: 12px; font-size: 12.5px; color: var(--ink-3); }
 .chipGap { margin-top: 14px; }
-.extRow { display: flex; flex-wrap: wrap; gap: 4px 20px; margin-top: 16px; }
-.extRow .ext { margin-top: 0; }
 .ext { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; font-size: 14px; font-weight: 500; color: var(--coral); text-decoration: none; }
 .ext:hover { text-decoration: underline; text-underline-offset: 3px; }
 
