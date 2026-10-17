@@ -2,12 +2,14 @@
 
 import { motion, type Variants } from "motion/react";
 import x from "./certifications.module.css";
+import { CertTitle, IssuerName } from "./CertTitle";
 
 /** One issuer group, precomputed on the server so the client gets plain strings. */
 export type IssuerGroup = {
   issuer: string;
   logo: string;
-  certs: { title: string; gone: boolean; meta: string }[];
+  url: string;
+  certs: { title: string; gone: boolean; meta: string; url: string; blurb: string }[];
 };
 
 /* Quiet by design: Kyle found the block timeline too busy, so the only motion
@@ -43,13 +45,12 @@ export function IssuerGroupsMotion({ groups }: { groups: IssuerGroup[] }) {
             <div className={x.issuerHead}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={`/logos/${g.logo}.svg`} alt="" className={x.logo} />
-              <span className={x.issuerName}>{g.issuer}</span>
-              <span className={x.issuerCount}>{g.certs.length}</span>
+              <IssuerName issuer={g.issuer} url={g.url} />
             </div>
             <ul className={x.issuerList}>
               {g.certs.map((c) => (
                 <li key={c.title}>
-                  <span className={`${x.title} ${c.gone ? x.muted : ""}`}>{c.title}</span>
+                  <CertTitle title={c.title} gone={c.gone} url={c.url} blurb={c.blurb} />
                   <small>{c.meta}</small>
                 </li>
               ))}

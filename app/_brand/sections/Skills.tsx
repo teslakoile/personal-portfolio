@@ -1,5 +1,6 @@
 import { sample } from "../../samples/sampleContent";
 import { Chips, Row, SectionHead } from "../kit";
+import { describe } from "../chipNotes";
 import b from "../brand.module.css";
 import s from "./sections.module.css";
 
@@ -18,7 +19,7 @@ export function Skills({ num }: { num?: string }) {
             <div key={g.title}>
               <h3 className={b.h4}>{g.title}</h3>
               <p className={s.blurb}>{g.blurb}</p>
-              <div className={s.chipGap}><Chips items={g.tools} logos /></div>
+              <div className={s.chipGap}><Chips items={g.tools} logos notes={describe(g.tools)} /></div>
             </div>
           ))}
         </div>

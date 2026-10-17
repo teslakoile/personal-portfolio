@@ -4,6 +4,15 @@
 .logo { width: 18px; height: 18px; object-fit: contain; flex: none; }
 .title { font-size: 15px; font-weight: 500; color: var(--ink); }
 .muted { color: var(--ink-3) !important; }
+/* a title that links to its credential: plain at rest, underlined in coral
+   with a small arrow on hover or focus */
+.titleLink { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px; transition: text-decoration-color 0.14s ease; }
+.titleLink:hover, .titleLink:focus-visible { text-decoration-color: var(--coral); }
+.titleLink:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+/* same size and weight as the title so the underline runs unbroken to the arrow */
+.out { font: inherit; color: var(--ink-3); opacity: 0; transition: opacity 0.14s ease; }
+.titleLink:hover .out, .titleLink:focus-visible .out { opacity: 1; color: var(--coral-ink); }
+@media (prefers-reduced-motion: reduce) { .titleLink, .out { transition: none; } }
 .tag { display: inline-block; margin-left: 8px; padding: 1px 7px; font-size: 11.5px; font-weight: 500; color: var(--ink-3); border: 1px dashed var(--line-2); border-radius: var(--r-chip); vertical-align: 2px; }
 
 /* A: registry table */

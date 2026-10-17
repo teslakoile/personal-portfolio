@@ -175,7 +175,7 @@ export function Highlights() {
   const T: [string, string, string][] = [
     ["b2", "AI Agents", "Snowflake Cortex agent workflows for investment officers, and a ChatGPT-to-Databricks MCP server."],
     ["b3", "Data Platforms", "Backend services across 10+ microservices, on vendor data from PitchBook, Bloomberg, and MSCI."],
-    ["b1", "Cloud", "Terraform, Kubernetes, and Databricks across AWS, Azure, and GCP, backed by 10 certifications."],
+    ["b1", "Cloud", "Terraform, Kubernetes, and Databricks across AWS, Azure, and GCP, backed by 12 certifications."],
     ["b4", "Community", "Leads GDG Davao, 2,000+ participants. Speaks on AI coding agents. Published in IEEE."],
   ];
   return (

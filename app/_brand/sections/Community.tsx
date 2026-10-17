@@ -1,5 +1,7 @@
 import { sample } from "../../samples/sampleContent";
 import { Row, SectionHead, Stat, Talk } from "../kit";
+import { OrgLink } from "../OrgLink";
+import { bare, range } from "../format";
 import b from "../brand.module.css";
 import s from "./sections.module.css";
 
@@ -16,21 +18,21 @@ export function Community({ num }: { num?: string }) {
           <span className={`${b.label} ${s.orgLabel}`}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={gdg.logo} alt="" />
-            {gdg.name}
+            <OrgLink name={gdg.name} url={gdg.url}>{gdg.name}</OrgLink>
           </span>
           <div className={b.stats} style={{ marginTop: 10 }}>
             {stats.map((x) => <Stat key={x.label} figure={x.fig} label={x.label} />)}
           </div>
-          <a className={s.orgRow} href={shapers.url} target="_blank" rel="noreferrer">
+          <div className={s.orgRow}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={shapers.logo} alt="" />
-            <span><b>{shapers.name}</b>{shapers.role} · {shapers.period}</span>
-          </a>
+            <span><b><OrgLink name={shapers.name} url={shapers.url}>{shapers.name}</OrgLink></b>{shapers.role} · {range(shapers.period)}</span>
+          </div>
         </div>
         <div>
           <span className={b.label}>Talks</span>
           <div style={{ marginTop: 6 }}>
-            {sample.speaking.map((t) => <Talk key={t.title} title={t.title} desc={t.description} meta={t.meta} />)}
+            {sample.speaking.map((t) => <Talk key={t.title} title={t.title} desc={bare(t.description)} meta={t.meta} href={t.link} />)}
           </div>
         </div>
       </div>

@@ -162,6 +162,32 @@
   border-radius: var(--r-chip);
 }
 
+/* an organization's name as a link (OrgLink): plain at rest, coral underline
+   and a small arrow on hover or focus. The arrow is the link's own text at the
+   same size, so the underline runs unbroken to it. */
+.orgLink { color: inherit; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px; transition: text-decoration-color 0.14s ease; }
+.orgLink:hover, .orgLink:focus-visible { text-decoration-color: var(--coral); }
+.orgLink:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+.orgOut { font: inherit; color: var(--ink-3); opacity: 0; transition: opacity 0.14s ease; }
+.orgLink:hover .orgOut, .orgLink:focus-visible .orgOut { opacity: 1; color: var(--coral-ink); }
+@media (prefers-reduced-motion: reduce) { .orgLink, .orgOut { transition: none; } }
+
+/* a chip with a note (ChipFx shows it): the dashed edge turns solid coral and
+   the chip lifts 1px, the one coral accent on an interactive element */
+.chipLive { cursor: default; transition: border-color 0.14s ease, color 0.14s ease, transform 0.14s cubic-bezier(0.33, 1, 0.68, 1), box-shadow 0.14s ease; }
+.chipLive:hover,
+.chipLive:focus-visible,
+.chipLive[data-open] { border-style: solid; border-color: var(--coral); color: var(--ink); transform: translateY(-1px); box-shadow: 0 2px 0 -1px rgb(245 72 45 / 0.28); }
+.chipLive:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+.chipLive:hover .chipLogo,
+.chipLive:focus-visible .chipLogo { transform: scale(1.12); }
+.chipLogo { transition: transform 0.16s cubic-bezier(0.33, 1, 0.68, 1); }
+@media (prefers-reduced-motion: reduce) {
+  .chipLive, .chipLogo { transition: none; }
+  .chipLive:hover, .chipLive:focus-visible, .chipLive[data-open] { transform: none; }
+  .chipLive:hover .chipLogo, .chipLive:focus-visible .chipLogo { transform: none; }
+}
+
 /* height-led so a wordmark (AWS, SQLAlchemy) keeps its width instead of
    shrinking into a 14px square */
 .chipLogo { flex: none; height: 14px; width: auto; max-width: 34px; object-fit: contain; }
@@ -261,6 +287,11 @@
 .lane .blocks { flex-wrap: nowrap; }
 .today { position: absolute; top: -6px; bottom: -6px; border-left: 1px dashed var(--coral); }
 .today span { position: absolute; bottom: -20px; right: 4px; font-size: 10.5px; color: var(--coral-ink); white-space: nowrap; }
+/* the flag form: one solid bar through every lane, its label plain text at the foot */
+.lanes { position: relative; }
+.lanesFlag { margin-right: 28px; }
+.todayBar { position: absolute; top: -4px; bottom: -4px; width: 0; border-left: 1px solid var(--coral); z-index: 1; pointer-events: none; }
+.todayBar span { position: absolute; top: 100%; left: 0.5px; transform: translateX(-50%); margin-top: 4px; font-size: 10.5px; line-height: 1.5; color: var(--coral-ink); white-space: nowrap; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 26px; font-size: 11.5px; color: var(--ink-2); }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .legend i { display: inline-block; width: 12px; height: 6px; }

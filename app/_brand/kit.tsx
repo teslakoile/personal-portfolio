@@ -91,14 +91,27 @@ export function Badge({ children }: { children: ReactNode }) {
 }
 
 /** Tag chips. With `logos`, a chip whose name has a verified brand mark shows
-    it before the label; any other chip stays text. */
-export function Chips({ items, logos = false }: { items: readonly string[]; logos?: boolean }) {
+    it before the label; any other chip stays text. With `notes`, a chip that
+    has an entry reacts to the pointer: ChipFx (mounted once on the page)
+    shows the chip's name and its note in the site tooltip and plays a tick,
+    and Cursor shows the standard hand. The chip takes focus too, so the note
+    is reachable from the keyboard. */
+export function Chips({ items, logos = false, notes }: {
+  items: readonly string[];
+  logos?: boolean;
+  notes?: Record<string, string>;
+}) {
   return (
     <ul className={b.chips} style={{ listStyle: "none", margin: 0, padding: 0 }}>
       {items.map((t) => {
         const src = logos ? toolLogo(t) : null;
+        const note = notes?.[t];
         return (
-          <li key={t} className={b.chip}>
+          <li
+            key={t}
+            className={note ? `${b.chip} ${b.chipLive}` : b.chip}
+            {...(note ? { "data-chip": t, "data-note": note, tabIndex: 0, "aria-label": `${t}. ${note}` } : {})}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             {src ? <img className={b.chipLogo} src={src} alt="" width={14} height={14} /> : null}
             {t}
@@ -209,10 +222,17 @@ export function Stat({ figure, label, n, c, unit }: { figure: string; label: str
   );
 }
 
-export function Talk({ title, desc, meta }: { title: string; desc: string; meta: string }) {
+export function Talk({ title, desc, meta, href }: { title: string; desc: string; meta: string; href?: string | null }) {
   return (
     <div className={b.talk}>
-      <div><b>{title}</b><span>{desc}</span></div>
+      <div>
+        <b>
+          {href ? (
+            <a className={b.orgLink} href={href} target="_blank" rel="noreferrer">{title}{"\u00A0"}<span className={b.orgOut} aria-hidden="true">↗</span></a>
+          ) : title}
+        </b>
+        <span>{desc}</span>
+      </div>
       <small>{meta}</small>
     </div>
   );

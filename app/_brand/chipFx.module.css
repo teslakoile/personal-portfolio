@@ -1,0 +1,54 @@
+/* Note for a chip (ChipFx.tsx), in the site's standard tooltip look: a dark
+   ink box with light text and a small caret, as on the ⌘K key hint. The chip
+   notes carry more than one line, so it grows to a few lines while keeping
+   the same colour, radius, and caret. It sits under the cursor, which is
+   always on top. Tokens come from the page's BrandRoot. */
+.tip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2147483000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+  will-change: transform;
+}
+.tip[data-open] { opacity: 1; }
+
+.card {
+  position: relative;
+  display: grid;
+  gap: 1px;
+  width: max-content;
+  max-width: 252px;
+  padding: 6px 10px 7px;
+  border-radius: 6px;
+  background: var(--ink);
+  color: #fff;
+  transform: translateY(3px);
+  transition: transform 0.15s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.tip[data-side="below"] .card { transform: translateY(-3px); }
+.tip[data-open] .card { transform: none; }
+
+/* caret toward the chip; ChipFx sets --caret to the chip's centre in the card */
+.card::after {
+  content: "";
+  position: absolute;
+  left: var(--caret, 50%);
+  bottom: -4px;
+  width: 8px;
+  height: 8px;
+  background: var(--ink);
+  transform: translateX(-50%) rotate(45deg);
+}
+.tip[data-side="below"] .card::after { bottom: auto; top: -4px; }
+
+.name { font-size: 12.5px; font-weight: 500; line-height: 1.35; }
+.text { margin: 2px 0 0; font-size: 12px; line-height: 1.45; color: rgb(255 255 255 / 0.78); }
+.text[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tip, .card { transition: none; }
+  .card, .tip[data-side="below"] .card { transform: none; }
+}

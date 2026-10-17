@@ -5,6 +5,8 @@ import { Rail } from "../../_brand/Rail";
 import { Footer } from "../../_brand/sections/Footer";
 import { Cursor } from "../../_brand/Cursor";
 import { MotionRoot } from "../../_brand/MotionRoot";
+import { ChipFx } from "../../_brand/ChipFx";
+import { SoundToggle } from "../../_brand/SoundToggle";
 import { Hero } from "../../_brand/sections/Hero";
 import { About } from "../../_brand/sections/About";
 import { Projects } from "../../_brand/sections/Projects";
@@ -48,6 +50,7 @@ export default function RedesignPage() {
     <BrandRoot>
       <MotionRoot>
         <Cursor />
+        <ChipFx />
         <AskPanel />
         <div className={s.page}>
           <div className={s.railWrap}>
@@ -56,21 +59,26 @@ export default function RedesignPage() {
               items={SECTIONS}
               active="about"
               utils={[{ label: "Ask KYLLM", keys: ["⌘", "K"] }]}
-              foot={<Button href={sample.hero.primaryCta.href}>Get in Touch</Button>}
+              foot={(
+                <>
+                  <SoundToggle />
+                  <div style={{ marginTop: 14 }}><Button href={sample.hero.primaryCta.href}>Get in Touch</Button></div>
+                </>
+              )}
             />
           </div>
           <main className={s.main}>
             <Frame>
               <Hero />
-              <About num="01" />
-              <Projects num="02" />
-              <Experience num="03" />
-              <Skills num="04" />
-              <Education num="05" />
-              <Certifications num="06" />
-              <Community num="07" />
-              <Recognition num="08" />
-              <GitHub num="09" />
+              <About />
+              <Projects />
+              <Experience />
+              <Skills />
+              <Education />
+              <Certifications />
+              <Community />
+              <Recognition />
+              <GitHub />
               <Footer />
             </Frame>
           </main>
