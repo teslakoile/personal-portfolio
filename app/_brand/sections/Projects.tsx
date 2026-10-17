@@ -1,4 +1,4 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, FileText } from "lucide-react";
 import { Chips, Row, SectionHead } from "../kit";
 import { describe } from "../chipNotes";
 import b from "../brand.module.css";
@@ -6,18 +6,39 @@ import s from "./sections.module.css";
 import { PROJECTS, type Project } from "./projectsData";
 
 /** Projects, alphabetical with no featured case study. The entries live in
-    projectsData.ts. */
+    projectsData.ts. Each card leads with the project's mark in a tile: its own
+    logo where it has one, a document icon for the Financial Services Site. */
+
+function Mark({ p }: { p: Project }) {
+  return (
+    <span className={s.projMark} data-fill={p.markFill ? "" : undefined} aria-hidden="true">
+      {p.mark
+        /* eslint-disable-next-line @next/next/no-img-element */
+        ? <img src={`/projects/marks/${p.mark}`} alt="" />
+        : <FileText size={20} strokeWidth={1.7} />}
+    </span>
+  );
+}
 
 function Card({ p }: { p: Project }) {
   return (
     <article className={s.project}>
-      <span className={b.label}>{p.kind} · {p.year}</span>
+      <div className={s.projHead}>
+        <Mark p={p} />
+        <span className={b.label}>{p.kind} · {p.year}</span>
+      </div>
       <h3 className={`${b.h3} ${s.cardTitle}`}>{p.name}</h3>
       <p className={s.lede}>{p.lede}</p>
       <p className={s.desc}>{p.detail}</p>
       <span className={s.role}>{p.role}</span>
       <div className={s.chipGap}><Chips items={p.stack} logos notes={describe(p.stack)} /></div>
-      {p.link ? <a className={s.ext} href={p.link.href} target="_blank" rel="noreferrer"><ArrowUpRight size={15} strokeWidth={2} aria-hidden="true" />{p.link.label}</a> : null}
+      {p.links?.length ? (
+        <div className={s.extRow}>
+          {p.links.map((l) => (
+            <a key={l.href} className={s.ext} href={l.href} target="_blank" rel="noreferrer"><ArrowUpRight size={15} strokeWidth={2} aria-hidden="true" />{l.label}</a>
+          ))}
+        </div>
+      ) : null}
     </article>
   );
 }

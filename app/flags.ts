@@ -9,7 +9,7 @@
  */
 export const SECTION_FLAGS = {
   about: true,
-  projects: false, // copy is real, but the six dossier screenshots are greeked mocks
+  projects: true, // on 2026-10-17, each card marked with the project's own logo
   experience: true,
   skills: true,
   education: true,
