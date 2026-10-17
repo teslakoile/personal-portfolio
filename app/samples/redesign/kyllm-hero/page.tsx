@@ -15,8 +15,7 @@ import s from "../redesign.module.css";
 /**
  * /samples/redesign/kyllm-hero: the redesign page with Kyle's photo in a cell
  * of the grid hero, a bar under the contact links promoting KYLLM, and
- * KYLLM as a dock pill that opens a sheet; ?tools=flip|marquee|wave|groups|slot picks how
- * the tools band moves;
+ * KYLLM as a dock pill that opens a sheet; ?slow=4 slows the tools band for frame captures;
  * the sheet opens on the mock "tell me about Kyle" exchange, answered.
  * ?mark=kn|hash|none picks this site's source mark. The first two sections
  * follow so the hero is seen in the page's rhythm.
@@ -50,7 +49,7 @@ export default async function KyllmHeroPage({ searchParams }: { searchParams: Pr
           </div>
           <main className={`${s.main} ${h.content}`}>
             <Frame>
-              <KyllmHero tools={q.tools === "marquee" || q.tools === "wave" || q.tools === "groups" || q.tools === "slot" ? q.tools : "flip"} />
+              <KyllmHero slow={Number(q.slow) || 1} />
               <About num="01" />
               <Projects num="02" />
             </Frame>

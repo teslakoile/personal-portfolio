@@ -1,8 +1,7 @@
 import type { CSSProperties } from "react";
 import { Hero } from "../../../_brand/sections/Hero";
-import s from "../../../_brand/sections/sections.module.css";
 import { KyllmPromo } from "./KyllmPromo";
-import { ToolsBand, type ToolsMotion } from "./ToolsBand";
+import { ToolsBand } from "./ToolsBand";
 import h from "./hero.module.css";
 
 /*
@@ -15,7 +14,7 @@ import h from "./hero.module.css";
  * band share. Under the contact links, a bar promotes KYLLM; it opens the
  * bottom-right sheet. The strip shows four projects instead of the Single
  * Customer View's metrics; every figure is from sampleContent.ts. The tools
- * band moves (?tools=flip|marquee|wave|groups|slot).
+ * band cascades to the next six tools every 4 s.
  */
 
 /*
@@ -37,7 +36,7 @@ const HIGHLIGHTS: Card[] = [
 function Highlights() {
   return (
     <div className={h.hl}>
-      <div className={`${s.stripLabel} ${h.hlLabel}`}><b>Career Highlights</b></div>
+      <div className={h.hlLabel}>Career Highlights</div>
       {HIGHLIGHTS.map((w) => (
         <article key={w.slug} className={h.workCard} style={{ "--ground": w.ground } as CSSProperties}>
           <div className={h.workImg} style={{ backgroundImage: `url(/projects/cards/${w.slug}.webp)` }} aria-hidden="true" />
@@ -49,13 +48,13 @@ function Highlights() {
   );
 }
 
-export function KyllmHero({ tools }: { tools: ToolsMotion }) {
+export function KyllmHero({ slow = 1 }: { slow?: number }) {
   return (
     <Hero
       aligned
       extra={<KyllmPromo />}
       strip={<Highlights />}
-      tools={<ToolsBand v={tools} />}
+      tools={<ToolsBand slow={slow} />}
       portrait={
         <div className={h.photoCell}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
