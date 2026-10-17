@@ -1,14 +1,12 @@
-import { ArrowUpRight, FileText } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Chips, Row, SectionHead } from "../kit";
 import { describe } from "../chipNotes";
 import b from "../brand.module.css";
 import s from "./sections.module.css";
 import { PROJECTS, type Project } from "./projectsData";
 
-/** Projects, alphabetical with no featured case study. The entries live in
-    projectsData.ts. Each card leads with the project's mark in a tile (its own
-    logo where it has one, a document icon for the Financial Services Site)
-    beside its name, with links to the live site or repo under the name for
+/** Projects, in the order of projectsData.ts. Each card leads with the
+    project's mark in a tile beside its name, with links to the live site or repo under the name for
     the public ones. Then two short paragraphs in one style (what it does, the
     engineering behind it), its tags as rounded pills, and its stack as the
     dashed tool chips. */
@@ -16,10 +14,8 @@ import { PROJECTS, type Project } from "./projectsData";
 function Mark({ p }: { p: Project }) {
   return (
     <span className={s.projMark} data-fill={p.markFill ? "" : undefined} aria-hidden="true">
-      {p.mark
-        /* eslint-disable-next-line @next/next/no-img-element */
-        ? <img src={`/projects/marks/${p.mark}`} alt="" />
-        : <FileText size={20} strokeWidth={1.7} />}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={`/projects/marks/${p.mark}`} alt="" />
     </span>
   );
 }
@@ -51,11 +47,10 @@ function Card({ p }: { p: Project }) {
 }
 
 export function Projects({ num }: { num?: string }) {
-  const sorted = [...PROJECTS].sort((a, c) => a.name.localeCompare(c.name, "en", { sensitivity: "base" }));
   return (
     <Row id="projects">
       <SectionHead num={num} title="Projects" />
-      <div className={`${s.grid} ${s.projGrid}`}>{sorted.map((p) => <Card key={p.name} p={p} />)}</div>
+      <div className={`${s.grid} ${s.projGrid}`}>{PROJECTS.map((p) => <Card key={p.name} p={p} />)}</div>
     </Row>
   );
 }
