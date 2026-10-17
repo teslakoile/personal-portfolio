@@ -1,14 +1,13 @@
 import { fontVars } from "./fonts";
-import { HomeShell } from "./_home/HomeShell";
+import { featureEnabled } from "./flags";
+import { SitePage } from "./_brand/SitePage";
 
 /**
- * Landing page, the "Quiet Blueprint" sections inside the sidebar shell
- * (app/_home/HomeShell.tsx), with the contributions graph, resources,
- * recommendations, ⌘K ask-anything, ⌘J typing test, and micro-sounds.
- * Fonts come exclusively from the global fontset (app/fonts.ts), only the
- * chosen families load here, unlike the /samples playground which loads every
- * candidate for its comparisons. The prior top-nav composition still renders
- * at /samples/home; the original text-dense homepage lives on at /classic.
+ * Landing page: the redesigned CV (app/_brand/SitePage.tsx), shipped
+ * 2026-10-17. Sections follow SECTION_FLAGS and KYLLM follows
+ * FEATURE_FLAGS.kyllm (app/flags.ts). The previous "Quiet Blueprint" landing
+ * page is app/_home/HomeShell.tsx; the original text-dense homepage lives on
+ * at /classic.
  */
 
 // Person structured data for search engines, every fact mirrors the visible
@@ -65,7 +64,7 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
-      <HomeShell />
+      <SitePage kyllm={featureEnabled("kyllm")} />
     </div>
   );
 }
