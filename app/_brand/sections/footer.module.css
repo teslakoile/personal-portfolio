@@ -44,7 +44,7 @@
 .viewTile { position: absolute; }
 .viewImg { position: absolute; display: block; max-width: none; }
 
-.card { grid-column: 3 / span 4; grid-row: 2; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line-2); text-align: center; }
+.card { grid-column: 3 / span 4; grid-row: 2; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; background: var(--paper); text-align: center; }
 .cardLine { margin: 0; font-size: 15px; color: var(--ink-2); }
 .cardMail { font-size: 30px; font-weight: 500; letter-spacing: -0.025em; line-height: 1.15; color: var(--ink); text-decoration: none; background-image: linear-gradient(var(--coral), var(--coral)); background-repeat: no-repeat; background-position: 0 100%; background-size: 100% 2px; padding-bottom: 2px; }
 .cardMail:hover { color: var(--coral); }
