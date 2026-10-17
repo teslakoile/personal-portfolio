@@ -1,4 +1,5 @@
 import { Row } from "../kit";
+import { DitherRule } from "../DitherRule";
 import { FooterTile } from "./FooterTile";
 import { FooterWall } from "./FooterWall";
 import f from "./footer.module.css";
@@ -32,7 +33,7 @@ function Contact() {
   return (
     <>
       <p className={f.cardLine}>For work, talks &amp; everything else</p>
-      <a className={f.cardMail} href={`mailto:${EMAIL}`}>{EMAIL}</a>
+      <a className={f.cardMail} href={`mailto:${EMAIL}`}>{EMAIL}<DitherRule /></a>
     </>
   );
 }

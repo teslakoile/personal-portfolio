@@ -46,15 +46,23 @@
 
 .card { grid-column: 3 / span 4; grid-row: 2; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; background: var(--paper); text-align: center; }
 .cardLine { margin: 0; font-size: 15px; color: var(--ink-2); }
-.cardMail { font-size: 30px; font-weight: 500; letter-spacing: -0.025em; line-height: 1.15; color: var(--ink); text-decoration: none; background-image: linear-gradient(var(--coral), var(--coral)); background-repeat: no-repeat; background-position: 0 100%; background-size: 100% 2px; padding-bottom: 2px; }
-.cardMail:hover { color: var(--coral); }
+/* the address's underline is a DitherRule: solid coral on the left that
+   breaks into square pixels toward the right. It stays the same on hover;
+   only the address turns coral. */
+.cardMail {
+  position: relative; display: inline-block;
+  font-size: 30px; font-weight: 500; letter-spacing: -0.025em; line-height: 1.15; color: var(--ink); text-decoration: none;
+  padding-bottom: 9px;
+  transition: color 0.2s ease-out;
+}
+.cardMail:hover, .cardMail:focus-visible { color: var(--coral); }
 
 .quiet { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 24px; padding: 20px var(--gutter); font-size: 13px; color: var(--ink-3); }
 .quiet nav { display: flex; gap: 20px; }
 .quiet a { color: var(--ink-2); text-decoration: none; }
 .quiet a:hover { color: var(--ink); }
 
-@media (prefers-reduced-motion: reduce) { .tile img { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .tile img, .cardMail { transition: none; } }
 
 /* Phone layouts. The in-grid card is hidden and .mCard sits above the photos,
    so the email leads. Three variants, chosen by the footer's `mobile` prop. */
