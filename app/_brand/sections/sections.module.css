@@ -16,12 +16,10 @@
 .orgLabel img { flex: none; height: 16px; width: auto; max-width: 44px; object-fit: contain; }
 
 /* a second community under the first one's figures */
-.orgRow { display: flex; align-items: center; gap: 14px; margin-top: 8px; padding: 16px 0 0; border-top: 1px dashed var(--line); color: var(--ink); text-decoration: none; }
+.orgRow { display: flex; align-items: center; gap: 14px; margin-top: 8px; padding: 16px 0 0; border-top: 1px dashed var(--line); color: var(--ink); }
 .orgRow img { flex: none; height: 30px; width: auto; max-width: 56px; object-fit: contain; }
 .orgRow b { display: block; font-size: 15px; font-weight: 500; }
 .orgRow span { font-size: 13.5px; color: var(--ink-2); }
-.orgRow:hover b { color: var(--coral); }
-
 /* projects: one grid; each card rules its own bottom, and the grid sits 1px
    into the row's bottom rule so the last cards' rules land on it */
 .projGrid { margin-bottom: -1px; }
@@ -73,13 +71,38 @@
 
 /* --------------------------- experience --------------------------- */
 .timelineWrap { padding: 8px var(--gutter) 34px; }
-.roleRow { display: grid; grid-template-columns: 180px minmax(0, 1fr) 250px; border-top: 1px solid var(--line); }
-.roleWhen { padding: 26px 28px 26px var(--gutter); font-size: 12.5px; line-height: 1.6; color: var(--ink-3); }
-.roleWhen b { display: block; font-weight: 400; color: var(--ink); }
-.roleBody { padding: 26px 28px; border-left: 1px solid var(--line); }
-.roleBody p { margin: 6px 0 0; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
-.roleItems { margin-top: 12px; }
-.roleStack { padding: 26px 28px; border-left: 1px solid var(--line); }
+
+/* the role list: a bar with Expand All, then one drawer per role */
+.roleBar { display: flex; justify-content: space-between; align-items: center; padding: 10px var(--gutter); border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink-3); }
+.roleAll { padding: 2px 0; font: inherit; color: var(--ink-2); background: none; border: 0; cursor: pointer; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px; transition: text-decoration-color 0.14s ease, color 0.14s ease; }
+.roleAll:hover, .roleAll:focus-visible { color: var(--ink); text-decoration-color: var(--coral); }
+
+.drawer { border-top: 1px solid var(--line); }
+.drawerHead { display: grid; grid-template-columns: 180px minmax(0, 1fr) 68px; align-items: center; cursor: pointer; transition: background 0.14s ease; }
+.drawerHead:hover { background: rgb(28 25 23 / 0.025); }
+.roleWhen { padding: 22px 12px 22px var(--gutter); font-size: 12.5px; line-height: 1.6; color: var(--ink-2); white-space: nowrap; }
+.drawerTitle { align-self: stretch; display: grid; align-content: center; gap: 3px; padding: 16px 12px 16px 28px; border-left: 1px solid var(--line); }
+.drawerOrg { display: flex; align-items: center; gap: 7px; font-size: 14px; color: var(--ink-3); }
+.drawerOrg img { flex: none; height: 15px; width: auto; max-width: 30px; object-fit: contain; }
+.chev { justify-self: center; display: grid; place-items: center; width: 34px; height: 34px; color: var(--ink-3); background: none; border: 1px solid transparent; border-radius: 50%; cursor: pointer; transition: color 0.14s ease, border-color 0.14s ease, transform 0.22s cubic-bezier(0.33, 1, 0.68, 1); }
+.chev:hover { color: var(--ink); border-color: var(--line-2); }
+.chev:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+.drawer[data-open] .chev { transform: rotate(180deg); color: var(--ink); }
+
+/* the folded detail: always in the page, 0fr when closed, 1fr when open */
+.drawerClip { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.26s cubic-bezier(0.22, 1, 0.36, 1); }
+.drawer[data-open] .drawerClip { grid-template-rows: 1fr; }
+.drawerFold { min-height: 0; overflow: hidden; display: grid; grid-template-columns: 180px minmax(0, 1fr); }
+.drawerFold::before { content: ""; }
+.drawerBody { grid-column: 2; padding: 0 28px 24px; border-left: 1px solid var(--line); opacity: 0; transition: opacity 0.2s ease; }
+.drawer[data-open] .drawerBody { opacity: 1; transition-delay: 0.06s; }
+.drawerBody p { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+.roleItems { margin-top: 14px; }
+.drawerStack { margin-top: 16px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .drawerClip, .drawerBody, .chev, .drawerHead { transition: none; }
+}
 
 /* ------------------------------ skills ---------------------------- */
 .blurb { margin: 4px 0 0; min-height: 40px; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
@@ -88,6 +111,9 @@
 .seal { display: block; height: 34px; width: auto; }
 .school { margin: 12px 0 0; font-size: 17px; }
 .degree { font-size: 14px; color: var(--ink-2); }
+.points { margin: 16px 0 0; padding: 0; list-style: none; }
+.points li { position: relative; padding: 9px 0 9px 18px; border-top: 1px dashed var(--line); font-size: 14.5px; line-height: 1.5; color: var(--ink-2); }
+.points li::before { content: ""; position: absolute; left: 3px; top: 17px; width: 5px; height: 5px; border-radius: 50%; background: var(--coral); }
 
 /* ----------------------------- github ----------------------------- */
 .ghFallback { padding: 6px var(--gutter) 34px; font-size: 14.5px; color: var(--ink-2); }
@@ -129,8 +155,10 @@
   .aboutCopy { padding: 32px var(--gutter); }
   .aboutFacts { border-left: 0; border-top: 1px solid var(--line); }
 
-  .roleRow { grid-template-columns: minmax(0, 1fr); }
-  .roleWhen { padding: 22px var(--gutter) 0; }
-  .roleBody { padding: 8px var(--gutter) 0; border-left: 0; }
-  .roleStack { padding: 14px var(--gutter) 24px; border-left: 0; }
+  .drawerHead { grid-template-columns: minmax(0, 1fr) 56px; grid-template-areas: "when chev" "title chev"; }
+  .roleWhen { grid-area: when; padding: 16px 0 0 var(--gutter); }
+  .drawerTitle { grid-area: title; padding: 2px 0 16px var(--gutter); border-left: 0; }
+  .chev { grid-area: chev; }
+  .drawerFold { grid-template-columns: minmax(0, 1fr); }
+  .drawerBody { grid-column: 1; padding: 0 var(--gutter) 22px; border-left: 0; }
 }

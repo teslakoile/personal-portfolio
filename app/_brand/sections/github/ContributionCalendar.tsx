@@ -265,9 +265,10 @@ export function ContributionCalendar({ year }: { year: Year }) {
   };
 
   const cell = tip ? byIdx[tip.i] : undefined;
-  const tipNote = (c: Cell) => {
-    if (!year.hasCounts) return `Level ${c.level} of 4`;
-    return c.date === year.bestDay.date ? "Busiest day of the year" : null;
+  // the site tooltip's note form: what the day holds, then its date
+  const tipTitle = (c: Cell) => {
+    if (!year.hasCounts) return `Contribution level ${c.level} of 4`;
+    return c.count ? plural(c.count) : "No contributions";
   };
 
   const state = !mounted ? undefined : inView ? "in" : "armed";
@@ -345,10 +346,9 @@ export function ContributionCalendar({ year }: { year: Year }) {
                   exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.1 } }}
                   transition={{ type: "spring", stiffness: 520, damping: 34, mass: 0.7 }}
                 >
-                  <div className={g.tipCard} style={{ width: TIP_W }}>
-                    <b>{year.hasCounts ? (cell.count ? plural(cell.count) : "No contributions") : "Contributions"}</b>
+                  <div className={g.tipCard}>
+                    <b>{tipTitle(cell)}</b>
                     <span>{fullDate(cell)}</span>
-                    {tipNote(cell) ? <em>{tipNote(cell)}</em> : null}
                   </div>
                 </motion.div>
               ) : null}

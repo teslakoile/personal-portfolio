@@ -4,6 +4,7 @@ import { BlockTimeline, monthCells, monthIndex, monthLabel, parseMonth, type YM 
 import b from "../brand.module.css";
 import x from "./certifications.module.css";
 import { IssuerGroupsMotion, type IssuerGroup } from "./CertificationsIssuerMotion";
+import { CertTitle, IssuerName } from "./CertTitle";
 
 /**
  * Certifications, redesign section, fed from sampleContent.ts. Kyle found the
@@ -18,7 +19,7 @@ const TO: YM = [2028, 12];
 /** Issuer → series color; the legend below names the same groups. */
 const ISSUER_COLOR: Record<string, BlockColor> = {
   "Google Cloud": "b3",
-  Microsoft: "b4",
+  "Microsoft Azure": "b4",
   "Amazon Web Services": "b4",
   Databricks: "b1",
   OpenAI: "b2",
@@ -94,13 +95,31 @@ function Registry({ today }: { today: YM }) {
             <span role="cell">{c.issuer}</span>
             <span role="cell">{c.issued}</span>
             <span role="cell" className={c.expires ? undefined : x.muted}>{c.expires ?? "No expiry"}</span>
-            <span className={x.tMeta}>{c.issuer} · {c.issued}{c.expires ? ` to ${c.expires}` : ", no expiry"}</span>
+            <span className={x.tMeta}>{c.issuer} · {c.issued}{c.expires ? ` - ${c.expires}` : " - Present"}</span>
           </div>
         );
       })}
     </div>
   );
 }
+
+/** Each issuer's certification program, for the issuer name's link. */
+const ISSUER_URL: Record<string, string> = {
+  OpenAI: "https://academy.openai.com/",
+  "Google Cloud": "https://cloud.google.com/learn/certification",
+  Databricks: "https://www.databricks.com/learn/training/certification",
+  "Microsoft Azure": "https://learn.microsoft.com/en-us/credentials/",
+  Astronomer: "https://www.astronomer.io/certification/",
+  "Amazon Web Services": "https://aws.amazon.com/certification/",
+};
+
+/** Where a title goes when LinkedIn lists no credential for it: the issuer's
+    page for that certification, not a verify link. Replace with the public
+    credential URL in sampleContent.ts when there is one. */
+const PROGRAM_PAGE: Record<string, string> = {
+  "Cloud Digital Leader": "https://cloud.google.com/learn/certification/cloud-digital-leader",
+  "Certified Cloud Practitioner": "https://aws.amazon.com/certification/certified-cloud-practitioner/",
+};
 
 /** Issuer groups in data order, with each credential's status line resolved. */
 function issuerGroups(today: YM): IssuerGroup[] {
@@ -110,10 +129,12 @@ function issuerGroups(today: YM): IssuerGroup[] {
     const item = {
       title: c.title,
       gone,
-      meta: gone ? `Expired ${c.expires}` : c.expires ? `${c.issued} to ${c.expires}` : `${c.issued}, no expiry`,
+      meta: gone ? `Expired ${c.expires}` : c.expires ? `${c.issued} - ${c.expires}` : `${c.issued} - Present`,
+      url: c.url.startsWith("http") ? c.url : PROGRAM_PAGE[c.title] ?? c.url,
+      blurb: c.blurb,
     };
     const g = groups.find((y) => y.issuer === c.issuer);
-    if (g) g.certs.push(item); else groups.push({ issuer: c.issuer, logo: c.logo, certs: [item] });
+    if (g) g.certs.push(item); else groups.push({ issuer: c.issuer, logo: c.logo, url: ISSUER_URL[c.issuer] ?? "", certs: [item] });
   }
   return groups;
 }
@@ -131,13 +152,12 @@ function ByIssuer({ today, animate }: { today: YM; animate: boolean }) {
             <div className={x.issuerHead}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={`/logos/${g.logo}.svg`} alt="" className={x.logo} />
-              <span className={x.issuerName}>{g.issuer}</span>
-              <span className={x.issuerCount}>{g.certs.length}</span>
+              <IssuerName issuer={g.issuer} url={g.url} />
             </div>
             <ul className={x.issuerList}>
               {g.certs.map((c) => (
                 <li key={c.title}>
-                  <span className={`${x.title} ${c.gone ? x.muted : ""}`}>{c.title}</span>
+                  <CertTitle title={c.title} gone={c.gone} url={c.url} blurb={c.blurb} />
                   <small>{c.meta}</small>
                 </li>
               ))}

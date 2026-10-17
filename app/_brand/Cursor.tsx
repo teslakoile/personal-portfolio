@@ -36,7 +36,7 @@ import { ASK_VERBS } from "../samples/states/verbs";
  *
  * Hands are Phosphor (fill weight, MIT).
  */
-const CLICKABLE = 'a[href], button:not(:disabled), select, summary, label[for], [role="button"], [role="link"], [role="tab"], [data-clickable], input[type="button"], input[type="submit"], input[type="checkbox"], input[type="radio"]';
+const CLICKABLE = 'a[href], button:not(:disabled), select, summary, label[for], [role="button"], [role="link"], [role="tab"], [data-clickable], [data-chip], input[type="button"], input[type="submit"], input[type="checkbox"], input[type="radio"]';
 const FIELD = 'input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]';
 const BUSY = '[aria-busy="true"], [data-busy]';
 const BLOCKED = ':disabled, [aria-disabled="true"], [data-blocked]';

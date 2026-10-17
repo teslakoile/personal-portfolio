@@ -40,13 +40,12 @@
 .cell[data-up] { transition: scale 0.38s cubic-bezier(0.34, 2.2, 0.5, 1), translate 0.38s cubic-bezier(0.34, 2.2, 0.5, 1), box-shadow 0.2s, filter 0.2s; }
 .grid:focus-visible { outline: none; }
 
-/* hover tooltip, the site's dark label: Motion glides .tip to the day and
-   .tipCard sits above its anchor */
+/* hover tooltip, the site's one tooltip look (--tip-* on BrandRoot): Motion
+   glides .tip to the day and .tipCard sits above it */
 .tip { position: absolute; left: 0; top: 0; z-index: 20; width: 0; height: 0; pointer-events: none; transform-origin: 0 0; }
-.tipCard { position: absolute; left: 0; bottom: 10px; translate: -50% 0; display: grid; gap: 1px; padding: 7px 10px 8px; border-radius: 6px; background: var(--ink); color: #fff; font-size: 12px; line-height: 1.4; }
-.tipCard b { font-size: 12.5px; font-weight: 500; }
-.tipCard span { color: rgb(255 255 255 / 0.62); }
-.tipCard em { margin-top: 2px; font-size: 11.5px; font-style: normal; font-weight: 500; color: var(--b1); }
+.tipCard { position: absolute; left: 0; bottom: 8px; translate: -50% 0; display: grid; gap: 1px; padding: var(--tip-pad); border-radius: var(--tip-radius); width: max-content; max-width: 252px; background: var(--tip-bg); color: #fff; }
+.tipCard b { font: var(--tip-title); font-variant-numeric: tabular-nums; }
+.tipCard span { margin: 2px 0 0; font: var(--tip-text); font-variant-numeric: tabular-nums; color: var(--tip-dim); }
 
 /* scan line: a full-width bar slides in from the left, its right edge is the
    line and its left side a short trail */

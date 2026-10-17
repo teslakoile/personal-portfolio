@@ -1,0 +1,37 @@
+/* Education layouts (page.tsx). Section classes come from
+   app/_brand/sections/sections.module.css; these add only what each option needs. */
+.page { display: grid; gap: 56px; padding: 40px 0 80px; }
+.head { max-width: 1080px; width: 100%; margin: 0 auto; padding: 0 24px; }
+.head p { margin: 6px 0 0; font-size: 14.5px; color: var(--ink-2); }
+.option { display: grid; gap: 12px; }
+.cap { max-width: 1080px; width: 100%; margin: 0 auto; padding: 0 24px; font-size: 14px; color: var(--ink-2); }
+.cap b { margin-right: 10px; font-weight: 500; color: var(--coral); }
+
+/* A, C: the figures, Community's large-number treatment */
+.figs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 18px; border-top: 1px dashed var(--line); }
+.figs > div { display: grid; gap: 2px; padding: 14px 0 12px; }
+.figs b { font-size: 28px; font-weight: 500; line-height: 1.1; letter-spacing: -0.02em; }
+.figs span { font-size: 13px; color: var(--ink-3); }
+
+/* B, D: ledger rows on Experience's 180px date column */
+.ledger { border-top: 1px solid var(--line); margin-left: -1px; }
+.lrow { display: grid; grid-template-columns: 180px minmax(0, 1fr) minmax(0, 1fr); align-items: center; border-left: 1px solid var(--line); }
+.lrow + .lrow { border-top: 1px solid var(--line); }
+.when { align-self: stretch; display: flex; align-items: center; padding: 20px 12px 20px var(--gutter); font-size: 12.5px; color: var(--ink-2); white-space: nowrap; }
+.who { display: flex; align-items: center; gap: 14px; align-self: stretch; padding: 18px 24px 18px 28px; border-left: 1px solid var(--line); }
+.who h3 { margin: 0; font-size: 16px; }
+.honours { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 0; padding: 18px 28px 18px 0; list-style: none; font-size: 14px; color: var(--ink-2); }
+/* no separators: a wrapped line would start with one */
+
+/* C: UP wide, PSHS narrow */
+.feature { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+.featureBody { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 0 28px; align-items: start; }
+.featureBody .figs { grid-template-columns: minmax(0, 1fr); }
+
+@media (max-width: 760px) {
+  .lrow { grid-template-columns: minmax(0, 1fr); }
+  .when { padding-bottom: 0; }
+  .who { border-left: 0; padding-left: var(--gutter); }
+  .honours { padding-left: var(--gutter); }
+  .feature, .featureBody { grid-template-columns: minmax(0, 1fr); }
+}

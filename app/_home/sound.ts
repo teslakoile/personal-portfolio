@@ -64,6 +64,12 @@ export function tick(rate = 1) {
   blip(1850 * rate, 0.045, 0.028);
 }
 
+/** Chip hover, a soft pitched tick. Pass a frequency so each chip keeps its
+    own note; it sits well under the nav tick so a row of chips stays calm. */
+export function chipTick(freq = 1100) {
+  blip(freq, 0.07, 0.02, "sine");
+}
+
 /** Click / confirm, slightly rounder. `rate` scales the pitch as in tick(). */
 export function click(rate = 1) {
   blip(940 * rate, 0.07, 0.04, "triangle", 660 * rate);

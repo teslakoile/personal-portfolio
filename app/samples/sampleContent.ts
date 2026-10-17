@@ -259,47 +259,59 @@ export const sample = {
   ],
 
   // logo = a verified brand-logo key in /public/logos, or "" for a text monogram
-  // fallback (no unverified marks). url = public credential link ("#" until set).
+  // fallback (no unverified marks). url = public credential link ("#" until set; the two LinkedIn does not list stay "#").
   // mono = the monogram shown when logo is "".
   certifications: [
     {
-      issuer: "OpenAI", logo: "openai", mono: "OpenAI", url: "#",
+      issuer: "OpenAI", logo: "openai", mono: "OpenAI", url: "https://oaipartnernetwork.credential.net/7754fd61-55c2-4b53-b62e-3684ed3b98d9",
+      title: "Foundational Knowledge",
+      blurb: "Core knowledge of working with OpenAI models and the OpenAI API.",
+      issued: "Aug 2026", expires: "Aug 2027",
+    },
+    {
+      issuer: "OpenAI", logo: "openai", mono: "OpenAI", url: "https://oaipartnernetwork.credential.net/f83e3d07-1089-4edd-a9fd-4e814b9151ba",
+      title: "API Deployment Practitioner",
+      blurb: "Deploying applications and AI agents with the OpenAI API.",
+      issued: "Apr 2026", expires: "Apr 2027",
+    },
+    {
+      issuer: "OpenAI", logo: "openai", mono: "OpenAI", url: "https://oaipartnernetwork.credential.net/73dbad6f-849b-4b9c-bab7-9aa2ccc8c37a",
       title: "AI Technical Practitioner",
       blurb: "Applying OpenAI models and tooling to build production AI solutions.",
       issued: "Mar 2026", expires: null as string | null,
     },
     {
-      issuer: "Google Cloud", logo: "googlecloud", mono: "", url: "#",
+      issuer: "Google Cloud", logo: "googlecloud", mono: "", url: "https://www.credly.com/badges/c7eb1548-c06e-469e-88fd-d7455f3fc934/public_url",
       title: "Professional Machine Learning Engineer",
       blurb: "Designing, training, and productionizing ML models and pipelines on Google Cloud.",
       issued: "Jul 2025", expires: "Jul 2027",
     },
     {
-      issuer: "Databricks", logo: "databricks", mono: "", url: "#",
+      issuer: "Databricks", logo: "databricks", mono: "", url: "https://credentials.databricks.com/b689dbf7-6d77-4877-a8dc-3d962181222d",
       title: "Certified Data Engineer Associate",
       blurb: "Building and operating production data pipelines on the Databricks Lakehouse.",
       issued: "Dec 2025", expires: "Dec 2027",
     },
     {
-      issuer: "Microsoft", logo: "azure", mono: "", url: "#",
+      issuer: "Microsoft Azure", logo: "azure", mono: "", url: "https://learn.microsoft.com/api/credentials/share/en-us/KyleNaranjo/51CE9C53B69A201A?sharingId=E6C9FC911B133A7",
       title: "Azure AI Engineer Associate",
       blurb: "Building, deploying, and managing AI and generative-AI solutions on Azure.",
-      issued: "May 2025", expires: "May 2026",
+      issued: "May 2025", expires: "May 2027",
     },
     {
-      issuer: "Google Cloud", logo: "googlecloud", mono: "", url: "#",
+      issuer: "Google Cloud", logo: "googlecloud", mono: "", url: "https://www.credly.com/badges/8138d287-5642-4f5d-ade3-2c3a0b956e52/public_url",
       title: "Generative AI Leader",
       blurb: "Driving generative-AI strategy, use-cases, and adoption across an organization.",
       issued: "Oct 2025", expires: "Oct 2028",
     },
     {
-      issuer: "Google Cloud", logo: "googlecloud", mono: "", url: "#",
+      issuer: "Google Cloud", logo: "googlecloud", mono: "", url: "https://www.credly.com/earner/earned/badge/fc4ed5f3-e414-44a1-8c74-2be6b355fdc0",
       title: "AI/ML Pre-Sales Technical Expert",
       blurb: "Scoping and positioning AI and ML solutions in a pre-sales technical role.",
       issued: "Dec 2025", expires: null as string | null,
     },
     {
-      issuer: "Astronomer", logo: "airflow", mono: "", url: "#",
+      issuer: "Astronomer", logo: "airflow", mono: "", url: "https://www.credly.com/badges/a2376500-500b-4b91-92c0-d9c06c2c87fc/public_url",
       title: "Airflow 3 Fundamentals",
       blurb: "Authoring and orchestrating data workflows with Apache Airflow 3.",
       issued: "Jul 2025", expires: null as string | null,
@@ -311,7 +323,7 @@ export const sample = {
       issued: "Mar 2024", expires: "Mar 2027",
     },
     {
-      issuer: "Microsoft", logo: "azure", mono: "", url: "#",
+      issuer: "Microsoft Azure", logo: "azure", mono: "", url: "https://learn.microsoft.com/api/credentials/share/en-us/KyleNaranjo-0749/75611DA21B6CE575?sharingId=E6C9FC911B133A7",
       title: "Azure Fundamentals",
       blurb: "Core Azure cloud concepts, services, security, and governance.",
       issued: "Jun 2024", expires: null as string | null,
