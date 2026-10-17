@@ -30,8 +30,8 @@ function Card({ p }: { p: Project }) {
           {p.links?.length ? (
             <div className={s.projLinks}>
               {p.links.map((l) => (
-                <a key={l.href} className={s.linkBtn} href={l.href} target="_blank" rel="noreferrer">
-                  <LinkIcon kind={linkKind(l.href)} size={14} favicon={`/projects/marks/${p.mark}`} />{l.label}
+                <a key={l.href} className={s.projLink} href={l.href} target="_blank" rel="noreferrer">
+                  <LinkIcon kind={linkKind(l.href)} size={14} favicon={`/projects/marks/${p.mark}`} /><span>{l.label}</span>
                 </a>
               ))}
             </div>

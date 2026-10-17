@@ -84,7 +84,7 @@ export const PROJECTS: Project[] = [
     tech: "Gemini generates each classroom and judges the explanations. The browser transcribes speech itself, so a child's voice never leaves the device.",
     stack: ["FastAPI", "Gemini", "Vertex AI", "Cloud Run", "Unity"],
     mark: "flee-the-faculty.png",
-    links: [{ label: "Play on itch.io", href: "https://uhan.itch.io/flee-the-faculty" }, { label: "GitHub", href: "https://github.com/Uhan7/Flee-the-Faculty" }],
+    links: [{ label: "itch.io", href: "https://uhan.itch.io/flee-the-faculty" }, { label: "GitHub", href: "https://github.com/Uhan7/Flee-the-Faculty" }],
   },
   {
     name: "huly-cli",

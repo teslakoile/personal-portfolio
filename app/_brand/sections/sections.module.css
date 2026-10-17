@@ -32,11 +32,14 @@
 .projHead { display: flex; align-items: center; gap: 14px; }
 .projTitle { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .projTitle h3 { margin: 0; }
-.projLinks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-/* a link as an outlined button with its destination's icon; coral edge and text on hover */
-.linkBtn { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; font-size: 12.5px; font-weight: 500; line-height: 1.5; color: var(--ink); text-decoration: none; background: var(--surface); border: 1px solid var(--line-2); border-radius: 999px; transition: border-color 0.14s ease, color 0.14s ease; }
-.linkBtn:hover, .linkBtn:focus-visible { border-color: var(--coral); color: var(--coral); }
-.linkBtn:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+.projLinks { display: flex; flex-wrap: wrap; gap: 2px 16px; margin-top: 2px; }
+/* a link: its destination's icon, then dark text on a faint underline; on
+   hover or focus the text, the icon, and the underline turn coral */
+.projLink { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; line-height: 1.6; color: var(--ink-2); text-decoration: none; transition: color 0.14s ease; }
+.projLink span { text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 3px; transition: text-decoration-color 0.14s ease; }
+.projLink:hover, .projLink:focus-visible { color: var(--coral); }
+.projLink:hover span, .projLink:focus-visible span { text-decoration-color: var(--coral); }
+.projLink:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; border-radius: 2px; }
 .projMark { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-2); overflow: hidden; }
 .projMark img { width: 30px; height: 30px; object-fit: contain; }
 .projMark img[src$=".svg"] { width: 22px; height: 22px; }  /* Huly's solid mark reads heavier than the others */
