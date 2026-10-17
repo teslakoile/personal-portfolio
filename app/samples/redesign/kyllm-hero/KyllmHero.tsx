@@ -48,11 +48,12 @@ function Highlights() {
   );
 }
 
-export function KyllmHero({ slow = 1 }: { slow?: number }) {
+/** `kyllm` shows the KYLLM question bar under the contact links (the FEATURE_FLAGS.kyllm switch). */
+export function KyllmHero({ slow = 1, kyllm = true }: { slow?: number; kyllm?: boolean }) {
   return (
     <Hero
       aligned
-      extra={<KyllmPromo />}
+      extra={kyllm ? <KyllmPromo /> : undefined}
       strip={<Highlights />}
       tools={<ToolsBand slow={slow} />}
       portrait={

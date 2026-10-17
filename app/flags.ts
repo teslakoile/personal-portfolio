@@ -31,3 +31,18 @@ export type SectionId = keyof typeof SECTION_FLAGS;
 export const sectionEnabled = (id: string): boolean =>
   process.env.NODE_ENV === "development" ||
   ((SECTION_FLAGS as Record<string, boolean>)[id] ?? true);
+
+/**
+ * Feature flags, for parts of the site that work but are not ready to ship.
+ * Unlike section flags, these hold in `next dev` too, so a local review shows
+ * the page as it would ship; a page may still offer an override for review.
+ *   kyllm  the KYLLM chat: the ⌘K panel, the dock pill and its chat window, the
+ *          "Ask KYLLM" rail button, and the hero's question bar. Off until
+ *          KYLLM has a real backend; today its answers are scripted.
+ */
+export const FEATURE_FLAGS = {
+  kyllm: false,
+} satisfies Record<string, boolean>;
+
+export type FeatureId = keyof typeof FEATURE_FLAGS;
+export const featureEnabled = (id: FeatureId): boolean => FEATURE_FLAGS[id];
