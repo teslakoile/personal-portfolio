@@ -296,6 +296,7 @@ export function ContributionCalendar({ year }: { year: Year }) {
             className={g.grid}
             role="group"
             tabIndex={0}
+            data-own-sound
             aria-label={`Contribution calendar, ${year.total.toLocaleString("en-US")} contributions in the last year. Use the arrow keys to move between days and Enter to press one.`}
             onPointerEnter={() => {
               // an idle sweep in flight gives way to the pointer

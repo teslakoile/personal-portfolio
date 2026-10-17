@@ -9,6 +9,7 @@ import { KyllmLive, type Mood } from "../../kyllm-ui/rig/KyllmLive";
 import type { SiteMark } from "../../kyllm-ui/brandIcons";
 import k from "../../kyllm-ui/kyllm.module.css";
 import { KYLLM_OPEN } from "./events";
+import { answerSound, stepSound, streamSound } from "../../../_home/sound";
 import { LIMITS, LINKS, SECTIONS, type Source, type StreamEvent, type Turn as ProtocolTurn } from "../../../_kyllm/protocol";
 import h from "./hero.module.css";
 
@@ -36,7 +37,7 @@ import h from "./hero.module.css";
 type Seg = string | { cite: number };
 
 /** Starters for the empty chat. */
-const STARTERS = ["What has he built with AI agents?", "How does the MCP server work?", "Which talks has he given?"];
+const STARTERS = ["Tell me more about Kyle", "What has he built with AI agents?", "Which talks has he given?"];
 
 /** What the live steps waterfall shows while the answer is fetched. */
 const LIVE_RUN: StepData[] = [
@@ -76,7 +77,7 @@ function Turn({ q, liveState, animate, live, site, onMood, onDone, onPick }: {
   const go = useEffectEvent((next: Stage) => {
     setStage(next);
     if (next === "steps") onMood("working");
-    if (next === "done") { onMood(liveState.error ? "sorry" : "answered"); onDone(); }
+    if (next === "done") { onMood(liveState.error ? "sorry" : "answered"); onDone(); if (animate) answerSound(!liveState.error); }
   });
 
   useEffect(() => {
@@ -94,7 +95,7 @@ function Turn({ q, liveState, animate, live, site, onMood, onDone, onPick }: {
       return () => clearTimeout(id);
     }
     const backlog = toks.length - n;
-    const id = setTimeout(() => setN((x) => x + 1), (1000 / WPS) * (0.8 + Math.random() * 0.4) / (backlog > 40 ? 4 : backlog > 15 ? 2 : 1));
+    const id = setTimeout(() => { if (n % 2 === 0) streamSound(); setN((x) => x + 1); }, (1000 / WPS) * (0.8 + Math.random() * 0.4) / (backlog > 40 ? 4 : backlog > 15 ? 2 : 1));
     return () => clearTimeout(id);
   }, [stage, n, toks.length, finished]);
 
@@ -108,7 +109,7 @@ function Turn({ q, liveState, animate, live, site, onMood, onDone, onPick }: {
       {stage === "sent" ? null : (
         <div className={h.rowFlat}>
           <div className={h.answerBody}>
-            <Steps v="waterfall" steps={LIVE_RUN} play={animate ? 1 : 0} onDone={() => setStage("fold")} />
+            <Steps v="waterfall" steps={LIVE_RUN} play={animate ? 1 : 0} onStep={stepSound} onDone={() => setStage("fold")} />
             {showText ? (
               <p className={h.text}>
                 {shown.map((t, i) => ("w" in t

@@ -7,6 +7,7 @@ import { Footer } from "./sections/Footer";
 import { Cursor } from "./Cursor";
 import { MotionRoot } from "./MotionRoot";
 import { ChipFx } from "./ChipFx";
+import { UiSound } from "./UiSound";
 import { About } from "./sections/About";
 import { Projects } from "./sections/Projects";
 import { Experience } from "./sections/Experience";
@@ -54,6 +55,7 @@ export function SitePage({ kyllm }: { kyllm: boolean }) {
       <MotionRoot>
         <Cursor />
         <ChipFx />
+        <UiSound />
         <ContactModal />
         <div className={s.page}>
           <div className={s.railWrap}>

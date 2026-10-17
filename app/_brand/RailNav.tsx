@@ -145,7 +145,7 @@ export function RailNav({ items, active, animate = true, move = "slide" }: {
     // layoutRoot (slide only): the rail is sticky, so Motion measures the
     // marker inside the nav rather than on the page; otherwise page scroll
     // reads as the marker moving and it drifts off its row mid-scroll
-    <motion.nav layoutRoot={move === "slide"} className={`${b.nav} ${animate ? b.navLive : ""}`} data-move={animate ? move : undefined} aria-label="Sections">
+    <motion.nav layoutRoot={move === "slide"} className={`${b.nav} ${animate ? b.navLive : ""}`} data-move={animate ? move : undefined} aria-label="Sections" data-own-sound>
       {items.map((x, i) => {
         const on = x.id === current;
         const o = origin?.id === x.id ? `${origin.x}px ${origin.y}px` : "0px 50%";

@@ -112,7 +112,7 @@ export function SrcChip({ src, site = "favicon" }: { src: Src; site?: SiteMark }
     }
   };
   return (
-    <a href={src.href ?? "#"} className={r.chip} data-where={here ? "site" : "web"} data-tip={tip} onClick={go}
+    <a href={src.href ?? "#"} className={r.chip} data-where={here ? "site" : "web"} data-tip={tip} data-tone onClick={go}
       target={src.href && !here ? "_blank" : undefined} rel={src.href && !here ? "noreferrer" : undefined}>
       <SourceMark kind={src.kind} site={site} />
       <b>{src.label}</b>{src.name}

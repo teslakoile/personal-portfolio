@@ -27,7 +27,7 @@ export const Kbd = ({ children, tip, open }: { children: ReactNode; tip?: string
 export function Pill({ children, dot, kind, arrow, onClick }: { children: ReactNode; dot?: string; kind?: "primary" | "source"; arrow?: boolean; onClick?: () => void }) {
   const cls = [s.pill, kind === "primary" && s.pillPrimary, kind === "source" && s.pillSource, arrow && s.pillArrow].filter(Boolean).join(" ");
   return (
-    <button type="button" className={cls} onClick={onClick}>
+    <button type="button" className={cls} onClick={onClick} data-tone>
       {dot ? <i style={{ background: `var(--${dot})` }} /> : null}
       {children}
       {arrow ? <ArrowRight className={s.pillIcon} size={ICON.size} strokeWidth={ICON.strokeWidth} aria-hidden="true" /> : null}
@@ -57,7 +57,7 @@ export function IconButton({ icon, label, on }: { icon: keyof typeof ICONS; labe
 
 /** Citation, round 3 pick A: a spaced chip and a real button, so it gets the hand cursor; coral on hover. */
 export const Cite = ({ n, on }: { n: number; on?: boolean }) => (
-  <button type="button" className={on ? `${s.cite} ${s.citeOn}` : s.cite} aria-label={`Source ${n}`}>{n}</button>
+  <button type="button" className={on ? `${s.cite} ${s.citeOn}` : s.cite} aria-label={`Source ${n}`} data-tone>{n}</button>
 );
 
 export function Status({ kind }: { kind: "live" | "poc" | "done" }) {

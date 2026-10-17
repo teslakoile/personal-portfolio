@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { chipTick } from "../_home/sound";
+import { chipTick, noteFor } from "../_home/sound";
 import f from "./chipFx.module.css";
 
 /**
@@ -19,17 +19,8 @@ import f from "./chipFx.module.css";
  * focus) with no sound.
  */
 
-/** Major-pentatonic steps above the base note, so any two chips sound friendly. */
-const STEPS = [0, 2, 4, 7, 9, 12, 14, 16];
-const BASE = 620;
 const GAP = 8;
 const EDGE = 12;
-
-function pitch(name: string): number {
-  let h = 0;
-  for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-  return BASE * 2 ** (STEPS[h % STEPS.length] / 12);
-}
 
 export function ChipFx() {
   const tip = useRef<HTMLDivElement>(null);
@@ -63,7 +54,7 @@ export function ChipFx() {
       place(chip);
       box.dataset.open = "";
       const now = performance.now();
-      if (sound && now - lastTick > 45) { lastTick = now; chipTick(pitch(chip.dataset.chip ?? "")); }
+      if (sound && now - lastTick > 45) { lastTick = now; chipTick(noteFor(chip.dataset.chip ?? "")); }
     };
 
     const hide = () => {

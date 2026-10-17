@@ -15,6 +15,7 @@ import h from "./hero.module.css";
  */
 
 const QUESTIONS = [
+  "Tell me more about Kyle",
   "How does the MCP server work?",
   "What has he built with AI agents?",
   "Which talks has he given?",
@@ -43,7 +44,7 @@ export function KyllmPromo() {
   const { q, shown, typing } = useTypewriter(QUESTIONS);
   return (
     <div className={`${h.tokens} ${h.promo}`}>
-      <button type="button" className={h.promoBar} onClick={() => openKyllm(q)} aria-label={`Ask KYLLM: ${q}`}>
+      <button type="button" className={h.promoBar} data-primary onClick={() => openKyllm(q)} aria-label={`Ask KYLLM: ${q}`}>
         <KyllmLive mood={typing ? "typing" : "idle"} size={30} />
         <span className={h.promoQ}>{shown}<i className={h.promoCaret} aria-hidden="true" /></span>
         <Kbd>⌘K</Kbd>
