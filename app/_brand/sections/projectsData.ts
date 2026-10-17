@@ -14,7 +14,9 @@
  * Servo, VSenses, and Leafmark have private repos: never link their source.
  * Servo and VSenses link their live apps, Leafmark and Wishlist their Chrome
  * Web Store pages; the others link their live site, package, game page, or
- * public repo. Copy is in the active voice (Kyle, 2026-10-17).
+ * public repo. A site link is labelled with the project's name and shows its
+ * favicon (the mark); a store link is labelled "Chrome Extension". Copy is in
+ * the active voice (Kyle, 2026-10-17).
  *
  * `mark` is the project's own logo from its repo (public/projects/marks), or
  * the platform it is built for (Huly).
@@ -42,7 +44,7 @@ export const PROJECTS: Project[] = [
     tech: "It stores patient data in the FHIR R4 standard, and its AI assistants wait for staff to confirm before they write to a record.",
     stack: ["FastAPI", "PostgreSQL", "Next.js", "Terraform", "AWS"],
     mark: "servo.png", markFill: true,
-    links: [{ label: "app.servoplatform.com", href: "https://app.servoplatform.com/" }],
+    links: [{ label: "Servo", href: "https://app.servoplatform.com/" }],
   },
   {
     name: "VSenses",
@@ -51,7 +53,7 @@ export const PROJECTS: Project[] = [
     tech: "Every API route checks permissions, and staff log in a second time to sign off on money.",
     stack: ["FastAPI", "PostgreSQL", "Next.js", "Terraform", "GCP"],
     mark: "vsenses.png",
-    links: [{ label: "app.vsensesmassage.com", href: "https://app.vsensesmassage.com/" }],
+    links: [{ label: "VSenses", href: "https://app.vsensesmassage.com/" }],
   },
   {
     name: "Wishlist",
@@ -61,8 +63,8 @@ export const PROJECTS: Project[] = [
     stack: ["Next.js", "FastAPI", "PostgreSQL", "MCP", "GCP"],
     mark: "wishlist.png", markFill: true,
     links: [
-      { label: "wishlist.fit", href: "https://wishlist.fit" },
-      { label: "Chrome Web Store", href: "https://chromewebstore.google.com/detail/wishlist/cilhnoblcgdacbfgkailhhohkacjholg" },
+      { label: "Wishlist", href: "https://wishlist.fit" },
+      { label: "Chrome Extension", href: "https://chromewebstore.google.com/detail/wishlist/cilhnoblcgdacbfgkailhhohkacjholg" },
       { label: "MCP on GitHub", href: "https://github.com/teslakoile/wishlist-mcp" },
     ],
   },
@@ -73,7 +75,7 @@ export const PROJECTS: Project[] = [
     tech: "A model scores each folder, files the sure ones silently, and learns from the bookmarks you move. Your own rules run locally first, and it never sends a URL that carries a token.",
     stack: ["JavaScript", "OpenRouter"],
     mark: "leafmark.png",
-    links: [{ label: "Chrome Web Store", href: "https://chromewebstore.google.com/detail/leafmark-%E2%80%93-auto-file-your/igdkdjfkclalhohbmeacfafodbibfnkh" }],
+    links: [{ label: "Chrome Extension", href: "https://chromewebstore.google.com/detail/leafmark-%E2%80%93-auto-file-your/igdkdjfkclalhohbmeacfafodbibfnkh" }],
   },
   {
     name: "Flee the Faculty",

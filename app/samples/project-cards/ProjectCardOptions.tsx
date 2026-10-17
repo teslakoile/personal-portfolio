@@ -5,7 +5,7 @@ import b from "../../_brand/brand.module.css";
 import s from "../../_brand/sections/sections.module.css";
 import o from "./options.module.css";
 import { PROJECTS, type Project } from "../../_brand/sections/projectsData";
-import { LinkIcon, linkKind } from "./linkIcons";
+import { LinkIcon, linkKind } from "../../_brand/linkIcons";
 
 /*
  * Options for the project cards' links and tags, on real cards (Wishlist,

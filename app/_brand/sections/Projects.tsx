@@ -1,9 +1,9 @@
-import { ArrowUpRight } from "lucide-react";
 import { Chips, Row, SectionHead } from "../kit";
 import { describe } from "../chipNotes";
 import b from "../brand.module.css";
 import s from "./sections.module.css";
 import { PROJECTS, type Project } from "./projectsData";
+import { LinkIcon, linkKind } from "../linkIcons";
 
 /** Projects, in the order of projectsData.ts. Each card leads with the
     project's mark in a tile beside its name, with links to the live site or repo under the name for
@@ -30,17 +30,19 @@ function Card({ p }: { p: Project }) {
           {p.links?.length ? (
             <div className={s.projLinks}>
               {p.links.map((l) => (
-                <a key={l.href} className={s.ext} href={l.href} target="_blank" rel="noreferrer"><ArrowUpRight size={14} strokeWidth={2} aria-hidden="true" />{l.label}</a>
+                <a key={l.href} className={s.linkBtn} href={l.href} target="_blank" rel="noreferrer">
+                  <LinkIcon kind={linkKind(l.href)} size={14} favicon={`/projects/marks/${p.mark}`} />{l.label}
+                </a>
               ))}
             </div>
           ) : null}
         </div>
       </div>
+      <ul className={s.tags}>{p.tags.map((t) => <li key={t}>{t}</li>)}</ul>
       <div className={s.projBody}>
         <p>{p.about}</p>
         <p>{p.tech}</p>
       </div>
-      <ul className={s.tags}>{p.tags.map((t) => <li key={t}>{t}</li>)}</ul>
       <div className={s.cardTools}><Chips items={p.stack} logos notes={describe(p.stack)} /></div>
     </article>
   );

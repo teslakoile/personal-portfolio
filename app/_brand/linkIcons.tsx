@@ -1,5 +1,5 @@
 import { Gamepad2, Globe } from "lucide-react";
-import { BrandIcon } from "../../_brand/icons";
+import { BrandIcon } from "./icons";
 
 /** Single-colour glyphs (Simple Icons paths) in currentColor, like BrandIcon. */
 const PATHS = {
@@ -16,8 +16,14 @@ export function linkKind(href: string): LinkKind {
   return "site";
 }
 
-/** The icon for a link's destination, at Lucide's text-row size. */
-export function LinkIcon({ kind, size = 15 }: { kind: LinkKind; size?: number }) {
+/** The icon for a link's destination, at Lucide's text-row size. A site link
+    shows the site's own favicon when it is given (`favicon`, a path under
+    /public), and a globe otherwise. */
+export function LinkIcon({ kind, size = 15, favicon }: { kind: LinkKind; size?: number; favicon?: string }) {
+  if (kind === "site" && favicon) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={favicon} alt="" width={size} height={size} style={{ display: "block", borderRadius: 3, objectFit: "contain" }} />;
+  }
   if (kind === "github") return <BrandIcon kind="github" size={size - 1} />;
   if (kind === "chrome") {
     return <svg width={size - 1} height={size - 1} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ display: "block" }}><path d={PATHS.chrome} /></svg>;
