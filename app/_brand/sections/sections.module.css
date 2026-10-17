@@ -113,7 +113,7 @@
 .degree { font-size: 14px; color: var(--ink-2); }
 .points { margin: 16px 0 0; padding: 0; list-style: none; }
 .points li { position: relative; padding: 9px 0 9px 18px; border-top: 1px dashed var(--line); font-size: 14.5px; line-height: 1.5; color: var(--ink-2); }
-.points li::before { content: ""; position: absolute; left: 3px; top: 17px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink-4); }
+.points li::before { content: ""; position: absolute; left: 3px; top: 17px; width: 5px; height: 5px; border-radius: 50%; background: var(--coral); }
 
 /* ----------------------------- github ----------------------------- */
 .ghFallback { padding: 6px var(--gutter) 34px; font-size: 14.5px; color: var(--ink-2); }
