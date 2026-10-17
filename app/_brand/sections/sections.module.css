@@ -28,22 +28,37 @@
 .projGrid > :nth-child(3n + 1) { padding-left: var(--gutter); }
 .projGrid > :not(:nth-child(3n + 1)) { padding-left: 28px; }
 
-/* the project's mark in a 44px tile, then its kind and year */
-.projHead { display: flex; align-items: center; gap: 12px; }
+/* the project's mark in a 44px tile beside its name, with its links under the name */
+.projHead { display: flex; align-items: center; gap: 14px; }
+.projTitle { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.projTitle h3 { margin: 0; }
+.projLinks { display: flex; flex-wrap: wrap; gap: 2px 16px; margin-top: 2px; }
+/* a link: its destination's icon, then dark text on a faint underline; on
+   hover or focus the text, the icon, and the underline turn coral */
+.projLink { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; line-height: 1.6; color: var(--ink-2); text-decoration: none; transition: color 0.14s ease; }
+.projLink span { text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 3px; transition: text-decoration-color 0.14s ease; }
+.projLink:hover, .projLink:focus-visible { color: var(--coral); }
+.projLink:hover span, .projLink:focus-visible span { text-decoration-color: var(--coral); }
+.projLink:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; border-radius: 2px; }
 .projMark { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-2); overflow: hidden; }
 .projMark img { width: 30px; height: 30px; object-fit: contain; }
 .projMark img[src$=".svg"] { width: 22px; height: 22px; }  /* Huly's solid mark reads heavier than the others */
 .projMark[data-fill] { box-shadow: none; }
 .projMark[data-fill] img { width: 100%; height: 100%; }
-.projHead + .cardTitle { margin-top: 14px; }
+/* two short paragraphs, one style */
+.projBody { margin-top: 14px; display: grid; gap: 8px; }
+.projBody p { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+/* tags: small square labels in a warm-grey fill with heavier text, above the
+   description (option T5), where the tool chips are white, dashed, and carry logos */
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 18px 0 0; padding: 0; list-style: none; }
+.tags li { padding: 2px 7px; font-size: 11.5px; font-weight: 600; line-height: 1.6; color: var(--ink); background: #ebe6df; border-radius: 3px; }
+.cardTools { margin-top: 10px; }
 
 .cardTitle { margin: 8px 0 0; }
 .lede { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink); }
 .desc { margin: 8px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
 .role { margin-top: 12px; font-size: 12.5px; color: var(--ink-3); }
 .chipGap { margin-top: 14px; }
-.extRow { display: flex; flex-wrap: wrap; gap: 4px 20px; margin-top: 16px; }
-.extRow .ext { margin-top: 0; }
 .ext { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; font-size: 14px; font-weight: 500; color: var(--coral); text-decoration: none; }
 .ext:hover { text-decoration: underline; text-underline-offset: 3px; }
 

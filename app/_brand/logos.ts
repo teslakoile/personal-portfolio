@@ -41,6 +41,7 @@ const RASTER_TOOLS: Record<string, string> = {
   Splink: "splink.png",
   "Vertex AI": "vertex-ai.png",
   Gemini: "gemini.png",
+  OpenRouter: "openrouter.png", // the glyph from openrouter.ai's favicon, in ink
 };
 
 export function toolLogo(name: string): string | null {

@@ -1,27 +1,36 @@
 /**
- * The six projects, listed alphabetically on the page with no featured case
- * study (Kyle's call on 2026-10-05). They come from the "Portfolio Redesign"
- * canvas, not from sampleContent.ts, whose `projects` still holds the older
- * bank-centred list. Kyle turned the section on on 2026-10-17.
+ * The projects, in Kyle's order (2026-10-17): Servo, VSenses, Wishlist,
+ * Leafmark, Flee the Faculty, huly-cli. They come from the "Portfolio
+ * Redesign" canvas and each project's repo, not from sampleContent.ts, whose
+ * `projects` still holds the older bank-centred list. Confidential client
+ * work stays off this list (and so out of KYLLM).
  *
- * Servo Platform, Financial Services Site, and VSenses are private: never give
- * them a link to a repo or source. The others link their live site, package,
- * or public repo.
+ * Each card says what the product does and what is unique about it (`about`),
+ * then the interesting engineering behind it (`tech`), one short paragraph
+ * each in one text style, per Kyle on 2026-10-17; no year and no role. A
+ * project carries as many `tags` as fit it (Title Case). The facts come from
+ * each project's own repo (READMEs, specs, and docs).
+ *
+ * Servo, VSenses, and Leafmark have private repos: never link their source.
+ * Servo and VSenses link their live apps, Leafmark and Wishlist their Chrome
+ * Web Store pages; the others link their live site, package, game page, or
+ * public repo. A site link is labelled with the project's name and shows its
+ * favicon (the mark); a store link is labelled "Chrome Extension". Copy is in
+ * the active voice (Kyle, 2026-10-17).
  *
  * `mark` is the project's own logo from its repo (public/projects/marks), or
- * the platform it is built for (Huly); the Financial Services Site has no mark
- * of its own, so the card shows a document icon instead.
+ * the platform it is built for (Huly).
  */
 
 export type Project = {
-  kind: string;
-  year: string;
   name: string;
-  lede: string;
-  detail: string;
-  role: string;
+  tags: string[];
+  /** what it does and what is unique about it */
+  about: string;
+  /** the interesting engineering behind it */
+  tech: string;
   stack: string[];
-  mark?: string;
+  mark: string;
   /** the mark is a full app icon that fills its tile, rather than a symbol set inside it */
   markFill?: boolean;
   links?: { label: string; href: string }[];
@@ -29,53 +38,61 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
-    kind: "AI Agents", year: "2026", name: "Financial Services Site",
-    lede: "An advice-document generator for a financial advisory firm.",
-    detail: "Turns adviser meeting notes into editable Record of Advice and investor summary documents with Google ADK agents on Vertex AI, with tracked edits and DOCX export.",
-    role: "Contributor, web app and agents",
-    stack: ["Google ADK", "Vertex AI", "React", "TypeScript", "Firebase"],
+    name: "Servo",
+    tags: ["Product", "Healthcare", "AI Assistants"],
+    about: "Runs Philippine clinics and 30 to 50 bed hospitals, from registration and clinical notes to PhilHealth-ready billing.",
+    tech: "It stores patient data in the FHIR R4 standard, and its AI assistants wait for staff to confirm before they write to a record.",
+    stack: ["FastAPI", "PostgreSQL", "Next.js", "Terraform", "AWS"],
+    mark: "servo.png", markFill: true,
+    links: [{ label: "Servo", href: "https://app.servoplatform.com/" }],
   },
   {
-    kind: "AI Agents", year: "2026", name: "Flee the Faculty",
-    lede: "An educational game where players rescue classmates by explaining school concepts out loud.",
-    detail: "The backend builds a classroom from the player's schoolwork, judges spoken explanations with Gemini on Vertex AI, and synthesizes speech.",
-    role: "Solo",
+    name: "VSenses",
+    tags: ["Product", "Wellness", "Operations"],
+    about: "Runs a Davao City spa's booking, intake forms, therapist commissions, and end-of-day cash count, in place of its Google Sheets.",
+    tech: "Every API route checks permissions, and staff log in a second time to sign off on money.",
+    stack: ["FastAPI", "PostgreSQL", "Next.js", "Terraform", "GCP"],
+    mark: "vsenses.png",
+    links: [{ label: "VSenses", href: "https://app.vsensesmassage.com/" }],
+  },
+  {
+    name: "Wishlist",
+    tags: ["Product", "Chrome Extension", "MCP", "On-Device AI"],
+    about: "Friends and family share gift lists. Its Chrome extension saves items from any shop in one click, and a gift picker suggests ideas for a friend.",
+    tech: "A custom MCP server lets Claude, ChatGPT, or Codex manage a wishlist with the app's own 29 actions. The gift picker runs Gemma in the visitor's browser, so nothing leaves the page.",
+    stack: ["Next.js", "FastAPI", "PostgreSQL", "MCP", "GCP"],
+    mark: "wishlist.png", markFill: true,
+    links: [
+      { label: "Wishlist", href: "https://wishlist.fit" },
+      { label: "Chrome Extension", href: "https://chromewebstore.google.com/detail/wishlist/cilhnoblcgdacbfgkailhhohkacjholg" },
+      { label: "MCP on GitHub", href: "https://github.com/teslakoile/wishlist-mcp" },
+    ],
+  },
+  {
+    name: "Leafmark",
+    tags: ["Chrome Extension", "LLM Classification", "Productivity"],
+    about: "Files each new bookmark into the right folder, and asks you only when it isn't sure.",
+    tech: "A model scores each folder, files the sure ones silently, and learns from the bookmarks you move. Your own rules run locally first, and it never sends a URL that carries a token.",
+    stack: ["JavaScript", "OpenRouter"],
+    mark: "leafmark.png",
+    links: [{ label: "Chrome Extension", href: "https://chromewebstore.google.com/detail/leafmark-%E2%80%93-auto-file-your/igdkdjfkclalhohbmeacfafodbibfnkh" }],
+  },
+  {
+    name: "Flee the Faculty",
+    tags: ["Game", "Education", "Voice AI"],
+    about: "Players rescue classmates by explaining school concepts out loud, in a classroom the game builds from their own schoolwork.",
+    tech: "Gemini generates each classroom and judges the explanations. The browser transcribes speech itself, so a child's voice never leaves the device.",
     stack: ["FastAPI", "Gemini", "Vertex AI", "Cloud Run", "Unity"],
     mark: "flee-the-faculty.png",
-    links: [{ label: "Game on GitHub", href: "https://github.com/Uhan7/Flee-the-Faculty" }],
+    links: [{ label: "itch.io", href: "https://uhan.itch.io/flee-the-faculty" }, { label: "GitHub", href: "https://github.com/Uhan7/Flee-the-Faculty" }],
   },
   {
-    kind: "Developer Tool", year: "2026", name: "huly-cli",
-    lede: "A Python command-line client for Huly workspaces, published on PyPI.",
-    detail: "Creates, reads, updates, and deletes issues, documents, components, milestones, and labels from the terminal.",
-    role: "Solo",
+    name: "huly-cli",
+    tags: ["Developer Tool", "CLI", "Open Source"],
+    about: "Manage and search a Huly workspace from the terminal: issues, documents, components, milestones, and labels.",
+    tech: "JSON and plain Markdown output let coding agents use it as easily as people.",
     stack: ["Python", "PyPI"],
     mark: "huly.svg",
     links: [{ label: "PyPI", href: "https://pypi.org/project/huly-cli/" }, { label: "GitHub", href: "https://github.com/teslakoile/huly-cli" }],
-  },
-  {
-    kind: "Product", year: "2026", name: "Servo Platform",
-    lede: "A hospital information system for the Philippine market, set up as a clinic or a 30 to 50 bed hospital.",
-    detail: "Covers registration, scheduling, clinical notes, pharmacy inventory, PhilHealth-ready billing, and accounting on a FHIR R4 data model. Its AI assistants never write to a record without staff confirmation.",
-    role: "Technical lead, architecture and build",
-    stack: ["FastAPI", "PostgreSQL", "Next.js", "Terraform", "AWS"],
-    mark: "servo.png", markFill: true,
-  },
-  {
-    kind: "Product", year: "2026", name: "VSenses",
-    lede: "An operations platform that replaced a Davao City spa's Google Sheets workflow.",
-    detail: "Bed-by-time booking with double-booking prevention, digital intake forms, therapist commissions, an end-of-day cash wizard, and a public booking page.",
-    role: "Solo",
-    stack: ["FastAPI", "PostgreSQL", "Next.js", "Terraform", "GCP"],
-    mark: "vsenses.png",
-  },
-  {
-    kind: "Product", year: "2026", name: "Wishlist",
-    lede: "A gift-list app with a Chrome extension and a hosted MCP server.",
-    detail: "The extension reads product pages into a list, and the MCP server lets Claude, ChatGPT, or Codex read and update it.",
-    role: "Solo",
-    stack: ["Next.js", "FastAPI", "PostgreSQL", "MCP", "GCP"],
-    mark: "wishlist.png", markFill: true,
-    links: [{ label: "wishlist.fit", href: "https://wishlist.fit" }, { label: "MCP server on GitHub", href: "https://github.com/teslakoile/wishlist-mcp" }],
   },
 ];
