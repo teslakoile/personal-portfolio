@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useEffectEvent, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { ArrowDown, X } from "lucide-react";
-import { Cite, Kbd, Pill, SendButton } from "../../kyllm-ui/kit";
+import { Kbd, Pill, SendButton } from "../../kyllm-ui/kit";
+import { SmoothText } from "../../kyllm-ui/streaming/SmoothText";
 import { Steps, type StepData } from "../../kyllm-ui/Steps";
 import { CopyButton, SrcChip, type Src } from "../../kyllm-ui/round3";
 import { KyllmLive, type Mood } from "../../kyllm-ui/rig/KyllmLive";
@@ -17,12 +18,12 @@ import h from "./hero.module.css";
  * The KYLLM chat for the hero, built only from the parts approved on
  * /samples/kyllm-ui: one live cat avatar, in the header, no
  * tagline and New chat after the first question, arrow pills for starters and
- * follow-ups, the Steps waterfall, text answers at 14 words a second with
- * spaced citation chips, source chips with each source's mark, a copy-only
+ * follow-ups, the Steps waterfall, text answers released at an even pace with
+ * a soft fade (SmoothText) and spaced citation chips, source chips with each source's mark, a copy-only
  * action, and the dashed key hint. One conversation, no history.
  *
  * Answers come live from /api/kyllm (Claude Sonnet 5.5, grounded in the CV
- * and the site), streamed in and revealed a word at a time, with citation
+ * and the site), streamed in and released a few characters at a time, with citation
  * chips and source chips linking to the page's sections. The chat opens empty:
  * KYLLM, a line, and three starters. Every KYLLM avatar in it can be booped
  * (KyllmLive touch), with a sound. Behind FEATURE_FLAGS.kyllm.
@@ -46,7 +47,10 @@ const LIVE_RUN: StepData[] = [
   { cat: "write", text: "Writing the answer", meta: "", ms: 500 },
   { cat: "check", text: "Linking sources", meta: "", ms: 200 },
 ];
-const WPS = 14;
+/** One tick sound for every this many characters released. */
+const TICK_EVERY = 8;
+/** The steps waterfall plays while the answer is fetched, so some text is already waiting when it starts: close that backlog over about a second. */
+const CATCH_UP = 1.2;
 
 type Tok = { w: string } | { cite: number };
 const tokenize = (segs: Seg[]): Tok[] =>
@@ -71,9 +75,11 @@ function Turn({ q, liveState, animate, live, site, onMood, onDone, onPick }: {
   onMood: (m: Mood) => void; onDone: () => void; onPick: (q: string) => void;
 }) {
   const [stage, setStage] = useState<Stage>(animate ? "sent" : "done");
-  const toks = tokenize(liveState.error ? [liveState.error] : toSegs(liveState.text));
-  const finished = liveState.finished;
-  const [n, setN] = useState(animate ? 0 : Number.MAX_SAFE_INTEGER);
+  // a citation still arriving ("[2") is held back until its "]" comes
+  const text = liveState.error ? "" : liveState.finished ? liveState.text : liveState.text.replace(/\[\d*$/, "");
+  const toks = tokenize(liveState.error ? [liveState.error] : toSegs(text));
+  const [settled, setSettled] = useState(!animate);
+  const ticked = useRef(0);
   const go = useEffectEvent((next: Stage) => {
     setStage(next);
     if (next === "steps") onMood("working");
@@ -86,20 +92,18 @@ function Turn({ q, liveState, animate, live, site, onMood, onDone, onPick }: {
     return () => clearTimeout(id);
   }, [stage]);
 
-  // reveal a word at a time; a long backlog (the model ran ahead) plays faster
+  // SmoothText releases the text at an even pace; once it has shown every character, finish
   useEffect(() => {
-    if (stage !== "stream") return;
-    if (n >= toks.length) {
-      if (!finished) return; // wait for more text
-      const id = setTimeout(() => go("done"), 220);
-      return () => clearTimeout(id);
-    }
-    const backlog = toks.length - n;
-    const id = setTimeout(() => { if (n % 2 === 0) streamSound(); setN((x) => x + 1); }, (1000 / WPS) * (0.8 + Math.random() * 0.4) / (backlog > 40 ? 4 : backlog > 15 ? 2 : 1));
+    if (stage !== "stream" || !settled) return;
+    const id = setTimeout(() => go("done"), 220);
     return () => clearTimeout(id);
-  }, [stage, n, toks.length, finished]);
+  }, [stage, settled]);
 
-  const shown = toks.slice(0, n);
+  const tick = (shown: number) => {
+    if (stage !== "stream") return;
+    if (shown - ticked.current >= TICK_EVERY) { ticked.current = shown; streamSound(); }
+  };
+
   const { sources, next } = liveState;
   const plain = (liveState.error ? "" : liveState.text).replace(/\[\d+\]/g, "");
   const showText = stage === "stream" || stage === "done";
@@ -111,12 +115,17 @@ function Turn({ q, liveState, animate, live, site, onMood, onDone, onPick }: {
           <div className={h.answerBody}>
             <Steps v="waterfall" steps={LIVE_RUN} play={animate ? 1 : 0} onStep={stepSound} onDone={() => setStage("fold")} />
             {showText ? (
-              <p className={h.text}>
-                {shown.map((t, i) => ("w" in t
-                  ? <span key={i} className={h.tok}>{t.w}</span>
-                  : <span key={i} className={h.citeIn}><Cite n={t.cite} /></span>))}
-                {stage === "stream" ? <span className={h.caret} aria-hidden="true" /> : null}
-              </p>
+              <SmoothText
+                className={h.text}
+                toks={toks}
+                n={toks.length}
+                done={liveState.finished}
+                always={!toks.length}
+                instant={!animate}
+                catchUp={CATCH_UP}
+                onRelease={tick}
+                onSettled={() => setSettled(true)}
+              />
             ) : null}
             {stage === "done" ? (
               <div className={h.after}>
