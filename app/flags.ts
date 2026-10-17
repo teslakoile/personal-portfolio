@@ -37,11 +37,12 @@ export const sectionEnabled = (id: string): boolean =>
  * Unlike section flags, these hold in `next dev` too, so a local review shows
  * the page as it would ship; a page may still offer an override for review.
  *   kyllm  the KYLLM chat: the ⌘K panel, the dock pill and its chat window, the
- *          "Ask KYLLM" rail button, and the hero's question bar. Off until
- *          KYLLM has a real backend; today its answers are scripted.
+ *          "Ask KYLLM" rail button, the hero's question bar, and /api/kyllm.
+ *          On since 2026-10-17; needs ANTHROPIC_API_KEY and
+ *          ANTHROPIC_WORKSPACE_ID on the deployment.
  */
 export const FEATURE_FLAGS = {
-  kyllm: false,
+  kyllm: true,
 } satisfies Record<string, boolean>;
 
 export type FeatureId = keyof typeof FEATURE_FLAGS;
