@@ -1,3 +1,4 @@
+import { ArrowUpRight } from "lucide-react";
 import { sample } from "../../samples/sampleContent";
 import { Row, SectionHead } from "../kit";
 import { orgLogo } from "../logos";
@@ -21,7 +22,7 @@ export function Recognition({ num }: { num?: string }) {
             <h3 className={b.h4} style={{ marginTop: 10, fontSize: 17 }}>{a.title}</h3>
             <p className={s.desc} style={{ marginTop: 6 }}>{a.desc}</p>
             {"href" in a && a.href ? (
-              <a className={s.ext} href={a.href} target="_blank" rel="noreferrer">Read the Paper <span aria-hidden="true">↗</span></a>
+              <a className={s.ext} href={a.href} target="_blank" rel="noreferrer"><ArrowUpRight size={15} strokeWidth={2} aria-hidden="true" />Read the Paper</a>
             ) : null}
           </div>
         ))}

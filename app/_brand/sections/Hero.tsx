@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
+import { Download, Mail, Send } from "lucide-react";
 import { sample } from "../../samples/sampleContent";
-import { ContactIcon } from "../../samples/quiet/Logo";
 import { CONTACT_KIND } from "../../samples/quiet/helpers";
+import { BrandIcon } from "../icons";
 import { Button, Metric, Row, run } from "../kit";
 import b from "../brand.module.css";
 import s from "./sections.module.css";
@@ -36,16 +37,19 @@ export function Hero({ portrait, aligned, extra, strip, tools }: { portrait?: Re
             <h1 className={b.h1}>I build <span className={b.accent}>AI agents</span>, data pipelines, and cloud infrastructure.</h1>
             <p className={`${b.sub} ${s.heroSub}`}>{sample.hero.subhead}</p>
             <div className={s.heroCta}>
-              <Button href={sample.hero.primaryCta.href} contact>Get in Touch →</Button>
-              <Button variant="secondary" href={sample.cvUrl} download>↓ Download CV</Button>
+              <Button href={sample.hero.primaryCta.href} contact><Send size={16} strokeWidth={2} aria-hidden="true" />Get in Touch</Button>
+              <Button variant="secondary" href={sample.cvUrl} download><Download size={16} strokeWidth={2} aria-hidden="true" />Download CV</Button>
             </div>
             <div className={`${b.contact} ${s.heroLinks}`}>
-              {sample.contacts.map((c) => (
-                <a key={c.label} href={c.href} target={c.href.startsWith("http") ? "_blank" : undefined} rel="noreferrer">
-                  <ContactIcon kind={CONTACT_KIND[c.label] ?? "email"} />
+              {sample.contacts.map((c) => {
+                const kind = CONTACT_KIND[c.label] ?? "email";
+                return (
+                <a key={c.label} href={c.href} target={c.href.startsWith("http") ? "_blank" : undefined} rel="noreferrer" data-kind={kind}>
+                  {kind === "email" ? <Mail size={15} strokeWidth={1.7} aria-hidden="true" /> : <BrandIcon kind={kind} />}
                   {c.label === "Email" ? c.value : c.label}
                 </a>
-              ))}
+                );
+              })}
             </div>
             {extra}
           </div>
