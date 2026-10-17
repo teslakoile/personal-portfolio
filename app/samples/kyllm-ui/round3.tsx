@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type MouseEvent, type ReactNode } from "react";
 import {
   ArrowDown, ArrowRight, ArrowUp, ArrowUpRight, AtSign, BookOpen, Check, Copy, Mail, PenLine,
   Terminal, type LucideIcon,
@@ -90,7 +90,8 @@ export function StarterR3() {
 }
 
 /* --------------------------------- sources ------------------------------- */
-export type Src = { kind: SourceKind; label: string; name: string; host?: string };
+/** `href` makes a chip a real link: "#id" scrolls to that section of the page, anything else opens in a new tab. */
+export type Src = { kind: SourceKind; label: string; name: string; host?: string; href?: string };
 const SRC: Src[] = [
   { kind: "site", label: "Projects", name: "MCP Server" },
   { kind: "site", label: "Community", name: "Talks" },
@@ -101,12 +102,21 @@ const onSite = (src: Src) => src.kind === "site";
 
 /** One chip for every source: its mark tells where it lives; a right arrow stays on this page, the diagonal one leaves it; hover says where it goes. */
 export function SrcChip({ src, site = "kn" }: { src: Src; site?: SiteMark }) {
-  const tip = onSite(src) ? `Scrolls to ${src.label} · ${src.name}` : `Opens ${src.host}/${src.name}`;
+  const here = src.href ? src.href.startsWith("#") : onSite(src);
+  const tip = here ? `Scrolls to ${src.label}${src.name ? ` · ${src.name}` : ""}` : `Opens ${src.host}/${src.name}`;
+  const go = (e: MouseEvent<HTMLAnchorElement>) => {
+    if (!src.href) { e.preventDefault(); return; }
+    if (here) {
+      e.preventDefault();
+      document.getElementById(src.href.slice(1))?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
   return (
-    <a href="#" className={r.chip} data-where={onSite(src) ? "site" : "web"} data-tip={tip} onClick={(e) => e.preventDefault()}>
+    <a href={src.href ?? "#"} className={r.chip} data-where={here ? "site" : "web"} data-tip={tip} onClick={go}
+      target={src.href && !here ? "_blank" : undefined} rel={src.href && !here ? "noreferrer" : undefined}>
       <SourceMark kind={src.kind} site={site} />
       <b>{src.label}</b>{src.name}
-      <I icon={onSite(src) ? ArrowRight : ArrowUpRight} size={13} />
+      <I icon={here ? ArrowRight : ArrowUpRight} size={13} />
     </a>
   );
 }
@@ -175,7 +185,8 @@ export function KeyHintStates() {
 }
 
 /* ------------------------------ copy button (C) -------------------------- */
-export function CopyButton({ forced }: { forced?: "hover" | "done" }) {
+/** `text` is what a click copies to the clipboard. */
+export function CopyButton({ forced, text }: { forced?: "hover" | "done"; text?: string }) {
   const [done, setDone] = useState(false);
   useEffect(() => {
     if (!done) return;
@@ -185,7 +196,7 @@ export function CopyButton({ forced }: { forced?: "hover" | "done" }) {
   const isDone = done || forced === "done";
   return (
     <button type="button" className={r.copy} data-done={isDone ? "" : undefined} data-hover={forced === "hover" ? "" : undefined}
-      aria-label={isDone ? "Copied" : "Copy answer"} onClick={() => setDone(true)}>
+      aria-label={isDone ? "Copied" : "Copy answer"} onClick={() => { if (text) void navigator.clipboard?.writeText(text).catch(() => {}); setDone(true); }}>
       <span className={r.copyIcons}><I icon={Copy} /><I icon={Check} /></span>
       <span className={r.copyTip}>{isDone ? "Copied" : "Copy"}</span>
     </button>

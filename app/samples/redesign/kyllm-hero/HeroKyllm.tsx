@@ -3,13 +3,14 @@
 import { useCallback, useEffect, useEffectEvent, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { ArrowDown, X } from "lucide-react";
 import { Cite, Kbd, Pill, SendButton } from "../../kyllm-ui/kit";
-import { AGENTS_RUN, OPENING_RUN, TALKS_RUN } from "../../kyllm-ui/HeroChat";
-import { MCP_RUN, Steps, type StepData } from "../../kyllm-ui/Steps";
+import { OPENING_RUN } from "../../kyllm-ui/HeroChat";
+import { Steps, type StepData } from "../../kyllm-ui/Steps";
 import { CopyButton, SrcChip, type Src } from "../../kyllm-ui/round3";
 import { KyllmLive, type Mood } from "../../kyllm-ui/rig/KyllmLive";
 import type { SiteMark } from "../../kyllm-ui/brandIcons";
 import k from "../../kyllm-ui/kyllm.module.css";
 import { KYLLM_OPEN } from "./events";
+import { LIMITS, LINKS, SECTIONS, type Source, type StreamEvent, type Turn as ProtocolTurn } from "../../../_kyllm/protocol";
 import h from "./hero.module.css";
 
 /*
@@ -19,6 +20,11 @@ import h from "./hero.module.css";
  * follow-ups, the Steps waterfall, text answers at 14 words a second with
  * spaced citation chips, source chips with each source's mark, a copy-only
  * action, and the dashed key hint. One conversation, no history.
+ *
+ * Answers come live from /api/kyllm (Claude Sonnet 5.5, grounded in the CV
+ * and the site), streamed in and revealed a word at a time, with citation
+ * chips and source chips linking to the page's sections. The opening exchange
+ * stays scripted. Behind FEATURE_FLAGS.kyllm.
  *
  * KYLLM is not in the hero (a chat window there and the sheet open at once
  * was too much; a full-height pane cost the CV 30% of the width). It lives in
@@ -33,70 +39,59 @@ type Script = { steps: StepData[]; text: Seg[]; sources: Src[]; next: string[] }
 const SEED = "Can you tell me more about Kyle?";
 const MCP = "How does the MCP server work?";
 const AGENTS = "What else has he built with agents?";
-const TALKS = "Which talks has he given?";
 
-const S = {
-  exp: { kind: "site", label: "Experience", name: "Thinking Machines" },
-  mcp: { kind: "site", label: "Projects", name: "MCP Server" },
-  doc: { kind: "site", label: "Projects", name: "Document Intelligence" },
-  gdg: { kind: "site", label: "Community", name: "GDG Davao" },
-  talks: { kind: "site", label: "Community", name: "Talks" },
-} satisfies Record<string, Src>;
-
-const SCRIPTS: Record<string, Script> = {
-  [SEED]: {
-    steps: OPENING_RUN,
-    text: ["Kyle builds data pipelines, agentic AI, and cloud infrastructure for enterprise clients in financial services, investment management, education, and compliance. At Thinking Machines he builds Snowflake Cortex agent workflows for investment officers", { cite: 1 }, " and a ChatGPT-to-Databricks MCP server", { cite: 2 }, ". Outside work he leads GDG Davao, 2,000+ participants, and speaks on AI coding agents", { cite: 3 }, "."],
-    sources: [S.exp, S.mcp, S.gdg],
-    next: [MCP, AGENTS],
-  },
-  [MCP]: {
-    steps: MCP_RUN,
-    text: ["A proof of concept between ChatGPT and Databricks. ChatGPT calls a tool on the server, and the server runs the query on the lakehouse through governed access, so there's no one-off API wrapper per question", { cite: 1 }, "."],
-    sources: [S.mcp],
-    next: [AGENTS, TALKS],
-  },
-  [AGENTS]: {
-    steps: AGENTS_RUN,
-    text: ["Snowflake Cortex agent workflows that let investment officers query long-form documents, where he owns the agent tooling, prompts, evaluation, and incident triage", { cite: 1 }, ". He also wires AI coding agents into his team's delivery with custom skills, hooks, and commands", { cite: 2 }, "."],
-    sources: [S.doc, S.exp],
-    next: [TALKS, MCP],
-  },
-  [TALKS]: {
-    steps: TALKS_RUN,
-    text: ["Generative AI, AI coding agents, and modern engineering workflows, at conferences, startup events, and AWS User Group Davao", { cite: 1 }, "."],
-    sources: [S.talks],
-    next: [AGENTS, MCP],
-  },
+/** The opening exchange is scripted, so opening the window costs nothing; every question after it is answered live. */
+const SEED_SCRIPT: Script = {
+  steps: OPENING_RUN,
+  text: ["Kyle builds data pipelines, agentic AI, and cloud infrastructure for enterprise clients in financial services, investment management, education, and compliance. At Thinking Machines he builds Snowflake Cortex agent workflows for investment officers", { cite: 1 }, " and a ChatGPT-to-Databricks MCP server", { cite: 2 }, ". Outside work he leads GDG Davao, 2,000+ participants, and speaks on AI coding agents", { cite: 3 }, "."],
+  sources: [
+    { kind: "site", label: "Experience", name: "Thinking Machines", href: "#experience" },
+    { kind: "site", label: "Experience", name: "MCP Server", href: "#experience" },
+    { kind: "site", label: "Community", name: "GDG Davao", href: "#community" },
+  ],
+  next: [MCP, AGENTS],
 };
-const WPS = 14;
+const seedText = SEED_SCRIPT.text.map((g) => (typeof g === "string" ? g : "")).join("");
 
-function match(q: string) {
-  if (SCRIPTS[q]) return q;
-  const t = q.toLowerCase();
-  if (/mcp|databricks|chatgpt/.test(t)) return MCP;
-  if (/agent|built|project|cortex/.test(t)) return AGENTS;
-  if (/talk|speak|gdg|community/.test(t)) return TALKS;
-  return SEED;
-}
+/** What the live steps waterfall shows while the answer is fetched. */
+const LIVE_RUN: StepData[] = [
+  { cat: "think", text: "Reading the question", meta: "", ms: 250 },
+  { cat: "tool", text: "Searching his CV", meta: "and the site", ms: 450 },
+  { cat: "write", text: "Writing the answer", meta: "", ms: 500 },
+  { cat: "check", text: "Linking sources", meta: "", ms: 200 },
+];
+const WPS = 14;
 
 type Tok = { w: string } | { cite: number };
 const tokenize = (segs: Seg[]): Tok[] =>
   segs.flatMap((g): Tok[] => (typeof g === "string" ? (g.match(/\s*\S+\s*/g) ?? []).map((w) => ({ w })) : [g]));
+/** Live text to segments: "[2]" becomes a citation chip. */
+const toSegs = (text: string): Seg[] => text.split(/(\[\d+\])/).map((p) => (/^\[\d+\]$/.test(p) ? { cite: Number(p.slice(1, -1)) } : p));
+
+const toSrc = (s: Source): Src =>
+  "section" in s
+    ? { kind: "site", label: SECTIONS[s.section], name: s.name, href: `#${s.section}` }
+    : { kind: s.link === "cv" ? "site" : s.link, label: LINKS[s.link].label, name: LINKS[s.link].name, host: LINKS[s.link].host, href: LINKS[s.link].href };
+
+/** One live answer as it streams in. */
+type Live = { text: string; sources: Src[]; next: string[]; error?: string; finished: boolean };
+const NO_LIVE: Live = { text: "", sources: [], next: [], finished: false };
 
 type Stage = "sent" | "steps" | "fold" | "stream" | "done";
 
-function Turn({ q, script, animate, live, site, onMood, onDone, onPick }: {
-  q: string; script: Script; animate: boolean; live: boolean; site: SiteMark;
+/** One question and its answer: scripted (`script`) or streaming in (`live`). */
+function Turn({ q, script, liveState, animate, live, site, onMood, onDone, onPick }: {
+  q: string; script?: Script; liveState?: Live; animate: boolean; live: boolean; site: SiteMark;
   onMood: (m: Mood) => void; onDone: () => void; onPick: (q: string) => void;
 }) {
   const [stage, setStage] = useState<Stage>(animate ? "sent" : "done");
-  const [toks] = useState(() => tokenize(script.text));
-  const [n, setN] = useState(animate ? 0 : toks.length);
+  const toks = tokenize(script ? script.text : liveState?.error ? [liveState.error] : toSegs(liveState?.text ?? ""));
+  const finished = script ? true : !!liveState?.finished;
+  const [n, setN] = useState(animate ? 0 : Number.MAX_SAFE_INTEGER);
   const go = useEffectEvent((next: Stage) => {
     setStage(next);
     if (next === "steps") onMood("working");
-    if (next === "done") { onMood("answered"); onDone(); }
+    if (next === "done") { onMood(liveState?.error ? "sorry" : "answered"); onDone(); }
   });
 
   useEffect(() => {
@@ -105,14 +100,23 @@ function Turn({ q, script, animate, live, site, onMood, onDone, onPick }: {
     return () => clearTimeout(id);
   }, [stage]);
 
+  // reveal a word at a time; a long backlog (the model ran ahead) plays faster
   useEffect(() => {
     if (stage !== "stream") return;
-    const id = n >= toks.length
-      ? setTimeout(() => go("done"), 220)
-      : setTimeout(() => setN((x) => x + 1), (1000 / WPS) * (0.8 + Math.random() * 0.4));
+    if (n >= toks.length) {
+      if (!finished) return; // wait for more text
+      const id = setTimeout(() => go("done"), 220);
+      return () => clearTimeout(id);
+    }
+    const backlog = toks.length - n;
+    const id = setTimeout(() => setN((x) => x + 1), (1000 / WPS) * (0.8 + Math.random() * 0.4) / (backlog > 40 ? 4 : backlog > 15 ? 2 : 1));
     return () => clearTimeout(id);
-  }, [stage, n, toks.length]);
+  }, [stage, n, toks.length, finished]);
 
+  const shown = toks.slice(0, n);
+  const sources = script ? script.sources : liveState?.sources ?? [];
+  const next = script ? script.next : liveState?.next ?? [];
+  const plain = (script ? seedText : liveState?.error ? "" : liveState?.text ?? "").replace(/\[\d+\]/g, "");
   const showText = stage === "stream" || stage === "done";
   return (
     <>
@@ -120,10 +124,10 @@ function Turn({ q, script, animate, live, site, onMood, onDone, onPick }: {
       {stage === "sent" ? null : (
         <div className={h.rowFlat}>
           <div className={h.answerBody}>
-            <Steps v="waterfall" steps={script.steps} play={animate ? 1 : 0} onDone={() => setStage("fold")} />
+            <Steps v="waterfall" steps={script ? script.steps : LIVE_RUN} play={animate ? 1 : 0} onDone={() => setStage("fold")} />
             {showText ? (
               <p className={h.text}>
-                {toks.slice(0, n).map((t, i) => ("w" in t
+                {shown.map((t, i) => ("w" in t
                   ? <span key={i} className={h.tok}>{t.w}</span>
                   : <span key={i} className={h.citeIn}><Cite n={t.cite} /></span>))}
                 {stage === "stream" ? <span className={h.caret} aria-hidden="true" /> : null}
@@ -131,10 +135,10 @@ function Turn({ q, script, animate, live, site, onMood, onDone, onPick }: {
             ) : null}
             {stage === "done" ? (
               <div className={h.after}>
-                <div className={h.sources}>{script.sources.map((src) => <SrcChip key={src.name} src={src} site={site} />)}</div>
-                <CopyButton />
-                {live ? (
-                  <div className={h.next}>{script.next.map((x, i) => (
+                {sources.length ? <div className={h.sources}>{sources.map((src, i) => <SrcChip key={`${i}-${src.name}`} src={src} site={site} />)}</div> : null}
+                {plain ? <CopyButton text={plain} /> : null}
+                {live && next.length ? (
+                  <div className={h.next}>{next.map((x, i) => (
                     <span key={x} style={{ "--i": i } as CSSProperties}><Pill arrow onClick={() => onPick(x)}>{x}</Pill></span>
                   ))}</div>
                 ) : null}
@@ -147,9 +151,46 @@ function Turn({ q, script, animate, live, site, onMood, onDone, onPick }: {
   );
 }
 
-type Thread = { id: number; q: string; key: string; animate: boolean };
-const seedTurn = (animate: boolean): Thread => ({ id: 0, q: SEED, key: SEED, animate });
+type Thread = { id: number; q: string; seed?: boolean; animate: boolean };
+const seedTurn = (animate: boolean): Thread => ({ id: 0, q: SEED, seed: true, animate });
 const settled = (ts: Thread[]) => ts.map((t) => ({ ...t, animate: false }));
+
+/** Streams one answer from /api/kyllm into `update`; resolves when the stream ends. */
+async function fetchAnswer(question: string, history: ProtocolTurn[], signal: AbortSignal, update: (f: (l: Live) => Live) => void) {
+  const fail = (v: string) => update((l) => ({ ...l, error: l.text ? undefined : v, finished: true }));
+  try {
+    const res = await fetch("/api/kyllm", {
+      method: "POST", headers: { "Content-Type": "application/json" }, signal,
+      body: JSON.stringify({ question, history }),
+    });
+    if (!res.ok || !res.body) {
+      const msg = res.status === 429 ? "Too many questions for now. Try again later." : "KYLLM couldn't answer just now. Try again, or email Kyle at kyle.naranjo@gmail.com.";
+      return fail(msg);
+    }
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = "";
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let nl: number;
+      while ((nl = buf.indexOf("\n")) >= 0) {
+        const line = buf.slice(0, nl); buf = buf.slice(nl + 1);
+        if (!line) continue;
+        const e = JSON.parse(line) as StreamEvent;
+        if (e.t === "text") update((l) => ({ ...l, text: l.text + e.v }));
+        else if (e.t === "meta") update((l) => ({ ...l, sources: e.sources.map(toSrc), next: e.next }));
+        else if (e.t === "error") return fail(e.v);
+        else if (e.t === "done") update((l) => ({ ...l, finished: true }));
+      }
+    }
+    update((l) => (l.finished ? l : { ...l, finished: true }));
+  } catch {
+    if (signal.aborted) update((l) => ({ ...l, text: l.text || "Stopped.", finished: true }));
+    else fail("KYLLM couldn't answer just now. Try again, or email Kyle at kyle.naranjo@gmail.com.");
+  }
+}
 
 /** One chat: the thread, the live avatar in the header (messages carry none), and the composer. */
 function Chat({ initial, site, height, focusKey, pending, onClose }: {
@@ -161,6 +202,7 @@ function Chat({ initial, site, height, focusKey, pending, onClose }: {
   onClose?: () => void;
 }) {
   const [turns, setTurns] = useState(initial);
+  const [lives, setLives] = useState<Record<number, Live>>({});
   const [busy, setBusy] = useState(() => initial.some((t) => t.animate));
   const [draft, setDraft] = useState("");
   const [mood, setMood] = useState<Mood>(() => (initial.some((t) => t.animate) ? "working" : "idle"));
@@ -169,20 +211,33 @@ function Chat({ initial, site, height, focusKey, pending, onClose }: {
   const thread = useRef<HTMLDivElement>(null);
   const follow = useRef(true);
   const input = useRef<HTMLInputElement>(null);
+  const abort = useRef<AbortController | null>(null);
 
   const ask = (q: string) => {
     if (busy || !q.trim()) return;
+    const question = q.trim();
+    // the conversation so far, as plain text, for context
+    const history: ProtocolTurn[] = turns.flatMap((t): ProtocolTurn[] => {
+      const answer = t.seed ? seedText : (lives[t.id]?.text ?? "").replace(/\[\d+\]/g, "");
+      return answer ? [{ role: "user", content: t.q }, { role: "assistant", content: answer }] : [];
+    });
+    const id = turns.length ? Math.max(...turns.map((t) => t.id)) + 1 : 1;
     setDraft("");
     follow.current = true;
     setBusy(true);
     setMood("working");
-    setTurns((ts) => [...settled(ts), { id: ts.length, q: q.trim(), key: match(q), animate: true }]);
+    setTurns((ts) => [...settled(ts), { id, q: question, animate: true }]);
+    setLives((m) => ({ ...m, [id]: NO_LIVE }));
+    const ctrl = new AbortController();
+    abort.current = ctrl;
+    void fetchAnswer(question, history, ctrl.signal, (f) => setLives((m) => ({ ...m, [id]: f(m[id] ?? NO_LIVE) })));
   };
-  const reset = () => { setTurns([seedTurn(false)]); setBusy(false); setMood("idle"); setDraft(""); };
+  const stop = () => abort.current?.abort();
+  const reset = () => { stop(); setTurns([seedTurn(false)]); setLives({}); setBusy(false); setMood("idle"); setDraft(""); };
 
   // answered plays its hop once, then KYLLM rests
   useEffect(() => {
-    if (mood !== "answered") return;
+    if (mood !== "answered" && mood !== "sorry") return;
     const id = setTimeout(() => setMood("idle"), 2200);
     return () => clearTimeout(id);
   }, [mood]);
@@ -220,7 +275,7 @@ function Chat({ initial, site, height, focusKey, pending, onClose }: {
     setAway(!follow.current && fromBottom > 120);
   };
 
-  const submit = (e: FormEvent) => { e.preventDefault(); ask(draft); };
+  const submit = (e: FormEvent) => { e.preventDefault(); if (busy) stop(); else ask(draft); };
   const liveMood: Mood = draft && !busy ? "typing" : mood;
   const sendState = busy ? "stop" : draft.trim() ? "send" : "wait";
 
@@ -238,9 +293,10 @@ function Chat({ initial, site, height, focusKey, pending, onClose }: {
       </div>
       <div className={h.scrollWrap}>
         <div ref={scroller} className={h.scroll} onScroll={onScroll} onWheel={(e) => { if (e.deltaY < 0) follow.current = false; }}>
-          <div ref={thread} className={h.thread}>
+          <div ref={thread} className={h.thread} aria-live="polite">
             {turns.map((t, i) => (
-              <Turn key={t.id} q={t.q} script={SCRIPTS[t.key]} animate={t.animate} live={i === turns.length - 1} site={site}
+              <Turn key={t.id} q={t.q} script={t.seed ? SEED_SCRIPT : undefined} liveState={t.seed ? undefined : lives[t.id] ?? NO_LIVE}
+                animate={t.animate} live={i === turns.length - 1} site={site}
                 onMood={setMood} onDone={() => setBusy(false)} onPick={ask} />
             ))}
           </div>
@@ -251,10 +307,10 @@ function Chat({ initial, site, height, focusKey, pending, onClose }: {
         </button>
       </div>
       <form className={`${k.composer} ${h.composer}`} onSubmit={submit}>
-        <input ref={input} className={h.input} value={draft} onChange={(e) => setDraft(e.target.value)}
+        <input ref={input} className={h.input} value={draft} onChange={(e) => setDraft(e.target.value)} maxLength={LIMITS.question}
           placeholder={busy ? "KYLLM is answering…" : "Ask KYLLM about my work…"} aria-label="Ask KYLLM" />
         {!draft && !busy ? <Kbd tip="Ask from anywhere">⌘K</Kbd> : null}
-        <SendButton state={sendState} onClick={() => ask(draft)} />
+        <SendButton state={sendState} onClick={() => (busy ? stop() : ask(draft))} />
       </form>
     </div>
   );
