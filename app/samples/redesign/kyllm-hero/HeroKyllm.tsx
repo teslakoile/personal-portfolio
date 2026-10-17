@@ -284,9 +284,18 @@ export function KyllmDock({ site = "kn" }: { site?: SiteMark }) {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); cmdK(); }
     };
     const onOpen = (e: Event) => fromPage((e as CustomEvent<{ q?: string }>).detail?.q);
+    // the rail's "Ask KYLLM" button opens it too
+    const onClick = (e: MouseEvent) => {
+      if (e.target instanceof Element && e.target.closest('[data-util="Ask KYLLM"]')) { e.preventDefault(); cmdK(); }
+    };
     window.addEventListener("keydown", onKey);
     window.addEventListener(KYLLM_OPEN, onOpen);
-    return () => { window.removeEventListener("keydown", onKey); window.removeEventListener(KYLLM_OPEN, onOpen); };
+    document.addEventListener("click", onClick);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener(KYLLM_OPEN, onOpen);
+      document.removeEventListener("click", onClick);
+    };
   }, []);
 
   return (
