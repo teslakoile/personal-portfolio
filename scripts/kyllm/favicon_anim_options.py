@@ -75,14 +75,22 @@ def eye_svg(openness) -> str:
     return "".join(one_eye(spec, v) for spec, v in zip(EYES, o))
 
 
-GLASSES = (
-    f'<ellipse cx="492.5" cy="498.5" rx="153.1" ry="129.9" transform="rotate(81.66 492.5 498.5)" '
-    f'fill="none" stroke="{INK}" stroke-width="41.8"/>'
-    f'<ellipse cx="780.7" cy="486.0" rx="150.2" ry="112.6" transform="rotate(75.30 780.7 486.0)" '
-    f'fill="none" stroke="{INK}" stroke-width="41.8"/>'
-    f'<line x1="622.0" y1="487.7" x2="666.3" y2="483.8" stroke="{INK}" stroke-width="31.4" stroke-linecap="round"/>'
-    f'<line x1="362.3" y1="498.8" x2="269.1" y2="510.1" stroke="{INK}" stroke-width="35.5" stroke-linecap="round"/>'
-)
+def glasses_svg(bold: float = 0.0) -> str:
+    """The frames of the glasses. `bold` adds flat px to every stroke (0 is the shipped drawing, byte for
+    byte), for the stroke options whose rings need to survive 16 px."""
+    return (
+        f'<ellipse cx="492.5" cy="498.5" rx="153.1" ry="129.9" transform="rotate(81.66 492.5 498.5)" '
+        f'fill="none" stroke="{INK}" stroke-width="{41.8 + bold:.1f}"/>'
+        f'<ellipse cx="780.7" cy="486.0" rx="150.2" ry="112.6" transform="rotate(75.30 780.7 486.0)" '
+        f'fill="none" stroke="{INK}" stroke-width="{41.8 + bold:.1f}"/>'
+        f'<line x1="622.0" y1="487.7" x2="666.3" y2="483.8" stroke="{INK}" stroke-width="{31.4 + bold:.1f}" '
+        f'stroke-linecap="round"/>'
+        f'<line x1="362.3" y1="498.8" x2="269.1" y2="510.1" stroke="{INK}" stroke-width="{35.5 + bold:.1f}" '
+        f'stroke-linecap="round"/>'
+    )
+
+
+GLASSES = glasses_svg()
 
 # the lens openings, inside the 41.8 px rims, for clipping the glint
 LENS_CLIP = (
@@ -169,7 +177,7 @@ def frame_svg(cx, cy, D, p: dict) -> str:
         bx, by = LEAF_BASE
         leaf_tf = f"translate({bx} {by}) scale({1 / sx:.5f} {1 / sy:.5f}) translate({-bx} {-by}) {leaf_tf}"
     leaf = f'<g transform="{leaf_tf}"><path d="{LEAF}" fill="{SAGE}"/></g>'
-    glasses = f'<g transform="translate(0 {p.get("gy", 0)})">{GLASSES}</g>'
+    glasses = f'<g transform="translate(0 {p.get("gy", 0)})">{glasses_svg(p["bold"]) if p.get("bold") else GLASSES}</g>'
     eyes = f'<g transform="translate({p.get("ex", 0)} {p.get("ey", 0)})">{eye_svg(p.get("eye", 1))}</g>'
     glint = ""
     if p.get("glint") is not None:
@@ -234,7 +242,7 @@ def round5(g: phys.Geom):
                          ring=ring))
         runs.append((a, built))
     for o in opts:
-        if o["group"] == "r6":
+        if o["group"] in ("r6", "stroke"):
             s = rhythm_stats(o["ring"])
             every = (f"every {s['mean']:.3f} s exactly" if s["max"] - s["min"] < 0.01
                      else f"every {s['min']:.1f} to {s['max']:.1f} s, {s['mean']:.1f} s on average")
@@ -271,6 +279,7 @@ def rhythm_stats(ring, hours=3, seed=7):
 
 
 def report5(runs, small, g):
+    PHYS_OUT.mkdir(parents=True, exist_ok=True)
     out = {}
     for a, built in runs:
         m = snappy.metrics(a, built, g)
@@ -417,7 +426,7 @@ def main() -> None:
              'import type { FaviconRing } from "../../_brand/faviconControl";', "",
              "export type Option = {", "  id: string;", "  label: string;", "  name: string;",
              "  /** what the loop is for: Idle, Thinking, Answer ready, On return, Loop */",
-             "  role: string;", '  group: "r6";', "  note: string;",
+             "  role: string;", '  group: "r6" | "stroke";', "  note: string;",
              "  /** the frame shown between beats */", "  base: string;",
              "  /** each beat is a list of [frame, hold in ms] */",
              "  beats: [string, number][][];", "  /** wait between beats: [min, extra random ms] */",
