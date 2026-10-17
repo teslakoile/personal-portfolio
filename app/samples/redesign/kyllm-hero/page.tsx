@@ -32,7 +32,7 @@ const SECTIONS = [
 
 export default async function KyllmHeroPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const q = await searchParams;
-  const site: SiteMark = q.mark === "hash" || q.mark === "none" ? q.mark : "kn";
+  const site: SiteMark = q.mark === "hash" || q.mark === "none" || q.mark === "kn" ? q.mark : "favicon";
   return (
     <BrandRoot>
       <MotionRoot>

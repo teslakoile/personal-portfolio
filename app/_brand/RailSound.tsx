@@ -43,7 +43,7 @@ function SoundIcon({ on }: { on: boolean }) {
     else { setSoundEnabled(true); popOpen(); }
   };
   return (
-    <button type="button" className={r.soundIcon} aria-pressed={on} aria-label="Sound" data-tip={on ? "Sound on" : "Sound off"} onClick={toggle}>
+    <button type="button" className={r.soundIcon} aria-pressed={on} aria-label="Sound" data-own-sound data-tip={on ? "Sound on" : "Sound off"} onClick={toggle}>
       {n > 0 && on ? <motion.span key={`ring${n}`} className={r.soundRing} aria-hidden="true"
         initial={{ scale: 0.55, opacity: 0.45 }} animate={{ scale: 1.5, opacity: 0 }} transition={{ duration: 0.55, ease: "easeOut" }} /> : null}
       <motion.svg key={`icon${n}`} viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth={1.8}

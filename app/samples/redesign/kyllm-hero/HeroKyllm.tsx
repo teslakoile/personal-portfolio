@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useEffectEvent, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { ArrowDown, X } from "lucide-react";
 import { Cite, Kbd, Pill, SendButton } from "../../kyllm-ui/kit";
-import { OPENING_RUN } from "../../kyllm-ui/HeroChat";
 import { Steps, type StepData } from "../../kyllm-ui/Steps";
 import { CopyButton, SrcChip, type Src } from "../../kyllm-ui/round3";
 import { KyllmLive, type Mood } from "../../kyllm-ui/rig/KyllmLive";
 import type { SiteMark } from "../../kyllm-ui/brandIcons";
 import k from "../../kyllm-ui/kyllm.module.css";
 import { KYLLM_OPEN } from "./events";
+import { answerSound, stepSound, streamSound } from "../../../_home/sound";
 import { LIMITS, LINKS, SECTIONS, type Source, type StreamEvent, type Turn as ProtocolTurn } from "../../../_kyllm/protocol";
 import h from "./hero.module.css";
 
@@ -23,8 +23,9 @@ import h from "./hero.module.css";
  *
  * Answers come live from /api/kyllm (Claude Sonnet 5.5, grounded in the CV
  * and the site), streamed in and revealed a word at a time, with citation
- * chips and source chips linking to the page's sections. The opening exchange
- * stays scripted. Behind FEATURE_FLAGS.kyllm.
+ * chips and source chips linking to the page's sections. The chat opens empty:
+ * KYLLM, a line, and three starters. Every KYLLM avatar in it can be booped
+ * (KyllmLive touch), with a sound. Behind FEATURE_FLAGS.kyllm.
  *
  * KYLLM is not in the hero (a chat window there and the sheet open at once
  * was too much; a full-height pane cost the CV 30% of the width). It lives in
@@ -34,24 +35,9 @@ import h from "./hero.module.css";
  */
 
 type Seg = string | { cite: number };
-type Script = { steps: StepData[]; text: Seg[]; sources: Src[]; next: string[] };
 
-const SEED = "Can you tell me more about Kyle?";
-const MCP = "How does the MCP server work?";
-const AGENTS = "What else has he built with agents?";
-
-/** The opening exchange is scripted, so opening the window costs nothing; every question after it is answered live. */
-const SEED_SCRIPT: Script = {
-  steps: OPENING_RUN,
-  text: ["Kyle builds data pipelines, agentic AI, and cloud infrastructure for enterprise clients in financial services, investment management, education, and compliance. At Thinking Machines he builds Snowflake Cortex agent workflows for investment officers", { cite: 1 }, " and a ChatGPT-to-Databricks MCP server", { cite: 2 }, ". Outside work he leads GDG Davao, 2,000+ participants, and speaks on AI coding agents", { cite: 3 }, "."],
-  sources: [
-    { kind: "site", label: "Experience", name: "Thinking Machines", href: "#experience" },
-    { kind: "site", label: "Experience", name: "MCP Server", href: "#experience" },
-    { kind: "site", label: "Community", name: "GDG Davao", href: "#community" },
-  ],
-  next: [MCP, AGENTS],
-};
-const seedText = SEED_SCRIPT.text.map((g) => (typeof g === "string" ? g : "")).join("");
+/** Starters for the empty chat. */
+const STARTERS = ["Tell me more about Kyle", "What has he built with AI agents?", "Which talks has he given?"];
 
 /** What the live steps waterfall shows while the answer is fetched. */
 const LIVE_RUN: StepData[] = [
@@ -79,19 +65,19 @@ const NO_LIVE: Live = { text: "", sources: [], next: [], finished: false };
 
 type Stage = "sent" | "steps" | "fold" | "stream" | "done";
 
-/** One question and its answer: scripted (`script`) or streaming in (`live`). */
-function Turn({ q, script, liveState, animate, live, site, onMood, onDone, onPick }: {
-  q: string; script?: Script; liveState?: Live; animate: boolean; live: boolean; site: SiteMark;
+/** One question and its answer, streaming in. */
+function Turn({ q, liveState, animate, live, site, onMood, onDone, onPick }: {
+  q: string; liveState: Live; animate: boolean; live: boolean; site: SiteMark;
   onMood: (m: Mood) => void; onDone: () => void; onPick: (q: string) => void;
 }) {
   const [stage, setStage] = useState<Stage>(animate ? "sent" : "done");
-  const toks = tokenize(script ? script.text : liveState?.error ? [liveState.error] : toSegs(liveState?.text ?? ""));
-  const finished = script ? true : !!liveState?.finished;
+  const toks = tokenize(liveState.error ? [liveState.error] : toSegs(liveState.text));
+  const finished = liveState.finished;
   const [n, setN] = useState(animate ? 0 : Number.MAX_SAFE_INTEGER);
   const go = useEffectEvent((next: Stage) => {
     setStage(next);
     if (next === "steps") onMood("working");
-    if (next === "done") { onMood(liveState?.error ? "sorry" : "answered"); onDone(); }
+    if (next === "done") { onMood(liveState.error ? "sorry" : "answered"); onDone(); if (animate) answerSound(!liveState.error); }
   });
 
   useEffect(() => {
@@ -109,14 +95,13 @@ function Turn({ q, script, liveState, animate, live, site, onMood, onDone, onPic
       return () => clearTimeout(id);
     }
     const backlog = toks.length - n;
-    const id = setTimeout(() => setN((x) => x + 1), (1000 / WPS) * (0.8 + Math.random() * 0.4) / (backlog > 40 ? 4 : backlog > 15 ? 2 : 1));
+    const id = setTimeout(() => { if (n % 2 === 0) streamSound(); setN((x) => x + 1); }, (1000 / WPS) * (0.8 + Math.random() * 0.4) / (backlog > 40 ? 4 : backlog > 15 ? 2 : 1));
     return () => clearTimeout(id);
   }, [stage, n, toks.length, finished]);
 
   const shown = toks.slice(0, n);
-  const sources = script ? script.sources : liveState?.sources ?? [];
-  const next = script ? script.next : liveState?.next ?? [];
-  const plain = (script ? seedText : liveState?.error ? "" : liveState?.text ?? "").replace(/\[\d+\]/g, "");
+  const { sources, next } = liveState;
+  const plain = (liveState.error ? "" : liveState.text).replace(/\[\d+\]/g, "");
   const showText = stage === "stream" || stage === "done";
   return (
     <>
@@ -124,7 +109,7 @@ function Turn({ q, script, liveState, animate, live, site, onMood, onDone, onPic
       {stage === "sent" ? null : (
         <div className={h.rowFlat}>
           <div className={h.answerBody}>
-            <Steps v="waterfall" steps={script ? script.steps : LIVE_RUN} play={animate ? 1 : 0} onDone={() => setStage("fold")} />
+            <Steps v="waterfall" steps={LIVE_RUN} play={animate ? 1 : 0} onStep={stepSound} onDone={() => setStage("fold")} />
             {showText ? (
               <p className={h.text}>
                 {shown.map((t, i) => ("w" in t
@@ -151,8 +136,7 @@ function Turn({ q, script, liveState, animate, live, site, onMood, onDone, onPic
   );
 }
 
-type Thread = { id: number; q: string; seed?: boolean; animate: boolean };
-const seedTurn = (animate: boolean): Thread => ({ id: 0, q: SEED, seed: true, animate });
+type Thread = { id: number; q: string; animate: boolean };
 const settled = (ts: Thread[]) => ts.map((t) => ({ ...t, animate: false }));
 
 /** Streams one answer from /api/kyllm into `update`; resolves when the stream ends. */
@@ -218,7 +202,7 @@ function Chat({ initial, site, height, focusKey, pending, onClose }: {
     const question = q.trim();
     // the conversation so far, as plain text, for context
     const history: ProtocolTurn[] = turns.flatMap((t): ProtocolTurn[] => {
-      const answer = t.seed ? seedText : (lives[t.id]?.text ?? "").replace(/\[\d+\]/g, "");
+      const answer = (lives[t.id]?.text ?? "").replace(/\[\d+\]/g, "");
       return answer ? [{ role: "user", content: t.q }, { role: "assistant", content: answer }] : [];
     });
     const id = turns.length ? Math.max(...turns.map((t) => t.id)) + 1 : 1;
@@ -233,7 +217,7 @@ function Chat({ initial, site, height, focusKey, pending, onClose }: {
     void fetchAnswer(question, history, ctrl.signal, (f) => setLives((m) => ({ ...m, [id]: f(m[id] ?? NO_LIVE) })));
   };
   const stop = () => abort.current?.abort();
-  const reset = () => { stop(); setTurns([seedTurn(false)]); setLives({}); setBusy(false); setMood("idle"); setDraft(""); };
+  const reset = () => { stop(); setTurns([]); setLives({}); setBusy(false); setMood("idle"); setDraft(""); };
 
   // answered plays its hop once, then KYLLM rests
   useEffect(() => {
@@ -282,20 +266,29 @@ function Chat({ initial, site, height, focusKey, pending, onClose }: {
   return (
     <div className={h.panel} style={{ height }}>
       <div className={h.head}>
-        <KyllmLive mood={liveMood} size={32} />
+        <KyllmLive mood={liveMood} size={32} touch />
         <b>KYLLM</b>
-        {turns.length > 1 ? <button type="button" className={h.newChat} onClick={reset}>New chat</button> : null}
+        {turns.length ? <button type="button" className={h.newChat} onClick={reset}>New chat</button> : null}
         {onClose ? (
-          <button type="button" className={h.close} onClick={onClose} aria-label="Close KYLLM" data-solo={turns.length > 1 ? undefined : ""}>
+          <button type="button" className={h.close} onClick={onClose} aria-label="Close KYLLM" data-solo={turns.length ? undefined : ""}>
             <X size={16} strokeWidth={2} aria-hidden="true" />
           </button>
         ) : null}
       </div>
       <div className={h.scrollWrap}>
         <div ref={scroller} className={h.scroll} onScroll={onScroll} onWheel={(e) => { if (e.deltaY < 0) follow.current = false; }}>
-          <div ref={thread} className={h.thread} aria-live="polite">
+          <div ref={thread} className={turns.length ? h.thread : `${h.thread} ${h.threadEmpty}`} aria-live="polite">
+            {turns.length ? null : (
+              <div className={h.empty}>
+                <KyllmLive mood={liveMood} size={72} touch />
+                <p>Ask me about Kyle&apos;s work</p>
+                <div className={h.next}>{STARTERS.map((x, i) => (
+                  <span key={x} style={{ "--i": i } as CSSProperties}><Pill arrow onClick={() => ask(x)}>{x}</Pill></span>
+                ))}</div>
+              </div>
+            )}
             {turns.map((t, i) => (
-              <Turn key={t.id} q={t.q} script={t.seed ? SEED_SCRIPT : undefined} liveState={t.seed ? undefined : lives[t.id] ?? NO_LIVE}
+              <Turn key={t.id} q={t.q} liveState={lives[t.id] ?? NO_LIVE}
                 animate={t.animate} live={i === turns.length - 1} site={site}
                 onMood={setMood} onDone={() => setBusy(false)} onPick={ask} />
             ))}
@@ -322,7 +315,7 @@ function Chat({ initial, site, height, focusKey, pending, onClose }: {
  * q. The sheet mounts on first open and stays mounted, so closing it keeps
  * the conversation.
  */
-export function KyllmDock({ site = "kn" }: { site?: SiteMark }) {
+export function KyllmDock({ site = "favicon" }: { site?: SiteMark }) {
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [opens, setOpens] = useState(0);
@@ -358,7 +351,7 @@ export function KyllmDock({ site = "kn" }: { site?: SiteMark }) {
     <div className={h.tokens}>
       {mounted ? (
         <aside className={h.sheet} data-open={open ? "" : undefined} aria-label="KYLLM" aria-hidden={!open}>
-          <Chat initial={[seedTurn(false)]} site={site} height="100%" focusKey={opens} pending={pending} onClose={close} />
+          <Chat initial={[]} site={site} height="100%" focusKey={opens} pending={pending} onClose={close} />
         </aside>
       ) : null}
       <button type="button" className={h.dockPill} data-show={open ? undefined : ""} onClick={() => show()}>

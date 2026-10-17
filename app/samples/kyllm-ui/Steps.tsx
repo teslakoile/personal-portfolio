@@ -138,13 +138,18 @@ function Row({ v, run, i, state, span, liveMs }: { v: StepsVariant; run: Run; i:
  * it in slow motion while the bars and seconds still show the run's own time;
  * a change applies from the next step.
  */
-export function Steps({ v, steps = MCP_RUN, play = 0, loop = false, freeze, defaultOpen = false, onDone, rate = 1 }: {
-  v: StepsVariant; steps?: StepData[]; play?: number; loop?: boolean; freeze?: { phase: Phase; shown?: number }; defaultOpen?: boolean; onDone?: () => void; rate?: number;
+export function Steps({ v, steps = MCP_RUN, play = 0, loop = false, freeze, defaultOpen = false, onDone, onStep, rate = 1 }: {
+  v: StepsVariant; steps?: StepData[]; play?: number; loop?: boolean; freeze?: { phase: Phase; shown?: number }; defaultOpen?: boolean; onDone?: () => void;
+  /** called as each step goes live, with its index */
+  onStep?: (i: number) => void; rate?: number;
 }) {
   const [run] = useState(() => toRun(steps));
   const STEPS = run.steps;
   const done = useRef(onDone);
   useEffect(() => { done.current = onDone; }, [onDone]);
+  const step = useRef(onStep);
+  useEffect(() => { step.current = onStep; }, [onStep]);
+  const stepped = useRef(-1); // the last step reported, so an effect re-run never reports it twice
   const rateRef = useRef(rate);
   useEffect(() => { rateRef.current = rate; }, [rate]);
   const [phase, setPhase] = useState<Phase>(freeze?.phase ?? (play ? "working" : "done"));
@@ -165,6 +170,7 @@ export function Steps({ v, steps = MCP_RUN, play = 0, loop = false, freeze, defa
       if (shown === 0 && !t0.current) t0.current = performance.now();
       stepT0.current = performance.now();
       shownRef.current = shown;
+      if (shown < STEPS.length && stepped.current !== shown) { stepped.current = shown; step.current?.(shown); }
       const r = rateRef.current;
       const id = shown < STEPS.length
         ? setTimeout(() => setShown((n) => n + 1), STEPS[shown].ms / r)
@@ -173,7 +179,7 @@ export function Steps({ v, steps = MCP_RUN, play = 0, loop = false, freeze, defa
     }
     // done: a looping demo starts over; otherwise fold unless the visitor opened it
     const id = loop
-      ? setTimeout(() => { t0.current = 0; setShown(0); setPhase("working"); }, 1400 / rateRef.current)
+      ? setTimeout(() => { t0.current = 0; stepped.current = -1; setShown(0); setPhase("working"); }, 1400 / rateRef.current)
       : setTimeout(() => { if (!touched.current) setOpen(false); }, 700 / rateRef.current);
     return () => clearTimeout(id);
   }, [phase, shown, play, freeze, STEPS, loop]);

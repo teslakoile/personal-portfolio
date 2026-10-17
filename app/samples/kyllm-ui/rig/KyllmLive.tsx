@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type KeyboardEvent, type PointerEvent } from "react";
 import { Kyllm } from "./Kyllm";
+import { boopSound } from "../../../_home/sound";
 import l from "./live.module.css";
 
 /*
@@ -58,7 +59,8 @@ import l from "./live.module.css";
  *          stroke across it turns the eyes happy, relaxes the body a little lower with a
  *          slow content breath, and leans it the way the stroke goes.
  * The mood keeps running underneath, so when a boop settles KYLLM is back in its mood
- * (still pondering, still sorry). Reduced motion keeps only the happy eyes.
+ * (still pondering, still sorry). Reduced motion keeps only the happy eyes. Each boop
+ * plays the site's boop sound (app/_home/sound.ts), which follows the sound switch.
  */
 
 export type Mood = "idle" | "typing" | "working" | "answered" | "sorry" | "hover";
@@ -209,6 +211,7 @@ export function KyllmLive({ mood = "idle", size = 48, poke = 0, variant = "avata
     t.joy = t.combo >= 4 ? 1.5 : calm ? 0.86 : 0.5;
     // pressed left of centre it tips right, and the other way round; a centre press alternates
     t.kick += (Math.abs(side) < 0.2 ? (t.combo % 2 ? 0.6 : -0.6) : -side) * 160;
+    boopSound(t.combo);
   };
   useEffect(() => { if (boop) pressKyllm(0); }, [boop]);
   const where = (e: PointerEvent<HTMLSpanElement>) => {
