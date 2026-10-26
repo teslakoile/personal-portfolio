@@ -1,5 +1,13 @@
+import type { Metadata } from "next";
 import type { CSSProperties, ReactNode } from "react";
 import { fontVars } from "../fonts";
+
+// robots.ts disallows /samples/ but not the bare /samples index, so the
+// playground opts out of search here too. Pages that set their own robots
+// keep theirs.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 /**
  * The samples playground now shares THE GLOBAL FONTSET (app/fonts.ts, Swiss:

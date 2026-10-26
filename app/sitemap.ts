@@ -5,7 +5,9 @@ import { getAllPosts } from "./blog/lib/posts";
 // /samples/* is the design playground, intentionally left out (robots.ts
 // disallows it too). /projects rides the projects section flag: while the
 // section is off the route 404s, so it must not be advertised here. /blog
-// 404s until a post is published, and lists published posts only.
+// 404s until a post is published, and lists published posts only. /classic
+// is the archived original landing page; it inherits the root canonical ("/"),
+// so it stays out too rather than advertise a URL that points elsewhere.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await getAllPosts({ includeDrafts: false });
   return [
@@ -41,11 +43,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           })),
         ]
       : []),
-    {
-      url: "https://kylenaranjo.cv/classic",
-      lastModified: new Date(),
-      changeFrequency: "yearly" as const,
-      priority: 0.3,
-    },
   ];
 }
