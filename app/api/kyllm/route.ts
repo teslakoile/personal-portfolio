@@ -29,6 +29,18 @@ const anthropic = () => (client ??= new Anthropic(
 const fail = (status: number, message: string, headers?: Record<string, string>) =>
   Response.json({ error: message }, { status, headers });
 
+/**
+ * False when a browser on another site sends the request. Browsers always set
+ * Origin on a cross-origin POST, so this keeps other pages from running KYLLM
+ * on this key. Scripts can forge the header; the rate limit covers those.
+ */
+function sameOrigin(request: Request): boolean {
+  const origin = request.headers.get("origin");
+  if (!origin) return true;
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  try { return new URL(origin).host === host; } catch { return false; }
+}
+
 /** The visitor's question and the conversation so far, trimmed to the limits; null if malformed. */
 function readBody(body: unknown): Turn[] | null {
   if (!body || typeof body !== "object") return null;
@@ -79,6 +91,7 @@ function readMeta(raw: string): { sources: Source[]; next: string[] } {
 export async function POST(request: Request) {
   if (!enabled()) return fail(404, "Not found");
   if (!process.env.ANTHROPIC_API_KEY) return fail(503, "KYLLM is not configured.");
+  if (!sameOrigin(request)) return fail(403, "Forbidden");
 
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "local";
   const allowed = take(ip);

@@ -1,0 +1,15 @@
+# Kyle Naranjo
+
+> Kyle Naranjo has 4+ years of experience in data, AI/ML, and software engineering for enterprises and startups in various industries. Kyle has earned 10 certifications across OpenAI, AWS, Azure, Google Cloud, and Databricks.
+
+## Pages
+
+- [Home](https://kylenaranjo.cv/): about, projects, experience, skills, education, certifications, community, and recognition
+- [Projects](https://kylenaranjo.cv/projects): AI agents, enterprise data pipelines, entity resolution, and research systems built for financial services, education, and compliance
+- [CV](https://kylenaranjo.cv/Kyle-Naranjo-CV.pdf): the full CV as a PDF
+
+## Elsewhere
+
+- [LinkedIn](https://linkedin.com/in/kyle-naranjo)
+- [GitHub](https://github.com/teslakoile)
+- [AIComprehend, IEEE](https://ieeexplore.ieee.org/document/10323847)
