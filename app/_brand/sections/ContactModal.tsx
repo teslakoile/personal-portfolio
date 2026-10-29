@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, type Transition } from "motion/react";
-import { ArrowUpRight, Check, Copy, Mail, Phone } from "lucide-react";
+import { ArrowUpRight, Check, Copy, Mail, Phone, X } from "lucide-react";
 import { sample } from "../../samples/sampleContent";
 import { trapTab } from "./AskPanel";
 import s from "./contactModal.module.css";
@@ -14,11 +14,12 @@ import s from "./contactModal.module.css";
  * without it. Esc or the backdrop closes it, and focus goes back to the button
  * that opened it. Render inside <BrandRoot> and <MotionRoot>.
  *
- * The title, then one ruled row per channel, in the business card's order:
- * email, LinkedIn, GitHub, and phone. Each row is its icon and the address as
- * the link, the handle in ink and the generic rest in ink-3. Email and phone
- * have a copy icon; LinkedIn and GitHub show an open arrow on hover. Email and
- * phone use plain glyphs in ink-3; LinkedIn and GitHub keep their own logos.
+ * The title and a close button, then one row per channel, in the business
+ * card's order: email, LinkedIn, GitHub, and phone. Each row is an icon tile,
+ * the channel's name in ink-3, and the address as the link, the handle in ink
+ * and the generic rest in ink-3. Email and phone have a copy button; LinkedIn
+ * and GitHub show an open arrow on hover. Email and phone use plain glyphs that
+ * turn coral on hover; LinkedIn and GitHub keep their own logos.
  */
 
 const TRIGGER = "[data-contact]";
@@ -86,7 +87,7 @@ export function ContactModal() {
             initial={{ opacity: 0, scale: 0.96, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 4, transition: { duration: 0.14, ease: "easeIn" } }} transition={SPRING}
             onKeyDown={trapTab}>
-            <Card />
+            <Card onClose={hide} />
           </motion.div>
         </motion.div>
       ) : null}
@@ -94,7 +95,7 @@ export function ContactModal() {
   );
 }
 
-function Card() {
+function Card({ onClose }: { onClose: () => void }) {
   const [copied, setCopied] = useState<string | null>(null);
   // focus the panel itself, so screen readers start at the title and no link
   // opens wearing a focus ring
@@ -109,15 +110,24 @@ function Card() {
 
   return (
     <div ref={panel} className={s.panel} tabIndex={-1}>
-      <h2 id="contact-title" className={s.title}>Get in Touch</h2>
+      <div className={s.head}>
+        <h2 id="contact-title" className={s.title}>Get in Touch</h2>
+        <button type="button" className={s.close} onClick={onClose} aria-label="Close">
+          <X size={16} strokeWidth={1.8} aria-hidden="true" />
+        </button>
+      </div>
       <ul className={s.rows}>
-        {CHANNELS.map((c) => (
-          <li key={c.name} className={s.row}>
+        {CHANNELS.map((c, i) => (
+          <motion.li key={c.name} className={s.row}
+            initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ ...SPRING, delay: 0.05 + i * 0.04 }}>
             <a href={c.href} aria-label={`${c.name}: ${c.text}`}
               target={c.external ? "_blank" : undefined} rel={c.external ? "noreferrer" : undefined}>
               <span className={s.icon}>{c.icon}</span>
-              <span className={s.text}>{c.parts.map(([t, muted], i) => <span key={i} data-muted={muted ? "" : undefined}>{t}</span>)}</span>
-              {c.copy ? null : <ArrowUpRight className={s.end} size={15} strokeWidth={1.8} aria-hidden="true" />}
+              <span className={s.body}>
+                <span className={s.name}>{c.name}</span>
+                <span className={s.text}>{c.parts.map(([t, muted], j) => <span key={j} data-muted={muted ? "" : undefined}>{t}</span>)}</span>
+              </span>
+              {c.copy ? null : <ArrowUpRight className={s.end} size={16} strokeWidth={1.8} aria-hidden="true" />}
             </a>
             {c.copy ? (
               <button type="button" className={s.copy} onClick={() => copy(c)} aria-label={`Copy ${c.text}`}
@@ -125,7 +135,7 @@ function Card() {
                 {copied === c.name ? <Check size={15} strokeWidth={2} aria-hidden="true" /> : <Copy size={15} strokeWidth={1.8} aria-hidden="true" />}
               </button>
             ) : null}
-          </li>
+          </motion.li>
         ))}
       </ul>
     </div>
