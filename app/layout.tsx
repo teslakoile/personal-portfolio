@@ -20,10 +20,11 @@ const geistMono = Geist_Mono({
 });
 
 // One title and description for the search result, the Open Graph card, and
-// the Twitter card, so every surface says the same thing.
+// the Twitter card, so every surface says the same thing. Kept under 160
+// characters, where Bing and Google cut descriptions off.
 const siteTitle = "Kyle Naranjo | Data, AI/ML, and Software Engineering";
 const siteDescription =
-  "Kyle Naranjo has 4+ years of experience in data, AI/ML, and software engineering for enterprises and startups in various industries. Kyle has earned 10 certifications across OpenAI, AWS, Azure, Google Cloud, and Databricks.";
+  "Kyle Naranjo has 4+ years in data, AI/ML, and software engineering. Kyle has earned 10 certifications across OpenAI, AWS, Azure, Google Cloud, and Databricks.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kylenaranjo.cv"),
