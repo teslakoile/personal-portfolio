@@ -33,13 +33,28 @@ const personJsonLd = {
     "https://linkedin.com/in/kyle-naranjo",
     "https://github.com/teslakoile",
   ],
+  // named methods and tools that appear on the page, the terms recruiters and
+  // AI search agents match on
   knowsAbout: [
     "Data Engineering",
-    "AI Infrastructure",
-    "Generative AI",
+    "Data Pipelines",
+    "Data Warehousing",
+    "Data Modeling",
+    "Record Linkage",
+    "AI Agents",
+    "Agentic AI",
+    "RAG",
+    "Document Intelligence",
     "MLOps",
-    "Backend Engineering",
-    "Cloud Infrastructure",
+    "Databricks",
+    "Snowflake",
+    "PySpark",
+    "dbt",
+    "Airflow",
+    "OpenAI API",
+    "FastAPI",
+    "Terraform",
+    "Kubernetes",
   ],
 };
 
