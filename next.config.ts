@@ -25,7 +25,8 @@ export default function config(phase: string): NextConfig {
     },
     async headers() {
       return [{ source: "/:path*", headers: securityHeaders }];
-    },    // the dev-only blog editor uploads images through a Server Action
+    },
+    // the dev-only blog editor uploads images through a Server Action
     // (app/blog/actions.ts); production keeps the 1 MB default
     ...(phase === PHASE_DEVELOPMENT_SERVER
       ? { experimental: { serverActions: { bodySizeLimit: "20mb" } } }
