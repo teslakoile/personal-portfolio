@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import b from "./brand.module.css";
 import { Legend, type BlockColor, type Cell } from "./kit";
 
@@ -64,14 +64,15 @@ export function BlockTimeline({ lanes, ticks, today, flag = false, legend, block
 }) {
   const step = blockW + gap;
   return (
-    <div className={b.timeline}>
+    // --lw: the label column's width; phones put each label above its lane and set it to 0 (brand.module.css)
+    <div className={b.timeline} style={{ "--lw": `${labelW}px` } as CSSProperties}>
       <div className={b.timelineInner}>
         <div className={b.axis} style={{ marginLeft: labelW }} aria-hidden="true">
           {ticks.map((t) => <span key={t.label} style={{ left: t.at * step }}>{t.label}</span>)}
         </div>
         <div className={flag ? `${b.lanes} ${b.lanesFlag}` : b.lanes}>
         {today && flag ? (
-          <div className={b.todayBar} style={{ left: labelW + today.at * step + blockW + 1 }} aria-hidden="true">
+          <div className={b.todayBar} style={{ left: `calc(var(--lw) + ${today.at * step + blockW + 1}px)` }} aria-hidden="true">
             <span>{today.label}</span>
           </div>
         ) : null}

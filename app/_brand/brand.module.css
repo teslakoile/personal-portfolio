@@ -194,12 +194,15 @@
 /* a chip with a note (ChipFx shows it): the dashed edge turns solid coral and
    the chip lifts 1px, the one coral accent on an interactive element */
 .chipLive { cursor: default; transition: border-color 0.14s ease, color 0.14s ease, transform 0.14s cubic-bezier(0.33, 1, 0.68, 1), box-shadow 0.14s ease; }
-.chipLive:hover,
 .chipLive:focus-visible,
 .chipLive[data-open] { border-style: solid; border-color: var(--coral); color: var(--ink); transform: translateY(-1px); box-shadow: 0 2px 0 -1px rgb(245 72 45 / 0.28); }
 .chipLive:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
-.chipLive:hover .chipLogo,
 .chipLive:focus-visible .chipLogo { transform: scale(1.12); }
+/* hover only where there is a pointer: iOS keeps :hover on a chip a scroll started on */
+@media (hover: hover) {
+  .chipLive:hover { border-style: solid; border-color: var(--coral); color: var(--ink); transform: translateY(-1px); box-shadow: 0 2px 0 -1px rgb(245 72 45 / 0.28); }
+  .chipLive:hover .chipLogo { transform: scale(1.12); }
+}
 .chipLogo { transition: transform 0.16s cubic-bezier(0.33, 1, 0.68, 1); }
 @media (prefers-reduced-motion: reduce) {
   .chipLive, .chipLogo { transition: none; }
@@ -375,11 +378,21 @@
   .root { --gutter: 20px; }
   /* timelines: each label sits above its lane, so the blocks get the width */
   .axis, .legendWrap { margin-left: 0 !important; }
+  .timeline { --lw: 0px !important; }
   .lane { display: block !important; height: auto; padding: 4px 0 6px; }
   .laneLabel { padding: 0 0 5px; }
+  /* the timeline scroll box opens at the present (ScrollToEnd); each label
+     stays pinned to the box's left edge */
+  .lane .laneLabel { position: sticky; left: 0; width: fit-content; max-width: calc(100vw - 2 * var(--gutter)); }
   .head { flex-direction: column; align-items: flex-start; padding-top: 36px; }
   .cells { grid-template-columns: 1fr !important; }
   .cells > * { border-bottom: 1px solid var(--line); }
   .cells > *:last-child { border-bottom: 0; }
   .bandIn { padding-block: 56px 60px; }
+}
+
+/* a phone on its side: under 500px of height the headline steps down to two
+   lines so the hero's buttons are not all below the fold */
+@media (pointer: coarse) and (max-height: 500px) {
+  .h1 { font-size: 30px; }
 }

@@ -26,7 +26,7 @@
 .prjBackArrow { color: var(--faint); transition: color 0.18s ease, transform 0.18s ease; }
 .prjBack:hover .prjBackArrow { color: var(--accent); transform: translateX(-3px); }
 .prjCount {
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: 0.75rem;
   color: var(--faint);
   font-variant-numeric: tabular-nums;
@@ -73,14 +73,14 @@
 .prjRail { position: sticky; top: 82px; display: grid; gap: 20px; }
 .prjMetaCluster { display: grid; gap: 12px; }
 .prjIdx {
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: 0.8125rem;
   color: var(--faint);
   font-variant-numeric: tabular-nums;
 }
 .prjItem:target .prjIdx { color: var(--accent); } /* arrival cue for /projects#slug */
 .prjMeta {
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: 0.75rem;
   line-height: 1.8;
   color: var(--muted);
@@ -90,11 +90,11 @@
 .prjClient { font-size: 0.8125rem; line-height: 1.5; color: var(--faint); margin: 0; max-width: 22ch; }
 .prjStack { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; }
 .prjChip {
-  font-family: var(--mono);
-  font-size: 0.6875rem;
+  font-family: var(--sans);
+  font-size: 0.75rem;
   font-weight: 500;
-  letter-spacing: 0.02em;
   color: var(--muted);
+  font-variant-numeric: tabular-nums;
   padding: 3px 9px;
   border-radius: 999px;
   box-shadow: inset 0 0 0 1px var(--border);
@@ -123,7 +123,7 @@
 }
 .prjMetric { display: grid; gap: 5px; align-content: start; margin: 0; }
 .prjFig {
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-weight: 500;
   font-size: clamp(1.15rem, 1.8vw, 1.45rem);
   letter-spacing: -0.01em;

@@ -27,7 +27,8 @@ export const metadata: Metadata = {
 /**
  * /projects, the Blueprint Dossier. One monumental column: a full-width
  * drafting-grid plate per project (inline schematic from figures.tsx), then a
- * sticky spec rail beside long-form prose, exact metrics in mono, and links.
+ * sticky spec rail beside long-form prose, exact metrics in Geist with
+ * tabular numerals, and links.
  * Landing sheets deep-link here via /projects#<slug>.
  */
 export default function ProjectsPage() {

@@ -1,0 +1,377 @@
+<title>iPhone Audit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; summary strip, filter row, then one finding per block with its screenshots beside it */
+:root {
+  --paper: #faf9f7; --surface: #ffffff; --sunk: #f1efeb; --line: #e6e2dc;
+  --ink: #1c1917; --ink-2: #57534e; --ink-3: #8a847d; --coral: #f5482d;
+  --p0: #c2321c; --p0-bg: #fde9e5; --p1: #a8590b; --p1-bg: #fbeedb;
+  --p2: #4d6a8a; --p2-bg: #e7eef6; --p3: #6b6660; --p3-bg: #efece8;
+  --ok: #2f7d55;
+  --sans: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #161412; --surface: #1f1c1a; --sunk: #2a2623; --line: #36312d;
+  --ink: #f2efea; --ink-2: #c3bdb5; --ink-3: #8f8880; --coral: #ff6a50;
+  --p0: #ff8a75; --p0-bg: #3a1c16; --p1: #f0ad5e; --p1-bg: #36260f; --p2: #9dbbe0; --p2-bg: #1d2836;
+  --p3: #b9b2aa; --p3-bg: #2a2623; --ok: #6cc595; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --paper: #161412; --surface: #1f1c1a; --sunk: #2a2623; --line: #36312d;
+  --ink: #f2efea; --ink-2: #c3bdb5; --ink-3: #8f8880; --coral: #ff6a50;
+  --p0: #ff8a75; --p0-bg: #3a1c16; --p1: #f0ad5e; --p1-bg: #36260f; --p2: #9dbbe0; --p2-bg: #1d2836;
+  --p3: #b9b2aa; --p3-bg: #2a2623; --ok: #6cc595; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.55;
+  font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 40px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 600; letter-spacing: -0.03em; margin: 0 0 8px; text-wrap: balance; }
+h2 { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+.lede { color: var(--ink-2); max-width: 68ch; }
+.meta { color: var(--ink-3); font-size: 13.5px; margin-top: 10px; }
+code { font-family: var(--mono); font-size: 0.86em; background: var(--sunk); padding: 1px 5px; border-radius: 5px; overflow-wrap: anywhere; }
+
+/* summary */
+.summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line);
+  border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin: 28px 0 18px; }
+.sumcell { background: var(--surface); padding: 14px 16px; display: grid; gap: 2px; }
+.sumcell b { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
+.sumcell span { font-size: 13px; color: var(--ink-2); }
+.sumcell[data-sev="P0"] b { color: var(--p0); } .sumcell[data-sev="P1"] b { color: var(--p1); }
+.sumcell[data-sev="P2"] b { color: var(--p2); } .sumcell[data-sev="P3"] b { color: var(--p3); }
+
+/* toolbar */
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.filters, .actions { display: flex; flex-wrap: wrap; gap: 6px; }
+button { font: inherit; cursor: pointer; }
+.chip { border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 6px 13px; font-size: 13.5px; min-height: 34px; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.btn { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 10px; padding: 7px 14px; font-size: 13.5px; font-weight: 500; min-height: 36px; }
+.btn.primary { background: var(--coral); border-color: var(--coral); color: #fff; }
+.chip:focus-visible, .btn:focus-visible, .seg button:focus-visible, .thumb:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.progress { font-size: 13.5px; color: var(--ink-3); }
+
+/* findings */
+.list { display: grid; gap: 14px; }
+.finding { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; }
+.finding[hidden] { display: none; }
+.head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
+.num { font-family: var(--mono); font-size: 12.5px; color: var(--ink-3); }
+.sev { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; }
+.sev[data-sev="P0"] { color: var(--p0); background: var(--p0-bg); } .sev[data-sev="P1"] { color: var(--p1); background: var(--p1-bg); }
+.sev[data-sev="P2"] { color: var(--p2); background: var(--p2-bg); } .sev[data-sev="P3"] { color: var(--p3); background: var(--p3-bg); }
+.area { font-size: 12.5px; color: var(--ink-3); }
+.body { min-width: 0; display: grid; gap: 12px; align-content: start; }
+.what { color: var(--ink); }
+.fix { display: grid; gap: 4px; padding: 12px 14px; background: var(--sunk); border-radius: 10px; font-size: 14px; color: var(--ink-2); }
+.fix b { color: var(--ink); font-weight: 600; font-size: 13px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; width: fit-content; }
+.seg button { border: 0; background: var(--surface); color: var(--ink-2); padding: 7px 14px; font-size: 13.5px; min-height: 36px; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"][data-v="fix"] { background: var(--coral); color: #fff; }
+.seg button[aria-pressed="true"][data-v="later"] { background: var(--ink); color: var(--paper); }
+.seg button[aria-pressed="true"][data-v="skip"] { background: var(--sunk); color: var(--ink); text-decoration: line-through; }
+.shots { display: grid; gap: 12px; align-content: start; }
+.shotGroup { display: grid; gap: 6px; }
+.shotRow { display: flex; gap: 8px; align-items: flex-start; }
+.shotLabel { font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.shotLabel.after { color: var(--ok); }
+.fix.changed { background: color-mix(in srgb, var(--ok) 10%, var(--surface)); }
+.fix.changed b { color: var(--ok); }
+.thumb { padding: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--sunk); width: 128px; display: block; }
+.thumb img { display: block; width: 100%; height: auto; }
+.thumb.wide { width: 220px; }
+
+/* passed + not tested */
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 40px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 10px; align-content: start; }
+.panel ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; color: var(--ink-2); font-size: 14px; }
+.panel h2 { font-size: 16px; }
+.regress { margin-top: 40px; }
+.regress ul b { color: var(--ink); font-weight: 600; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; vertical-align: 1px; }
+
+/* lightbox */
+dialog { border: 0; padding: 0; background: transparent; max-width: 96vw; max-height: 94vh; }
+dialog::backdrop { background: rgb(0 0 0 / 0.72); }
+dialog img { display: block; max-width: 96vw; max-height: 88vh; width: auto; height: auto; border-radius: 14px; }
+dialog p { color: #fff; font-size: 13.5px; text-align: center; margin-top: 10px; }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  background: var(--ink); color: var(--paper); padding: 9px 16px; border-radius: 10px; font-size: 13.5px; }
+textarea.out { width: 100%; min-height: 120px; font-family: var(--mono); font-size: 12.5px; border: 1px solid var(--line); border-radius: 10px; padding: 10px; background: var(--surface); color: var(--ink); }
+
+@media (max-width: 760px) {
+  .finding { grid-template-columns: minmax(0, 1fr); }
+  .shotRow { overflow-x: auto; padding-bottom: 4px; }
+  .thumb { width: 112px; flex: none; } .thumb.wide { width: 200px; }
+  .cols { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 480px) { .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: no-preference) { .chip, .btn, .seg button { transition: background .15s, color .15s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>iPhone Audit of kylenaranjo.cv</h1>
+    <p class="lede">The landing page and <code>/projects</code>, tested in Safari in the Xcode iOS Simulator with the keyboard, rotation, dark mode, sheets, and the photo viewer. Each finding now shows the iPhone before and after its fix. Mark each fix Ship, Revise, or Drop, then copy your decisions back into the chat.</p>
+    <p class="meta">14 Nov 2026 · iPhone 17 Pro · iOS 26.5 · 402 × 874 pt · local <code>next dev</code> build, KYLLM answers checked on the live site. The round “N” button in local shots is the Next.js dev badge.</p>
+  </header>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="toolbar">
+    <div class="filters" role="group" aria-label="Filter by severity" id="filters"></div>
+    <div class="actions">
+      <span class="progress" id="progress"></span>
+      <button class="btn primary" id="copy" type="button">Copy Decisions</button>
+    </div>
+  </div>
+  <textarea class="out" id="out" readonly hidden aria-label="Decisions text"></textarea>
+
+  <div class="list" id="list"></div>
+
+  <section class="panel regress">
+    <h2><span class="dot" style="background: var(--ok)"></span>Desktop Regression Check</h2>
+    <p class="lede">Every fix sits behind a phone or touch condition: <code>max-width: 760px</code> or narrower, <code>hover: none</code>, <code>pointer: coarse</code>, or a matching <code>matchMedia</code> check in script. Screenshots before and after were compared pixel by pixel.</p>
+    <ul>
+      <li><b>Static pages:</b> 40 full-page tiles of <code>/</code> and <code>/projects</code> at 1440 × 900 and 768 × 1024. No tile changed beyond the 10px dev-badge and pill-animation corners, which also differ between two runs of the unchanged site.</li>
+      <li><b>Interactions:</b> 12 states at 1440, 1280, and 768 wide (contact modal open, row and copy hover, Copied, closed, hero bar hover, KYLLM open and typed, About, chip hover, Experience, footer), compared against an untouched copy of <code>main</code>. The only differences are the drawn cursor and a tooltip fade landing on different frames, which flip between runs.</li>
+      <li><b>Caught and fixed during the check:</b> the timeline scroll-to-end first ran on every width, shifting desktop by 3px and hiding tablet labels; it now runs under 720px only. The About stacking first fired on tablet’s 472px column; its breakpoint is now 440px.</li>
+      <li><b>Build:</b> <code>tsc --noEmit</code> clean, <code>npm run lint</code> 0 errors (21 existing image warnings), <code>npm run build</code> passes.</li>
+    </ul>
+  </section>
+
+  <div class="cols">
+    <section class="panel">
+      <h2><span class="dot" style="background: var(--ok)"></span>Checks That Passed</h2>
+      <ul>
+        <li>The contact sheet keeps the page behind it from scrolling.</li>
+        <li>Copy buttons work: the simulator clipboard held the email, then the phone number.</li>
+        <li>Footer photos reveal on tap and open full screen.</li>
+        <li>KYLLM answers stream with a stop button, then show sources and follow-up questions.</li>
+        <li>The <code>/projects</code> top bar stays pinned while scrolling.</li>
+        <li>Rotating to landscape causes no sideways scrolling.</li>
+      </ul>
+    </section>
+    <section class="panel">
+      <h2><span class="dot" style="background: var(--ink-3)"></span>Not Tested</h2>
+      <ul>
+        <li>Camera, microphone, file upload: the site uses none of them.</li>
+        <li>The Phone row (<code>tel:</code>): the simulator has no Phone app.</li>
+        <li>iOS Text Size and Safari page zoom.</li>
+        <li>iPhone 17e and a physical device.</li>
+      </ul>
+    </section>
+    <section class="panel">
+      <h2><span class="dot" style="background: var(--p2)"></span>Outside iPhone Scope</h2>
+      <ul>
+        <li><code>/projects</code> sets dates, metrics, and chips in Geist Mono; AGENTS.md keeps Mono for code identifiers.</li>
+        <li>The KYLLM field says “Ask KYLLM about my work…” above an empty state that says “Ask me about Kyle’s work”.</li>
+        <li>The contact sheet pads with <code>env(safe-area-inset-bottom)</code>, which is always 0 without <code>viewportFit: "cover"</code>.</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<dialog id="lightbox" aria-label="Screenshot"><img id="lbImg" alt=""><p id="lbCap"></p></dialog>
+
+<script>
+const F = [
+  { sev: "P0", area: "KYLLM chat", title: "The page zooms when you tap the KYLLM field, and stays zoomed",
+    what: "Focusing the field zooms the whole page. After the keyboard closes the zoom remains: the sheet header and close button sit off-screen, and answers, the question bubble, and the send button are cut off on the right. Reproduced on kylenaranjo.cv.",
+    fix: "iOS zooms on any text field under 16px. <code>.input</code> is 15px at <code>kyllm-hero/hero.module.css:130</code>. Set it to 16px on phones.",
+    shots: [["03-kyllm-focus-zoom.jpg", "Zoom on focus"], ["04-kyllm-stuck-zoomed-after-blur.jpg", "Still zoomed after the keyboard closes"], ["23-prod-answer.jpg", "Live site: answer cut off on the right"]],
+    after: [["01-typing-no-zoom.jpg", "Typing: no zoom, header and send button in place"]],
+    changed: "The chat field is 16px under 760px. Desktop keeps 15px." },
+  { sev: "P0", area: "KYLLM chat", title: "The keyboard covers the KYLLM text field",
+    what: "Tapping the hero question bar opens the sheet and raises the keyboard over the text field. You cannot see what you type, and the keyboard hides most of the answer.",
+    fix: "On phones the sheet is <code>position: fixed; height: 100%</code> (<code>hero.module.css:155-158</code>) and nothing reads <code>window.visualViewport</code>. Size the sheet to <code>visualViewport.height</code> on resize. Skip the auto-focus at <code>HeroKyllm.tsx:238-240</code> on touch after a question is sent.",
+    shots: [["02-kyllm-keyboard-composer-hidden.jpg", "Keyboard over the text field"]],
+    after: [["02b-keyboard-composer-visible.jpg", "Keyboard up: the field stays above it"], ["02a-question-no-keyboard.jpg", "Asked from the hero: no keyboard, answer visible"]],
+    changed: "On phones the sheet pads itself to <code>visualViewport</code>, so the chat ends at the top of the keyboard. A question asked from the hero bar no longer focuses the field on touch screens. The page shows through the translucent iOS 26 keyboard below the sheet, as it does on other sites." },
+  { sev: "P1", area: "Footer", title: "The Ask KYLLM button covers the footer links",
+    what: "At the end of the page the floating Ask KYLLM button sits on the LinkedIn, GitHub, and CV links and the copyright line, so those links cannot be tapped.",
+    fix: "The button is fixed at <code>bottom: 20px</code> (<code>hero.module.css:72-85</code>). Pad the footer on phones by the button height plus its gap, or hide the button once the footer is in view.",
+    shots: [["13-dock-covers-footer-links.jpg", "Footer links under the button"]],
+    after: [["03-footer-links-clear.jpg", "Footer links clear of the button"]],
+    changed: "The footer’s bottom row gets 86px of bottom padding under 760px." },
+  { sev: "P1", area: "Experience", title: "The timeline makes the current job look two months long",
+    what: "The timeline shows 2022 to 2024. Data Engineer II (Aug 2024 to present) shows as two blocks at the cut-off right edge. The rest needs a sideways swipe that nothing hints at.",
+    fix: "<code>.timeline</code> is <code>overflow-x: auto</code> (<code>_brand/brand.module.css:293</code>). On phones, start it scrolled to the right end or shrink the blocks so every year fits, and add an edge fade.",
+    shots: [["10b-experience-anchor.jpg", "Current role as two blocks at the edge"]],
+    after: [["04-timeline-opens-at-present.jpg", "Opens on the current role, labels pinned"]],
+    changed: "Under 720px the timeline opens scrolled to the present and lane labels stay pinned at the left. Fixing this exposed a second phone bug: the Present line sat 320px too far right, because it kept the desktop label column offset. It now follows <code>--lw</code>, which phones set to 0. Older roles are a swipe left." },
+  { sev: "P1", area: "Hero", title: "Download CV takes visitors off the site",
+    what: "The button replaces the portfolio with Safari’s PDF viewer in the same tab. Visitors must tap Back to return.",
+    fix: "Safari opened the PDF inline despite the <code>download</code> attribute (<code>_brand/kit.tsx:82</code>). Open it with <code>target=\"_blank\"</code>, or call it View CV on touch.",
+    shots: [["17-download-cv.jpg", "PDF replaces the page"]],
+    after: [["05-cv-new-tab.jpg", "The CV in its own tab, the portfolio tab still open"]],
+    changed: "The Download CV button also gets <code>target=\"_blank\"</code>. Desktop browsers still download the file." },
+  { sev: "P2", area: "KYLLM, hero", title: "⌘K hints show on a phone",
+    what: "The hero question bar, the Ask KYLLM button, and the chat field all show a ⌘K keyboard hint. Phones have no ⌘ key.",
+    fix: "Hide the hint under <code>@media (hover: none)</code> at <code>HeroKyllm.tsx:314</code>, <code>:367</code>, and <code>KyllmPromo.tsx:50</code>.",
+    shots: [["01-hero.jpg", "⌘K on the hero bar and button"], ["21-prod-dock-open.jpg", "⌘K in the chat field"]],
+    after: [["06-hero-no-kbd.jpg", "No ⌘K hints"]],
+    changed: "<code>.kbd</code> is hidden under <code>@media (hover: none)</code>." },
+  { sev: "P2", area: "Dark mode", title: "A black band appears behind the clock in dark mode",
+    what: "With the phone in dark mode the page stays light, but the status bar area and the bounce area above and below the page turn black.",
+    fix: "<code>app/globals.css:15-20</code> sets <code>body</code> to <code>#0a0a0a</code> in dark mode. Paint <code>html</code> and <code>body</code> paper in both schemes, or set <code>color-scheme: light</code>.",
+    shots: [["11-dark-mode.jpg", "Black band above a light page"]],
+    after: [["07-dark-mode.jpg", "Dark mode: paper behind the clock"]],
+    changed: "<code>html</code> is painted paper, so the canvas behind the page matches in both schemes." },
+  { sev: "P2", area: "Contact sheet, chips", title: "Hover styles stick after a tap",
+    what: "After you copy the email, a “Copy” tooltip stays on screen and sits over the sheet’s close button. Rows keep their hover fill after a scroll; tech chips and calendar cells keep an outline.",
+    fix: "iOS keeps <code>:hover</code> on the last tapped element. Wrap hover rules in <code>@media (hover: hover)</code>, starting with <code>.copy:hover::after</code> in <code>contactModal.module.css</code>.",
+    shots: [["06-contact-sticky-copy-tooltip.jpg", "Copy tooltip over the close button"], ["10-experience-timeline-clipped.jpg", "Outline left on the Vertex AI chip"]],
+    after: [["08-copy-tooltip-clears.jpg", "“Copied”, then the tooltip clears"]],
+    changed: "Hover styles on the contact sheet, the hero question bar, the Ask KYLLM button, and tech chips apply only on hover-capable devices." },
+  { sev: "P2", area: "About", title: "The three fact columns are cramped",
+    what: "Currently, Industries, and Speaking On sit three across at phone width, so most lines hold one or two words.",
+    fix: "Stack them into one column under about 480px.",
+    shots: [["09-about-three-columns-cramped.jpg", "One or two words per line"]],
+    after: [["09-about-stacked.jpg", "One fact per row"]],
+    changed: "The facts stack when the content column is 440px or narrower. Phones (402px column) stack; tablet (472px) keeps three across." },
+  { sev: "P2", area: "Tap targets", title: "Several buttons are smaller than 44 pt",
+    what: "KYLLM close (28px), KYLLM New Chat (28px tall), contact close and copy (32px), and KYLLM suggestion pills (30px) are under Apple’s 44 pt minimum.",
+    fix: "Keep the drawn size and widen the hit area with padding or a <code>::after</code> inset, as <code>.expand::after</code> in <code>footer.module.css:34</code> does.",
+    shots: [["05-contact-sheet.jpg", "Contact close and copy buttons"]],
+    after: [["10-hit-areas.jpg", "Dashed: the new touch hit areas (headless phone render)", true]],
+    changed: "Invisible <code>::after</code>/<code>::before</code> hit areas on touch screens. Drawn sizes are unchanged." },
+  { sev: "P2", area: "Photo viewer", title: "The full-screen photo blocks pinch-to-zoom and has no close button",
+    what: "Pinching does nothing, and nothing on screen says that a tap anywhere closes the photo.",
+    fix: "<code>FooterPhotoView.tsx:82-89</code> cancels every <code>touchmove</code>. Cancel only one-finger moves, and add a close button.",
+    shots: [["15-photo-viewer.jpg", "Photo viewer"], ["16-photo-viewer-pinch.jpg", "After a pinch: unchanged"]],
+    after: [["11-viewer-pinch-and-close.jpg", "Mid-pinch, then released; close button top right", true]],
+    changed: "A two-finger pinch scales the photo up to 3× and springs back on release. Touch screens get a close button. The tap iOS sends after a pinch no longer closes the view." },
+  { sev: "P3", area: "Reading", title: "The Ask KYLLM button covers text while you scroll",
+    what: "The floating button sits over body text and chips in every section.",
+    fix: "Hide it while scrolling down and show it on scroll up, or shrink it to the avatar after the hero.",
+    shots: [["08-content-under-status-bar.jpg", "Button over a highlight card"]],
+    after: [["12-pill-tucked-while-reading.jpg", "Scrolling down: the button steps aside"]],
+    changed: "Under 760px the button hides while the page scrolls down and returns on scroll up." },
+  { sev: "P3", area: "Contact sheet", title: "The bottom sheet does not close on a swipe down",
+    what: "There is no grab handle, and swiping the sheet down does nothing. iOS sheets close this way.",
+    fix: "Add a handle and drag-to-dismiss with Motion <code>drag=\"y\"</code>.",
+    shots: [["05-contact-sheet.jpg", "Contact sheet"]],
+    after: [["08-copy-tooltip-clears.jpg", "Grab handle at the top of the sheet"]],
+    changed: "A grab handle shows under 480px. Dragging the sheet down past 90px, or flicking it, closes it." },
+  { sev: "P3", area: "Contact sheet", title: "A focus ring appears after closing the sheet",
+    what: "After you close the sheet with a tap, the hero Get in Touch button shows a coral focus ring.",
+    fix: "Return focus with <code>focus({ focusVisible: false })</code>, or only when the sheet was opened from the keyboard.",
+    shots: [["07-focus-ring-after-close.jpg", "Ring on Get in Touch"]],
+    after: [["14-closed-no-focus-ring.jpg", "Closed by dragging: no ring on Get in Touch"]],
+    changed: "After a touch, focus returns with <code>focusVisible: false</code>. Keyboard users still get the ring." },
+  { sev: "P3", area: "Page chrome", title: "Content scrolls under the clock with no backing",
+    what: "Page content passes under the clock and Dynamic Island. On the coloured highlight cards the dark clock sits on white text.",
+    fix: "iOS 26 Safari draws pages edge to edge. A sticky header on phones would back the status bar; it is <code>position: static</code> under 760px (<code>redesign.module.css:9-15</code>).",
+    shots: [["08-content-under-status-bar.jpg", "Text under the clock"]],
+    after: [["15-sticky-header.jpg", "Header stays at the top and backs the status bar"]],
+    changed: "The phone header bar is sticky with a paper background." },
+  { sev: "P3", area: "Landscape", title: "In landscape the headline fills the screen",
+    what: "The header, buttons, and question bar are all below the fold. There is no sideways scrolling.",
+    fix: "Shrink the headline when the viewport is short, for example <code>@media (max-height: 500px)</code>.",
+    shots: [["12-landscape.jpg", "Landscape", true]],
+    after: [["16-landscape.jpg", "Landscape: smaller headline, subhead visible", true]],
+    changed: "The headline is 36px on touch screens under 500px tall. The subhead now shows; the buttons are still one scroll down because Safari’s landscape tab bar takes the top third." },
+  { sev: "P3", area: "KYLLM chat", title: "A suggestion tap was lost once with the keyboard up",
+    what: "With the chat field focused, the first tap on a suggestion only closed the keyboard; a second tap sent it. Seen once, not reproduced.",
+    fix: "The layout likely moves as the keyboard bar hides. Recheck after the keyboard fix.",
+    shots: [],
+    after: [],
+    changed: "Not seen again in any test after fixes 1 and 2. Nothing changed for this one." },
+];
+
+const KEY = "iphone-audit-fix-decisions";
+let decisions = {};
+try { decisions = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { decisions = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(decisions)); } catch (e) {} };
+
+const SEVS = ["P0", "P1", "P2", "P3"];
+const LABEL = { P0: "Blocks a task", P1: "Hides content", P2: "Visible defect", P3: "Polish" };
+document.getElementById("summary").innerHTML = SEVS.map(s =>
+  `<div class="sumcell" data-sev="${s}"><b>${F.filter(f => f.sev === s).length}</b><span>${s} · ${LABEL[s]}</span></div>`).join("");
+
+let filter = "All";
+const filters = document.getElementById("filters");
+["All", ...SEVS].forEach(s => {
+  const b = document.createElement("button");
+  b.className = "chip"; b.type = "button"; b.textContent = s; b.id = "filter-" + s;
+  b.setAttribute("aria-pressed", s === filter ? "true" : "false");
+  b.onclick = () => { filter = s; [...filters.children].forEach(c => c.setAttribute("aria-pressed", c.textContent === s ? "true" : "false")); applyFilter(); };
+  filters.appendChild(b);
+});
+
+const list = document.getElementById("list");
+F.forEach((f, i) => {
+  const n = i + 1;
+  const el = document.createElement("article");
+  el.className = "finding"; el.dataset.sev = f.sev; el.id = "finding-" + n;
+  const thumbs = (list, dir) => list.map(([src, cap, wide]) =>
+    `<button class="thumb${wide ? " wide" : ""}" type="button" data-src="${dir}/${src}" data-cap="${cap}" aria-label="Open screenshot: ${cap}"><img src="${dir}/${src}" alt="${cap}" loading="lazy"></button>`).join("");
+  const before = thumbs(f.shots, "shots"), after = thumbs(f.after, "after");
+  const shots = (before ? `<div class="shotGroup"><span class="shotLabel">Before</span><div class="shotRow">${before}</div></div>` : "")
+    + (after ? `<div class="shotGroup"><span class="shotLabel after">After</span><div class="shotRow">${after}</div></div>` : "");
+  el.innerHTML = `
+    <div class="body">
+      <div>
+        <div class="head"><span class="num">#${n}</span><span class="sev" data-sev="${f.sev}">${f.sev}</span><span class="area">${f.area}</span></div>
+        <h3>${f.title}</h3>
+      </div>
+      <p class="what">${f.what}</p>
+      <div class="fix"><b>Cause</b><span>${f.fix}</span></div>
+      <div class="fix changed"><b>What changed</b><span>${f.changed}</span></div>
+      <div class="seg" role="group" aria-label="Decision for finding ${n}">
+        ${["fix", "later", "skip"].map(v => `<button type="button" id="d-${n}-${v}" data-n="${n}" data-v="${v}" aria-pressed="${decisions[n] === v}">${v === "fix" ? "Ship" : v === "later" ? "Revise" : "Drop"}</button>`).join("")}
+      </div>
+    </div>
+    ${shots ? `<div class="shots">${shots}</div>` : ""}`;
+  list.appendChild(el);
+});
+
+list.addEventListener("click", e => {
+  const d = e.target.closest(".seg button");
+  if (d) {
+    const n = d.dataset.n, v = d.dataset.v;
+    decisions[n] = decisions[n] === v ? undefined : v;
+    if (!decisions[n]) delete decisions[n];
+    save();
+    d.parentElement.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", decisions[n] === b.dataset.v ? "true" : "false"));
+    progress();
+    return;
+  }
+  const t = e.target.closest(".thumb");
+  if (t) {
+    document.getElementById("lbImg").src = t.dataset.src;
+    document.getElementById("lbImg").alt = t.dataset.cap;
+    document.getElementById("lbCap").textContent = t.dataset.cap;
+    document.getElementById("lightbox").showModal();
+  }
+});
+const lb = document.getElementById("lightbox");
+lb.addEventListener("click", () => lb.close());
+
+function applyFilter() { list.querySelectorAll(".finding").forEach(el => { el.hidden = filter !== "All" && el.dataset.sev !== filter; }); }
+function progress() { document.getElementById("progress").textContent = `${Object.keys(decisions).length} of ${F.length} decided`; }
+progress();
+
+function toast(msg) {
+  const t = document.createElement("div"); t.className = "toast"; t.textContent = msg; document.body.appendChild(t);
+  setTimeout(() => t.remove(), 1800);
+}
+document.getElementById("copy").addEventListener("click", async () => {
+  const groups = { ship: [], revise: [], drop: [], undecided: [] };
+  F.forEach((f, i) => { const n = i + 1; (groups[{ fix: "ship", later: "revise", skip: "drop" }[decisions[n]]] || groups.undecided).push(`#${n} ${f.sev} ${f.title}`); });
+  const text = ["iPhone audit fixes: decisions", ...Object.entries(groups).filter(([, v]) => v.length)
+    .map(([k, v]) => `\n${k[0].toUpperCase() + k.slice(1)}:\n` + v.map(x => "- " + x).join("\n"))].join("\n");
+  const out = document.getElementById("out");
+  try { await navigator.clipboard.writeText(text); out.hidden = true; toast("Copied. Paste it into the chat."); }
+  catch (e) { out.value = text; out.hidden = false; out.focus(); out.select(); toast("Select the text below and copy it."); }
+});
+</script>

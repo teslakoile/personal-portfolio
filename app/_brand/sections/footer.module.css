@@ -43,6 +43,17 @@
 .viewPhoto { position: relative; width: min(640px, calc(100vw - 32px), calc((100dvh - 32px) * var(--a, 1))); aspect-ratio: var(--a, 1); }
 .viewTile { position: absolute; }
 .viewImg { position: absolute; display: block; max-width: none; }
+/* touch: a visible way out (a tap anywhere also closes), and a pinch that
+   zooms the photo and springs back on release (FooterPhotoView.tsx) */
+.viewClose { display: none; }
+@media (hover: none) {
+  .viewClose {
+    position: absolute; z-index: 1; top: calc(12px + env(safe-area-inset-top, 0px)); right: calc(12px + env(safe-area-inset-right, 0px));
+    display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%;
+    /* literal colours: the view is portalled to <body>, outside BrandRoot's tokens */
+    background: #fff; box-shadow: 0 1px 3px rgb(28 25 23 / 0.12), 0 8px 20px -8px rgb(28 25 23 / 0.3); color: #1c1917; cursor: pointer;
+  }
+}
 
 .card { grid-column: 3 / span 4; grid-row: 2; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; background: var(--paper); text-align: center; }
 .cardLine { margin: 0; font-size: 15px; color: var(--ink-2); }
@@ -71,6 +82,8 @@
 .drift { max-width: 100%; }
 
 @media (max-width: 760px) {
+  /* room under the last row for the Ask KYLLM pill (46px at 20px from the bottom), so it never covers these links */
+  .quiet { padding-bottom: 86px; }
   .card { display: none; }
   .mCard { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 36px var(--gutter) 28px; }
   .mCard .cardMail { font-size: 24px; }

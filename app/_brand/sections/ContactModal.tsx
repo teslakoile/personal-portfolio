@@ -45,15 +45,22 @@ const CHANNELS: Channel[] = [
 ];
 /* eslint-enable @next/next/no-img-element */
 
+/** the width where the modal becomes a bottom sheet (contactModal.module.css) */
+const SHEET = "(max-width: 480px)";
+
 export function ContactModal() {
   const [open, setOpen] = useState(false);
+  const [sheet, setSheet] = useState(false);
   const opener = useRef<HTMLElement | null>(null);
+  /** the opener was tapped on a touch screen: focus goes back without a ring */
+  const touched = useRef(false);
 
   const hide = useCallback(() => {
     setOpen(false);
     const el = opener.current;
     opener.current = null;
-    if (el) requestAnimationFrame(() => el.focus({ preventScroll: true }));
+    // focusVisible: false keeps iOS Safari from drawing a focus ring on the button after a tap
+    if (el) requestAnimationFrame(() => el.focus({ preventScroll: true, focusVisible: !touched.current } as FocusOptions));
   }, []);
 
   useEffect(() => {
@@ -62,10 +69,13 @@ export function ContactModal() {
       if (!el) return;
       e.preventDefault();
       opener.current = el instanceof HTMLElement ? el : null;
+      setSheet(window.matchMedia(SHEET).matches);
       setOpen(true);
     };
+    const onPointer = (e: PointerEvent) => { touched.current = e.pointerType === "touch"; };
     document.addEventListener("click", onClick);
-    return () => document.removeEventListener("click", onClick);
+    document.addEventListener("pointerdown", onPointer, true);
+    return () => { document.removeEventListener("click", onClick); document.removeEventListener("pointerdown", onPointer, true); };
   }, []);
 
   useEffect(() => {
@@ -86,7 +96,10 @@ export function ContactModal() {
           <motion.div className={s.shell} role="dialog" aria-modal="true" aria-labelledby="contact-title"
             initial={{ opacity: 0, scale: 0.96, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 4, transition: { duration: 0.14, ease: "easeIn" } }} transition={SPRING}
-            onKeyDown={trapTab}>
+            onKeyDown={trapTab}
+            // the phone bottom sheet drags down to close, like an iOS sheet
+            drag={sheet ? "y" : false} dragConstraints={{ top: 0, bottom: 0 }} dragElastic={{ top: 0, bottom: 0.7 }}
+            onDragEnd={(_, info) => { if (info.offset.y > 90 || info.velocity.y > 600) hide(); }}>
             <Card onClose={hide} />
           </motion.div>
         </motion.div>
@@ -110,6 +123,7 @@ function Card({ onClose }: { onClose: () => void }) {
 
   return (
     <div ref={panel} className={s.panel} tabIndex={-1}>
+      <div className={s.grip} aria-hidden="true" />
       <div className={s.head}>
         <h2 id="contact-title" className={s.title}>Get in Touch</h2>
         <button type="button" className={s.close} onClick={onClose} aria-label="Close">
