@@ -1,5 +1,6 @@
 import type { YM } from "../timeline";
 import { BlockTimeline, monthCells, monthIndex } from "../timeline";
+import { ScrollToEnd } from "../ScrollToEnd";
 import s from "./sections.module.css";
 import { FROM, type RoleView } from "./experienceData";
 
@@ -19,7 +20,7 @@ export function ExperienceTimeline({ roles, today }: { roles: RoleView[]; today:
   const ticks = Array.from({ length: today[0] - FROM[0] + 1 }, (_, i) => FROM[0] + i)
     .map((y) => ({ at: monthIndex([y, 1]) - monthIndex(FROM), label: String(y) }));
   return (
-    <div className={s.timelineWrap}>
+    <ScrollToEnd className={s.timelineWrap}>
       <BlockTimeline
         lanes={lanes}
         ticks={ticks}
@@ -28,6 +29,6 @@ export function ExperienceTimeline({ roles, today }: { roles: RoleView[]; today:
         blockW={9}
         labelW={320}
       />
-    </div>
+    </ScrollToEnd>
   );
 }

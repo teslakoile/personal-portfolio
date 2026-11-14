@@ -21,6 +21,9 @@
 
 html {
   scroll-behavior: smooth;
+  /* the canvas behind the page (overscroll, the iOS status bar area) matches
+     the site's paper in both colour schemes; the site has no dark theme */
+  background: #faf9f7;
 }
 
 body {

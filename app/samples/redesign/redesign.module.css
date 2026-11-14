@@ -8,9 +8,17 @@
 
 @media (max-width: 760px) {
   .page { grid-template-columns: minmax(0, 1fr); }
-  .railWrap { position: static; height: auto; }
+  /* the header bar stays at the top on phones: Get in Touch is always one tap
+     away, and iOS Safari backs the status bar with the bar's paper */
+  .railWrap { position: sticky; top: 0; z-index: 40; height: auto; background: var(--paper); }
   .railWrap > aside { flex-direction: row; align-items: center; justify-content: space-between; padding: 14px 20px; border-right: 0; border-bottom: 1px solid var(--line); }
   .railWrap nav, .railWrap hr, .railWrap button { display: none; }
   .railWrap > aside > div { margin-top: 0 !important; }
   .main { padding: 0; }
+}
+
+/* a phone on its side: a slimmer header bar leaves more of the short screen
+   for the hero */
+@media (pointer: coarse) and (max-height: 500px) {
+  .railWrap > aside { padding-block: 6px; }
 }

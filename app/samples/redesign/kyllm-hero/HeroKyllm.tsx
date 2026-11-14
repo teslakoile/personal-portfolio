@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useEffectEvent, useRef, useState, type CSSProperties, type FormEvent } from "react";
+import { useCallback, useEffect, useEffectEvent, useRef, useState, type CSSProperties, type FormEvent, type MouseEvent as ReactMouseEvent } from "react";
 import { ArrowDown, X } from "lucide-react";
 import { Kbd, Pill, SendButton } from "../../kyllm-ui/kit";
 import { SmoothText } from "../../kyllm-ui/streaming/SmoothText";
@@ -38,6 +38,19 @@ import h from "./hero.module.css";
 type Seg = string | { cite: number };
 
 /** Starters for the empty chat. */
+/** the width where the sheet goes full screen (hero.module.css), and a touch screen */
+const PHONE = "(max-width: 760px)";
+const TOUCH = "(pointer: coarse)";
+
+/*
+ * Suggestion pills keep the composer focused through the tap (audit #17). A
+ * tap that blurred the field first would close the keyboard, the sheet would
+ * grow back to full height, and the centred pills would slide out from under
+ * the finger, so the first tap could land on nothing. The question is sent
+ * with the keyboard still up, and only then does the keyboard close.
+ */
+const keepFocus = (e: ReactMouseEvent) => e.preventDefault();
+
 const STARTERS = ["Tell me more about Kyle", "What has he built with AI agents?", "Which talks has he given?"];
 
 /** What the live steps waterfall shows while the answer is fetched. */
@@ -132,7 +145,7 @@ function Turn({ q, liveState, animate, live, site, onMood, onDone, onPick }: {
                 {sources.length ? <div className={h.sources}>{sources.map((src, i) => <SrcChip key={`${i}-${src.name}`} src={src} site={site} />)}</div> : null}
                 {plain ? <CopyButton text={plain} /> : null}
                 {live && next.length ? (
-                  <div className={h.next}>{next.map((x, i) => (
+                  <div className={h.next} onMouseDown={keepFocus}>{next.map((x, i) => (
                     <span key={x} style={{ "--i": i } as CSSProperties}><Pill arrow onClick={() => onPick(x)}>{x}</Pill></span>
                   ))}</div>
                 ) : null}
@@ -225,6 +238,12 @@ function Chat({ initial, site, height, focusKey, pending, onClose }: {
     abort.current = ctrl;
     void fetchAnswer(question, history, ctrl.signal, (f) => setLives((m) => ({ ...m, [id]: f(m[id] ?? NO_LIVE) })));
   };
+  // a suggestion pill: ask it, then on a touch screen close the keyboard so
+  // the answer has the screen
+  const pick = (q: string) => {
+    ask(q);
+    if (window.matchMedia(TOUCH).matches) input.current?.blur();
+  };
   const stop = () => abort.current?.abort();
   const reset = () => { stop(); setTurns([]); setLives({}); setBusy(false); setMood("idle"); setDraft(""); };
 
@@ -291,15 +310,15 @@ function Chat({ initial, site, height, focusKey, pending, onClose }: {
               <div className={h.empty}>
                 <KyllmLive mood={liveMood} size={72} touch />
                 <p>Ask me about Kyle&apos;s work</p>
-                <div className={h.next}>{STARTERS.map((x, i) => (
-                  <span key={x} style={{ "--i": i } as CSSProperties}><Pill arrow onClick={() => ask(x)}>{x}</Pill></span>
+                <div className={h.next} onMouseDown={keepFocus}>{STARTERS.map((x, i) => (
+                  <span key={x} style={{ "--i": i } as CSSProperties}><Pill arrow onClick={() => pick(x)}>{x}</Pill></span>
                 ))}</div>
               </div>
             )}
             {turns.map((t, i) => (
               <Turn key={t.id} q={t.q} liveState={lives[t.id] ?? NO_LIVE}
                 animate={t.animate} live={i === turns.length - 1} site={site}
-                onMood={setMood} onDone={() => setBusy(false)} onPick={ask} />
+                onMood={setMood} onDone={() => setBusy(false)} onPick={pick} />
             ))}
           </div>
         </div>
@@ -310,7 +329,7 @@ function Chat({ initial, site, height, focusKey, pending, onClose }: {
       </div>
       <form className={`${k.composer} ${h.composer}`} onSubmit={submit}>
         <input ref={input} className={h.input} value={draft} onChange={(e) => setDraft(e.target.value)} maxLength={LIMITS.question}
-          placeholder={busy ? "KYLLM is answering…" : "Ask KYLLM about my work…"} aria-label="Ask KYLLM" />
+          placeholder={busy ? "KYLLM is answering…" : "Ask KYLLM about Kyle's work…"} aria-label="Ask KYLLM" />
         {!draft && !busy ? <Kbd tip="Ask from anywhere">⌘K</Kbd> : null}
         <SendButton state={sendState} onClick={() => (busy ? stop() : ask(draft))} />
       </form>
@@ -329,11 +348,48 @@ export function KyllmDock({ site = "favicon" }: { site?: SiteMark }) {
   const [open, setOpen] = useState(false);
   const [opens, setOpens] = useState(0);
   const [pending, setPending] = useState({ q: "", n: 0 });
+  const [tuck, setTuck] = useState(false);
+  const sheet = useRef<HTMLElement>(null);
   const show = (q?: string) => {
-    setMounted(true); setOpen(true); setOpens((n) => n + 1);
+    setMounted(true); setOpen(true);
+    // a question asked from the page answers at once; on a touch screen the
+    // keyboard would cover that answer, so the composer is not focused
+    if (!(q && window.matchMedia(TOUCH).matches)) setOpens((n) => n + 1);
     if (q) setPending((p) => ({ q, n: p.n + 1 }));
   };
   const close = useCallback(() => setOpen(false), []);
+
+  // phones: fit the open sheet to the visual viewport, the part of the screen
+  // above the on-screen keyboard, so the composer stays in view while typing
+  useEffect(() => {
+    const vv = window.visualViewport, el = sheet.current;
+    if (!open || !vv || !el) return;
+    const sync = () => {
+      if (!window.matchMedia(PHONE).matches) { el.style.removeProperty("--vv-top"); el.style.removeProperty("--vv-bottom"); return; }
+      el.style.setProperty("--vv-top", `${vv.offsetTop}px`);
+      el.style.setProperty("--vv-bottom", `${Math.max(0, el.clientHeight - vv.offsetTop - vv.height)}px`);
+    };
+    sync();
+    vv.addEventListener("resize", sync);
+    vv.addEventListener("scroll", sync);
+    return () => { vv.removeEventListener("resize", sync); vv.removeEventListener("scroll", sync); };
+  }, [open, mounted]);
+
+  // phones: the dock pill steps aside while the page scrolls down, so it does
+  // not sit on the text being read, and comes back on the way up
+  useEffect(() => {
+    const phone = window.matchMedia(PHONE);
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (!phone.matches) { setTuck(false); last = y; return; }
+      if (Math.abs(y - last) < 8) return;
+      setTuck(y > last && y > 80);
+      last = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const cmdK = useEffectEvent(() => show());
   const fromPage = useEffectEvent((q?: string) => show(q));
@@ -359,11 +415,11 @@ export function KyllmDock({ site = "favicon" }: { site?: SiteMark }) {
   return (
     <div className={h.tokens}>
       {mounted ? (
-        <aside className={h.sheet} data-open={open ? "" : undefined} aria-label="KYLLM" aria-hidden={!open}>
+        <aside ref={sheet} className={h.sheet} data-open={open ? "" : undefined} aria-label="KYLLM" aria-hidden={!open}>
           <Chat initial={[]} site={site} height="100%" focusKey={opens} pending={pending} onClose={close} />
         </aside>
       ) : null}
-      <button type="button" className={h.dockPill} data-show={open ? undefined : ""} onClick={() => show()}>
+      <button type="button" className={h.dockPill} data-show={open ? undefined : ""} data-tuck={tuck ? "" : undefined} onClick={() => show()}>
         <KyllmLive mood="idle" size={30} />Ask KYLLM<Kbd tip="Open KYLLM">⌘K</Kbd>
       </button>
     </div>

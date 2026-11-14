@@ -80,7 +80,9 @@ export function Button({ variant = "primary", size, href, download, contact, chi
     const external = href.startsWith("http");
     return (
       <a className={cls} href={href} download={download || undefined} data-contact={contact ? "" : undefined}
-        target={external ? "_blank" : undefined} rel={external ? "noreferrer" : undefined}>
+        // download: desktop browsers still save the file; iOS Safari ignores the
+        // attribute and shows the PDF, which then opens in its own tab
+        target={external || download ? "_blank" : undefined} rel={external || download ? "noreferrer" : undefined}>
         {children}
       </a>
     );

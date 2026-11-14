@@ -204,3 +204,20 @@
   .projMain { padding-right: 0; padding-bottom: 12px; }
   .projStack { padding: 0 0 18px; border-left: 0; }
 }
+
+/* a phone-width column: the three facts stack, one per row */
+@container content (max-width: 440px) {
+  .aboutFacts dl { display: block; }
+  .aboutFacts dl > div, .aboutFacts dl > div:first-child { border-left: 0; border-bottom: 1px dashed var(--line); padding-left: var(--gutter); }
+  .aboutFacts dl > div:last-child { border-bottom: 0; }
+}
+
+/* a phone on its side (finding #16): the hero's copy packs tighter, and the
+   contact links move under the KYLLM question bar, so both buttons and the
+   bar sit above the fold */
+@media (pointer: coarse) and (max-height: 500px) {
+  .heroCopy, .heroAligned .heroCopy { padding-top: 8px; }
+  .heroSub { margin-top: 6px; max-width: none; font-size: 15px; line-height: 1.4; }
+  .heroCta { margin-top: 8px; }
+  .heroLinks { order: 1; margin-top: 14px; }
+}

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { animate, motion, useMotionValue, useReducedMotion } from "motion/react";
+import { X } from "lucide-react";
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import f from "./footer.module.css";
@@ -46,6 +47,10 @@ export function FooterPhotoView({ id, src, aspect, tile, onClosed }: {
   const [phase, setPhase] = useState<"from" | "open" | "back">(still ? "open" : "from");
   const [box, setBox] = useState(() => tile());
   const dialog = useRef<HTMLDivElement>(null);
+  /** a two-finger pinch zooms the photo; it springs back to 1 on release */
+  const zoom = useMotionValue(1);
+  /** when the last pinch ended: iOS sends a click after it, which must not close the view */
+  const pinched = useRef(0);
   const done = useRef(onClosed);
   useEffect(() => { done.current = onClosed; });
 
@@ -80,22 +85,40 @@ export function FooterPhotoView({ id, src, aspect, tile, onClosed }: {
     el.focus({ preventScroll: true });
     const esc = (e: globalThis.KeyboardEvent) => { if (e.key === "Escape") { e.preventDefault(); closeRef.current(); } };
     const stop = (e: Event) => e.preventDefault();
+    // touchmove is still cancelled, so neither the page nor the browser zoom moves;
+    // two fingers scale the photo by how far they have spread
+    let start = 0;
+    const span = (t: TouchList) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+    const onStart = (e: TouchEvent) => { if (e.touches.length === 2) { start = span(e.touches); pinched.current = Date.now(); } };
+    const onMove = (e: TouchEvent) => {
+      e.preventDefault();
+      if (e.touches.length === 2 && start) zoom.set(Math.min(3, Math.max(1, span(e.touches) / start)));
+    };
+    const onEnd = (e: TouchEvent) => {
+      if (e.touches.length < 2 && start) { start = 0; pinched.current = Date.now(); animate(zoom, 1, { type: "spring", bounce: 0.25, duration: 0.4 }); }
+    };
     addEventListener("keydown", esc);
     el.addEventListener("wheel", stop, { passive: false });
-    el.addEventListener("touchmove", stop, { passive: false });
+    el.addEventListener("touchstart", onStart, { passive: true });
+    el.addEventListener("touchmove", onMove, { passive: false });
+    el.addEventListener("touchend", onEnd);
+    el.addEventListener("touchcancel", onEnd);
     return () => {
       removeEventListener("keydown", esc);
       el.removeEventListener("wheel", stop);
-      el.removeEventListener("touchmove", stop);
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchmove", onMove);
+      el.removeEventListener("touchend", onEnd);
+      el.removeEventListener("touchcancel", onEnd);
     };
-  }, []);
+  }, [zoom]);
 
   const key = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); close(); }
     else if (e.key === "Tab" || SCROLL_KEYS.has(e.key)) e.preventDefault();   // the dialog is the only stop
   };
   // portals bubble React events to the tile and the wall: keep this click here
-  const click = (e: MouseEvent<HTMLDivElement>) => { e.stopPropagation(); close(); };
+  const click = (e: MouseEvent<HTMLDivElement>) => { e.stopPropagation(); if (Date.now() - pinched.current > 600) close(); };
 
   const large = phase === "open";
   return createPortal(
@@ -111,8 +134,13 @@ export function FooterPhotoView({ id, src, aspect, tile, onClosed }: {
       onKeyDown={key}
     >
       <motion.div className={f.viewBack} initial={{ opacity: 0 }} animate={{ opacity: phase === "back" ? 0 : 1 }} transition={FADE} />
+      {phase === "back" ? null : (
+        <button type="button" className={f.viewClose} aria-label="Close photo" tabIndex={-1}>
+          <X size={18} strokeWidth={2} aria-hidden="true" />
+        </button>
+      )}
       {large ? (
-        <motion.div key="large" layoutId={id} className={f.viewPhoto} style={{ "--a": aspect } as CSSProperties} transition={MORPH}>
+        <motion.div key="large" layoutId={id} className={f.viewPhoto} style={{ ...({ "--a": aspect } as CSSProperties), scale: zoom }} transition={MORPH}>
           <motion.img layoutId={`${id}-img`} src={src} alt="" className={f.viewImg} style={{ inset: 0, width: "100%", height: "100%" }} transition={MORPH} />
         </motion.div>
       ) : (
