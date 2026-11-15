@@ -1,0 +1,30 @@
+/* /samples/kyllm-charts: shadcn charts at the chat's 384px content width. */
+
+/* shadcn's new-york-v4 neutral theme, scoped to this page */
+.shadcn {
+  --background: oklch(1 0 0); --foreground: oklch(0.145 0 0);
+  --muted: oklch(0.97 0 0); --muted-foreground: oklch(0.556 0 0); --border: oklch(0.922 0 0);
+  --chart-1: oklch(0.646 0.222 41.116); --chart-2: oklch(0.6 0.118 184.704);
+  font-family: var(--font-geist), system-ui, sans-serif;
+  min-height: 100vh; background: #faf9f7;
+}
+.wrap { max-width: 1700px; margin: 0 auto; padding: 32px 24px 80px; }
+.grid { display: grid; grid-template-columns: repeat(4, 384px); gap: 28px 36px; margin-top: 18px; }
+.colHead { font-size: 15px; font-weight: 600; }
+.cell { width: 384px; align-self: start; }
+
+/* shadcn Card, as its chart examples use it */
+.sCard { display: grid; gap: 14px; padding: 18px; border: 1px solid var(--border); border-radius: 12px; background: var(--background); color: var(--foreground); box-shadow: 0 1px 2px rgb(0 0 0 / 0.05); }
+.sHead { display: grid; gap: 2px; }
+.sHead b { font-size: 15px; font-weight: 600; }
+.sHead span { font-size: 13px; color: var(--muted-foreground); }
+
+/* the site's block standard */
+.block { display: grid; gap: 10px; padding: 14px 14px 12px; border: 1px solid #e7e3de; border-radius: 12px; background: #fff; color: #1c1917; }
+.bT { margin: 0; font-size: 14px; font-weight: 500; }
+.bS { margin: 0; font-size: 12px; color: #a8a29e; }
+.block :global(.recharts-cartesian-axis-tick text) { fill: #57534e; font-size: 11.5px; }
+.val { fill: #1c1917; font-size: 11.5px; font-weight: 500; }
+.tip { display: grid; gap: 1px; max-width: 252px; padding: 7px 10px 6px; border-radius: 6px; background: #1c1917; color: #fff; }
+.tip b { font: 500 12.5px/1.35 var(--font-geist), sans-serif; }
+.tip span { font: 400 12px/1.45 var(--font-geist), sans-serif; color: rgb(255 255 255 / 0.78); }

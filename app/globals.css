@@ -10,6 +10,11 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  /* shadcn chart tokens for /samples/kyllm-charts only; the variables are
+     defined inside that page's .shadcn wrapper, so they are unset elsewhere */
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
 }
 
 @media (prefers-color-scheme: dark) {
