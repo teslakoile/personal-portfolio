@@ -14,6 +14,7 @@ export const SECTIONS = {
   community: "Community",
   recognition: "Recognition",
   github: "GitHub",
+  writing: "Writing",
 } as const;
 export type SectionId = keyof typeof SECTIONS;
 
@@ -29,8 +30,21 @@ export type LinkId = keyof typeof LINKS;
 /** One cited source, as the model names it: a section and the item in it, or an outside link. */
 export type Source = { section: SectionId; name: string } | { link: LinkId };
 
+/**
+ * What KYLLM did, as it happens: a step starts with its kind and ends with
+ * `end`, both carrying the same id. Steps can overlap (parallel reads).
+ *   think  the model's thinking block
+ *   tool   one list, read, or grep call; `label` names what it looked up
+ *   write  the answer text, from its first word to the sources mark
+ */
+export type StepKind = "think" | "tool" | "write";
+export type StepEvent =
+  | { t: "step"; id: number; kind: StepKind; name?: string; label?: string; args?: unknown }
+  | { t: "step"; id: number; end: true; ok?: boolean };
+
 /** The route streams newline-delimited JSON, one of these per line. */
 export type StreamEvent =
+  | StepEvent
   | { t: "text"; v: string }
   | { t: "meta"; sources: Source[]; next: string[] }
   | { t: "error"; v: string }

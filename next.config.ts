@@ -23,6 +23,8 @@ export default function config(phase: string): NextConfig {
     turbopack: {
       root: projectRoot,
     },
+    // KYLLM reads published blog posts from content/blog at runtime (app/_kyllm/kb.ts)
+    outputFileTracingIncludes: { "/api/kyllm": ["./content/blog/**/*.json"] },
     async headers() {
       return [{ source: "/:path*", headers: securityHeaders }];
     },
