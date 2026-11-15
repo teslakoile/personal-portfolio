@@ -1,16 +1,22 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { featureEnabled } from "../../flags";
-import { SYSTEM } from "../../_kyllm/prompt";
+import { getKb } from "../../_kyllm/kb";
+import { system } from "../../_kyllm/prompt";
+import { TOOLS, runTool, stepLabel } from "../../_kyllm/tools";
 import { take } from "../../_kyllm/rateLimit";
 import { LIMITS, LINKS, META_MARK, SECTIONS, type Source, type StreamEvent, type Turn } from "../../_kyllm/protocol";
 
 /**
  * POST /api/kyllm: one KYLLM answer, streamed as newline-delimited JSON
- * (StreamEvent). Claude Sonnet 5.5 at medium effort, with the CV and site
- * content in a cached system prompt (app/_kyllm/prompt.ts) and server-side
- * refusal fallback. The answer text streams as it arrives; the sources and
- * follow-ups the model writes after META_MARK are parsed, checked against the
- * page's sections and links, and sent as one `meta` event.
+ * (StreamEvent). Claude Sonnet 5.5 at medium effort, with server-side refusal
+ * fallback. The cached system prompt holds the CV and a catalog of the
+ * knowledge base (app/_kyllm/kb.ts); the model reads files with the list,
+ * read, and grep tools (app/_kyllm/tools.ts) for up to MAX_TOOL_ROUNDS
+ * rounds, then answers. Each thinking block, tool call, and the answer text
+ * stream as `step` events when they start and end. The answer text streams
+ * as it arrives; the sources and follow-ups the model writes after META_MARK
+ * are parsed, checked against the page's sections and links, and sent as one
+ * `meta` event.
  *
  * Off unless FEATURE_FLAGS.kyllm is on, KYLLM_API=1 is set (a preview
  * deployment), or the dev server is running. Needs ANTHROPIC_API_KEY, and
@@ -18,6 +24,8 @@ import { LIMITS, LINKS, META_MARK, SECTIONS, type Source, type StreamEvent, type
  */
 
 const MODEL = "claude-sonnet-5-5";
+/** tool rounds before the model must answer */
+const MAX_TOOL_ROUNDS = 3;
 const enabled = () => featureEnabled("kyllm") || process.env.KYLLM_API === "1" || process.env.NODE_ENV === "development";
 
 let client: Anthropic | null = null;
@@ -101,6 +109,7 @@ export async function POST(request: Request) {
   try { messages = readBody(await request.json()); } catch { /* malformed JSON */ }
   if (!messages) return fail(400, "Send a question.");
 
+  const kb = await getKb();
   const started = Date.now();
   const enc = new TextEncoder();
   const body = new ReadableStream<Uint8Array>({
@@ -126,24 +135,71 @@ export async function POST(request: Request) {
         held = held.slice(held.length - keep);
       };
 
+      let stepId = 0, writeId = 0;
+      // the answer's write step: starts with its first text, ends at the sources mark or the end
+      const endWrite = () => { if (writeId > 0) { send({ t: "step", id: writeId, end: true }); writeId = -1; } };
+      const total = { in: 0, cacheRead: 0, cacheWrite: 0, out: 0, rounds: 0, tools: 0 };
+
       try {
-        const stream = anthropic().beta.messages.stream(
-          {
-            model: MODEL,
-            max_tokens: 4000,
-            betas: ["server-side-fallback-2026-07-01"],
-            fallbacks: "default",
-            output_config: { effort: "medium" },
-            system: [{ type: "text", text: SYSTEM, cache_control: { type: "ephemeral", ttl: "1h" } }],
-            messages,
-          },
-          { signal: request.signal },
-        );
-        for await (const event of stream) {
-          if (event.type === "content_block_delta" && event.delta.type === "text_delta") push(event.delta.text);
+        const convo: Anthropic.Beta.BetaMessageParam[] = messages!.map((m) => ({ role: m.role, content: m.content }));
+        let final: Anthropic.Beta.BetaMessage;
+        for (let round = 0; ; round++) {
+          const stream = anthropic().beta.messages.stream(
+            {
+              model: MODEL,
+              max_tokens: 8000,
+              betas: ["server-side-fallback-2026-07-01"],
+              fallbacks: "default",
+              output_config: { effort: "medium" },
+              tools: TOOLS,
+              // after the last tool round the model has to answer with what it has read
+              tool_choice: round < MAX_TOOL_ROUNDS ? { type: "auto" } : { type: "none" },
+              system: [{ type: "text", text: system(kb.catalog), cache_control: { type: "ephemeral", ttl: "1h" } }],
+              messages: convo,
+            },
+            { signal: request.signal },
+          );
+          const thinking = new Map<number, number>(); // content block index -> step id
+          for await (const event of stream) {
+            if (event.type === "content_block_start") {
+              const b = event.content_block;
+              if (b.type === "thinking" || b.type === "redacted_thinking") {
+                thinking.set(event.index, ++stepId);
+                send({ t: "step", id: stepId, kind: "think" });
+              } else if (b.type === "text" && writeId === 0) {
+                writeId = ++stepId;
+                send({ t: "step", id: writeId, kind: "write" });
+              }
+            } else if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
+              const wasMeta = inMeta;
+              push(event.delta.text);
+              if (!wasMeta && inMeta) endWrite();
+            } else if (event.type === "content_block_stop") {
+              const id = thinking.get(event.index);
+              if (id) { send({ t: "step", id, end: true }); thinking.delete(event.index); }
+            }
+          }
+          final = await stream.finalMessage();
+          const u = final.usage;
+          total.in += u.input_tokens; total.cacheRead += u.cache_read_input_tokens ?? 0; total.cacheWrite += u.cache_creation_input_tokens ?? 0; total.out += u.output_tokens;
+          total.rounds = round + 1;
+
+          const uses = final.content.filter((b): b is Anthropic.Beta.BetaToolUseBlock => b.type === "tool_use");
+          if (final.stop_reason !== "tool_use" || !uses.length) break;
+
+          // run every call of this round together and return all results in one message
+          total.tools += uses.length;
+          const results = uses.map((use): Anthropic.Beta.BetaToolResultBlockParam => {
+            const id = ++stepId;
+            send({ t: "step", id, kind: "tool", name: use.name, label: stepLabel(kb, use.name, use.input), args: use.input });
+            const r = runTool(kb, use.name, use.input);
+            send({ t: "step", id, end: true, ok: !r.error });
+            return { type: "tool_result", tool_use_id: use.id, content: r.text, ...(r.error ? { is_error: true } : {}) };
+          });
+          convo.push({ role: "assistant", content: final.content }, { role: "user", content: results });
         }
-        const final = await stream.finalMessage();
         if (!inMeta && held) { send({ t: "text", v: held }); answer += held; }
+        endWrite();
 
         if (final.stop_reason === "refusal" && !answer.trim()) {
           send({ t: "text", v: "I can only answer questions about Kyle's work. For anything else, email Kyle at kyle.naranjo@gmail.com." });
@@ -153,11 +209,9 @@ export async function POST(request: Request) {
         }
         send({ t: "done" });
 
-        const u = final.usage;
         console.log(JSON.stringify({
           kyllm: {
-            ms: Date.now() - started, model: final.model, stop: final.stop_reason,
-            in: u.input_tokens, cacheRead: u.cache_read_input_tokens, cacheWrite: u.cache_creation_input_tokens, out: u.output_tokens,
+            ms: Date.now() - started, model: final.model, stop: final.stop_reason, ...total,
             turns: messages!.length, metaOk: inMeta,
           },
         }));
