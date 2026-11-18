@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useEffectEvent, useRef, useState, type CSSProperties, type FormEvent, type MouseEvent as ReactMouseEvent } from "react";
 import { ArrowDown, X } from "lucide-react";
-import { Kbd, Pill, SendButton } from "../../kyllm-ui/kit";
+import { Cite, Kbd, Pill, SendButton } from "../../kyllm-ui/kit";
 import { SmoothText } from "../../kyllm-ui/streaming/SmoothText";
-import { Steps, type StepData } from "../../kyllm-ui/Steps";
+import { LiveSteps, type StepRun } from "../../kyllm-ui/LiveSteps";
 import { CopyButton, SrcChip, type Src } from "../../kyllm-ui/round3";
 import { KyllmLive, type Mood } from "../../kyllm-ui/rig/KyllmLive";
 import type { SiteMark } from "../../kyllm-ui/brandIcons";
@@ -30,9 +30,12 @@ import h from "./hero.module.css";
  *
  * KYLLM is not in the hero (a chat window there and the sheet open at once
  * was too much; a full-height pane cost the CV 30% of the width). It lives in
- * a dock pill, bottom right, that opens a sheet. The sheet never opens empty:
- * it starts on "Can you tell me more about Kyle?" already answered, so the
- * summary reads at a glance, and stays open while the page scrolls.
+ * a dock pill, bottom right, that opens a sheet. The sheet stays open while
+ * the page scrolls.
+ *
+ * Each answer's steps (LiveSteps) come from the route's `step` events: a row
+ * appears when the route starts thinking, a tool call, or the answer text,
+ * and stops when that ends. The answer text shows as soon as it arrives.
  */
 
 type Seg = string | { cite: number };
@@ -53,16 +56,9 @@ const keepFocus = (e: ReactMouseEvent) => e.preventDefault();
 
 const STARTERS = ["Tell me more about Kyle", "What has he built with AI agents?", "Which talks has he given?"];
 
-/** What the live steps waterfall shows while the answer is fetched. */
-const LIVE_RUN: StepData[] = [
-  { cat: "think", text: "Reading the question", meta: "", ms: 250 },
-  { cat: "tool", text: "Searching his CV", meta: "and the site", ms: 450 },
-  { cat: "write", text: "Writing the answer", meta: "", ms: 500 },
-  { cat: "check", text: "Linking sources", meta: "", ms: 200 },
-];
 /** One tick sound for every this many characters released. */
 const TICK_EVERY = 8;
-/** The steps waterfall plays while the answer is fetched, so some text is already waiting when it starts: close that backlog over about a second. */
+/** If text piles up faster than it is released, close that backlog over about a second. */
 const CATCH_UP = 1.2;
 
 type Tok = { w: string } | { cite: number };
@@ -77,10 +73,39 @@ const toSrc = (s: Source): Src =>
     : { kind: s.link === "cv" ? "site" : s.link, label: LINKS[s.link].label, name: LINKS[s.link].name, host: LINKS[s.link].host, href: LINKS[s.link].href };
 
 /** One live answer as it streams in. */
-type Live = { text: string; sources: Src[]; next: string[]; error?: string; finished: boolean };
-const NO_LIVE: Live = { text: "", sources: [], next: [], finished: false };
+/** sources[n - 1] is the source for citation [n], or null when the route found it invalid; `meta` is true once they arrive */
+type Live = { text: string; sources: (Src | null)[]; meta: boolean; next: string[]; error?: string; finished: boolean; run: StepRun };
+const NO_RUN: StepRun = { t0: 0, steps: [] };
+const NO_LIVE: Live = { text: "", sources: [], meta: false, next: [], finished: false, run: NO_RUN };
 
-type Stage = "sent" | "steps" | "fold" | "stream" | "done";
+type Stage = "sent" | "working" | "done";
+
+/**
+ * A citation chip with its source. Hovering or focusing it shows the source
+ * in the site's note and lights that source's chip below the answer. It has
+ * no click action: only the source chips scroll or open a link. The note opens
+ * toward the side of the answer with more room.
+ */
+function CiteNote({ n, src, onLight }: { n: number; src: Src; onLight: (src: Src | null) => void }) {
+  const [side, setSide] = useState<"left" | "right">("left");
+  const enter = (el: HTMLElement) => {
+    const box = el.closest("p")?.getBoundingClientRect(), r = el.getBoundingClientRect();
+    if (box) setSide(r.left - box.left > box.width / 2 ? "right" : "left");
+    onLight(src);
+  };
+  const leave = () => onLight(null);
+  return (
+    <span className={h.citeWrap} data-side={side} onPointerEnter={(e) => enter(e.currentTarget)} onPointerLeave={leave}
+      onFocus={(e) => enter(e.currentTarget)} onBlur={leave}>
+      {/* a press never focuses it, so a click leaves nothing pinned; Tab still reaches it */}
+      <span className={k.cite} tabIndex={0} onMouseDown={(e) => e.preventDefault()} aria-label={`Source ${n}: ${src.label}${src.name ? `, ${src.name}` : ""}`}>{n}</span>
+      <span className={h.citeNote} role="tooltip">
+        <b>{src.label}</b>
+        <span>{src.host ? `${src.name} · ${src.host}` : src.name}</span>
+      </span>
+    </span>
+  );
+}
 
 /** One question and its answer, streaming in. */
 function Turn({ q, liveState, animate, live, site, onMood, onDone, onPick }: {
@@ -92,41 +117,50 @@ function Turn({ q, liveState, animate, live, site, onMood, onDone, onPick }: {
   const text = liveState.error ? "" : liveState.finished ? liveState.text : liveState.text.replace(/\[\d*$/, "");
   const toks = tokenize(liveState.error ? [liveState.error] : toSegs(text));
   const [settled, setSettled] = useState(!animate);
+  // the source chip lit by the citation under the pointer
+  const [lit, setLit] = useState<Src | null>(null);
   const ticked = useRef(0);
   const go = useEffectEvent((next: Stage) => {
     setStage(next);
-    if (next === "steps") onMood("working");
+    if (next === "working") onMood("working");
     if (next === "done") { onMood(liveState.error ? "sorry" : "answered"); onDone(); if (animate) answerSound(!liveState.error); }
   });
 
   useEffect(() => {
-    if (stage !== "sent" && stage !== "fold") return;
-    const id = setTimeout(() => go(stage === "sent" ? "steps" : "stream"), stage === "sent" ? 380 : 280);
+    if (stage !== "sent") return;
+    const id = setTimeout(() => go("working"), 380);
     return () => clearTimeout(id);
   }, [stage]);
 
-  // SmoothText releases the text at an even pace; once it has shown every character, finish
+  // SmoothText releases the text at an even pace; once the stream has ended and every character shows, finish
   useEffect(() => {
-    if (stage !== "stream" || !settled) return;
+    if (stage !== "working" || !settled || !liveState.finished) return;
     const id = setTimeout(() => go("done"), 220);
     return () => clearTimeout(id);
-  }, [stage, settled]);
+  }, [stage, settled, liveState.finished]);
 
   const tick = (shown: number) => {
-    if (stage !== "stream") return;
+    if (stage !== "working") return;
     if (shown - ticked.current >= TICK_EVERY) { ticked.current = shown; streamSound(); }
   };
 
-  const { sources, next } = liveState;
+  const { next } = liveState;
+  // one chip per source, in citation order
+  const sources = liveState.sources.filter((x, i, all): x is Src => !!x && all.findIndex((y) => y && JSON.stringify(y) === JSON.stringify(x)) === i);
+  // a citation shows its source on hover; once the sources arrive, one without a valid source is hidden
+  const cite = (n: number) => {
+    const src = liveState.sources[n - 1];
+    return src ? <CiteNote n={n} src={src} onLight={setLit} /> : liveState.meta ? null : <Cite n={n} />;
+  };
   const plain = (liveState.error ? "" : liveState.text).replace(/\[\d+\]/g, "");
-  const showText = stage === "stream" || stage === "done";
+  const showText = toks.length > 0 || liveState.finished;
   return (
     <>
       <div className={`${k.user} ${h.userIn}`}>{q}</div>
       {stage === "sent" ? null : (
         <div className={h.rowFlat}>
           <div className={h.answerBody}>
-            <Steps v="waterfall" steps={LIVE_RUN} play={animate ? 1 : 0} onStep={stepSound} onDone={() => setStage("fold")} />
+            {liveState.run.t0 ? <LiveSteps run={liveState.run} onStep={animate ? stepSound : undefined} /> : null}
             {showText ? (
               <SmoothText
                 className={h.text}
@@ -138,11 +172,12 @@ function Turn({ q, liveState, animate, live, site, onMood, onDone, onPick }: {
                 catchUp={CATCH_UP}
                 onRelease={tick}
                 onSettled={() => setSettled(true)}
+                cite={cite}
               />
             ) : null}
             {stage === "done" ? (
               <div className={h.after}>
-                {sources.length ? <div className={h.sources}>{sources.map((src, i) => <SrcChip key={`${i}-${src.name}`} src={src} site={site} />)}</div> : null}
+                {sources.length ? <div className={h.sources}>{sources.map((src, i) => <SrcChip key={`${i}-${src.name}`} src={src} site={site} lit={!!lit && JSON.stringify(lit) === JSON.stringify(src)} />)}</div> : null}
                 {plain ? <CopyButton text={plain} /> : null}
                 {live && next.length ? (
                   <div className={h.next} onMouseDown={keepFocus}>{next.map((x, i) => (
@@ -163,7 +198,9 @@ const settled = (ts: Thread[]) => ts.map((t) => ({ ...t, animate: false }));
 
 /** Streams one answer from /api/kyllm into `update`; resolves when the stream ends. */
 async function fetchAnswer(question: string, history: ProtocolTurn[], signal: AbortSignal, update: (f: (l: Live) => Live) => void) {
-  const fail = (v: string) => update((l) => ({ ...l, error: l.text ? undefined : v, finished: true }));
+  const at = (l: Live) => performance.now() - l.run.t0;
+  const end = (l: Live, outcome: NonNullable<StepRun["outcome"]>): StepRun => (l.run.outcome ? l.run : { ...l.run, end: at(l), outcome });
+  const fail = (v: string) => update((l) => ({ ...l, error: l.text ? undefined : v, finished: true, run: end(l, l.text ? "ok" : "failed") }));
   try {
     const res = await fetch("/api/kyllm", {
       method: "POST", headers: { "Content-Type": "application/json" }, signal,
@@ -185,15 +222,24 @@ async function fetchAnswer(question: string, history: ProtocolTurn[], signal: Ab
         const line = buf.slice(0, nl); buf = buf.slice(nl + 1);
         if (!line) continue;
         const e = JSON.parse(line) as StreamEvent;
-        if (e.t === "text") update((l) => ({ ...l, text: l.text + e.v }));
-        else if (e.t === "meta") update((l) => ({ ...l, sources: e.sources.map(toSrc), next: e.next }));
+        if (e.t === "step") {
+          update((l) => {
+            const ms = at(l);
+            const steps = "end" in e
+              ? l.run.steps.map((x) => (x.id === e.id ? { ...x, end: ms, state: e.ok === false ? "failed" as const : "done" as const, detail: e.detail ?? x.detail } : x))
+              : [...l.run.steps, { id: e.id, kind: e.kind, label: e.label ?? "", detail: e.detail ?? "", start: ms }];
+            return { ...l, run: { ...l.run, steps } };
+          });
+        }
+        else if (e.t === "text") update((l) => ({ ...l, text: l.text + e.v }));
+        else if (e.t === "meta") update((l) => ({ ...l, sources: e.sources.map((x) => (x ? toSrc(x) : null)), meta: true, next: e.next }));
         else if (e.t === "error") return fail(e.v);
-        else if (e.t === "done") update((l) => ({ ...l, finished: true }));
+        else if (e.t === "done") update((l) => ({ ...l, finished: true, run: end(l, "ok") }));
       }
     }
-    update((l) => (l.finished ? l : { ...l, finished: true }));
+    update((l) => (l.finished ? l : { ...l, finished: true, run: end(l, l.text ? "ok" : "failed") }));
   } catch {
-    if (signal.aborted) update((l) => ({ ...l, text: l.text || "Stopped.", finished: true }));
+    if (signal.aborted) update((l) => ({ ...l, text: l.text || "Stopped.", finished: true, run: end(l, "stopped") }));
     else fail("KYLLM couldn't answer just now. Try again, or email Kyle at kyle.naranjo@gmail.com.");
   }
 }
@@ -233,7 +279,7 @@ function Chat({ initial, site, height, focusKey, pending, onClose }: {
     setBusy(true);
     setMood("working");
     setTurns((ts) => [...settled(ts), { id, q: question, animate: true }]);
-    setLives((m) => ({ ...m, [id]: NO_LIVE }));
+    setLives((m) => ({ ...m, [id]: { ...NO_LIVE, run: { t0: performance.now(), steps: [] } } }));
     const ctrl = new AbortController();
     abort.current = ctrl;
     void fetchAnswer(question, history, ctrl.signal, (f) => setLives((m) => ({ ...m, [id]: f(m[id] ?? NO_LIVE) })));

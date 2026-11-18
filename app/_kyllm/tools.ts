@@ -1,5 +1,6 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import type { Kb } from "./kb";
+import { SECTIONS } from "./protocol";
 
 /**
  * The tools KYLLM reads its knowledge base with. Every file is raw text from
@@ -110,10 +111,18 @@ export function runTool(kb: Kb, name: string, input: unknown): ToolResult {
   return { text: `No tool named "${name}".`, error: true };
 }
 
-/** The step label a tool call shows, e.g. "Looking up Wishlist". */
-export function stepLabel(kb: Kb, name: string, input: unknown): string {
+/** The row a tool call shows in the chat's steps, in Title Case: "Looking Up Wishlist", with the file's section as detail. Search terms keep their own case. */
+export function stepLabel(kb: Kb, name: string, input: unknown): { label: string; detail: string } {
   const a = (input && typeof input === "object" ? input : {}) as Record<string, unknown>;
-  if (name === "read") return kb.byPath.get(str(a.path))?.title ?? str(a.path);
-  if (name === "grep") return str(a.pattern);
-  return dirOf(a.dir) || "the knowledge base";
+  // "MCP|agent" reads as "MCP or agent"; the folder shows only when the search is limited to one
+  const terms = (p: string) => {
+    const xs = p.split("|").map((x) => x.trim()).filter(Boolean).slice(0, 4);
+    return xs.length > 2 ? `${xs.slice(0, -1).join(", ")}, or ${xs.at(-1)}` : xs.join(" or ");
+  };
+  if (name === "read") {
+    const doc = kb.byPath.get(str(a.path).trim().replace(/^\.?\/+/, ""));
+    return doc ? { label: `Looking Up ${doc.title}`, detail: SECTIONS[doc.section] } : { label: `Looking Up ${str(a.path)}`, detail: "" };
+  }
+  if (name === "grep") return { label: `Searching for ${terms(str(a.pattern).slice(0, 80))}`, detail: dirOf(a.dir) ? `In ${dirOf(a.dir)}/` : "" };
+  return { label: `Listing ${dirOf(a.dir) ? `${dirOf(a.dir)}/` : "All Files"}`, detail: "" };
 }

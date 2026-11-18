@@ -1,0 +1,97 @@
+/* LiveSteps (C2 Aligned Strip). Brand tokens (--ink, --b1..--b4, --tip-*) come from BrandRoot. */
+
+/* step colours, picked order: Understanding yellow, Using tools blue, Writing coral, Checking green */
+.steps [data-cat="think"] { --c: var(--b4); --tint: #fbf0dc; --deep: #8a5a10; }
+.steps [data-cat="tool"] { --c: var(--b3); --tint: #e3ecf5; --deep: #3d5f80; }
+.steps [data-cat="write"] { --c: var(--b1); --tint: #fde4dc; --deep: #f5482d; }
+.steps [data-cat="answer"] { --tint: var(--sunk); --deep: var(--ink-2); }
+.steps [data-cat="check"] { --c: var(--b2); --tint: #e2efe7; --deep: #2f6b4f; }
+
+.steps { --cols: 22px minmax(0, 1fr) minmax(64px, 0.5fr) 38px; --fail: #b4432f; position: relative; font-size: 14px; font-variant-numeric: tabular-nums; }
+
+/* step icons */
+.ic { width: 22px; height: 22px; flex: none; display: grid; place-items: center; position: relative; border-radius: 6px; background: var(--tint); color: var(--deep); transition: background 0.3s, color 0.3s; }
+.ic svg { width: 60%; height: 60%; stroke-width: 2.2; }
+.ic[data-state="failed"], .ic[data-state="stopped"] { background: var(--sunk); color: var(--fail); }
+.ic[data-state="live"]::after { content: ""; position: absolute; inset: -3px; border-radius: 8px; box-shadow: 0 0 0 1.5px var(--c); animation: halo 1.2s var(--ease) infinite; }
+@keyframes halo { 0% { opacity: 0.9; transform: scale(0.92); } 70%, 100% { opacity: 0; transform: scale(1.12); } }
+.spin { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line-2); border-top-color: var(--coral); animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* header: the list's columns, so the strip sits right above the bars */
+.head {
+  display: grid; grid-template-columns: var(--cols); column-gap: 10px; align-items: center;
+  width: 100%; min-height: 32px; padding: 4px 0; background: none; border: 0; font: inherit; color: var(--ink-2); text-align: left; cursor: pointer;
+}
+.head:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; border-radius: 6px; }
+.lead { width: 22px; height: 22px; display: grid; place-items: center; }
+.lead > * { grid-area: 1 / 1; animation: pop 0.32s var(--ease) both; }
+@keyframes pop { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: none; } }
+.swap { display: grid; min-width: 0; }
+.swap > span { grid-area: 1 / 1; display: flex; align-items: center; gap: 8px; min-width: 0; transition: opacity 0.3s var(--ease), transform 0.3s var(--ease); }
+.steps[data-phase="working"] .hd { opacity: 0; transform: translateY(4px); pointer-events: none; }
+.steps[data-phase="done"] .hw { opacity: 0; transform: translateY(-4px); }
+.lbl { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink); animation: lblIn 0.3s var(--ease) both; }
+@keyframes lblIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+.hd > span { white-space: nowrap; }
+.hd em { font-style: normal; font-size: 12.5px; color: var(--ink-3); white-space: nowrap; }
+.head:hover .hd > span { color: var(--ink); }
+/* the chevron says the header opens and closes the list */
+.chev { width: 15px; height: 15px; flex: none; margin-left: -2px; color: var(--ink-3); stroke-width: 2; transition: transform 0.3s var(--ease), color 0.15s; }
+.steps[data-open] .chev { transform: rotate(90deg); }
+.head:hover .chev { color: var(--ink); }
+
+/* the whole run on one line, on the bars' time scale */
+/* time with no step running shows as a thin line; every segment ends in the same 2px white gap */
+.strip { position: relative; display: block; width: 100%; height: 8px; overflow: hidden; }
+.strip::before { content: ""; position: absolute; left: 0; right: 0; top: 3.5px; height: 1px; background: var(--line-2); }
+.strip i { position: absolute; top: 0; bottom: 0; box-sizing: border-box; border-right: 2px solid var(--surface); background: var(--c); background-clip: padding-box; transition: opacity 0.2s; }
+.htime { font-size: 12.5px; color: var(--ink-3); text-align: right; }
+
+.fold { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.36s var(--ease); }
+.steps[data-open] .fold { grid-template-rows: 1fr; }
+.fold > div { min-height: 0; overflow: hidden; opacity: 0; transition: opacity 0.22s ease; }
+.steps[data-open] .fold > div { opacity: 1; transition-delay: 0.05s; }
+
+/* rows */
+.list { display: grid; grid-template-columns: var(--cols); column-gap: 10px; row-gap: 4px; margin: 6px 0 4px; padding: 0; list-style: none; }
+.row { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: center; min-height: 28px; animation: rise 0.36s var(--ease) backwards; transition: opacity 0.2s; }
+@keyframes rise { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+.txt { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.lab { flex: none; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-2); transition: color 0.3s; }
+.txt em { flex: 0 100 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-style: normal; font-size: 12.5px; color: var(--ink-3); }
+.row[data-state="live"] .lab { color: var(--ink); }
+.row[data-state="failed"] .lab, .row[data-state="stopped"] .lab { color: var(--fail); }
+.row time { font-size: 12.5px; color: var(--ink-3); text-align: right; transition: color 0.3s; }
+.row time[data-state="live"] { color: var(--deep); font-weight: 500; }
+.track { position: relative; height: 26px; }
+.bar { position: absolute; top: 9px; height: 8px; background: var(--c); }
+.bar[data-state="live"], .strip i[data-state="live"] { background: linear-gradient(90deg, color-mix(in srgb, var(--c) 45%, transparent), var(--c)); }
+.bar[data-state="live"]::after { content: ""; position: absolute; right: 0; top: -2px; bottom: -2px; width: 2px; background: var(--deep); animation: beat 0.9s ease-in-out infinite; }
+.bar[data-state="failed"], .bar[data-state="stopped"] { background: repeating-linear-gradient(90deg, var(--c) 0 4px, transparent 4px 7px); }
+.strip i[data-state="failed"], .strip i[data-state="stopped"] { background: repeating-linear-gradient(90deg, var(--c) 0 3px, transparent 3px 5px); }
+@keyframes beat { 50% { opacity: 0.45; } }
+
+/* hover: the step under the pointer stays, the others dim */
+.steps[data-hover] .row:not([data-hot]) { opacity: 0.4; }
+.steps[data-hover] .strip i:not([data-hot]) { opacity: 0.35; }
+.row[data-hot] .bar { box-shadow: 0 0 0 3px var(--tint); }
+
+/* the site's one tooltip: ink box, no caret, a title then a dimmer line */
+.tip {
+  position: absolute; left: 0; top: 0; z-index: 5; display: grid; gap: 1px; width: max-content; max-width: 252px;
+  padding: var(--tip-pad); border-radius: var(--tip-radius); background: var(--tip-bg); color: #fff; pointer-events: none;
+  animation: tipIn 0.14s var(--ease) both;
+}
+@keyframes tipIn { from { opacity: 0; transform: translateY(var(--tip-shift)); } to { opacity: 1; transform: none; } }
+.tip b { font: var(--tip-title); font-variant-numeric: tabular-nums; }
+.tip span { margin-top: 2px; font: var(--tip-text); font-variant-numeric: tabular-nums; color: var(--tip-dim); }
+.scrub { position: absolute; z-index: 4; width: 1px; background: var(--ink); opacity: 0.55; pointer-events: none; }
+
+@media (max-width: 460px) {
+  .steps { --cols: 22px minmax(0, 1fr) 56px 34px; }
+  .head, .list { column-gap: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .steps *, .steps *::before, .steps *::after { animation: none !important; transition: none !important; }
+}
