@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Cite } from "../kit";
 import m from "./smooth.module.css";
 
@@ -20,11 +20,13 @@ type Unit = { ch: string } | { cite: number };
 const FADE = 0.18; // seconds each character takes to fade in
 const PAUSE = 0.4; // seconds without new text before the bar shows
 
-export function SmoothText({ toks, n, done, rate = 1, always = false, instant = false, catchUp = 0.15, onSettled, onRelease, className }: {
+export function SmoothText({ toks, n, done, rate = 1, always = false, instant = false, catchUp = 0.15, onSettled, onRelease, className, cite = (k) => <Cite n={k} /> }: {
   /** the whole answer, split into words and citations */
   toks: StreamTok[];
   /** how many tokens have arrived */
   n: number;
+  /** draws citation [k]; defaults to a plain chip */
+  cite?: (k: number) => ReactNode;
   /** the stream has ended: drop the bar and settle the tail */
   done: boolean;
   /** slow motion for demos: 0.5 runs everything at half speed */
@@ -96,11 +98,11 @@ export function SmoothText({ toks, n, done, rate = 1, always = false, instant = 
     const op = settled ? 1 : Math.min(1, (frame.clock - frame.seen[u]) / FADE);
     if (op >= 1) {
       if ("ch" in unit) run += unit.ch;
-      else { flush(); out.push(<Cite key={u} n={unit.cite} />); }
+      else { flush(); out.push(<Fragment key={u}>{cite(unit.cite)}</Fragment>); }
     } else {
       flush();
       const o = Math.max(0.06, op);
-      out.push("ch" in unit ? <span key={u} style={{ opacity: o }}>{unit.ch}</span> : <span key={u} style={{ opacity: o }}><Cite n={unit.cite} /></span>);
+      out.push("ch" in unit ? <span key={u} style={{ opacity: o }}>{unit.ch}</span> : <span key={u} style={{ opacity: o }}>{cite(unit.cite)}</span>);
     }
   }
   flush();

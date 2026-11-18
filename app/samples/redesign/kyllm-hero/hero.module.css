@@ -112,6 +112,20 @@
 .rowFlat { display: grid; grid-template-columns: minmax(0, 1fr); animation: rise 0.3s var(--ease) both; }
 .answerBody { min-width: 0; display: grid; gap: 10px; align-content: start; }
 .text { margin: 0; font-size: 15px; line-height: 1.6; }
+/* a citation and its source note, in the site's one tooltip look */
+.citeWrap { position: relative; display: inline-block; }
+/* a citation only points at its source chip; the chip is the link */
+.citeWrap > span:first-child { cursor: default; }
+.citeWrap:hover > span:first-child, .citeWrap:focus-within > span:first-child { background: var(--coral); color: #fff; transform: translateY(-1px); }
+.citeNote {
+  position: absolute; bottom: calc(100% + 6px); left: 0; z-index: 5; display: grid; gap: 1px; width: max-content; max-width: 240px;
+  padding: var(--tip-pad); border-radius: var(--tip-radius); background: var(--tip-bg); color: #fff; text-align: left; pointer-events: none;
+  opacity: 0; transform: translateY(var(--tip-shift)); transition: opacity var(--tip-in), transform var(--tip-in);
+}
+.citeWrap[data-side="right"] .citeNote { left: auto; right: 0; }
+.citeNote b { font: var(--tip-title); }
+.citeNote span { font: var(--tip-text); color: var(--tip-dim); }
+.citeWrap:hover .citeNote, .citeWrap:focus-within .citeNote { opacity: 1; transform: none; }
 .userIn { animation: sent 0.38s var(--ease) both; transform-origin: 100% 100%; }
 .after { display: grid; gap: 8px; justify-items: start; }
 .after > * { animation: rise 0.35s var(--ease) both; }

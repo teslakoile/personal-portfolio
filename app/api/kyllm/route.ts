@@ -16,7 +16,8 @@ import { LIMITS, LINKS, META_MARK, SECTIONS, type Source, type StreamEvent, type
  * stream as `step` events when they start and end. The answer text streams
  * as it arrives; the sources and follow-ups the model writes after META_MARK
  * are parsed, checked against the page's sections and links, and sent as one
- * `meta` event.
+ * `meta` event. A `check` step covers that part: it starts at META_MARK and
+ * ends with whether every citation in the answer has a valid source.
  *
  * Off unless FEATURE_FLAGS.kyllm is on, KYLLM_API=1 is set (a preview
  * deployment), or the dev server is running. Needs ANTHROPIC_API_KEY, and
@@ -73,27 +74,39 @@ function readBody(body: unknown): Turn[] | null {
   return [...alternating, { role: "user", content: q }];
 }
 
-/** The sources and follow-ups the model wrote after META_MARK, keeping only valid entries. */
-function readMeta(raw: string): { sources: Source[]; next: string[] } {
+/**
+ * The sources and follow-ups the model wrote after META_MARK. sources[n - 1]
+ * stays the source for citation [n]; an entry that names no known section or
+ * link becomes null, so later numbers keep their place.
+ */
+function readMeta(raw: string): { sources: (Source | null)[]; next: string[] } {
   const start = raw.indexOf("{"), end = raw.lastIndexOf("}");
   if (start < 0 || end <= start) return { sources: [], next: [] };
   try {
     const m = JSON.parse(raw.slice(start, end + 1)) as { sources?: unknown; next?: unknown };
-    const sources: Source[] = (Array.isArray(m.sources) ? m.sources : []).flatMap((s): Source[] => {
+    const sources = (Array.isArray(m.sources) ? m.sources.slice(0, 20) : []).map((s): Source | null => {
       if (s && typeof s === "object" && "section" in s && typeof s.section === "string" && s.section in SECTIONS)
-        return [{ section: s.section as keyof typeof SECTIONS, name: typeof s.name === "string" ? s.name.slice(0, 60) : "" }];
+        return { section: s.section as keyof typeof SECTIONS, name: typeof s.name === "string" ? s.name.slice(0, 60) : "" };
       if (s && typeof s === "object" && "link" in s && typeof s.link === "string" && s.link in LINKS)
-        return [{ link: s.link as keyof typeof LINKS }];
-      return [];
+        return { link: s.link as keyof typeof LINKS };
+      return null;
     });
-    // one chip per source, even if the model listed one twice
-    const seen = new Set<string>();
-    const unique = sources.filter((x) => { const k = JSON.stringify(x); return seen.has(k) ? false : (seen.add(k), true); });
     const next = (Array.isArray(m.next) ? m.next : []).filter((x): x is string => typeof x === "string" && x.length < 90).slice(0, 2);
-    return { sources: unique, next };
+    return { sources, next };
   } catch {
     return { sources: [], next: [] };
   }
+}
+
+/** The check step's result: every [n] in the answer needs a valid sources[n - 1]. */
+function checkCitations(answer: string, sources: (Source | null)[]): { ok: boolean; detail: string } {
+  const cited = [...new Set([...answer.matchAll(/\[(\d+)\]/g)].map((x) => Number(x[1])))];
+  const bad = cited.filter((n) => !sources[n - 1]).length;
+  const valid = sources.filter(Boolean).length;
+  // Title Case, like the chat's other step labels
+  const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? "" : "s"}`;
+  if (bad) return { ok: false, detail: `${plural(bad, "Citation")} Without a Source, Hidden` };
+  return { ok: true, detail: cited.length ? `${plural(valid, "Source")}, ${plural(cited.length, "Citation")}` : "No Citations" };
 }
 
 export async function POST(request: Request) {
@@ -135,9 +148,12 @@ export async function POST(request: Request) {
         held = held.slice(held.length - keep);
       };
 
-      let stepId = 0, writeId = 0;
+      let stepId = 0, writeId = 0, checkId = 0;
       // the answer's write step: starts with its first text, ends at the sources mark or the end
       const endWrite = () => { if (writeId > 0) { send({ t: "step", id: writeId, end: true }); writeId = -1; } };
+      // the check step: starts where the writing ends, while the model writes its sources
+      const startCheck = () => { if (!checkId) { checkId = ++stepId; send({ t: "step", id: checkId, kind: "check" }); } };
+      let checks: { ok: boolean; detail: string } | null = null;
       const total = { in: 0, cacheRead: 0, cacheWrite: 0, out: 0, rounds: 0, tools: 0 };
 
       try {
@@ -173,7 +189,7 @@ export async function POST(request: Request) {
             } else if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
               const wasMeta = inMeta;
               push(event.delta.text);
-              if (!wasMeta && inMeta) endWrite();
+              if (!wasMeta && inMeta) { endWrite(); startCheck(); }
             } else if (event.type === "content_block_stop") {
               const id = thinking.get(event.index);
               if (id) { send({ t: "step", id, end: true }); thinking.delete(event.index); }
@@ -191,7 +207,7 @@ export async function POST(request: Request) {
           total.tools += uses.length;
           const results = uses.map((use): Anthropic.Beta.BetaToolResultBlockParam => {
             const id = ++stepId;
-            send({ t: "step", id, kind: "tool", name: use.name, label: stepLabel(kb, use.name, use.input), args: use.input });
+            send({ t: "step", id, kind: "tool", name: use.name, ...stepLabel(kb, use.name, use.input), args: use.input });
             const r = runTool(kb, use.name, use.input);
             send({ t: "step", id, end: true, ok: !r.error });
             return { type: "tool_result", tool_use_id: use.id, content: r.text, ...(r.error ? { is_error: true } : {}) };
@@ -205,14 +221,19 @@ export async function POST(request: Request) {
           send({ t: "text", v: "I can only answer questions about Kyle's work. For anything else, email Kyle at kyle.naranjo@gmail.com." });
           send({ t: "meta", sources: [], next: [] });
         } else {
-          send({ t: "meta", ...readMeta(meta) });
+          startCheck();
+          const m = readMeta(meta);
+          const result = checkCitations(answer, m.sources);
+          send({ t: "meta", ...m });
+          send({ t: "step", id: checkId, end: true, ...result });
+          checks = result;
         }
         send({ t: "done" });
 
         console.log(JSON.stringify({
           kyllm: {
             ms: Date.now() - started, model: final.model, stop: final.stop_reason, ...total,
-            turns: messages!.length, metaOk: inMeta,
+            turns: messages!.length, metaOk: inMeta, check: checks,
           },
         }));
       } catch (err) {

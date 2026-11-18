@@ -34,19 +34,24 @@ export type Source = { section: SectionId; name: string } | { link: LinkId };
  * What KYLLM did, as it happens: a step starts with its kind and ends with
  * `end`, both carrying the same id. Steps can overlap (parallel reads).
  *   think  the model's thinking block
- *   tool   one list, read, or grep call; `label` names what it looked up
+ *   tool   one list, read, or grep call; `label` is the row's text
+ *          ("Looking Up Wishlist") and `detail` the file's section ("Projects")
  *   write  the answer text, from its first word to the sources mark
+ *   check  the model writing its source list, then the route checking that
+ *          every citation in the answer has a valid source; its end carries
+ *          the result as `detail` ("2 sources, 3 citations") and `ok`
  */
-export type StepKind = "think" | "tool" | "write";
+export type StepKind = "think" | "tool" | "write" | "check";
 export type StepEvent =
-  | { t: "step"; id: number; kind: StepKind; name?: string; label?: string; args?: unknown }
-  | { t: "step"; id: number; end: true; ok?: boolean };
+  | { t: "step"; id: number; kind: StepKind; name?: string; label?: string; detail?: string; args?: unknown }
+  | { t: "step"; id: number; end: true; ok?: boolean; detail?: string };
 
 /** The route streams newline-delimited JSON, one of these per line. */
 export type StreamEvent =
   | StepEvent
   | { t: "text"; v: string }
-  | { t: "meta"; sources: Source[]; next: string[] }
+  /** sources[n - 1] is the source for citation [n]; null when the model named an invalid one */
+  | { t: "meta"; sources: (Source | null)[]; next: string[] }
   | { t: "error"; v: string }
   | { t: "done" };
 
