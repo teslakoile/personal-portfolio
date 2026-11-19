@@ -123,6 +123,10 @@ export function stepLabel(kb: Kb, name: string, input: unknown): { label: string
     const doc = kb.byPath.get(str(a.path).trim().replace(/^\.?\/+/, ""));
     return doc ? { label: `Looking Up ${doc.title}`, detail: SECTIONS[doc.section] } : { label: `Looking Up ${str(a.path)}`, detail: "" };
   }
+  if (name === "show_chart") {
+    const doc = kb.byPath.get(str(a.source).trim().replace(/^\.?\/+/, ""));
+    return { label: "Drawing a Chart", detail: doc ? SECTIONS[doc.section] : "" };
+  }
   if (name === "grep") return { label: `Searching for ${terms(str(a.pattern).slice(0, 80))}`, detail: dirOf(a.dir) ? `In ${dirOf(a.dir)}/` : "" };
   return { label: `Listing ${dirOf(a.dir) ? `${dirOf(a.dir)}/` : "All Files"}`, detail: "" };
 }
