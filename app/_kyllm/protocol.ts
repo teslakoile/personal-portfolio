@@ -46,10 +46,30 @@ export type StepEvent =
   | { t: "step"; id: number; kind: StepKind; name?: string; label?: string; detail?: string; args?: unknown }
   | { t: "step"; id: number; end: true; ok?: boolean; detail?: string };
 
+/**
+ * A chart the chat draws under the answer, from a spec the model sends with
+ * the show_chart tool and the route checks against a file read that turn.
+ *   bars     one horizontal bar per category, with the category's logo
+ *   columns  one vertical column per step of an ordered scale, such as years
+ */
+export type Chart = {
+  kind: "bars" | "columns";
+  /** the finding, in sentence case: "Half came in 2025" */
+  title: string;
+  /** what one unit is, plural: "certifications" */
+  unit: string;
+  rows: { label: string; value: number; detail?: string }[];
+  /** the one row drawn in orange */
+  highlight?: string;
+  /** the source line under the chart: "From Certifications" */
+  source: string;
+};
+
 /** The route streams newline-delimited JSON, one of these per line. */
 export type StreamEvent =
   | StepEvent
   | { t: "text"; v: string }
+  | { t: "chart"; chart: Chart }
   /** sources[n - 1] is the source for citation [n]; null when the model named an invalid one */
   | { t: "meta"; sources: (Source | null)[]; next: string[] }
   | { t: "error"; v: string }

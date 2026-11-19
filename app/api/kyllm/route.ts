@@ -3,6 +3,7 @@ import { featureEnabled } from "../../flags";
 import { getKb } from "../../_kyllm/kb";
 import { system } from "../../_kyllm/prompt";
 import { TOOLS, runTool, stepLabel } from "../../_kyllm/tools";
+import { SHOW_CHART, checkChart } from "../../_kyllm/chart";
 import { take } from "../../_kyllm/rateLimit";
 import { LIMITS, LINKS, META_MARK, SECTIONS, type Source, type StreamEvent, type Turn } from "../../_kyllm/protocol";
 
@@ -12,7 +13,8 @@ import { LIMITS, LINKS, META_MARK, SECTIONS, type Source, type StreamEvent, type
  * fallback. The cached system prompt holds the CV and a catalog of the
  * knowledge base (app/_kyllm/kb.ts); the model reads files with the list,
  * read, and grep tools (app/_kyllm/tools.ts) for up to MAX_TOOL_ROUNDS
- * rounds, then answers. Each thinking block, tool call, and the answer text
+ * rounds, then answers. With show_chart (app/_kyllm/chart.ts) it can add one
+ * chart, checked against a file it read, sent as a `chart` event. Each thinking block, tool call, and the answer text
  * stream as `step` events when they start and end. The answer text streams
  * as it arrives; the sources and follow-ups the model writes after META_MARK
  * are parsed, checked against the page's sections and links, and sent as one
@@ -155,6 +157,9 @@ export async function POST(request: Request) {
       const startCheck = () => { if (!checkId) { checkId = ++stepId; send({ t: "step", id: checkId, kind: "check" }); } };
       let checks: { ok: boolean; detail: string } | null = null;
       const total = { in: 0, cacheRead: 0, cacheWrite: 0, out: 0, rounds: 0, tools: 0 };
+      // files read in this answer, which a chart may use; and whether one is drawn
+      const read = new Set<string>();
+      let chart: "none" | "shown" | "rejected" = "none";
 
       try {
         const convo: Anthropic.Beta.BetaMessageParam[] = messages!.map((m) => ({ role: m.role, content: m.content }));
@@ -167,7 +172,7 @@ export async function POST(request: Request) {
               betas: ["server-side-fallback-2026-07-01"],
               fallbacks: "default",
               output_config: { effort: "medium" },
-              tools: TOOLS,
+              tools: [...TOOLS, SHOW_CHART],
               // after the last tool round the model has to answer with what it has read
               tool_choice: round < MAX_TOOL_ROUNDS ? { type: "auto" } : { type: "none" },
               system: [{ type: "text", text: system(kb.catalog), cache_control: { type: "ephemeral", ttl: "1h" } }],
@@ -208,7 +213,16 @@ export async function POST(request: Request) {
           const results = uses.map((use): Anthropic.Beta.BetaToolResultBlockParam => {
             const id = ++stepId;
             send({ t: "step", id, kind: "tool", name: use.name, ...stepLabel(kb, use.name, use.input), args: use.input });
-            const r = runTool(kb, use.name, use.input);
+            let r: { text: string; error?: boolean };
+            if (use.name === SHOW_CHART.name) {
+              const c = chart === "shown" ? { error: "A chart is already shown in this answer." } : checkChart(kb, read, use.input);
+              if ("chart" in c) { send({ t: "chart", chart: c.chart }); chart = "shown"; r = { text: c.text }; }
+              else { r = { text: c.error, error: true }; if (chart === "none") chart = "rejected"; }
+            } else {
+              r = runTool(kb, use.name, use.input);
+              const path = (use.input as { path?: unknown })?.path;
+              if (use.name === "read" && !r.error && typeof path === "string") read.add(path.trim().replace(/^\.?\/+/, ""));
+            }
             send({ t: "step", id, end: true, ok: !r.error });
             return { type: "tool_result", tool_use_id: use.id, content: r.text, ...(r.error ? { is_error: true } : {}) };
           });
@@ -233,7 +247,7 @@ export async function POST(request: Request) {
         console.log(JSON.stringify({
           kyllm: {
             ms: Date.now() - started, model: final.model, stop: final.stop_reason, ...total,
-            turns: messages!.length, metaOk: inMeta, check: checks,
+            turns: messages!.length, metaOk: inMeta, check: checks, chart,
           },
         }));
       } catch (err) {
