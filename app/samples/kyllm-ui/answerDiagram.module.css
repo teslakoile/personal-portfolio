@@ -1,0 +1,21 @@
+/* AnswerDiagram: the locked block standard (card frame, two-column grid, tiles by kind, site tooltip). */
+.block { display: grid; gap: 10px; width: 100%; margin: 0; padding: 14px 14px 12px; border: 1px solid #e7e3de; border-radius: 12px; background: #fff; color: #1c1917; box-sizing: border-box; animation: rise 0.35s var(--ease, ease) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+.title { margin: 0; font-size: 14px; font-weight: 500; }
+.source { margin: 0; font-size: 12px; color: #a8a29e; }
+.stage { position: relative; }
+.svg { display: block; width: 100%; height: auto; overflow: visible; }
+/* names in Geist Mono, everything else in Geist, at the sizes app/_kyllm/diagramLayout.ts measures */
+.name { font: 500 11px var(--font-geist-mono), ui-monospace, monospace; fill: #1c1917; }
+.detail { font: 400 10.5px var(--font-geist), sans-serif; fill: #a8a29e; }
+.group { font: 11px var(--font-geist), sans-serif; }
+.link { font: 400 10.5px var(--font-geist), sans-serif; fill: #57534e; }
+.part { cursor: default; }
+.svg text { pointer-events: none; user-select: none; }
+.part:hover { filter: brightness(0.96); }
+.stack { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; font-size: 12px; color: #a8a29e; }
+.stack code { padding: 1px 5px; border-radius: 4px; background: #f3f1ed; font: 500 11px var(--font-geist-mono), ui-monospace, monospace; color: #57534e; }
+.tip { position: absolute; z-index: 2; pointer-events: none; display: grid; gap: 1px; max-width: 200px; padding: var(--tip-pad, 7px 10px 6px); border-radius: var(--tip-radius, 6px); background: var(--tip-bg, #1c1917); color: #fff; transform: translate(-50%, calc(-100% - 6px)); white-space: nowrap; }
+.tip b { font: var(--tip-title, 500 12.5px/1.35 var(--font-geist), sans-serif); }
+.tip span { margin-top: 2px; font: var(--tip-text, 400 12px/1.45 var(--font-geist), sans-serif); color: var(--tip-dim, rgb(255 255 255 / 0.78)); }
+@media (prefers-reduced-motion: reduce) { .block { animation: none; } }

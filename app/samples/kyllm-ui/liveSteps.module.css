@@ -15,8 +15,8 @@
 .ic[data-state="failed"], .ic[data-state="stopped"] { background: var(--sunk); color: var(--fail); }
 .ic[data-state="live"]::after { content: ""; position: absolute; inset: -3px; border-radius: 8px; box-shadow: 0 0 0 1.5px var(--c); animation: halo 1.2s var(--ease) infinite; }
 @keyframes halo { 0% { opacity: 0.9; transform: scale(0.92); } 70%, 100% { opacity: 0; transform: scale(1.12); } }
-.spin { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line-2); border-top-color: var(--coral); animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+/* between steps: the site's chevron loader, the one the busy cursor shows */
+.spin { display: inline-flex; font-size: 14px; }
 
 /* header: the list's columns, so the strip sits right above the bars */
 .head {

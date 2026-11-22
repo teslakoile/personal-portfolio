@@ -145,23 +145,27 @@ export function Verb({ text, effect }: { text: string; effect: Effect }) {
  * chat, where a wait is open-ended), the slot instead eases to the current
  * verb's width so the seconds stay close to the word.
  */
-export function Loading({ verbs = PIPELINE_VERBS, effect = "shimmerSync", running = true, ms = 3400, timer = false, rate = 1 }: {
+export function Loading({ verbs = PIPELINE_VERBS, effect = "shimmerSync", running = true, ms = 3400, timer = false, rate = 1, chevron = true, fit = timer }: {
   verbs?: string[]; effect?: Effect; running?: boolean; ms?: number; timer?: boolean; rate?: number;
+  /** false when the chevron already sits elsewhere, such as an icon column */
+  chevron?: boolean;
+  /** size the verb's slot to the current verb, as with a timer, so nothing after it sits apart */
+  fit?: boolean;
 }) {
   const { verb, prev } = useVerb(verbs, ms, running);
   const t = useElapsed(running);
   const slot = useRef<HTMLSpanElement>(null);
   useLayoutEffect(() => {
     const el = slot.current;
-    if (!el || !timer) return;
+    if (!el || !fit) return;
     const sizer = [...el.children].find((c) => (c as HTMLElement).dataset.w === verb) as HTMLElement | undefined;
     if (sizer) el.style.width = `${sizer.offsetWidth}px`;
-  }, [verb, timer]);
+  }, [verb, fit]);
   return (
     <span className={s.loading} role="status" aria-label={`${verb}…`}>
       <span className={s.loadingRow}>
-        <ChevronLoader />
-        <span ref={slot} className={timer ? `${s.slot} ${s.slotFit}` : s.slot} aria-hidden="true">
+        {chevron ? <ChevronLoader /> : null}
+        <span ref={slot} className={fit ? `${s.slot} ${s.slotFit}` : s.slot} aria-hidden="true">
           {verbs.map((w) => <span key={`w-${w}`} data-w={w} className={s.slotSizer}>{w}…</span>)}
           {prev ? <span key={`out-${prev}`} className={s.wordOut}><Verb text={prev} effect={effect} />…</span> : null}
           <span key={`in-${verb}`} className={prev ? s.wordIn : s.wordOn}><Verb text={verb} effect={effect} />…</span>

@@ -64,9 +64,13 @@ function items(text: string): string[][] {
 }
 
 /** Whether `value` is written in the file as a word of its own: not part of "2025", "3.5", or a URL's ID. */
-const written = (text: string, value: number) =>
+export const written = (text: string, value: number) =>
   new RegExp(`(?<![\\w.,-])${String(value).replace(".", "\\.")}(?![\\w-]|\\.\\d)`)
     .test(text.replace(/https?:\/\/\S+/g, " ").replace(/(\d),(\d{3})/g, "$1$2"));
+
+/** The line under a block naming the file's page section and item: "From Projects · Wishlist". */
+export const sourceLine = (doc: Kb["docs"][number]) =>
+  `From ${doc.title === SECTIONS[doc.section] ? doc.title : `${SECTIONS[doc.section]} · ${doc.title}`}`;
 
 export type ChartResult = { chart: Chart; text: string } | { error: string };
 
@@ -110,6 +114,6 @@ export function checkChart(kb: Kb, read: Set<string>, input: unknown): ChartResu
   const highlight = rows.find((x) => low(x.label) === low(hl))?.label;
   if (hl && !highlight) return { error: `highlight "${hl}" is not one of the row labels.` };
 
-  const chart: Chart = { kind, title, unit, rows, ...(highlight ? { highlight } : {}), source: `From ${doc.title === SECTIONS[doc.section] ? doc.title : `${SECTIONS[doc.section]} · ${doc.title}`}` };
+  const chart: Chart = { kind, title, unit, rows, ...(highlight ? { highlight } : {}), source: sourceLine(doc) };
   return { chart, text: "The chart is shown under your answer. Now write the answer text; it should still state the finding." };
 }

@@ -6,13 +6,14 @@ import { Cite, Kbd, Pill, SendButton } from "../../kyllm-ui/kit";
 import { SmoothText } from "../../kyllm-ui/streaming/SmoothText";
 import { LiveSteps, type StepRun } from "../../kyllm-ui/LiveSteps";
 import { AnswerChart } from "../../kyllm-ui/AnswerChart";
+import { AnswerDiagram } from "../../kyllm-ui/AnswerDiagram";
 import { CopyButton, SrcChip, type Src } from "../../kyllm-ui/round3";
 import { KyllmLive, type Mood } from "../../kyllm-ui/rig/KyllmLive";
 import type { SiteMark } from "../../kyllm-ui/brandIcons";
 import k from "../../kyllm-ui/kyllm.module.css";
 import { KYLLM_OPEN } from "./events";
 import { answerSound, stepSound, streamSound } from "../../../_home/sound";
-import { LIMITS, LINKS, SECTIONS, type Chart, type Source, type StreamEvent, type Turn as ProtocolTurn } from "../../../_kyllm/protocol";
+import { LIMITS, LINKS, SECTIONS, type Chart, type Diagram, type Source, type StreamEvent, type Turn as ProtocolTurn } from "../../../_kyllm/protocol";
 import h from "./hero.module.css";
 
 /*
@@ -75,7 +76,7 @@ const toSrc = (s: Source): Src =>
 
 /** One live answer as it streams in. */
 /** sources[n - 1] is the source for citation [n], or null when the route found it invalid; `meta` is true once they arrive */
-type Live = { text: string; chart?: Chart; sources: (Src | null)[]; meta: boolean; next: string[]; error?: string; finished: boolean; run: StepRun };
+type Live = { text: string; chart?: Chart; diagram?: Diagram; sources: (Src | null)[]; meta: boolean; next: string[]; error?: string; finished: boolean; run: StepRun };
 const NO_RUN: StepRun = { t0: 0, steps: [] };
 const NO_LIVE: Live = { text: "", sources: [], meta: false, next: [], finished: false, run: NO_RUN };
 
@@ -176,8 +177,9 @@ function Turn({ q, liveState, animate, live, site, onMood, onDone, onPick }: {
                 cite={cite}
               />
             ) : null}
-            {/* the chart sits between the answer and its sources, once the answer is written */}
+            {/* the chart or diagram sits between the answer and its sources, once the answer is written */}
             {stage === "done" && liveState.chart && !liveState.error ? <AnswerChart chart={liveState.chart} /> : null}
+            {stage === "done" && liveState.diagram && !liveState.error ? <AnswerDiagram diagram={liveState.diagram} /> : null}
             {stage === "done" ? (
               <div className={h.after}>
                 {sources.length ? <div className={h.sources}>{sources.map((src, i) => <SrcChip key={`${i}-${src.name}`} src={src} site={site} lit={!!lit && JSON.stringify(lit) === JSON.stringify(src)} />)}</div> : null}
@@ -230,12 +232,16 @@ async function fetchAnswer(question: string, history: ProtocolTurn[], signal: Ab
             const ms = at(l);
             const steps = "end" in e
               ? l.run.steps.map((x) => (x.id === e.id ? { ...x, end: ms, state: e.ok === false ? "failed" as const : "done" as const, detail: e.detail ?? x.detail } : x))
-              : [...l.run.steps, { id: e.id, kind: e.kind, label: e.label ?? "", detail: e.detail ?? "", start: ms }];
+              : l.run.steps.some((x) => x.id === e.id)
+                // a step that turns out to be another kind keeps its start
+                ? l.run.steps.map((x) => (x.id === e.id ? { ...x, kind: e.kind, label: e.label ?? "", detail: e.detail ?? x.detail } : x))
+                : [...l.run.steps, { id: e.id, kind: e.kind, label: e.label ?? "", detail: e.detail ?? "", start: ms }];
             return { ...l, run: { ...l.run, steps } };
           });
         }
         else if (e.t === "text") update((l) => ({ ...l, text: l.text + e.v }));
         else if (e.t === "chart") update((l) => ({ ...l, chart: e.chart }));
+        else if (e.t === "diagram") update((l) => ({ ...l, diagram: e.diagram }));
         else if (e.t === "meta") update((l) => ({ ...l, sources: e.sources.map((x) => (x ? toSrc(x) : null)), meta: true, next: e.next }));
         else if (e.t === "error") return fail(e.v);
         else if (e.t === "done") update((l) => ({ ...l, finished: true, run: end(l, "ok") }));

@@ -4,22 +4,27 @@ import { getKb } from "../../_kyllm/kb";
 import { system } from "../../_kyllm/prompt";
 import { TOOLS, runTool, stepLabel } from "../../_kyllm/tools";
 import { SHOW_CHART, checkChart } from "../../_kyllm/chart";
+import { SHOW_DIAGRAM, checkDiagram } from "../../_kyllm/diagram";
 import { take } from "../../_kyllm/rateLimit";
 import { LIMITS, LINKS, META_MARK, SECTIONS, type Source, type StreamEvent, type Turn } from "../../_kyllm/protocol";
 
 /**
  * POST /api/kyllm: one KYLLM answer, streamed as newline-delimited JSON
  * (StreamEvent). Claude Sonnet 5.5 at medium effort, with server-side refusal
- * fallback. The cached system prompt holds the CV and a catalog of the
- * knowledge base (app/_kyllm/kb.ts); the model reads files with the list,
- * read, and grep tools (app/_kyllm/tools.ts) for up to MAX_TOOL_ROUNDS
- * rounds, then answers. With show_chart (app/_kyllm/chart.ts) it can add one
- * chart, checked against a file it read, sent as a `chart` event. Each thinking block, tool call, and the answer text
+ * fallback. The cached system prompt holds a catalog of the knowledge base
+ * (app/_kyllm/kb.ts); the model reads his CV with read_cv and files with the
+ * list, read, and grep tools (app/_kyllm/tools.ts) for up to MAX_TOOL_ROUNDS
+ * rounds, then answers. With show_chart (app/_kyllm/chart.ts) or show_diagram
+ * (app/_kyllm/diagram.ts) it can add one block, a chart or a diagram, checked
+ * against a file it read and sent as a `chart` or `diagram` event. Each thinking block, tool call, and the answer text
  * stream as `step` events when they start and end. The answer text streams
  * as it arrives; the sources and follow-ups the model writes after META_MARK
  * are parsed, checked against the page's sections and links, and sent as one
  * `meta` event. A `check` step covers that part: it starts at META_MARK and
- * ends with whether every citation in the answer has a valid source.
+ * ends with whether every citation in the answer has a valid source. Every
+ * round opens with a `think` step, from the request (or the tool results)
+ * until the model's first text or tool call; after the first round its label
+ * is "Reading What It Found".
  *
  * Off unless FEATURE_FLAGS.kyllm is on, KYLLM_API=1 is set (a preview
  * deployment), or the dev server is running. Needs ANTHROPIC_API_KEY, and
@@ -157,14 +162,21 @@ export async function POST(request: Request) {
       const startCheck = () => { if (!checkId) { checkId = ++stepId; send({ t: "step", id: checkId, kind: "check" }); } };
       let checks: { ok: boolean; detail: string } | null = null;
       const total = { in: 0, cacheRead: 0, cacheWrite: 0, out: 0, rounds: 0, tools: 0 };
-      // files read in this answer, which a chart may use; and whether one is drawn
+      // files read in this answer, which a chart or diagram may use; and which block, if any, is drawn
       const read = new Set<string>();
-      let chart: "none" | "shown" | "rejected" = "none";
+      let block: "none" | "chart" | "diagram" | "rejected" = "none";
+      // a think step opens every round: from the request (or the tool results) until the model's first text or tool call,
+      // any thinking included. After a tool round the API often holds the answer text until it is all written, so this
+      // step also covers that wait.
+      let readId = ++stepId;
+      send({ t: "step", id: readId, kind: "think" });
+      const endRead = () => { if (readId) { send({ t: "step", id: readId, end: true }); readId = 0; } };
 
       try {
         const convo: Anthropic.Beta.BetaMessageParam[] = messages!.map((m) => ({ role: m.role, content: m.content }));
         let final: Anthropic.Beta.BetaMessage;
         for (let round = 0; ; round++) {
+          if (round > 0) { readId = ++stepId; send({ t: "step", id: readId, kind: "think", label: "Reading What It Found" }); }
           const stream = anthropic().beta.messages.stream(
             {
               model: MODEL,
@@ -172,7 +184,7 @@ export async function POST(request: Request) {
               betas: ["server-side-fallback-2026-07-01"],
               fallbacks: "default",
               output_config: { effort: "medium" },
-              tools: [...TOOLS, SHOW_CHART],
+              tools: [...TOOLS, SHOW_CHART, SHOW_DIAGRAM],
               // after the last tool round the model has to answer with what it has read
               tool_choice: round < MAX_TOOL_ROUNDS ? { type: "auto" } : { type: "none" },
               system: [{ type: "text", text: system(kb.catalog), cache_control: { type: "ephemeral", ttl: "1h" } }],
@@ -185,9 +197,17 @@ export async function POST(request: Request) {
             if (event.type === "content_block_start") {
               const b = event.content_block;
               if (b.type === "thinking" || b.type === "redacted_thinking") {
+                if (readId) continue; // part of the first step
                 thinking.set(event.index, ++stepId);
                 send({ t: "step", id: stepId, kind: "think" });
-              } else if (b.type === "text" && writeId === 0) {
+              } else if (b.type === "text") {
+                // after a tool round the API sends the answer in one burst at the end, so the round's wait was the
+                // model writing: the step becomes the write step, from the round's start. A tool call ends the step
+                // once the call is complete, when its own step starts.
+                if (readId && round > 0 && writeId === 0) { writeId = readId; readId = 0; send({ t: "step", id: writeId, kind: "write" }); }
+                else endRead();
+              }
+              if (b.type === "text" && writeId === 0) {
                 writeId = ++stepId;
                 send({ t: "step", id: writeId, kind: "write" });
               }
@@ -201,6 +221,7 @@ export async function POST(request: Request) {
             }
           }
           final = await stream.finalMessage();
+          endRead();
           const u = final.usage;
           total.in += u.input_tokens; total.cacheRead += u.cache_read_input_tokens ?? 0; total.cacheWrite += u.cache_creation_input_tokens ?? 0; total.out += u.output_tokens;
           total.rounds = round + 1;
@@ -214,24 +235,35 @@ export async function POST(request: Request) {
             const id = ++stepId;
             send({ t: "step", id, kind: "tool", name: use.name, ...stepLabel(kb, use.name, use.input), args: use.input });
             let r: { text: string; error?: boolean };
+            const drawn = block === "chart" || block === "diagram";
             if (use.name === SHOW_CHART.name) {
-              const c = chart === "shown" ? { error: "A chart is already shown in this answer." } : checkChart(kb, read, use.input);
-              if ("chart" in c) { send({ t: "chart", chart: c.chart }); chart = "shown"; r = { text: c.text }; }
-              else { r = { text: c.error, error: true }; if (chart === "none") chart = "rejected"; }
+              const c = drawn ? { error: `A ${block} is already shown in this answer; an answer takes one.` } : checkChart(kb, read, use.input);
+              if ("chart" in c) { send({ t: "chart", chart: c.chart }); block = "chart"; r = { text: c.text }; }
+              else { r = { text: c.error, error: true }; if (!drawn) block = "rejected"; }
+            } else if (use.name === SHOW_DIAGRAM.name) {
+              const c = drawn ? { error: `A ${block} is already shown in this answer; an answer takes one.` } : checkDiagram(kb, read, use.input);
+              if ("diagram" in c) { send({ t: "diagram", diagram: c.diagram }); block = "diagram"; r = { text: c.text }; }
+              else { r = { text: c.error, error: true }; if (!drawn) block = "rejected"; }
             } else {
               r = runTool(kb, use.name, use.input);
               const path = (use.input as { path?: unknown })?.path;
               if (use.name === "read" && !r.error && typeof path === "string") read.add(path.trim().replace(/^\.?\/+/, ""));
             }
             send({ t: "step", id, end: true, ok: !r.error });
-            return { type: "tool_result", tool_use_id: use.id, content: r.text, ...(r.error ? { is_error: true } : {}) };
+            // the last tool round: say so, or the model may spend the answer round on another call and write nothing
+            const text = round === MAX_TOOL_ROUNDS - 1 ? `${r.text}\n\nThat was your last tool call. Write the answer now from what you have read.` : r.text;
+            return { type: "tool_result", tool_use_id: use.id, content: text, ...(r.error ? { is_error: true } : {}) };
           });
           convo.push({ role: "assistant", content: final.content }, { role: "user", content: results });
         }
         if (!inMeta && held) { send({ t: "text", v: held }); answer += held; }
         endWrite();
 
-        if (final.stop_reason === "refusal" && !answer.trim()) {
+        if (!answer.trim() && final.stop_reason !== "refusal") {
+          // the model ended without writing anything: say so instead of showing an empty answer
+          send({ t: "text", v: "KYLLM couldn't put an answer together for that one. Try asking it another way, or email Kyle at kyle.naranjo@gmail.com." });
+          send({ t: "meta", sources: [], next: [] });
+        } else if (final.stop_reason === "refusal" && !answer.trim()) {
           send({ t: "text", v: "I can only answer questions about Kyle's work. For anything else, email Kyle at kyle.naranjo@gmail.com." });
           send({ t: "meta", sources: [], next: [] });
         } else {
@@ -247,7 +279,7 @@ export async function POST(request: Request) {
         console.log(JSON.stringify({
           kyllm: {
             ms: Date.now() - started, model: final.model, stop: final.stop_reason, ...total,
-            turns: messages!.length, metaOk: inMeta, check: checks, chart,
+            turns: messages!.length, metaOk: inMeta, check: checks, block,
           },
         }));
       } catch (err) {
