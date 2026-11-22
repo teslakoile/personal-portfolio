@@ -1,6 +1,7 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import type { Kb } from "./kb";
 import { SECTIONS } from "./protocol";
+import { CV } from "./cv";
 
 /**
  * The tools KYLLM reads its knowledge base with. Every file is raw text from
@@ -9,6 +10,11 @@ import { SECTIONS } from "./protocol";
  */
 
 export const TOOLS: Anthropic.Beta.BetaTool[] = [
+  {
+    name: "read_cv",
+    description: "Read Kyle's CV: his roles, employers, dates, education, certifications, awards, and skills. It is the source to trust first.",
+    input_schema: { type: "object", properties: {} },
+  },
   {
     name: "list",
     description: "List the files in a folder of Kyle's knowledge base, with each file's title. Pass \"\" for the top level, or a folder such as \"projects\" or \"talks\".",
@@ -105,6 +111,7 @@ function grep(kb: Kb, pattern: string, dir: string): ToolResult {
 /** Runs one tool call. Inputs come from the model, so every field is checked here. */
 export function runTool(kb: Kb, name: string, input: unknown): ToolResult {
   const a = (input && typeof input === "object" ? input : {}) as Record<string, unknown>;
+  if (name === "read_cv") return { text: CV };
   if (name === "list") return list(kb, dirOf(a.dir));
   if (name === "read") return str(a.path) ? read(kb, str(a.path), a.offset) : { text: "Give a file path.", error: true };
   if (name === "grep") return grep(kb, str(a.pattern).slice(0, 200), dirOf(a.dir));
@@ -119,13 +126,14 @@ export function stepLabel(kb: Kb, name: string, input: unknown): { label: string
     const xs = p.split("|").map((x) => x.trim()).filter(Boolean).slice(0, 4);
     return xs.length > 2 ? `${xs.slice(0, -1).join(", ")}, or ${xs.at(-1)}` : xs.join(" or ");
   };
+  if (name === "read_cv") return { label: "Looking Up His CV", detail: "CV" };
   if (name === "read") {
     const doc = kb.byPath.get(str(a.path).trim().replace(/^\.?\/+/, ""));
     return doc ? { label: `Looking Up ${doc.title}`, detail: SECTIONS[doc.section] } : { label: `Looking Up ${str(a.path)}`, detail: "" };
   }
-  if (name === "show_chart") {
+  if (name === "show_chart" || name === "show_diagram") {
     const doc = kb.byPath.get(str(a.source).trim().replace(/^\.?\/+/, ""));
-    return { label: "Drawing a Chart", detail: doc ? SECTIONS[doc.section] : "" };
+    return { label: name === "show_chart" ? "Drawing a Chart" : "Drawing a Diagram", detail: doc ? SECTIONS[doc.section] : "" };
   }
   if (name === "grep") return { label: `Searching for ${terms(str(a.pattern).slice(0, 80))}`, detail: dirOf(a.dir) ? `In ${dirOf(a.dir)}/` : "" };
   return { label: `Listing ${dirOf(a.dir) ? `${dirOf(a.dir)}/` : "All Files"}`, detail: "" };

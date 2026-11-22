@@ -32,7 +32,10 @@ export type Source = { section: SectionId; name: string } | { link: LinkId };
 
 /**
  * What KYLLM did, as it happens: a step starts with its kind and ends with
- * `end`, both carrying the same id. Steps can overlap (parallel reads).
+ * `end`, both carrying the same id. Steps can overlap (parallel reads). A
+ * second start with an id already open changes that step's kind and label,
+ * keeping its start time: a round's think step becomes the write step when
+ * the round turns out to be the answer.
  *   think  the model's thinking block
  *   tool   one list, read, or grep call; `label` is the row's text
  *          ("Looking Up Wishlist") and `detail` the file's section ("Projects")
@@ -65,11 +68,39 @@ export type Chart = {
   source: string;
 };
 
+/** What a diagram part is; the kind picks its icon and tile colour (app/_kyllm/diagram.ts). */
+export const PART_KINDS = [
+  "person", "assistant", "model", "app", "service", "pipeline", "database", "storage", "extension",
+  "browser", "external", "cloud", "container", "loadbalancer", "dns", "cache", "registry", "monitor",
+] as const;
+export type PartKind = (typeof PART_KINDS)[number];
+
+/**
+ * An architecture diagram the chat draws under the answer, from a spec the
+ * model sends with the show_diagram tool and the route checks against a file
+ * read that turn. Parts sit on a two-column, four-row grid; links run between
+ * parts or groups. Laid out by app/_kyllm/diagramLayout.ts.
+ */
+export type Diagram = {
+  /** the finding, in sentence case: "Assistants write only after staff confirm" */
+  title: string;
+  parts: { id: string; label: string; detail?: string; kind: PartKind; col: 0 | 1; row: number; chip?: boolean; group?: string }[];
+  groups?: { id: string; label: string }[];
+  links: { from: string; to: string; label?: string }[];
+  /** the part or group the answer is about, drawn in light blue */
+  subject?: string;
+  /** the tools listed under the drawing */
+  stack?: string[];
+  /** the source line: "From Projects · Wishlist" */
+  source: string;
+};
+
 /** The route streams newline-delimited JSON, one of these per line. */
 export type StreamEvent =
   | StepEvent
   | { t: "text"; v: string }
   | { t: "chart"; chart: Chart }
+  | { t: "diagram"; diagram: Diagram }
   /** sources[n - 1] is the source for citation [n]; null when the model named an invalid one */
   | { t: "meta"; sources: (Source | null)[]; next: string[] }
   | { t: "error"; v: string }

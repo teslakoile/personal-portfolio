@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useId, useLayoutEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { ChevronLoader } from "../loaders/Loaders";
+import { Loading } from "../states/States";
+import { ASK_VERBS } from "../states/verbs";
 import { BookOpen, ChevronRight, MessageSquareText, PenLine, ShieldCheck, Square, Wrench, X, type LucideIcon } from "lucide-react";
 import type { StepKind } from "../../_kyllm/protocol";
 import s from "./liveSteps.module.css";
@@ -42,9 +45,9 @@ export type StepRun = {
 
 const ICON: Record<StepKind, LucideIcon> = { think: BookOpen, tool: Wrench, write: PenLine, check: ShieldCheck };
 const LABEL: Record<Exclude<StepKind, "tool">, string> = { think: "Understanding the Question", write: "Writing the Answer", check: "Checking the Answer" };
-export const stepLabel = (kind: StepKind, label?: string) => (kind === "tool" ? label || "Looking Up a File" : LABEL[kind]);
+export const stepLabel = (kind: StepKind, label?: string) => label || (kind === "tool" ? "Looking Up a File" : LABEL[kind]);
 
-const sec = (ms: number) => `${(Math.max(0, ms) / 1000).toFixed(1)}s`;
+const sec = (ms: number) => `${(Math.max(0, ms) / 1000).toFixed(2)}s`;
 // no-break spaces keep "0.8s to 1.9s" on one line when a note wraps
 const nb = (x: string) => x.replace(/ /g, " ");
 
@@ -59,8 +62,14 @@ const manyTools = (xs: { label: string }[]) => (xs.every((x) => x.label.startsWi
 type Shown = Omit<StepRow, "state"> & { state: StepState; to: number };
 type Hover = { hot: number[]; title: string; text: string; x: number; y: number; scrub?: { top: number; height: number } } | null;
 
-/** One answer's steps. `onStep` gets the index of each step as it starts. */
-export function LiveSteps({ run, onStep }: { run: StepRun; onStep?: (i: number) => void }) {
+/**
+ * One answer's steps. `onStep` gets the index of each step as it starts.
+ * `head` picks what the header shows while working: the site's loading line,
+ * the chevron and a rotating verb ("loader", picked 2026-11-22), or the
+ * running step's icon and label ("step"). The list and strip are the same
+ * either way.
+ */
+export function LiveSteps({ run, onStep, head: headStyle = "loader" }: { run: StepRun; onStep?: (i: number) => void; head?: "step" | "loader" }) {
   const working = !run.outcome;
   const [now, setNow] = useState(() => (working ? performance.now() - run.t0 : run.end ?? 0));
   const [open, setOpen] = useState(working);
@@ -109,7 +118,8 @@ export function LiveSteps({ run, onStep }: { run: StepRun; onStep?: (i: number) 
   // the done header carries the check's result: its shield, or a cross when it flagged a citation
   const checked: StepState = steps.find((x) => x.kind === "check")?.state === "failed" ? "failed" : "done";
   const lead = working
-    ? leadKind ? <Icon key={leadKind} kind={leadKind} state="live" /> : <span key="spin" className={s.spin} />
+    ? headStyle === "loader" ? <span key="loader" className={s.spin}><ChevronLoader /></span>
+    : leadKind ? <Icon key={leadKind} kind={leadKind} state="live" /> : <span key="spin" className={s.spin}><ChevronLoader /></span>
     : run.outcome === "ok" && checked === "done"
       ? <span key="answered" className={s.ic} data-cat="answer"><MessageSquareText aria-hidden="true" /></span>
       : <Icon key={`end-${run.outcome}`} kind={run.outcome === "ok" ? "check" : "write"} state={run.outcome === "ok" ? "failed" : run.outcome!} />;
@@ -182,7 +192,12 @@ export function LiveSteps({ run, onStep }: { run: StepRun; onStep?: (i: number) 
         onPointerMove={onHead} onPointerLeave={() => setHover(null)}>
         <span className={s.lead}>{lead}</span>
         <span className={s.swap}>
-          <span className={s.hw} aria-hidden={!working}><span key={head} className={s.lbl}>{head}</span>{chev}</span>
+          <span className={s.hw} aria-hidden={!working}>
+            {headStyle === "loader"
+              ? <span className={s.lbl}>{working ? <Loading verbs={ASK_VERBS} chevron={false} fit /> : null}</span>
+              : <span key={head} className={s.lbl}>{head}</span>}
+            {chev}
+          </span>
           <span className={s.hd} aria-hidden={working}><span>{total}</span>{steps.length ? <em>{steps.length} {steps.length === 1 ? "Step" : "Steps"}</em> : null}{steps.length ? chev : null}</span>
         </span>
         <span ref={strip} className={s.strip} aria-hidden="true">
