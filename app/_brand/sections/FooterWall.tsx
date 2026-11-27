@@ -15,7 +15,9 @@ import f from "./footer.module.css";
  * touch screens, or without WebGL they are the footer, with the same click
  * reveal in CSS (FooterTile). The halftone masks are mipmapped so their fine
  * dots average out instead of beating into moire, and the loop only runs
- * while something moves and the wall is on screen.
+ * while something moves and the wall is on screen. A frame is drawn only when
+ * it would differ from the last one: the mouse is within reach of the wall, a
+ * tile is still moving, or the canvas was cleared.
  */
 export type WallTile = { n: number; ink: string };
 
@@ -23,6 +25,9 @@ const INK: Record<string, [number, number, number]> = {
   "var(--b1)": [0xf2, 0x6a, 0x4b], "var(--b2)": [0x7f, 0xb9, 0x9a], "var(--b3)": [0x86, 0xa9, 0xc8], "var(--b4)": [0xe9, 0xb6, 0x5c],
 };
 const PAPER: [number, number, number] = [0xfa, 0xf9, 0xf7];
+/** px from a tile's centre at which the bulge reaches zero (see bTo), so the
+    mouse matters to a tile only within this distance of its centre */
+const REACH = 137.5;
 /** click reveal length, ms */
 const REVEAL_MS = 800;
 /** a light spring: about 15% past the end, settled by the end */
@@ -149,8 +154,14 @@ export function FooterWall({ tiles, children }: { tiles: WallTile[]; children: R
 
     const els = Array.from(w.querySelectorAll<HTMLElement>("[data-tile]"));
     const R = els.map(() => 0), B = els.map(() => 0);
+    // each tile's centre from the canvas corner, as of the last frame drawn
+    const C = els.map((): [number, number] => [0, 0]);
     reveal.current = R;
     let mx = -9999, my = -9999, raf = 0, last = 0, alive = true, visible = true, loaded = false;
+    // stale: the canvas no longer shows the wall as it is (cleared by a resize,
+    // a click to animate, back on screen). rested: the last frame drawn left
+    // nothing moving.
+    let stale = true, rested = false;
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const size = () => {
@@ -158,6 +169,7 @@ export function FooterWall({ tiles, children }: { tiles: WallTile[]; children: R
       cv.width = Math.round(b.width * dpr); cv.height = Math.round(b.height * dpr);
       gl.viewport(0, 0, cv.width, cv.height);
       gl.uniform2f(U.view, cv.width, cv.height);
+      stale = true;
     };
 
     const frame = (now: number) => {
@@ -167,11 +179,16 @@ export function FooterWall({ tiles, children }: { tiles: WallTile[]; children: R
       const dt = Math.min((now - (last || now)) / 1000, 1 / 20);
       last = now;
       const cb = cv.getBoundingClientRect(), dpr = cv.width / cb.width;
+      // a mouse move or a scroll far from a wall at rest changes nothing drawn
+      const near = C.some(([x, y]) => Math.hypot(mx - cb.left - x, my - cb.top - y) < REACH);
+      if (!stale && rested && !near) { last = 0; return; }
+      stale = false;
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       let busy = false;
       els.forEach((el, i) => {
         const b = el.getBoundingClientRect();
+        C[i] = [b.left - cb.left + b.width / 2, b.top - cb.top + b.height / 2];
         // the reveal: a spring tween from where the tile was to where it is going
         const tw = tweens.current.get(i);
         if (tw) {
@@ -208,17 +225,19 @@ export function FooterWall({ tiles, children }: { tiles: WallTile[]; children: R
         gl.uniform1f(U.scale, scale);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
       });
+      rested = !busy;
       if (busy && visible) raf = requestAnimationFrame(frame); else last = 0;
     };
     const go = () => { if (!raf && alive) raf = requestAnimationFrame(frame); };
-    kick.current = go;
+    kick.current = () => { stale = true; go(); };
 
     const move = (e: PointerEvent) => { if (e.pointerType === "mouse") { mx = e.clientX; my = e.clientY; if (visible) go(); } };
     const away = () => { mx = my = -9999; go(); };
     const ro = new ResizeObserver(() => { size(); go(); });
-    const io = new IntersectionObserver(([en]) => { visible = en.isIntersecting; go(); });
+    const io = new IntersectionObserver(([en]) => { visible = en.isIntersecting; stale = true; go(); });
+    const scroll = () => { if (visible) go(); };
     addEventListener("pointermove", move, { passive: true });
-    addEventListener("scroll", go, { passive: true });
+    addEventListener("scroll", scroll, { passive: true });
     document.documentElement.addEventListener("pointerleave", away);
     ro.observe(w); ro.observe(cv); io.observe(w);
     size();
@@ -230,6 +249,7 @@ export function FooterWall({ tiles, children }: { tiles: WallTile[]; children: R
       // draw only once every image is in, so the canvas never shows half a wall
       if (!alive || tex.size < files.length * 2) return;
       loaded = true;
+      stale = true;
       setReady(true);
       go();
     });
@@ -238,7 +258,7 @@ export function FooterWall({ tiles, children }: { tiles: WallTile[]; children: R
       alive = false;
       cancelAnimationFrame(raf);
       removeEventListener("pointermove", move);
-      removeEventListener("scroll", go);
+      removeEventListener("scroll", scroll);
       document.documentElement.removeEventListener("pointerleave", away);
       ro.disconnect(); io.disconnect();
       tex.forEach((x) => gl.deleteTexture(x));
