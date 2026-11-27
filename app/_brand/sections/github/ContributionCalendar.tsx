@@ -1,8 +1,9 @@
 "use client";
 
-import { AnimatePresence, animate, motion, useInView, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
 import { click, tick } from "../../../_home/sound";
+import { DURATION, drawEntrance, drawSweep, fit, reachedAt, type Tile } from "./calendarFx";
 import { fullDate, type Cell, type Year } from "./year";
 import g from "./github.module.css";
 
@@ -12,9 +13,8 @@ import g from "./github.module.css";
  *
  * Entrance: a coral scan line crosses the grid once, and each column wakes as
  * the line reaches it (ghost square, then its color grows in under a coral
- * flash, with a small bump). Everything is opacity and transform, and the
- * per-column delays are the inverse of the line's easing so the two stay in
- * step.
+ * flash, with a small bump). The per-column delays are the inverse of the
+ * line's easing so the two stay in step.
  * Hover: the square lifts like a keycap and a tooltip glides to it on a spring.
  * Press: only that square moves. It sinks on pointer down or Enter and springs
  * back on release; a quick click still holds the key down for MIN_PRESS so the
@@ -24,32 +24,23 @@ import g from "./github.module.css";
  * sweep across the year rises with the busy stretches. The site's global
  * toggle controls it.
  * Idle: once the entrance is done, a chevron of light travels across the grid
- * every ~11 seconds. It is made of the tiles themselves: Motion animates each
- * tile's own --gloss (0 to 1 to 0), which lightens its color and draws a glint
- * across it, with each tile's delay set by its distance to a ">" shaped front.
+ * every ~11 seconds. It is made of the tiles themselves: each one lightens and
+ * carries a glint for a moment, delayed by its distance to a ">" shaped front.
  * It stops while the pointer is on the grid and is off under reduced motion.
+ *
+ * The entrance and the idle sweep are drawn on one canvas over the squares
+ * (calendarFx.ts), because animating about 370 squares one by one dropped
+ * frames. The squares stay in the DOM, and only the hovered or pressed one
+ * ever animates there. During the entrance a column shows its ghost color
+ * under the canvas, and takes its own color (data-on on the column) in the
+ * frame the canvas stops drawing it. A square that has just stopped moving
+ * hides any one-pixel difference between the two.
  */
 
-const DURATION = 1.7; // s, scan line end to end
-const [X1, Y1, X2, Y2] = [0.5, 0, 0.2, 1]; // the scan line's easing, also set in CSS
 const TIP_W = 176;
 const MIN_PRESS = 150; // ms a key stays down, even on the quickest click
 const SCALE = [0, 2, 4, 7, 9, 12, 14, 16]; // pentatonic semitones, 8 steps
 const LEVEL = [g.k0, g.k1, g.k2, g.k3, g.k4];
-
-/** Point on one axis of a cubic bezier with end points 0 and 1. */
-const B = (s: number, a: number, b: number) => 3 * (1 - s) ** 2 * s * a + 3 * (1 - s) * s * s * b + s ** 3;
-
-/** Seconds into the scan at which the line reaches fraction `f` of the width. */
-function reachedAt(f: number) {
-  let lo = 0;
-  let hi = 1;
-  for (let i = 0; i < 24; i++) {
-    const mid = (lo + hi) / 2;
-    if (B(mid, Y1, Y2) < f) lo = mid; else hi = mid;
-  }
-  return B((lo + hi) / 2, X1, X2) * DURATION;
-}
 
 /** Pitch rate for tick() and click(): 0.62 for an empty day up to about 1.56
     for the busiest, on a square-root scale of the day's count. */
@@ -58,13 +49,9 @@ function rateFor(count: number, max: number) {
   return 0.62 * 2 ** (SCALE[step] / 12);
 }
 
-// idle sweep: the front crosses the grid in SWEEP s; each tile glows for GLOW s,
-// so the lit chevron is about GLOW / SWEEP of the grid thick. LEAD is how many
-// columns each row steps back from the middle row, which sets the ">" angle.
-const SWEEP = 3.4;
-const GLOW = 0.42;
-const LEAD = 1.8;
+const FIRST_SWEEP = 1100; // ms from the end of the entrance to the first idle sweep
 const REST = 8000; // ms between sweeps
+const GIVE_WAY = 250; // ms a sweep takes to fade when the pointer arrives
 
 const noop = () => () => {};
 const useMounted = () => useSyncExternalStore(noop, () => true, () => false);
@@ -76,10 +63,14 @@ type Tip = { i: number; x: number; y: number };
 export function ContributionCalendar({ year }: { year: Year }) {
   const reduce = useReducedMotion();
   const hovering = useRef(false);
-  const sweep = useRef<ReturnType<typeof animate> | null>(null);
-  const [ready, setReady] = useState(false);
+  const [scanned, setScanned] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const grid = useRef<HTMLDivElement>(null);
+  const columns = useRef<HTMLDivElement>(null);
+  const fx = useRef<HTMLCanvasElement>(null);
+  const scan = useRef<HTMLElement>(null);
+  const legend = useRef<HTMLSpanElement>(null);
+  const tiles = useRef<Tile[]>([]);
   const els = useRef<HTMLElement[]>([]);
   const lastOver = useRef(-1);
   const kb = useRef(-1);
@@ -90,11 +81,15 @@ export function ContributionCalendar({ year }: { year: Year }) {
   const mounted = useMounted();
   const [tip, setTip] = useState<Tip | null>(null);
 
-  const { byIdx, max, delays, monthDelays } = useMemo(() => {
+  // with reduced motion there is no entrance, so the squares are done on sight
+  const done = scanned || (inView && !!reduce);
+
+  const { byIdx, levels, max, delays, monthDelays } = useMemo(() => {
     const byIdx: (Cell | undefined)[] = [];
     year.days.forEach((c) => { byIdx[c.week * 7 + c.weekday] = c; });
     return {
       byIdx,
+      levels: Array.from({ length: year.weeks * 7 }, (_, i) => byIdx[i]?.level),
       max: Math.max(...year.days.map((c) => c.count)),
       delays: Array.from({ length: year.weeks }, (_, w) => reachedAt((w + 0.5) / year.weeks)),
       monthDelays: year.monthStarts.map((m) => reachedAt(m.week / year.weeks)),
@@ -108,41 +103,83 @@ export function ContributionCalendar({ year }: { year: Year }) {
     els.current = list;
   }, [year]);
 
-  // the idle sweep starts once the entrance scan has finished
+  // keep the canvas and the squares' boxes in step with the layout
   useEffect(() => {
-    if (!inView) return;
-    const t = setTimeout(() => setReady(true), (DURATION + 1) * 1000);
-    return () => clearTimeout(t);
-  }, [inView]);
+    const canvas = fx.current;
+    const cols = columns.current;
+    if (!canvas || !cols) return;
+    const ro = new ResizeObserver(() => { tiles.current = fit(canvas, cols); });
+    ro.observe(canvas);
+    return () => ro.disconnect();
+  }, [year]);
 
-  // idle: one Motion animation over every tile, delayed by its distance to a
-  // ">" front, then a rest, again and again
+  // entrance: the canvas draws the waking columns on the scan line's own clock
+  // (its CSS animation) and hands each settled column back to the DOM
   useEffect(() => {
-    if (!ready || !visible || reduce) return;
-    const tiles: HTMLElement[] = [];
-    const order: number[] = [];
-    els.current.forEach((el, i) => { if (el) { tiles.push(el); order.push(i); } });
-    const delayOf = (k: number) => {
-      const w = Math.floor(order[k] / 7);
-      const d = order[k] % 7;
-      const front = w - (3 - Math.abs(d - 3)) * LEAD; // middle row leads
-      return ((front + 3 * LEAD) / (year.weeks + 3 * LEAD)) * SWEEP;
+    if (!inView || done) return;
+    const canvas = fx.current;
+    const cols = columns.current;
+    const c = canvas?.getContext("2d");
+    const swatches = legend.current?.querySelectorAll("i");
+    let id = 0;
+    if (!canvas || !cols || !c || !swatches || swatches.length < LEVEL.length) {
+      id = requestAnimationFrame(() => setScanned(true));
+      return () => cancelAnimationFrame(id);
+    }
+    const colors = LEVEL.map((_, k) => getComputedStyle(swatches[k]).backgroundColor);
+    const coral = getComputedStyle(canvas).getPropertyValue("--coral").trim() || "#f5482d";
+    const line = scan.current?.getAnimations()[0];
+    let at = 0; // ms on the line's clock when it was last read
+    let read = performance.now();
+    let shown = 0; // columns already handed to the DOM
+    const frame = () => {
+      const now = line && line.playState !== "finished" ? line.currentTime : null;
+      if (typeof now === "number") { at = now; read = performance.now(); }
+      const settled = drawEntrance(c, tiles.current, levels, colors, coral, delays, (at + performance.now() - read) / 1000);
+      for (; shown < settled; shown++) cols.children[shown]?.setAttribute("data-on", "");
+      if (settled >= delays.length) { setScanned(true); return; }
+      id = requestAnimationFrame(frame);
     };
+    tiles.current = fit(canvas, cols);
+    id = requestAnimationFrame(frame);
+    return () => cancelAnimationFrame(id);
+  }, [inView, done, delays, levels]);
+
+  // idle: one sweep on the canvas, then a rest, again and again
+  useEffect(() => {
+    if (!scanned || !visible || reduce) return;
+    const canvas = fx.current;
+    const cols = columns.current;
+    const c = canvas?.getContext("2d");
+    if (!canvas || !cols || !c) return;
     let stopped = false;
     let wait: ReturnType<typeof setTimeout>;
+    let id = 0;
     const pass = () => {
       if (stopped) return;
       if (document.hidden || hovering.current) { wait = setTimeout(pass, 1500); return; }
-      sweep.current = animate(tiles, { "--gloss": [0, 1, 0] }, { duration: GLOW, ease: "easeInOut", delay: (k: number) => delayOf(k) });
-      sweep.current.then(() => { if (!stopped) wait = setTimeout(pass, REST); });
+      tiles.current = fit(canvas, cols);
+      let start = 0;
+      let held: { t: number; at: number } | null = null; // where the sweep stood when the pointer arrived
+      const frame = (now: number) => {
+        start ||= now;
+        if (hovering.current) held ??= { t: (now - start) / 1000, at: now };
+        const fade = held ? 1 - (now - held.at) / GIVE_WAY : 1;
+        const live = fade > 0 && drawSweep(c, tiles.current, levels, year.weeks, held ? held.t : (now - start) / 1000, fade, kb.current);
+        if (live) { id = requestAnimationFrame(frame); return; }
+        c.clearRect(0, 0, canvas.width, canvas.height);
+        wait = setTimeout(pass, REST);
+      };
+      id = requestAnimationFrame(frame);
     };
-    wait = setTimeout(pass, 700);
+    wait = setTimeout(pass, FIRST_SWEEP);
     return () => {
       stopped = true;
       clearTimeout(wait);
-      sweep.current?.stop();
+      cancelAnimationFrame(id);
+      c.clearRect(0, 0, canvas.width, canvas.height);
     };
-  }, [ready, visible, reduce, year.weeks]);
+  }, [scanned, visible, reduce, levels, year.weeks]);
 
   const show = (i: number) => {
     const el = els.current[i];
@@ -271,7 +308,18 @@ export function ContributionCalendar({ year }: { year: Year }) {
     return c.count ? plural(c.count) : "No contributions";
   };
 
-  const state = !mounted ? undefined : inView ? "in" : "armed";
+  const state = !mounted ? undefined : done ? "done" : inView ? "in" : "armed";
+
+  // the squares never change, so a hover (which moves the tooltip) skips them
+  const squares = useMemo(() => Array.from({ length: year.weeks }, (_, w) => (
+    <div key={w} className={g.week}>
+      {Array.from({ length: 7 }, (_, d) => {
+        const c = byIdx[w * 7 + d];
+        if (!c) return <i key={d} className={g.empty} />;
+        return <i key={d} className={`${g.cell} ${LEVEL[c.level]}`} data-i={w * 7 + d} data-clickable="" />;
+      })}
+    </div>
+  )), [byIdx, year.weeks]);
 
   return (
     <>
@@ -279,7 +327,6 @@ export function ContributionCalendar({ year }: { year: Year }) {
         ref={root}
         className={g.cal}
         data-state={state}
-        data-idle-on={ready ? "" : undefined}
         style={{ "--dur": `${DURATION}s` } as CSSProperties}
       >
         <div className={g.calBody}>
@@ -298,15 +345,8 @@ export function ContributionCalendar({ year }: { year: Year }) {
             tabIndex={0}
             data-own-sound
             aria-label={`Contribution calendar, ${year.total.toLocaleString("en-US")} contributions in the last year. Use the arrow keys to move between days and Enter to press one.`}
-            onPointerEnter={() => {
-              // an idle sweep in flight gives way to the pointer
-              hovering.current = true;
-              if (sweep.current) {
-                sweep.current.stop();
-                sweep.current = null;
-                animate(els.current.filter(Boolean), { "--gloss": 0 }, { duration: 0.25 });
-              }
-            }}
+            // an idle sweep in flight sees this and gives way to the pointer
+            onPointerEnter={() => { hovering.current = true; }}
             onPointerOver={onOver}
             onPointerLeave={onLeave}
             onPointerDown={onPointerDown}
@@ -315,26 +355,9 @@ export function ContributionCalendar({ year }: { year: Year }) {
             onFocus={onFocus}
             onBlur={onBlur}
           >
-            <div className={g.weeks} style={{ "--weeks": year.weeks } as CSSProperties}>
-              {Array.from({ length: year.weeks }, (_, w) => (
-                <div key={w} className={g.week}>
-                  {Array.from({ length: 7 }, (_, d) => {
-                    const c = byIdx[w * 7 + d];
-                    if (!c) return <i key={d} className={g.empty} />;
-                    return (
-                      <i
-                        key={d}
-                        className={`${g.cell} ${LEVEL[c.level]}`}
-                        data-i={w * 7 + d}
-                        data-clickable=""
-                        style={{ "--d": `${delays[w].toFixed(3)}s` } as CSSProperties}
-                      />
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-            <div className={g.scan} aria-hidden="true"><i /></div>
+            <div ref={columns} className={g.weeks} style={{ "--weeks": year.weeks } as CSSProperties}>{squares}</div>
+            <canvas ref={fx} className={g.fx} aria-hidden="true" />
+            <div className={g.scan} aria-hidden="true"><i ref={scan} /></div>
 
             <AnimatePresence>
               {tip && cell ? (
@@ -360,7 +383,7 @@ export function ContributionCalendar({ year }: { year: Year }) {
 
       <div className={g.readout}>
         <span><b>{year.total.toLocaleString("en-US")}</b> contributions in the last year</span>
-        <span className={g.legend} aria-hidden="true">
+        <span ref={legend} className={g.legend} aria-hidden="true">
           Less <span /> {LEVEL.map((l, i) => <i key={i} className={l} />)} <span /> More
         </span>
       </div>
