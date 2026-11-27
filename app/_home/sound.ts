@@ -2,13 +2,19 @@
 
 /**
  * Micro sound effects, tiny WebAudio blips, no audio files. Everything is
- * guarded: SSR-safe (functions only run in event handlers), autoplay-safe (the
- * context unlocks on the first user gesture that triggers a sound), and
- * user-controllable (persisted toggle, default ON at a near-subliminal volume).
+ * guarded: SSR-safe (nothing touches the window on the server), autoplay-safe
+ * (where the browser holds audio back, the context starts on the first click,
+ * tap, or key press anywhere on the page), and user-controllable (persisted
+ * toggle, default ON at a near-subliminal volume).
  */
 
 const KEY = "kn-sound";
+/** A sound asked for while the context is not running yet plays if the context
+    is running within LATE ms. Older ones are dropped, so the sounds asked for
+    while audio was blocked never play together when it starts. */
+const LATE = 200;
 let ctx: AudioContext | null = null;
+let waiting: { at: number; play: (a: AudioContext) => void }[] = [];
 const listeners = new Set<(on: boolean) => void>();
 
 export function soundEnabled(): boolean {
@@ -30,13 +36,53 @@ export function onSoundChange(l: (on: boolean) => void): () => void {
   };
 }
 
+/** Play what was asked for in the last LATE ms, once the context is running. */
+function flush() {
+  if (ctx?.state !== "running") return;
+  const a = ctx;
+  const now = performance.now();
+  const due = waiting.filter((w) => now - w.at < LATE);
+  waiting = [];
+  due.forEach((w) => w.play(a));
+}
+
+/** The shared context, made on first use and asked to run. Whether it runs
+    before the first click, tap, or key press is the browser's call: Chrome
+    allows it on sites the visitor uses often, and most others hold it
+    suspended until that press. */
 function ac(): AudioContext | null {
   try {
-    ctx ??= new AudioContext();
-    if (ctx.state === "suspended") void ctx.resume();
+    if (!ctx) {
+      ctx = new AudioContext();
+      ctx.addEventListener("statechange", flush);
+    }
+    // asked again on every call: a browser that is holding audio back only
+    // grants a resume() made during a press
+    if (ctx.state !== "running") void ctx.resume().then(flush, () => {});
     return ctx;
   } catch {
     return null;
+  }
+}
+
+if (typeof window !== "undefined") {
+  // Open the context once the page is idle, so audio is already running at
+  // the first hover where the browser allows it.
+  const warm = () => { if (soundEnabled()) ac(); };
+  if ("requestIdleCallback" in window) window.requestIdleCallback(warm, { timeout: 2000 });
+  else setTimeout(warm, 300);
+
+  // Where the browser holds audio until a press, start it on the first press
+  // of any kind, whether or not that press makes a sound of its own, so the
+  // next hover is audible. pointerup, touchend, and click are here for touch,
+  // where a browser counts the release and not the press. The listeners stay:
+  // a context can be suspended again, for example when a phone puts the page
+  // in the background.
+  const unlock = () => {
+    if (ctx?.state !== "running" && soundEnabled()) ac();
+  };
+  for (const type of ["pointerdown", "pointerup", "touchend", "keydown", "click"]) {
+    window.addEventListener(type, unlock, { capture: true, passive: true });
   }
 }
 
@@ -45,17 +91,25 @@ function blip(freq: number, dur: number, vol: number, type: OscillatorType = "tr
   if (!soundEnabled()) return;
   const a = ac();
   if (!a) return;
-  const t = a.currentTime;
-  const osc = a.createOscillator();
-  const gain = a.createGain();
-  osc.type = type;
-  osc.frequency.setValueAtTime(freq, t);
-  if (glideTo) osc.frequency.exponentialRampToValueAtTime(glideTo, t + dur);
-  gain.gain.setValueAtTime(vol, t);
-  gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  osc.connect(gain).connect(a.destination);
-  osc.start(t);
-  osc.stop(t + dur + 0.02);
+  const play = (a: AudioContext) => {
+    const t = a.currentTime;
+    const osc = a.createOscillator();
+    const gain = a.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t);
+    if (glideTo) osc.frequency.exponentialRampToValueAtTime(glideTo, t + dur);
+    gain.gain.setValueAtTime(vol, t);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(gain).connect(a.destination);
+    osc.start(t);
+    osc.stop(t + dur + 0.02);
+  };
+  if (a.state === "running") {
+    play(a);
+    return;
+  }
+  waiting.push({ at: performance.now(), play });
+  if (waiting.length > 8) waiting.shift();
 }
 
 /** Nav hover / keystroke, a faint mechanical tick. `rate` scales the pitch
