@@ -9,7 +9,7 @@
   at about its drawn size: one feature of the product, with few, large
   elements. Colours, fonts, marks, and strings are each product's own; records
   are made up. Every top-level element with data-piece is captured to
-  <name>-3x.png. Wishlist is drawn on its live page instead
+  <name>-4x.png. Wishlist is drawn on its live page instead
   (scripts/covers/wishlist-live.mjs).
   How to add one: .claude/skills/project-cover/SKILL.md
   Capture: node scripts/covers/capture.mjs
@@ -86,7 +86,7 @@ button { font: inherit; }
 .lm li { display: flex; align-items: center; gap: 8px; height: 26px; padding: 0 10px; border-radius: 7px; background: rgba(151, 174, 114, 0.2); font-size: 10.5px; }
 .lm li span { margin-right: auto; }
 .lm li i { width: 40px; height: 4px; border-radius: 2px; overflow: hidden; background: rgba(79, 107, 60, 0.16); }
-.lm li i::before { content: ""; display: block; width: var(--p); height: 100%; border-radius: 2px; background: #4f6b3c; }
+.lm li i::before { content: ""; display: block; width: var(--p); min-width: 4px; height: 100%; border-radius: 2px; background: #4f6b3c; }
 .lm li em { width: 24px; text-align: right; color: #6e6b60; font-style: normal; font-size: 10px; font-variant-numeric: tabular-nums; }
 
 /* ---- Flee the Faculty: a classmate's misconception, the player's spoken answer ----
@@ -127,54 +127,59 @@ button { font: inherit; }
 /* ---- Narrow pieces (r-<name>-n): the same feature drawn for a 303px tile,
    three across or a phone, at about 146px tall. Each keeps the wide piece's
    classes and overrides sizes; what it leaves out is noted beside it. ---- */
-/* Zervo: no panel header and no request bubble; the mark sits beside the title */
-.zn { width: 232px; padding: 11px 13px 12px; }
-.zn .hd { display: flex; align-items: flex-start; gap: 8px; }
-.zn .hd img { width: 18px; height: 18px; margin-top: 1px; border-radius: 5px; }
-.zn h3 { margin-top: 0; font-size: 12.5px; }
+/* Zervo: no request bubble and no panel chrome; "Zervo AI" stays as a label, and
+   the old and new price share one line with their label */
+.zn { width: 264px; padding: 11px 12px 12px; }
+.zn .ai { display: flex; align-items: center; gap: 6px; color: #475569; font-size: 10.5px; font-weight: 650; }
+.zn .ai img { width: 15px; height: 15px; border-radius: 4px; }
+.zn h3 { margin-top: 7px; font-size: 12.5px; }
 .zn .sub { font-size: 10.5px; white-space: nowrap; }
-.zn dl { margin-top: 9px; padding: 7px 10px; }
-.zn dl div { grid-template-columns: 1fr; gap: 1px; }
+.zn dl { margin-top: 9px; padding: 7px 9px; }
+.zn dl div { grid-template-columns: auto minmax(0, 1fr); font-size: 10.5px; }
+.zn dd { justify-content: flex-end; }
 .zn footer { margin-top: 9px; }
 .zn footer button { height: 26px; padding: 0 12px; }
 /* VSenses: two beds, three half hours, no legend */
 .vn { width: 250px; }
-.vn header { height: 30px; padding: 0 11px; }
-.vn .cols { grid-template-columns: 58px repeat(2, 1fr); }
-.vn .bh { height: 23px; padding: 0 11px; }
-.vn .lane { height: 96px; background: repeating-linear-gradient(#fff 0 31px, #EFEADC 31px 32px); }
-.vn .rail time { left: 11px; padding-top: 4px; }
+.vn header { height: 29px; padding: 0 11px; }
+.vn .cols { grid-template-columns: 62px repeat(2, 1fr); }
+.vn .bh { height: 22px; padding: 0 11px; }
+.vn .lane { height: 99px; background: repeating-linear-gradient(#fff 0 32px, #EFEADC 32px 33px); }
+.vn .rail time { left: 10px; padding-top: 4px; font-size: 10px; }
 .vn .bk { padding: 5px 7px; }
-.vn .bk::after { height: 9px; }
-/* Leafmark: the popup alone, without the toolbar and the note */
-.ln { width: 250px; }
-.ln .pop { padding: 11px 11px 11px; border-radius: 5px; }
+.vn .bk span { font-size: 10px; }
+.vn .bk::after { height: 8px; }
+/* Leafmark: the popup alone, without the toolbar; the mark sits beside the page
+   title in place of the wordmark row */
+.ln { width: 254px; }
+.ln .pop { padding: 11px 11px 12px; border-radius: 0; }
 .ln .pop::before { content: none; }
-.ln .brand img { width: 20px; height: 20px; }
-.ln .brand b { font-size: 15px; }
-.ln .t { margin-top: 8px; font-size: 12px; }
+.ln .t { display: flex; align-items: center; gap: 6px; margin-top: 0; font-size: 12.5px; }
+.ln .t img { width: 17px; height: 17px; }
+.ln .m { font-size: 10.5px; }
 .ln ol { gap: 4px; margin-top: 8px; }
-.ln li { gap: 6px; height: 22px; padding: 0 8px; border-radius: 6px; font-size: 10px; }
-.ln li i { width: 24px; }
+.ln li { gap: 6px; height: 24px; padding: 0 8px; border-radius: 6px; font-size: 10.5px; }
 .ln li span { white-space: nowrap; }
-.ln li em { width: 22px; font-size: 9.5px; }
-/* Flee the Faculty: the wrong idea and the spoken answer; no reply */
+.ln li i { width: 24px; background: rgba(79, 107, 60, 0.26); }
+.ln li em { width: 24px; font-size: 10px; }
+/* Flee the Faculty: the wrong idea and a shorter spoken answer; no reply */
 .fn { width: 250px; }
 .fn header { height: 31px; padding: 0 11px; font-size: 10.5px; }
 .fn .steps i { width: 13px; }
 .fn .chat { gap: 7px; padding: 10px 11px 12px; }
 .fn .who { width: 20px; height: 20px; font-size: 9.5px; }
 .fn .bub { max-width: 186px; padding: 6px 10px; font-size: 11px; }
-.fn .me { max-width: 216px; gap: 8px; padding: 7px 11px 7px 7px; font-size: 11px; }
+.fn .me { max-width: 192px; gap: 8px; padding: 7px 11px 7px 7px; font-size: 11px; }
 .fn .me i { width: 21px; height: 21px; }
 .fn .me svg { width: 12px; height: 12px; }
-/* huly-cli: a shorter command, four rows, no table title */
-.hn { width: 264px; }
-.hn .bar { height: 24px; padding: 0 11px; }
+/* huly-cli: a shorter command, four rows, no table title; 14px rows so the
+   pitch is even */
+.hn { width: 262px; }
+.hn .bar { height: 24px; padding: 0 10px; }
 .hn .bar i { width: 7px; height: 7px; }
-.hn .out { padding: 9px 12px 11px; font-size: 9.5px; line-height: 1.42; }
+.hn .out { padding: 9px 10px 10px; font-size: 10px; line-height: 14px; }
 .hn table { margin-top: 6px; }
-.hn th, .hn td { padding-inline: 5px; }
+.hn th, .hn td { padding-inline: 4px; }
 .hn th { padding-block: 3px; }
 </style>
 
@@ -273,7 +278,9 @@ button { font: inherit; }
 </div>
 
 <div data-piece="r-zervo-n" class="z zn">
-  <div class="hd"><img src="../../public/projects/marks/zervo.png" alt=""><div><h3>Update a service</h3><p class="sub">Complete Blood Count (LAB-CBC)</p></div></div>
+  <p class="ai"><img src="../../public/projects/marks/zervo.png" alt="">Zervo AI</p>
+  <h3>Update a service</h3>
+  <p class="sub">Complete Blood Count (LAB-CBC)</p>
   <dl>
     <div><dt>Standard price</dt><dd><s>PHP 500.00</s><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8h11M9.5 4l4 4-4 4"/></svg><b>PHP 750.00</b></dd></div>
   </dl>
@@ -289,22 +296,22 @@ button { font: inherit; }
   </div>
   <div class="cols">
     <div><div class="lane rail">
-      <time style="top:0">11:00 AM</time><time style="top:32px">11:30 AM</time><time style="top:64px">12:00 PM</time>
+      <time style="top:0">11:00 AM</time><time style="top:33px">11:30 AM</time><time style="top:66px">12:00 PM</time>
     </div></div>
     <div><div class="lane">
-      <div class="bk on" style="top:2px;height:60px"><b>Ana Cruz</b><span>Deep Tissue</span><span>60 min</span></div>
+      <div class="bk on" style="top:2px;height:62px"><b>Ana Cruz</b><span>Deep Tissue</span><span>60 min</span></div>
     </div></div>
     <div><div class="lane">
-      <div class="bk done" style="top:2px;height:28px"><b>Dina Lim</b></div>
-      <div class="bk bo" style="top:34px;height:60px"><b>Carla Dizon</b><span>Hot Stone</span><span>60 min</span></div>
+      <div class="bk done" style="top:2px;height:29px"><b>Dina Lim</b></div>
+      <div class="bk bo" style="top:35px;height:60px"><b>Carla Dizon</b><span>Hot Stone</span><span>60 min</span></div>
     </div></div>
   </div>
 </div>
 
 <div data-piece="r-leafmark-n" class="lm ln">
   <div class="pop">
-    <div class="brand"><img src="../../public/projects/marks/leafmark.png" alt=""><b>Leafmark</b></div>
-    <p class="t">12 Factor Agents</p>
+    <p class="t"><img src="../../public/projects/marks/leafmark.png" alt="">12 Factor Agents</p>
+    <p class="m">Not sure between these.</p>
     <ol>
       <li><span>References › GenAI &amp; Agents</span><i style="--p:46%"></i><em>46%</em></li>
       <li><span>Tools › Agents &amp; Dev Workflow</span><i style="--p:38%"></i><em>38%</em></li>
@@ -317,7 +324,7 @@ button { font: inherit; }
   <header>Students helped: 3 / 4<span class="steps"><i></i><i></i><i></i><i class="no"></i></span></header>
   <div class="chat">
     <div class="them"><span class="who">Z</span><p class="bub">Plants eat the dirt, right? That's what the soil is for.</p></div>
-    <p class="me"><i><svg viewBox="0 0 16 16" fill="currentColor"><rect x="5.5" y="1.5" width="5" height="8.5" rx="2.5"/><path d="M3.2 7.4a.7.7 0 0 1 1.4 0 3.4 3.4 0 0 0 6.8 0 .7.7 0 0 1 1.4 0 4.8 4.8 0 0 1-4.1 4.75V14a.7.7 0 0 1-1.4 0v-1.85A4.8 4.8 0 0 1 3.2 7.4Z"/></svg></i>A plant makes its own food from air, water, and light.</p>
+    <p class="me"><i><svg viewBox="0 0 16 16" fill="currentColor"><rect x="5.5" y="1.5" width="5" height="8.5" rx="2.5"/><path d="M3.2 7.4a.7.7 0 0 1 1.4 0 3.4 3.4 0 0 0 6.8 0 .7.7 0 0 1 1.4 0 4.8 4.8 0 0 1-4.1 4.75V14a.7.7 0 0 1-1.4 0v-1.85A4.8 4.8 0 0 1 3.2 7.4Z"/></svg></i>Plants make food from air, water, and light.</p>
   </div>
 </div>
 

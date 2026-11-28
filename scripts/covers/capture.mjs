@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Captures every cover piece in scripts/covers/pieces.html (each top-level
-// element with data-piece) at 3x on a transparent page, as <name>-3x.png, and
+// element with data-piece) at 4x on a transparent page, as <name>-4x.png, and
 // prints each piece's CSS size. A piece should be about 213px tall: see
 // .claude/skills/project-cover/SKILL.md.
 //   node scripts/covers/capture.mjs [out dir, default output/covers] [--only r-zervo]
@@ -17,7 +17,7 @@ mkdirSync(out, { recursive: true });
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const b = await chromium.launch();
-const p = await b.newPage({ viewport: { width: 700, height: 2400 }, deviceScaleFactor: 3 });
+const p = await b.newPage({ viewport: { width: 700, height: 2400 }, deviceScaleFactor: 4 });
 await p.goto(pathToFileURL(path.join(here, "pieces.html")).href);
 await p.evaluate(() => document.fonts.ready);
 await p.waitForTimeout(300);
@@ -26,7 +26,7 @@ for (const name of names) {
   if (only && name !== only) continue;
   const el = p.locator(`[data-piece="${name}"]`);
   const box = await el.boundingBox();
-  await el.screenshot({ path: `${out}/${name}-3x.png`, omitBackground: true });
+  await el.screenshot({ path: `${out}/${name}-4x.png`, omitBackground: true });
   console.log(`${name}  ${Math.round(box.width)} x ${Math.round(box.height)} CSS px`);
 }
 await b.close();

@@ -52,8 +52,9 @@ function Mark({ p }: { p: Project }) {
    huly-cli is the tool's real output. Flee the Faculty is a mock drawn for
    this page: the lines are the game's own strings and the classmates, mic,
    and check are its own sprites, but the cards are not the game's UI.
-   `w` is the column's width as a share of the tile, `wn` the same on a narrow
-   tile (three across, or a phone). A `flat` piece carries its own corners and
+   `w` is the column's width as a percent of the tile's, `wn` the same on a
+   narrow tile (three across, or a phone). The CSS sizes it from the tile's
+   height, so a tile that is a little narrower than 16:10 keeps the same piece. A `flat` piece carries its own corners and
    takes its shadow from its outline. Each image is exported at the exact
    pixel width it shows at on a 467px tile at 2x, so the browser does not
    rescale it there. `tone` shows while the ground loads. Grounds come from
@@ -80,7 +81,7 @@ function Mark({ p }: { p: Project }) {
    again. To add a project's cover: .claude/skills/project-cover/SKILL.md.
 
    The fallback set's sources are local only (output/, gitignored). */
-type Piece = { file: string; /** a shorter crop of the same screen for a narrow tile */ narrow?: string; flat?: boolean };
+type Piece = { file: string; /** the same feature drawn for a narrow tile */ narrow?: string; /** the image carries its own corners; "wide" when only the wide drawing does */ flat?: boolean | "wide" };
 type Cover = { ground: string; tone: string; w: number; wn: number; pieces: Piece[] };
 const COVERS: Record<string, Cover> = {
   Zervo: { ground: "zervo", tone: "#5a9cf0", w: 54, wn: 78, pieces: [{ file: "zervo-ai", narrow: "zervo-ai-short" }] },
@@ -92,12 +93,12 @@ const COVERS: Record<string, Cover> = {
 };
 
 const COVERS_REDESIGN: Record<string, Cover> = {
-  Zervo: { ground: "zervo", tone: "#5a9cf0", w: 58, wn: 74, pieces: [{ file: "r-zervo", narrow: "r-zervo-n" }] },
-  VSenses: { ground: "vsenses", tone: "#ee8b55", w: 76, wn: 80, pieces: [{ file: "r-vsenses", narrow: "r-vsenses-n" }] },
-  Wishlist: { ground: "wishlist", tone: "#7fb99a", w: 72, wn: 78, pieces: [{ file: "r-wishlist", narrow: "r-wishlist-n" }] },
-  Leafmark: { ground: "leafmark", tone: "#8a78d6", w: 56, wn: 80, pieces: [{ file: "r-leafmark", narrow: "r-leafmark-n", flat: true }] },
-  "Flee the Faculty": { ground: "flee-the-faculty", tone: "#4fc0dc", w: 64, wn: 80, pieces: [{ file: "r-flee", narrow: "r-flee-n" }] },
-  "huly-cli": { ground: "huly-cli", tone: "#f39a3a", w: 72, wn: 84, pieces: [{ file: "r-huly", narrow: "r-huly-n" }] },
+  Zervo: { ground: "zervo", tone: "#5a9cf0", w: 58, wn: 81, pieces: [{ file: "r-zervo", narrow: "r-zervo-n" }] },
+  VSenses: { ground: "vsenses", tone: "#ee8b55", w: 76, wn: 79, pieces: [{ file: "r-vsenses", narrow: "r-vsenses-n" }] },
+  Wishlist: { ground: "wishlist", tone: "#7fb99a", w: 72, wn: 79, pieces: [{ file: "r-wishlist", narrow: "r-wishlist-n" }] },
+  Leafmark: { ground: "leafmark", tone: "#8a78d6", w: 56, wn: 81, pieces: [{ file: "r-leafmark", narrow: "r-leafmark-n", flat: "wide" }] },
+  "Flee the Faculty": { ground: "flee-the-faculty", tone: "#4fc0dc", w: 64, wn: 82, pieces: [{ file: "r-flee", narrow: "r-flee-n" }] },
+  "huly-cli": { ground: "huly-cli", tone: "#f39a3a", w: 72, wn: 82, pieces: [{ file: "r-huly", narrow: "r-huly-n" }] },
 };
 export type CoverSet = "redesign" | "fallback";
 
@@ -110,10 +111,10 @@ function Card({ p, cover, coverSet, hostLabels }: { p: Project; cover: boolean; 
     <article className={s.project}>
       {cover && shot ? (
         <div className={s.projCover} role="img" aria-label={`${p.name} preview`} style={{ "--c": shot.tone, backgroundImage: `url(/projects/covers/bg-${shot.ground}.webp)` } as CSSProperties}>
-          <div className={s.coverStack} style={{ "--w": `${shot.w}%`, "--wn": `${shot.wn}%` } as CSSProperties}>
+          <div className={s.coverStack} style={{ "--w": shot.w, "--wn": shot.wn } as CSSProperties}>
             {shot.pieces.flatMap((x) => [x.file, x.narrow].map((file, n) => (file ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={file} data-on={x.narrow ? (n ? "narrow" : "wide") : undefined} data-flat={x.flat ? "" : undefined} src={`/projects/covers/${file}.webp`} alt="" loading="lazy" />
+              <img key={file} data-on={x.narrow ? (n ? "narrow" : "wide") : undefined} data-flat={x.flat === true || (x.flat === "wide" && n === 0) ? "" : undefined} src={`/projects/covers/${file}.webp`} alt="" loading="lazy" />
             ) : null)))}
           </div>
         </div>

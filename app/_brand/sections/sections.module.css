@@ -287,13 +287,17 @@
    corners; its shadow follows its outline. The tile itself stays square, like
    the frame. The cover carries the project's identity, so the 44px mark tile
    beside the name is dropped. */
-.projCover { container-type: inline-size; position: relative; display: grid; place-items: center; aspect-ratio: 16 / 10; margin-bottom: 18px; overflow: hidden; background: var(--c) center / cover no-repeat; }
-.coverStack { display: flex; flex-direction: column; align-items: flex-start; gap: 2.4cqw; width: var(--w, 66%); }
-.coverStack img { display: block; width: 100%; height: auto; border-radius: 1.6cqw; box-shadow: 0 0.15cqw 0.4cqw rgb(28 25 23 / 0.1), 0 1.8cqw 3.2cqw -1.4cqw rgb(28 25 23 / 0.34); }
-.coverStack img[data-flat] { border-radius: 0; box-shadow: none; filter: drop-shadow(0 0.15cqw 0.3cqw rgb(28 25 23 / 0.1)) drop-shadow(0 1.3cqw 1.5cqw rgb(28 25 23 / 0.2)); }
+/* A cover's piece is sized from the tile's height (cqh), not its width: the
+   covers in a row share one height, but the first column is 16px narrower, and
+   a width-based piece came out 5% smaller there. `--w` and `--wn` are the
+   piece's width as a percent of a 16:10 tile's width, so 1.6cqh is 1% of it. */
+.projCover { container-type: size; position: relative; display: grid; place-items: center; aspect-ratio: 16 / 10; margin-bottom: 18px; overflow: hidden; background: var(--c) center / cover no-repeat; }
+.coverStack { display: flex; flex-direction: column; align-items: flex-start; gap: 3.84cqh; width: calc(var(--w, 66) * 1.6cqh); }
+.coverStack img { display: block; width: 100%; height: auto; border-radius: 2.56cqh; box-shadow: 0 0.24cqh 0.64cqh rgb(28 25 23 / 0.1), 0 2.88cqh 5.12cqh -2.24cqh rgb(28 25 23 / 0.34); }
+.coverStack img[data-flat] { border-radius: 0; box-shadow: none; filter: drop-shadow(0 0.24cqh 0.48cqh rgb(28 25 23 / 0.1)) drop-shadow(0 2.08cqh 2.4cqh rgb(28 25 23 / 0.2)); }
 .coverStack img[data-on="narrow"] { display: none; }
 @container (max-width: 380px) {
-  .coverStack { width: var(--wn, 80%); }
+  .coverStack { width: calc(var(--wn, 80) * 1.6cqh); }
   .coverStack img[data-on="wide"] { display: none; }
   .coverStack img[data-on="narrow"] { display: block; }
 }

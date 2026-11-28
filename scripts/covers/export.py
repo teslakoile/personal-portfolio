@@ -2,12 +2,12 @@
 
 Each piece is saved at the exact pixel width it shows at on a 467px tile on a
 2x screen (934px times its `w` share), so the browser does not rescale it
-there. A `narrow` piece is saved for a 303px tile at 3x (909px times its `wn`
-share): the live page shows it at 2x on a desktop and at 3x on a phone, where
-the tile is about 350px wide. The widths come from COVERS_REDESIGN in
+there. A `narrow` piece is saved at 3.45 times its size on a 303px tile: the
+landing page shows it at 2x on a desktop and at 3x on a phone, where the tile
+is up to 348px wide, so the file is never scaled up. The widths come from COVERS_REDESIGN in
 app/_brand/sections/Projects.tsx, the one place they are set. Flat UI is saved
 as lossless WebP, because lossy WebP smears small coloured text; a piece that
-holds photos (PHOTO below) is saved at quality 96.
+is mostly photos (PHOTO below) is saved at quality 96.
 
   python3 scripts/covers/export.py [captures dir, default output/covers] [--only r-zervo]
 
@@ -19,11 +19,11 @@ import re, sys
 from pathlib import Path
 from PIL import Image, ImageFilter
 
-PHOTO = {"r-wishlist", "r-wishlist-n"}
+PHOTO = {"r-wishlist"}
 OUT = Path("public/projects/covers")
 # tile size in CSS px, pixels per CSS px to save at, and the height band
 WIDE = dict(w=467, h=292, scale=2, band=(0.68, 0.76))
-NARROW = dict(w=303, h=189, scale=3, band=(0.72, 0.78))
+NARROW = dict(w=303, h=189, scale=3.45, band=(0.72, 0.78))
 
 args = sys.argv[1:]
 only = None
@@ -46,7 +46,7 @@ if not jobs:
 for name, share_w, tile in jobs:
     if only and name != only:
         continue
-    png = src / f"{name}-3x.png"
+    png = src / f"{name}-4x.png"
     if not png.exists():
         print(f"{name}: no capture at {png}, skipped"); continue
     im = Image.open(png)

@@ -18,7 +18,7 @@ import { chromium } from "playwright";
 const out = process.argv[2] ?? "output/covers";
 mkdirSync(out, { recursive: true });
 const b = await chromium.launch();
-const p = await b.newPage({ viewport: { width: 900, height: 1400 }, deviceScaleFactor: 3 });
+const p = await b.newPage({ viewport: { width: 900, height: 1400 }, deviceScaleFactor: 4 });
 await p.goto("https://app.wishlist.fit/kyle", { waitUntil: "domcontentloaded", timeout: 60000 });
 await p.getByText("Add to Circle").first().waitFor({ timeout: 60000 });
 await p.waitForTimeout(6000);
@@ -81,7 +81,7 @@ const info = await p.evaluate(async () => {
   </div>
   <div id="wlrn">
     <div class="hd"><img src="${avatar}" alt=""><div><b>Kyle</b><small>@kyle, ${count}</small></div><button>${icon}Add to Circle</button></div>
-    <div class="rows">${[{ ...items[0], name: "Slash T64 Backpack", line: items[0].price }, { ...items[2], name: "Freezer cups", line: "Set of 2" }].map((x) => `<div class="row"><div class="ph"><img src="${x.src}" alt=""></div><div><p class="nm">${x.name}</p><p class="mt">${x.line}</p></div>${x.reserved ? `<span class="act got">${tick}Reserved</span>` : `<span class="act">Reserve</span>`}</div>`).join("")}</div>
+    <div class="rows">${[{ ...items[0], name: "Slash T64 Backpack", line: items[0].price }, { ...items[2], name: "Freezer cups", line: "Set of 2", zoom: "transform:scale(1.45)" }].map((x) => `<div class="row"><div class="ph"><img src="${x.src}" style="${x.zoom ?? ""}" alt=""></div><div><p class="nm">${x.name}</p><p class="mt">${x.line}</p></div>${x.reserved ? `<span class="act got">${tick}Reserved</span>` : `<span class="act">Reserve</span>`}</div>`).join("")}</div>
   </div>`;
   document.body.style.cssText = "margin:0;padding:30px;background:transparent";
   document.documentElement.style.background = "transparent";
@@ -92,7 +92,7 @@ const info = await p.evaluate(async () => {
 });
 console.log(JSON.stringify(info));
 await p.waitForTimeout(500);
-await p.locator("#wlr").screenshot({ path: `${out}/r-wishlist-3x.png` });
-await p.locator("#wlrn").screenshot({ path: `${out}/r-wishlist-n-3x.png` });
-console.log(`${out}/r-wishlist-3x.png`, `${out}/r-wishlist-n-3x.png`);
+await p.locator("#wlr").screenshot({ path: `${out}/r-wishlist-4x.png` });
+await p.locator("#wlrn").screenshot({ path: `${out}/r-wishlist-n-4x.png` });
+console.log(`${out}/r-wishlist-4x.png`, `${out}/r-wishlist-n-4x.png`);
 await b.close();

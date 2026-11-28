@@ -74,7 +74,9 @@ If the product has a public live page with real content worth showing (as Wishli
 Then draw the narrow piece as a second element, `data-piece="r-<name>-n"`, with the wide piece's classes plus one modifier class that overrides sizes (see the "Narrow pieces" block of the stylesheet). It is a separate drawing, not a scaled copy: at 303px a scaled wide piece puts its text at 7px.
 
 - Draw at about 230 to 265 CSS px wide and 144 to 150 px tall.
-- Keep the type at 9.5 to 12.5px and cut elements until it fits: about three elements. Keep the one that carries the point of the product (Zervo keeps the old and new value and the Save button; it loses the panel header and the request).
+- Keep the type at 10 to 12.5px and cut elements until it fits: about three or four elements.
+- Keep the cue that carries the point of the product, even if it costs the wordmark. A first narrow Zervo dropped "Zervo AI" and read as an ordinary edit dialog; a first narrow Leafmark dropped "Not sure between these." and its scores read as progress bars. Both cues went back in.
+- Use free horizontal space before vertical space: put a label and its value on one line.
 - Say in the CSS comment what the narrow piece leaves out.
 
 Capture and look at both:
@@ -84,7 +86,7 @@ node scripts/covers/capture.mjs --only r-<name>
 node scripts/covers/capture.mjs --only r-<name>-n
 ```
 
-Open `output/covers/r-<name>-3x.png` and `r-<name>-n-3x.png`, and fix what you see before going on.
+Open `output/covers/r-<name>-4x.png` and `r-<name>-n-4x.png`, and fix what you see before going on.
 
 ### 4. Make the ground
 
@@ -110,7 +112,7 @@ Add the project to `COVERS_REDESIGN`, keyed by its exact `name` in `projectsData
 
 - `w` is the piece's width as a percent of the tile. Choose it so the piece is 72% to 74% of the tile's height: `w = 213 / drawn height * drawn width / 467 * 100`.
 - `wn` is the narrow piece's width as a percent of a narrow tile. Choose it so the piece is 75% to 77% of that tile's height: `wn = 143 / drawn height * drawn width / 303 * 100`.
-- Add `flat: true` when the piece has more than one part with its own corners and transparent gaps (see Leafmark). Its shadow then follows its outline.
+- Add `flat: true` when the piece has more than one part with its own corners and transparent gaps. Its shadow then follows its outline, and the CSS does not round it. Use `flat: "wide"` when only the wide drawing is like that (see Leafmark).
 - A piece with photos goes in `PHOTO` in `export.py`; everything else is saved lossless, because lossy WebP smears small coloured text.
 - Keep `w`, `wn`, `file`, and `narrow` on one line in that order: `export.py` reads them from this file.
 
@@ -118,7 +120,7 @@ Add the project to `COVERS_REDESIGN`, keyed by its exact `name` in `projectsData
 python3 scripts/covers/export.py
 ```
 
-`export.py` saves the wide piece at 2x of a 467px tile and the narrow piece at 3x of a 303px tile (a phone shows it at 3x). It warns when a wide piece is outside 68% to 76% of its tile's height, or a narrow one outside 72% to 78%. Change the width or the drawing until neither warns.
+`export.py` saves the wide piece at 2x of a 467px tile and the narrow piece at 3.45x of a 303px tile, which is 3x of the 348px tile a phone shows. It warns when a wide piece is outside 68% to 76% of its tile's height, or a narrow one outside 72% to 78%. Change the width or the drawing until neither warns.
 
 ### 6. Render and check
 
@@ -146,7 +148,8 @@ Before calling it done: `npm run lint`, `npx tsc --noEmit`, `npm run build`.
 
 Check for these before the review; each one cost a round.
 
-- **Soft or smeared text.** Lossy WebP, or an image shown at a width other than the one it was exported at. Export after every change to `w`.
+- **Soft or smeared text.** Lossy WebP, or an image shown larger than it was exported. Export after every change to `w` or `wn`, and keep a piece out of `PHOTO` unless it is mostly photos.
+- **A smaller piece in the first column.** The first column of the grid is 16px narrower than the others. The CSS sizes a piece from the tile's height (`cqh`) for that reason; do not size anything in `.coverStack` from the tile's width.
 - **Gaps in terminal tables.** Box-drawing characters leave seams between rows. Draw the table with 1px CSS borders and keep the monospace font for the text.
 - **Uneven photo tiles.** A photo with a white background disappears into a white card. Put photos in a tinted frame with `mix-blend-mode: multiply`, and position the image absolutely so its natural size cannot stretch the frame.
 - **A label that wraps badly.** Break it yourself with `<br>`; `text-wrap: balance` picked the worse break.
