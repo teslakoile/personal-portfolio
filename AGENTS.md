@@ -34,6 +34,7 @@ The capture turns off the site's smooth scrolling and hides the Next dev badge. 
 - Real brand logos from `public/logos/`. Never fabricate screenshots, dashboards, or product mockups of confidential work.
 - Build design options as real routes under `app/samples/` so they can be compared rendered, not described in prose.
 - KYLLM and tab-icon motion: read `.claude/skills/avatar-animation/SKILL.md` first. New motion goes on `/samples/favicon-kyllm-anim` as an option and ships only when Kyle names it.
+- Project covers (the image tile above a project card): read `.claude/skills/project-cover/SKILL.md` first. Sources are in `scripts/covers/`.
 
 ## Copy rules
 

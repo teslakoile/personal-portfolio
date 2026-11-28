@@ -9,7 +9,7 @@ import { LinkIcon, linkKind } from "../../_brand/linkIcons";
 
 /*
  * Options for the project cards' links and tags, on real cards (Wishlist,
- * huly-cli, Servo: three links, two, and one). Each link option keeps the
+ * huly-cli, Zervo: three links, two, and one). Each link option keeps the
  * shipped tags (L1 is what ships); each tag option keeps the shipped links
  * (T1 is what ships).
  */
@@ -33,7 +33,7 @@ export const TAG_OPTS: [TagOpt, string, string][] = [
   ["T5", "Square Labels", "Small square-cornered labels in a light fill with heavier text, closer to a category label than a chip."],
 ];
 
-const SHOWN = ["Wishlist", "huly-cli", "Servo"].map((n) => PROJECTS.find((p) => p.name === n)!);
+const SHOWN = ["Wishlist", "huly-cli", "Zervo"].map((n) => PROJECTS.find((p) => p.name === n)!);
 
 /** The brand's data colours as tag tints: light fill, dark text in the same hue. */
 const TINTS = [

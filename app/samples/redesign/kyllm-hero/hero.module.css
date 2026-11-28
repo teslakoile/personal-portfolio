@@ -191,3 +191,11 @@
 @media (pointer: coarse) and (max-height: 500px) {
   .promo { margin-top: 8px; }
 }
+
+/* refined (SitePage `refined`): the ground runs solid behind all four lines
+   of a Career Highlights description; before, the top line sat on the image */
+[data-refined] .workCard::before { background: linear-gradient(to bottom, var(--ground) 0%, transparent 18%), linear-gradient(to top, var(--ground) 48%, transparent 72%); }
+@media (max-width: 720px) {
+  /* a phone's narrower card runs the description to six lines */
+  [data-refined] .workCard::before { background: linear-gradient(to bottom, var(--ground) 0%, transparent 18%), linear-gradient(to top, var(--ground) 62%, transparent 86%); }
+}

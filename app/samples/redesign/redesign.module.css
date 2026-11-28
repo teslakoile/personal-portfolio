@@ -22,3 +22,9 @@
 @media (pointer: coarse) and (max-height: 500px) {
   .railWrap > aside { padding-block: 6px; }
 }
+
+/* refined (SitePage `refined`): the phone header's section menu drops below
+   the bar, so the bar must not clip it */
+@media (max-width: 760px) {
+  .page[data-refined] .railWrap { overflow: visible; }
+}

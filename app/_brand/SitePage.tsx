@@ -34,7 +34,31 @@ import s from "../samples/redesign/redesign.module.css";
  * every section). `kyllm` shows KYLLM: the hero's question bar, the "Ask
  * KYLLM" rail button, and the chat window; the landing page passes
  * FEATURE_FLAGS.kyllm.
+ *
+ * `refined` turns on the 2026-11-27 design-audit fixes (/samples/refined shows
+ * them without the rest): every rule they add sits under
+ * [data-refined] in the section stylesheets, the phone header gains a
+ * section menu, and the KYLLM pill steps aside over the hero's question bar
+ * and the footer links.
+ *
+ * `polish` adds the visual-alignment pass on top of `refined`. The landing
+ * page has rendered with it since 2026-11-28, and so does /samples/polished: its rules sit under [data-polish]. Vertical rules land on
+ * shared lines across sections, project cards share rows, and a role's date
+ * and chevron sit on its title's line.
+ *
+ * `polish` also carries Kyle's picks of 2026-11-27: solid hairline chips, a
+ * site link labelled with its host name, and one key cap on the rail.
+ *
+ * `options` are the choices put to Kyle, switched with a toggle bar at
+ * /samples/polished/options. The landing page passes `covers`, which he
+ * picked on 2026-11-28 at three across. The list: project covers (one product
+ * UI on a generated ground),
+ * the earlier covers that scale a full-size screen down (the fallback),
+ * two projects across, and the footer wall in the Career Highlights' dark
+ * shades or halfway to them. The others are still open.
  */
+export const SITE_OPTIONS = ["covers", "fallback", "wide", "footer", "footermid"] as const;
+export type SiteOption = (typeof SITE_OPTIONS)[number];
 
 const SECTIONS: { id: string; label: string; node: ReactNode }[] = [
   { id: "about", label: "About", node: <About key="about" /> },
@@ -48,7 +72,9 @@ const SECTIONS: { id: string; label: string; node: ReactNode }[] = [
   { id: "github", label: "GitHub", node: <GitHub key="github" /> },
 ];
 
-export function SitePage({ kyllm }: { kyllm: boolean }) {
+export function SitePage({ kyllm, refined: refinedOnly = false, polish = false, options = [] }: { kyllm: boolean; refined?: boolean; polish?: boolean; options?: SiteOption[] }) {
+  const refined = refinedOnly || polish;
+  const has = (o: SiteOption) => options.includes(o);
   const shown = SECTIONS.filter((x) => sectionEnabled(x.id));
   return (
     <BrandRoot>
@@ -57,27 +83,28 @@ export function SitePage({ kyllm }: { kyllm: boolean }) {
         <ChipFx />
         <UiSound />
         <ContactModal />
-        <div className={s.page}>
+        <div className={s.page} data-refined={refined ? "" : undefined} data-polish={polish ? "" : undefined} data-opt={options.length ? options.join(" ") : undefined}>
           <div className={s.railWrap}>
             <Rail
               wordmark={sample.wordmark}
               items={shown.map((x, i) => ({ id: x.id, label: x.label, num: String(i + 1).padStart(2, "0") }))}
               active={shown[0]?.id ?? "about"}
-              utils={kyllm ? [{ label: "Ask KYLLM", keys: ["⌘", "K"] }] : undefined}
+              utils={kyllm ? [{ label: "Ask KYLLM", keys: polish ? ["⌘K"] : ["⌘", "K"] }] : undefined}
               sound
               variant="ruled"
+              menu={refined}
               foot={<Button href={sample.hero.primaryCta.href} contact>Get in Touch</Button>}
             />
           </div>
           <main className={`${s.main} ${h.content}`}>
             <Frame>
               <KyllmHero kyllm={kyllm} />
-              {shown.map((x) => x.node)}
-              <Footer />
+              {shown.map((x) => (x.id === "projects" && polish ? <Projects key="projects" covers={has("covers")} coverSet={has("fallback") ? "fallback" : "redesign"} hostLabels /> : x.node))}
+              <Footer tone={has("footermid") ? "mid" : has("footer") ? "dark" : "light"} />
             </Frame>
           </main>
         </div>
-        {kyllm ? <KyllmDock /> : null}
+        {kyllm ? <KyllmDock avoid={refined} /> : null}
       </MotionRoot>
     </BrandRoot>
   );

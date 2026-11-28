@@ -14,7 +14,7 @@ export function Skills({ num }: { num?: string }) {
     <Row id="skills">
       <SectionHead num={num} title="Skills" />
       {rows.map((row, i) => (
-        <div key={i} className={s.grid}>
+        <div key={i} className={`${s.grid} ${s.skillRow}`}>
           {row.map((g) => (
             <div key={g.title}>
               <h3 className={b.h4}>{g.title}</h3>

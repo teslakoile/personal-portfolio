@@ -84,7 +84,7 @@ export function ExperienceRoles({ roles, initial = "first" }: { roles: RoleView[
                     {r.projects.map((p, n) => (
                       <div key={n} className={s.proj}>
                         <div className={s.projMain}>
-                          <h4 className={s.projTitle}>{p.title}{p.context ? <em> · {p.context}</em> : null}</h4>
+                          <h4 className={s.projTitle}>{p.title}{p.context ? <em><i aria-hidden="true"> · </i>{p.context}</em> : null}</h4>
                           <ul className={s.projPoints}>{p.points.map((pt) => <li key={pt}>{pt}</li>)}</ul>
                         </div>
                         <div className={s.projStack}><Chips items={p.stack} logos notes={p.notes} /></div>

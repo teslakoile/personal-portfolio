@@ -19,7 +19,7 @@ import f from "./footer.module.css";
  * it would differ from the last one: the mouse is within reach of the wall, a
  * tile is still moving, or the canvas was cleared.
  */
-export type WallTile = { n: number; ink: string };
+export type WallTile = { n: number; ink: string; /** the ground where the ink is not; paper when unset */ bg?: string };
 
 const INK: Record<string, [number, number, number]> = {
   "var(--b1)": [0xf2, 0x6a, 0x4b], "var(--b2)": [0x7f, 0xb9, 0x9a], "var(--b3)": [0x86, 0xa9, 0xc8], "var(--b4)": [0xe9, 0xb6, 0x5c],
@@ -28,6 +28,9 @@ const PAPER: [number, number, number] = [0xfa, 0xf9, 0xf7];
 /** px from a tile's centre at which the bulge reaches zero (see bTo), so the
     mouse matters to a tile only within this distance of its centre */
 const REACH = 137.5;
+/** a palette variable or a #rrggbb colour, as 0 to 255 */
+const rgb = (c: string): [number, number, number] =>
+  INK[c] ?? (/^#[0-9a-f]{6}$/i.test(c) ? [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)] : INK["var(--b1)"]);
 /** click reveal length, ms */
 const REVEAL_MS = 800;
 /** a light spring: about 15% past the end, settled by the end */
@@ -205,8 +208,8 @@ export function FooterWall({ tiles, children }: { tiles: WallTile[]; children: R
         const ps = pulses.current.get(i);
         if (ps !== undefined) { const x = (t - ps) / 420; if (x >= 1) pulses.current.delete(i); else { scale = pulseAt(x); busy = true; } }
 
-        const { n, ink } = tiles[i];
-        const ph = tex.get(`p${n}`), mk = tex.get(`m${n}`), c = INK[ink] ?? INK["var(--b1)"];
+        const { n, ink, bg } = tiles[i];
+        const ph = tex.get(`p${n}`), mk = tex.get(`m${n}`), c = rgb(ink), g = bg ? rgb(bg) : PAPER;
         if (!ph || !mk) return;
         gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, ph);
         gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, mk);
@@ -220,6 +223,7 @@ export function FooterWall({ tiles, children }: { tiles: WallTile[]; children: R
         const at = clicks.current.get(i) ?? [0.5, 0.5];
         gl.uniform2f(U.click, at[0], at[1]);
         gl.uniform3f(U.ink, c[0] / 255, c[1] / 255, c[2] / 255);
+        gl.uniform3f(U.paper, g[0] / 255, g[1] / 255, g[2] / 255);
         gl.uniform1f(U.bulge, B[i]);
         gl.uniform1f(U.reveal, R[i]);
         gl.uniform1f(U.scale, scale);

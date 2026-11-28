@@ -399,12 +399,17 @@ function Chat({ initial, site, height, focusKey, pending, onClose }: {
  * q. The sheet mounts on first open and stays mounted, so closing it keeps
  * the conversation.
  */
-export function KyllmDock({ site = "favicon" }: { site?: SiteMark }) {
+/** `avoid` hides the pill while it would sit on something that does its job
+    or that it covers: the hero's question bar (any screen) and the footer's
+    links (wide screens; phones leave room under the links instead). Those
+    elements carry data-kyllm-avoid="always" or "wide". */
+export function KyllmDock({ site = "favicon", avoid = false }: { site?: SiteMark; avoid?: boolean }) {
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [opens, setOpens] = useState(0);
   const [pending, setPending] = useState({ q: "", n: 0 });
   const [tuck, setTuck] = useState(false);
+  const [covering, setCovering] = useState(false);
   const sheet = useRef<HTMLElement>(null);
   const show = (q?: string) => {
     setMounted(true); setOpen(true);
@@ -447,6 +452,20 @@ export function KyllmDock({ site = "favicon" }: { site?: SiteMark }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    if (!avoid) return;
+    const phone = window.matchMedia(PHONE).matches;
+    const els = [...document.querySelectorAll("[data-kyllm-avoid]")].filter((el) => !(phone && el.getAttribute("data-kyllm-avoid") === "wide"));
+    if (!els.length) return;
+    const seen = new Set<Element>();
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) { if (e.isIntersecting) seen.add(e.target); else seen.delete(e.target); }
+      setCovering(seen.size > 0);
+    });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [avoid]);
+
   const cmdK = useEffectEvent(() => show());
   const fromPage = useEffectEvent((q?: string) => show(q));
   useEffect(() => {
@@ -475,7 +494,7 @@ export function KyllmDock({ site = "favicon" }: { site?: SiteMark }) {
           <Chat initial={[]} site={site} height="100%" focusKey={opens} pending={pending} onClose={close} />
         </aside>
       ) : null}
-      <button type="button" className={h.dockPill} data-show={open ? undefined : ""} data-tuck={tuck ? "" : undefined} onClick={() => show()}>
+      <button type="button" className={h.dockPill} data-show={open || covering ? undefined : ""} data-tuck={tuck ? "" : undefined} onClick={() => show()}>
         <KyllmLive mood="idle" size={30} />Ask KYLLM<Kbd tip="Open KYLLM">⌘K</Kbd>
       </button>
     </div>

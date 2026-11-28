@@ -71,6 +71,13 @@ export function ContributionCalendar({ year }: { year: Year }) {
   const scan = useRef<HTMLElement>(null);
   const legend = useRef<HTMLSpanElement>(null);
   const tiles = useRef<Tile[]>([]);
+  // where the calendar is wider than its box (a phone, refined layout), it
+  // opens scrolled to the present; elsewhere the box never scrolls
+  const scroller = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = scroller.current;
+    if (el && el.scrollWidth > el.clientWidth) el.scrollLeft = el.scrollWidth;
+  }, []);
   const els = useRef<HTMLElement[]>([]);
   const lastOver = useRef(-1);
   const kb = useRef(-1);
@@ -329,6 +336,7 @@ export function ContributionCalendar({ year }: { year: Year }) {
         data-state={state}
         style={{ "--dur": `${DURATION}s` } as CSSProperties}
       >
+        <div ref={scroller} className={g.calScroll}>
         <div className={g.calBody}>
           <div className={g.months} style={{ "--weeks": year.weeks } as CSSProperties} aria-hidden="true">
             {year.monthStarts.map((m, k) => (
@@ -378,6 +386,7 @@ export function ContributionCalendar({ year }: { year: Year }) {
               ) : null}
             </AnimatePresence>
           </div>
+        </div>
         </div>
       </div>
 

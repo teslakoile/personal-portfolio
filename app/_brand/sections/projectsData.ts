@@ -1,5 +1,5 @@
 /**
- * The projects, in Kyle's order (2026-10-17): Servo, VSenses, Wishlist,
+ * The projects, in Kyle's order (2026-10-17): Zervo, VSenses, Wishlist,
  * Leafmark, Flee the Faculty, huly-cli. They come from the "Portfolio
  * Redesign" canvas and each project's repo, not from sampleContent.ts, whose
  * `projects` still holds the older bank-centred list. Confidential client
@@ -11,8 +11,8 @@
  * project carries as many `tags` as fit it (Title Case). The facts come from
  * each project's own repo (READMEs, specs, and docs).
  *
- * Servo, VSenses, and Leafmark have private repos: never link their source.
- * Servo and VSenses link their live apps, Leafmark and Wishlist their Chrome
+ * Zervo, VSenses, and Leafmark have private repos: never link their source.
+ * Zervo and VSenses link their live apps, Leafmark and Wishlist their Chrome
  * Web Store pages; the others link their live site, package, game page, or
  * public repo. A site link is labelled with the project's name and shows its
  * favicon (the mark); a store link is labelled "Chrome Extension". Copy is in
@@ -38,13 +38,13 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
-    name: "Servo",
+    name: "Zervo",
     tags: ["Product", "Healthcare", "AI Assistants"],
     about: "Runs Philippine clinics and 30 to 50 bed hospitals, from registration and clinical notes to PhilHealth-ready billing.",
     tech: "It stores patient data in the FHIR R4 standard, and its AI assistants wait for staff to confirm before they write to a record.",
     stack: ["FastAPI", "PostgreSQL", "Next.js", "Terraform", "AWS"],
-    mark: "servo.png", markFill: true,
-    links: [{ label: "Servo", href: "https://app.servoplatform.com/" }],
+    mark: "zervo.png", markFill: true,
+    links: [{ label: "Zervo", href: "https://app.zervo.tech/" }],
   },
   {
     name: "VSenses",
