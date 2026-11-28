@@ -5,7 +5,7 @@
    closes it. With a mouse on the desktop grid, FooterWall.tsx draws the wall
    in WebGL over these tiles (.drawn), adding a lens bulge under the mouse. */
 .wall { position: relative; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: repeat(3, 128px); gap: 6px; padding: 6px; }
-.tile { position: relative; overflow: hidden; background: var(--paper); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.tile { position: relative; overflow: hidden; background: var(--tile-bg, var(--paper)); cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .tile img, .tile i { position: absolute; inset: 0; }
 .tile i { background: var(--tile-ink); -webkit-mask: var(--src) center / cover no-repeat; mask: var(--src) center / cover no-repeat; }
 .tile img {

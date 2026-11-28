@@ -92,3 +92,17 @@
   .readout { padding-inline: 20px; }
   .cell:hover, .cell[data-kb] { scale: 1.5; outline-width: 1.5px; box-shadow: none; }
 }
+
+/* refined (SitePage `refined`): on a phone the calendar keeps full-size
+   squares and scrolls sideways, opened on the present (the effect in
+   ContributionCalendar), in place of 53 weeks squeezed to 5px squares. The
+   box reaches up 44px so a day's tooltip is not clipped above the top row. */
+@media (max-width: 720px) {
+  [data-refined] .calScroll { overflow-x: auto; margin: -44px -20px 0; padding-top: 44px; scrollbar-width: none; }
+  [data-refined] .calScroll::-webkit-scrollbar { display: none; }
+  /* the gutters are the body's own padding: a scroll box drops its end padding */
+  [data-refined] .calBody { box-sizing: content-box; width: 686px; padding-inline: 20px; }
+  [data-refined] .months, [data-refined] .weeks { column-gap: 3px; }
+  [data-refined] .week { row-gap: 3px; }
+  [data-refined] .months span:nth-child(even) { visibility: visible; }
+}

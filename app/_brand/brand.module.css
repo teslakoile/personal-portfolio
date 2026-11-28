@@ -396,3 +396,28 @@
 @media (pointer: coarse) and (max-height: 500px) {
   .h1 { font-size: 30px; }
 }
+
+/* ===================== REFINED (design audit) ===================== */
+/* On under [data-refined] only (SitePage `refined`, /samples/refined). */
+/* section headings are all ink; coral stays on what can be clicked */
+[data-refined] .head .accent { color: inherit; }
+@media (max-width: 760px) {
+  /* a section link lands its heading under the sticky header bar, not behind it */
+  [data-refined] .row[id] { scroll-margin-top: 70px; }
+}
+@media (max-width: 720px) {
+  /* a talk's kind sits under its description, so the title has the full width */
+  [data-refined] .talk { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  [data-refined] .talk small { text-align: left; }
+}
+
+/* ===================== POLISH (visual alignment) ===================== */
+/* On under [data-polish] only (SitePage `polish`, /samples/polished). */
+/* timeline: every employer's mark gets the same 18px slot, so the role names
+   share one left edge whatever the mark's own width */
+[data-polish] .laneLabel img { width: 18px; height: 15px; object-fit: contain; }
+
+/* chips: a solid hairline in place of the dashed outline (Kyle's pick,
+   2026-11-27). :where() keeps the rule as weak as .chip itself, so the coral
+   hover edge still wins. */
+:where([data-polish]) .chip { border-style: solid; border-color: var(--line); }

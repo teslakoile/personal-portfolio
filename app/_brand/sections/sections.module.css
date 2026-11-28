@@ -14,6 +14,7 @@
 .orgLogo { display: inline-block; height: 16px; width: auto; max-width: 40px; margin-right: 7px; vertical-align: -2px; object-fit: contain; }
 .orgLabel { display: flex; align-items: center; gap: 8px; height: 24px; }
 .orgLabel img { flex: none; height: 16px; width: auto; max-width: 44px; object-fit: contain; }
+.orgWhen i { font-style: normal; }
 
 /* a second community under the first one's figures */
 .orgRow { display: flex; align-items: center; gap: 14px; margin-top: 8px; padding: 16px 0 0; border-top: 1px dashed var(--line); color: var(--ink); }
@@ -134,6 +135,7 @@
 .projStack { min-width: 0; padding: 16px 0 18px 24px; border-left: 1px solid var(--line); }
 .projTitle { margin: 0 0 5px; font-size: 16px; font-weight: 500; line-height: 1.4; color: var(--ink); }
 .projTitle em { font-size: 14px; font-style: normal; font-weight: 400; color: var(--ink-3); }
+.projTitle em i { font-style: normal; }
 .projPoints { margin: 0; padding: 0; list-style: none; max-width: 70ch; }
 .projPoints li { position: relative; padding-left: 16px; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
 .projPoints li + li { margin-top: 6px; }
@@ -220,4 +222,90 @@
   .heroSub { margin-top: 6px; max-width: none; font-size: 15px; line-height: 1.4; }
   .heroCta { margin-top: 8px; }
   .heroLinks { order: 1; margin-top: 14px; }
+}
+
+/* ===================== REFINED (design audit) ===================== */
+/* On under [data-refined] only (SitePage `refined`, /samples/refined). */
+/* Experience: .projTitle is declared twice in this file, and the project
+   card's flex column was also landing on a role's project title, putting the
+   client on its own line behind a stray middle dot. Back on one line. */
+[data-refined] .proj .projTitle { display: block; }
+@media (max-width: 720px) {
+  /* a phone has no room for both on one line: the client takes the next line, without the dot */
+  [data-refined] .proj .projTitle em { display: block; }
+  [data-refined] .proj .projTitle em i { display: none; }
+}
+/* Education bullets match Experience: grey, since nothing here is clickable */
+[data-refined] .points li::before { background: var(--ink-4); }
+/* Recognition: the organization on the left, its date on the right in one
+   piece, the row growing when the name wraps */
+[data-refined] .orgLabel:has(.orgText) { height: auto; min-height: 24px; align-items: flex-start; }
+[data-refined] .orgLabel:has(.orgText) img { margin-top: 1px; }
+[data-refined] .orgText { flex: 1; min-width: 0; display: flex; justify-content: space-between; gap: 12px; }
+[data-refined] .orgWhen { flex: none; white-space: nowrap; }
+[data-refined] .orgWhen i { display: none; }
+/* a card's label and its body sit on two shared rows, so the titles start on
+   one line across the row when one organization's name wraps */
+[data-refined] .recRow > div { display: grid; grid-template-rows: subgrid; grid-row: span 2; }
+/* Skills: each card's title, blurb, and chips sit on shared rows, so the
+   chips start on one line across a row whatever the blurb's length */
+[data-refined] .skillRow > div { display: grid; grid-template-rows: subgrid; grid-row: span 3; }
+
+/* ===================== POLISH (visual alignment) ===================== */
+/* On under [data-polish] only (SitePage `polish`, /samples/polished). */
+/* Projects: marks sit on the title's top edge, and each card's head, tags,
+   and text share rows across the row, so a card with a second line of links
+   no longer pushes its tags and text below its neighbours' */
+[data-polish] .projHead { align-items: flex-start; }
+[data-polish] .project { display: grid; grid-template-rows: subgrid; grid-row: span 3; }
+/* in a shared row the tag list keeps its own height; its tags must not stretch to the tallest list */
+[data-polish] .tags { align-self: start; align-content: flex-start; align-items: flex-start; }
+/* Wide layouts only: the frame's vertical rules land on shared lines. Measured
+   from the frame's left edge they were 749 (About), 181 and 787 (Experience)
+   against 719 (the three-column sections), 200 (the hero's label column), and
+   785 (the tools band). */
+@container content (min-width: 821px) {
+  [data-polish] .aboutGrid { grid-template-columns: minmax(0, 1fr) 360px; }
+  [data-polish] .drawerHead { grid-template-columns: 199px minmax(0, 1fr) 68px; }
+  [data-polish] .drawerFold { grid-template-columns: 199px minmax(0, 1fr); }
+  [data-polish] .proj { grid-template-columns: minmax(0, 1fr) 266px; }
+  /* a role's date and chevron sit on its title's line, not at the middle of
+     the title, employer, and summary together */
+  [data-polish] .roleWhen { align-self: start; padding-top: 19px; }
+  [data-polish] .chev { align-self: start; margin-top: 12px; }
+}
+
+/* ===================== OPTIONS (Kyle's call) ===================== */
+/* On under [data-opt~="..."] only (SitePage `options`, /samples/polished/options). */
+/* covers: a 16:10 tile at the top of each project card: a ground of soft
+   shapes (--c shows while it loads) and one centred column holding the screen
+   that best represents the project (Projects.tsx). The piece never touches
+   the tile's edge. Corner radius and shadow scale with the tile (cqw) and are
+   the same on every tile: a small radius, so a screenshot keeps its corners.
+   Under 380px (three across, or a phone) the column takes its narrow width,
+   and a piece with a shorter crop swaps to it. A flat piece brings its own
+   corners; its shadow follows its outline. The tile itself stays square, like
+   the frame. The cover carries the project's identity, so the 44px mark tile
+   beside the name is dropped. */
+.projCover { container-type: inline-size; position: relative; display: grid; place-items: center; aspect-ratio: 16 / 10; margin-bottom: 18px; overflow: hidden; background: var(--c) center / cover no-repeat; }
+.coverStack { display: flex; flex-direction: column; align-items: flex-start; gap: 2.4cqw; width: var(--w, 66%); }
+.coverStack img { display: block; width: 100%; height: auto; border-radius: 1.6cqw; box-shadow: 0 0.15cqw 0.4cqw rgb(28 25 23 / 0.1), 0 1.8cqw 3.2cqw -1.4cqw rgb(28 25 23 / 0.34); }
+.coverStack img[data-flat] { border-radius: 0; box-shadow: none; filter: drop-shadow(0 0.15cqw 0.3cqw rgb(28 25 23 / 0.1)) drop-shadow(0 1.3cqw 1.5cqw rgb(28 25 23 / 0.2)); }
+.coverStack img[data-on="narrow"] { display: none; }
+@container (max-width: 380px) {
+  .coverStack { width: var(--wn, 80%); }
+  .coverStack img[data-on="wide"] { display: none; }
+  .coverStack img[data-on="narrow"] { display: block; }
+}
+[data-opt~="covers"] .projMark { display: none; }
+[data-opt~="covers"][data-polish] .project { grid-row: span 4; }
+/* the first column is 16px narrower (its left padding is the page gutter), so its
+   cover would end 10px above its neighbours'; a cover fills its shared row instead */
+[data-opt~="covers"][data-polish] .projCover { place-self: stretch; }
+/* wide: two projects across, so each cover is about 1.6 times as wide */
+@container content (min-width: 821px) {
+  [data-opt~="wide"] .projGrid { --cols: 2; }
+  [data-opt~="wide"] .projGrid > :nth-child(n) { padding-left: 28px; padding-right: 28px; }
+  [data-opt~="wide"] .projGrid > :nth-child(2n + 1) { padding-left: var(--gutter); }
+  [data-opt~="wide"] .projGrid > :nth-child(2n) { padding-right: var(--gutter); }
 }

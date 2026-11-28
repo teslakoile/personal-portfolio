@@ -21,7 +21,7 @@ const PULSE: Keyframe[] = [
     With `fullView`, an open photo also shows a small expand button that
     grows the photo to a large view (FooterPhotoView). The button sits above
     the canvas and keeps its click from toggling the tile. */
-export function FooterTile({ n, ink, i, fullView = false }: { n: number; ink: string; i?: number; fullView?: boolean }) {
+export function FooterTile({ n, ink, bg, i, fullView = false }: { n: number; ink: string; /** the tile's ground where the ink is not; paper when unset */ bg?: string; i?: number; fullView?: boolean }) {
   const [on, setOn] = useState(false);
   /** the open large view's photo aspect (width / height), or null */
   const [view, setView] = useState<number | null>(null);
@@ -57,7 +57,7 @@ export function FooterTile({ n, ink, i, fullView = false }: { n: number; ink: st
   };
 
   return (
-    <div ref={tile} className={`${f.tile} ${on ? f.on : ""}`} aria-hidden={expandable ? undefined : true} data-clickable data-tile={i} onClick={click}>
+    <div ref={tile} className={`${f.tile} ${on ? f.on : ""}`} aria-hidden={expandable ? undefined : true} data-clickable data-tile={i} onClick={click} style={bg ? ({ "--tile-bg": bg } as CSSProperties) : undefined}>
       <i style={{ "--src": `url(/footer/draft/${file}.webp)`, "--tile-ink": ink } as CSSProperties} aria-hidden="true" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img ref={photo} src={src} alt="" width={256} height={256} loading="lazy" />

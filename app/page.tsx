@@ -5,7 +5,9 @@ import { SitePage } from "./_brand/SitePage";
 /**
  * Landing page: the redesigned CV (app/_brand/SitePage.tsx), shipped
  * 2026-10-17. Sections follow SECTION_FLAGS and KYLLM follows
- * FEATURE_FLAGS.kyllm (app/flags.ts). The previous "Quiet Blueprint" landing
+ * FEATURE_FLAGS.kyllm (app/flags.ts). Since 2026-11-28 it renders with the
+ * design-audit fixes and alignment pass (`polish`) and a cover on each project
+ * card (`covers`), three across. The previous "Quiet Blueprint" landing
  * page is app/_home/HomeShell.tsx; the original text-dense homepage lives on
  * at /classic.
  */
@@ -79,7 +81,7 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
-      <SitePage kyllm={featureEnabled("kyllm")} />
+      <SitePage kyllm={featureEnabled("kyllm")} polish options={["covers"]} />
     </div>
   );
 }

@@ -43,7 +43,7 @@ function useTypewriter(items: string[]) {
 export function KyllmPromo() {
   const { q, shown, typing } = useTypewriter(QUESTIONS);
   return (
-    <div className={`${h.tokens} ${h.promo}`}>
+    <div className={`${h.tokens} ${h.promo}`} data-kyllm-avoid="always">
       <button type="button" className={h.promoBar} data-primary onClick={() => openKyllm(q)} aria-label={`Ask KYLLM: ${q}`}>
         <KyllmLive mood={typing ? "typing" : "idle"} size={30} />
         <span className={h.promoQ}>{shown}<i className={h.promoCaret} aria-hidden="true" /></span>

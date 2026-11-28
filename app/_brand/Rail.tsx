@@ -5,6 +5,7 @@ import r from "./rail.module.css";
 import { Kbd } from "./kit";
 import { RailNav, type RailNavItem } from "./RailNav";
 import { RailSound } from "./RailSound";
+import { RailMenu } from "./RailMenu";
 
 /** Rail layouts. classic is the original. ruled (picked for the redesign on
     2026-10-15) cuts the rail into ruled rows like the page frame: the
@@ -19,7 +20,7 @@ export type RailVariant = "classic" | "ruled";
     component) moves the tick to the section on screen as the page scrolls;
     `active` is the row it starts on. animate={false} keeps the original
     instant tick for before/after comparisons. */
-export function Rail({ wordmark, items, active, utils, sound = false, foot, animate = true, variant = "classic" }: {
+export function Rail({ wordmark, items, active, utils, sound = false, foot, animate = true, variant = "classic", menu = false }: {
   wordmark: string;
   /** num pins a row's number to its place on the full page (a partial page
       keeps "06 Certifications"); without it rows number from 01. */
@@ -32,6 +33,9 @@ export function Rail({ wordmark, items, active, utils, sound = false, foot, anim
   /** Slide the tick between rows with a Motion spring (default true). */
   animate?: boolean;
   variant?: RailVariant;
+  /** Ruled rail on a phone: a menu button in the header bar that drops the
+      section list down under it (RailMenu). Without it a phone has no nav. */
+  menu?: boolean;
 }) {
   const keys = (u: { keys: string[] }) => <span>{u.keys.map((k) => <Kbd key={k}>{k}</Kbd>)}</span>;
 
@@ -51,6 +55,7 @@ export function Rail({ wordmark, items, active, utils, sound = false, foot, anim
           </button>
         ))}
         {foot ? <div className={r.cta}>{foot}</div> : null}
+        {menu ? <RailMenu /> : null}
       </div>
     </aside>
   );

@@ -88,3 +88,31 @@
   .foot { margin-top: 0; border: 0; }
   .cta { padding: 0; }
 }
+
+/* the phone section menu (Rail `menu`, RailMenu.tsx): a round button at the
+   right of the header bar; open, the section list drops down under the bar as
+   ruled rows 48px tall. Nothing here shows above 760px. */
+.menuBtn { display: none; }
+@media (max-width: 760px) {
+  .rail .foot:has(.menuBtn) { display: flex; align-items: center; gap: 8px; }
+  .rail .menuBtn {
+    display: grid; place-items: center; flex: none; width: 42px; height: 42px; padding: 0; border: 0; border-radius: 50%;
+    background: var(--surface); box-shadow: inset 0 0 0 1px var(--line-2); color: var(--ink); cursor: pointer; transition: box-shadow 0.16s ease, background 0.16s ease;
+  }
+  .rail .menuBtn[aria-expanded="true"] { background: var(--sunk); box-shadow: inset 0 0 0 1px var(--ink-3); }
+  .rail:has(.menuBtn[aria-expanded="true"]) nav {
+    display: flex; position: absolute; top: 100%; left: 0; right: 0; z-index: 1;
+    background: var(--paper); border-bottom: 1px solid var(--line); box-shadow: 0 22px 32px -22px rgb(28 25 23 / 0.28);
+    animation: menuIn 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .rail:has(.menuBtn) nav > a { height: 48px; padding-left: 20px; }
+  .rail:has(.menuBtn) nav > a:last-child { border-bottom: 0; }
+  /* the active row's lift fills the whole row: the desktop ripple stops at 260px */
+  .rail:has(.menuBtn) nav > a > i { clip-path: none !important; }
+}
+@keyframes menuIn { from { opacity: 0; transform: translateY(-6px); } }
+@media (prefers-reduced-motion: reduce) { .rail nav { animation: none !important; } }
+
+/* polish (Kyle's pick, 2026-11-27): the rail's shortcut is one cap in the same
+   style as the hero bar's and the pill's */
+[data-polish] .util kbd { min-width: 0; padding: 1px 6px; font: 500 11.5px/1.5 var(--sans); background: none; border: 1px dashed var(--line-2); border-radius: 4px; }

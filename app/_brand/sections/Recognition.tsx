@@ -13,7 +13,7 @@ export function Recognition({ num }: { num?: string }) {
   return (
     <Row id="recognition">
       <SectionHead num={num} title="Recognition" />
-      <div className={s.grid}>
+      <div className={`${s.grid} ${s.recRow}`}>
         {sample.achievements.map((a) => {
           // "IEEE · Published Nov 27, 2023": the organization links, the date does not
           const [org, ...rest] = a.meta.split(" · ");
@@ -23,13 +23,15 @@ export function Recognition({ num }: { num?: string }) {
             <span className={`${b.label} ${s.orgLabel}`}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               {mark ? <img src={mark} alt="" /> : null}
-              <span><OrgLink name={org}>{org}</OrgLink>{rest.length ? ` · ${rest.join(" · ")}` : ""}</span>
+              <span className={s.orgText}><OrgLink name={org}>{org}</OrgLink>{rest.length ? <span className={s.orgWhen}><i aria-hidden="true"> · </i>{rest.join(" · ")}</span> : null}</span>
             </span>
-            <h3 className={b.h4} style={{ marginTop: 10, fontSize: 17 }}>{a.title}</h3>
-            <p className={s.desc} style={{ marginTop: 6 }}>{bare(a.desc)}</p>
-            {"href" in a && a.href ? (
-              <a className={s.ext} href={a.href} target="_blank" rel="noreferrer"><ArrowUpRight size={15} strokeWidth={2} aria-hidden="true" />Read the Paper</a>
-            ) : null}
+            <div>
+              <h3 className={b.h4} style={{ marginTop: 10, fontSize: 17 }}>{a.title}</h3>
+              <p className={s.desc} style={{ marginTop: 6 }}>{bare(a.desc)}</p>
+              {"href" in a && a.href ? (
+                <a className={s.ext} href={a.href} target="_blank" rel="noreferrer"><ArrowUpRight size={15} strokeWidth={2} aria-hidden="true" />Read the Paper</a>
+              ) : null}
+            </div>
           </div>
           );
         })}
