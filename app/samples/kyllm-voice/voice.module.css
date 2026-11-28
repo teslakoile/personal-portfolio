@@ -1,0 +1,19 @@
+.page { min-height: 100vh; padding: 40px 16px 80px; background: #faf9f7; color: #1c1917; }
+.wrap { max-width: 1200px; margin: 0 auto; }
+.title { margin: 0; font-size: 26px; font-weight: 600; }
+.h2 { margin: 40px 0 0; font-size: 19px; font-weight: 600; }
+.lede { margin: 6px 0 0; max-width: 760px; font-size: 14.5px; color: #57534e; }
+.starters { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); gap: 16px; margin-top: 16px; }
+.card { display: grid; gap: 8px; align-content: start; padding: 16px; border: 1px solid #e7e3de; border-radius: 14px; background: #fff; }
+.name { margin: 0; font-size: 15px; font-weight: 600; }
+.note { margin: 0; font-size: 13px; color: #57534e; }
+.pills { display: grid; gap: 8px; justify-items: start; margin-top: 4px; }
+.pill { display: inline-flex; gap: 8px; align-items: center; padding: 7px 13px; border: 1px solid #d9d3cc; border-radius: 999px; font-size: 14px; color: #1c1917; background: #fff; }
+.pill span { color: #a8a29e; }
+.tones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 16px; margin-top: 16px; }
+.toneHead { display: grid; gap: 4px; align-content: start; padding-bottom: 4px; }
+.q { grid-column: 1 / -1; justify-self: end; margin-top: 14px; padding: 8px 14px; border-radius: 14px; background: #1c1917; color: #fff; font-size: 14.5px; }
+.cell { padding: 14px; border: 1px solid #e7e3de; border-radius: 12px; background: #fff; }
+.answer { margin: 0; font-size: 14.5px; line-height: 1.6; }
+.cite { display: inline-grid; place-items: center; min-width: 17px; height: 17px; margin: 0 2px 0 3px; padding: 0 4px; border-radius: 5px; background: #f3f1ed; color: #57534e; font-size: 10.5px; font-weight: 600; vertical-align: 2px; }
+@media (max-width: 860px) { .tones { grid-template-columns: minmax(0, 1fr); } .toneHead { display: none; } }
