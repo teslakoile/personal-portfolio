@@ -46,3 +46,6 @@ next-env.d.ts
 # KYLLM style references (third-party images, local only)
 /scripts/kyllm/ref-*.png
 /scripts/kyllm/build/
+
+# KYLLM eval output (scripts/kyllm-eval/run.mts)
+scripts/kyllm-eval/results/
