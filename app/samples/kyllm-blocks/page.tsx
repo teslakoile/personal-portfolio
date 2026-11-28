@@ -246,7 +246,7 @@ const POST_TEXT = (
 const POST_TRACE = <Trace ms={3900} steps={[["think", 4], ["tool", 3], ["write", 22], ["check", 4]]} />;
 
 const MARKS: [string, string, string][] = [
-  ["Servo", "servo.png", "Runs Philippine clinics and 30 to 50 bed hospitals"],
+  ["Zervo", "zervo.png", "Runs Philippine clinics and 30 to 50 bed hospitals"],
   ["VSenses", "vsenses.png", "Runs a Davao City spa's booking and intake forms"],
   ["Wishlist", "wishlist.png", "Friends and family share gift lists"],
   ["Leafmark", "leafmark.png", "Files each new bookmark into the right folder"],
