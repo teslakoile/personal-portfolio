@@ -6,7 +6,9 @@ import { TOOLS, runTool, stepLabel } from "../../_kyllm/tools";
 import { SHOW_CHART, checkChart } from "../../_kyllm/chart";
 import { SHOW_DIAGRAM, checkDiagram } from "../../_kyllm/diagram";
 import { take } from "../../_kyllm/rateLimit";
-import { LIMITS, LINKS, META_MARK, SECTIONS, type Source, type StreamEvent, type Turn } from "../../_kyllm/protocol";
+import { checkCitations, readMeta } from "../../_kyllm/meta";
+import { LIMITS, META_MARK, type StreamEvent, type Turn } from "../../_kyllm/protocol";
+import { REWRITE_MODEL, REWRITE_SYSTEM, acceptRewrite, hasJoin, takeSentences } from "../../_kyllm/joins";
 
 /**
  * POST /api/kyllm: one KYLLM answer, streamed as newline-delimited JSON
@@ -81,41 +83,6 @@ function readBody(body: unknown): Turn[] | null {
   return [...alternating, { role: "user", content: q }];
 }
 
-/**
- * The sources and follow-ups the model wrote after META_MARK. sources[n - 1]
- * stays the source for citation [n]; an entry that names no known section or
- * link becomes null, so later numbers keep their place.
- */
-function readMeta(raw: string): { sources: (Source | null)[]; next: string[] } {
-  const start = raw.indexOf("{"), end = raw.lastIndexOf("}");
-  if (start < 0 || end <= start) return { sources: [], next: [] };
-  try {
-    const m = JSON.parse(raw.slice(start, end + 1)) as { sources?: unknown; next?: unknown };
-    const sources = (Array.isArray(m.sources) ? m.sources.slice(0, 20) : []).map((s): Source | null => {
-      if (s && typeof s === "object" && "section" in s && typeof s.section === "string" && s.section in SECTIONS)
-        return { section: s.section as keyof typeof SECTIONS, name: typeof s.name === "string" ? s.name.slice(0, 60) : "" };
-      if (s && typeof s === "object" && "link" in s && typeof s.link === "string" && s.link in LINKS)
-        return { link: s.link as keyof typeof LINKS };
-      return null;
-    });
-    const next = (Array.isArray(m.next) ? m.next : []).filter((x): x is string => typeof x === "string" && x.length < 90).slice(0, 2);
-    return { sources, next };
-  } catch {
-    return { sources: [], next: [] };
-  }
-}
-
-/** The check step's result: every [n] in the answer needs a valid sources[n - 1]. */
-function checkCitations(answer: string, sources: (Source | null)[]): { ok: boolean; detail: string } {
-  const cited = [...new Set([...answer.matchAll(/\[(\d+)\]/g)].map((x) => Number(x[1])))];
-  const bad = cited.filter((n) => !sources[n - 1]).length;
-  const valid = sources.filter(Boolean).length;
-  // Title Case, like the chat's other step labels
-  const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? "" : "s"}`;
-  if (bad) return { ok: false, detail: `${plural(bad, "Citation")} Without a Source, Hidden` };
-  return { ok: true, detail: cited.length ? `${plural(valid, "Source")}, ${plural(cited.length, "Citation")}` : "No Citations" };
-}
-
 export async function POST(request: Request) {
   if (!enabled()) return fail(404, "Not found");
   if (!process.env.ANTHROPIC_API_KEY) return fail(503, "KYLLM is not configured.");
@@ -135,24 +102,49 @@ export async function POST(request: Request) {
   const body = new ReadableStream<Uint8Array>({
     async start(controller) {
       const send = (e: StreamEvent) => controller.enqueue(enc.encode(JSON.stringify(e) + "\n"));
-      let answer = "", meta = "", inMeta = false, held = "";
+      let answer = "", meta = "", inMeta = false, held = "", pending = "", rewrites = 0;
+
+      // one sentence with a ", so" or ", and" join, rewritten by a small model; the original when that fails or the rewrite can't be trusted
+      const fix = async (sentence: string) => {
+        try {
+          const r = await anthropic().messages.create(
+            { model: REWRITE_MODEL, max_tokens: 300, system: REWRITE_SYSTEM, messages: [{ role: "user", content: sentence.trim() }] },
+            { timeout: 5000, maxRetries: 0 },
+          );
+          const text = r.content.map((b) => (b.type === "text" ? b.text : "")).join("");
+          const ok = acceptRewrite(sentence, text);
+          if (ok) { rewrites++; return ok; }
+        } catch { /* show the original sentence */ }
+        return sentence;
+      };
+      // answer text goes out one finished sentence at a time, so a sentence with a join can be rewritten before anyone sees it
+      const say = async (text: string, last = false) => {
+        pending += text;
+        const { done, rest } = takeSentences(pending);
+        if (last && rest) done.push(rest);
+        pending = last ? "" : rest;
+        for (const s of done) {
+          const v = hasJoin(s) ? await fix(s) : s;
+          send({ t: "text", v }); answer += v;
+        }
+      };
 
       // emit text, but hold back a tail that could be the start of META_MARK
-      const push = (delta: string) => {
+      const push = async (delta: string) => {
         if (inMeta) { meta += delta; return; }
         held += delta;
         const at = held.indexOf(META_MARK);
         if (at >= 0) {
           const before = held.slice(0, at).trimEnd();
-          if (before) { send({ t: "text", v: before }); answer += before; }
           inMeta = true; meta = held.slice(at + META_MARK.length); held = "";
+          await say(before, true);
           return;
         }
         let keep = 0;
         for (let n = Math.min(META_MARK.length - 1, held.length); n > 0; n--) if (META_MARK.startsWith(held.slice(-n))) { keep = n; break; }
         const out = held.slice(0, held.length - keep);
-        if (out) { send({ t: "text", v: out }); answer += out; }
         held = held.slice(held.length - keep);
+        if (out) await say(out);
       };
 
       let stepId = 0, writeId = 0, checkId = 0;
@@ -213,7 +205,7 @@ export async function POST(request: Request) {
               }
             } else if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
               const wasMeta = inMeta;
-              push(event.delta.text);
+              await push(event.delta.text);
               if (!wasMeta && inMeta) { endWrite(); startCheck(); }
             } else if (event.type === "content_block_stop") {
               const id = thinking.get(event.index);
@@ -256,7 +248,7 @@ export async function POST(request: Request) {
           });
           convo.push({ role: "assistant", content: final.content }, { role: "user", content: results });
         }
-        if (!inMeta && held) { send({ t: "text", v: held }); answer += held; }
+        if (!inMeta) { await say(held, true); held = ""; }
         endWrite();
 
         if (!answer.trim() && final.stop_reason !== "refusal") {
@@ -279,7 +271,7 @@ export async function POST(request: Request) {
         console.log(JSON.stringify({
           kyllm: {
             ms: Date.now() - started, model: final.model, stop: final.stop_reason, ...total,
-            turns: messages!.length, metaOk: inMeta, check: checks, block,
+            turns: messages!.length, metaOk: inMeta, check: checks, block, rewrites,
           },
         }));
       } catch (err) {
