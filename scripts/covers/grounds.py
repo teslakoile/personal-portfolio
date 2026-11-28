@@ -38,7 +38,8 @@ def ground(name, seed, stops, cells=(3,2), warp=0.16, sharp=2.4, tilt=(0.0,0.0),
     im=Image.fromarray(np.clip(img,0,255).astype(np.uint8))
     s=np.asarray(im.resize((64,40))).reshape(-1,3)/255; hls=[colorsys.rgb_to_hls(*p) for p in s]
     print(f'bg-{name}: L {min(x[1] for x in hls)*100:.0f}-{max(x[1] for x in hls)*100:.0f}, S {min(x[2] for x in hls)*100:.0f}-{max(x[2] for x in hls)*100:.0f}')
-    im.save(out+f'bg-{name}.webp',quality=88,method=6); return im
+    # saved at 960 wide: the widest tile is 558 CSS px, and the six grounds load with the page
+    im.resize((960,600),Image.LANCZOS).save(out+f'bg-{name}.webp',quality=80,method=6); return im
 SEEDS=dict(zervo=11,vsenses=22,wishlist=33,leafmark=44,flee=55,huly=66)
 for a in sys.argv[1:]:
     k,v=a.split('='); SEEDS[k]=int(v)
