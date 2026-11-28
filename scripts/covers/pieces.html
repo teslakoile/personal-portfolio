@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Redesigned cover pieces</title>
+<!--
+  The UI pieces on the project covers (COVERS_REDESIGN in
+  app/_brand/sections/Projects.tsx). Each piece is drawn for the size it shows
+  at on a project tile (467 by 292 CSS px at two across), so its type is read
+  at about its drawn size: one feature of the product, with few, large
+  elements. Colours, fonts, marks, and strings are each product's own; records
+  are made up. Every top-level element with data-piece is captured to
+  <name>-3x.png. Wishlist is drawn on its live page instead
+  (scripts/covers/wishlist-live.mjs).
+  How to add one: .claude/skills/project-cover/SKILL.md
+  Capture: node scripts/covers/capture.mjs
+-->
+<style>
+@font-face { font-family: "Inter"; font-weight: 100 900; font-display: block; src: url("assets/inter-latin-wght-normal.woff2") format("woff2"); }
+* { box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; }
+body { margin: 0; padding: 30px; background: transparent; display: flex; flex-direction: column; align-items: flex-start; gap: 50px; }
+p, h3, dl, dd, pre { margin: 0; }
+button { font: inherit; }
+
+/* ---- Zervo: the card that asks before the assistant changes a record ----
+   components/assistant/assistant-action-card.tsx and its test data. */
+.z { width: 300px; background: #fff; font-family: "Inter", system-ui, sans-serif; color: #1e293b; }
+.z header { display: flex; align-items: center; gap: 8px; height: 35px; padding: 0 12px 0 13px; border-bottom: 1px solid #e2e8f0; }
+.z header img { width: 19px; height: 19px; border-radius: 5px; }
+.z header b { font-size: 12.5px; font-weight: 650; letter-spacing: -0.005em; }
+.z header span { display: flex; gap: 9px; margin-left: auto; color: #94a3b8; }
+.z header svg { width: 13px; height: 13px; }
+.zb { padding: 11px 14px 13px; }
+.z .you { width: max-content; margin-left: auto; padding: 6px 11px; border-radius: 11px; background: #f1f5f9; font-size: 11.5px; font-weight: 500; line-height: 1.4; }
+.z h3 { margin-top: 11px; font-size: 13.5px; font-weight: 650; line-height: 1.3; letter-spacing: -0.01em; }
+.z .sub { margin-top: 2px; color: #64748b; font-size: 11px; line-height: 1.4; }
+.z dl { display: grid; gap: 6px; margin-top: 9px; padding: 9px 11px; border-radius: 8px; background: #eff6ff; }
+.z dl div { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 8px; align-items: center; font-size: 11px; line-height: 1.45; }
+.z dt { color: #64748b; }
+.z dd { display: flex; align-items: center; gap: 5px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.z dd s { color: #64748b; }
+.z dd svg { width: 11px; height: 11px; color: #2563eb; flex: none; }
+.z dd b { font-weight: 650; }
+.z footer { display: flex; gap: 7px; margin-top: 11px; }
+.z footer button { height: 29px; padding: 0 13px; border-radius: 6px; border: 1px solid #e2e8f0; background: #fff; color: #334155; font-size: 11px; font-weight: 650; }
+.z footer .ok { border-color: #2563eb; background: #2563eb; color: #fff; }
+
+/* ---- VSenses: the bed grid, the booking board the spa runs on ----
+   src/grid/bed-grid-workspace.tsx; tokens from app/globals.css. */
+.v { width: 372px; background: #fff; font-family: "Inter", system-ui, sans-serif; color: #1F2614; font-variant-numeric: tabular-nums; }
+.v header { display: flex; align-items: center; height: 36px; padding: 0 12px; border-bottom: 1px solid #E5DFCE; background: #FBF8EF; }
+.v header b { font-size: 12px; font-weight: 650; letter-spacing: -0.005em; }
+.v header ul { display: flex; gap: 11px; margin: 0 0 0 auto; padding: 0; list-style: none; color: #4A4F3F; font-size: 9.5px; font-weight: 500; }
+.v header li { display: flex; align-items: center; gap: 4px; }
+.v header i { width: 7px; height: 7px; border-radius: 2px; }
+.v .cols { display: grid; grid-template-columns: 62px repeat(3, 1fr); }
+.v .cols > div { border-left: 1px solid #EFEADC; }
+.v .cols > div:first-child { border-left: 0; }
+.v .bh { display: flex; align-items: center; height: 25px; padding: 0 12px; border-bottom: 1px solid #E5DFCE; color: #4A4F3F; font-size: 10px; font-weight: 600; }
+.v .lane { position: relative; height: 160px; background: repeating-linear-gradient(#fff 0 39px, #EFEADC 39px 40px); }
+.v .rail time { position: absolute; left: 12px; padding-top: 5px; color: #7A7E6E; font-size: 9px; font-weight: 500; }
+.v .bk { position: absolute; left: 4px; right: 4px; padding: 6px 8px; border-radius: 5px; overflow: hidden; color: #fff; }
+.v .bk b { display: block; font-size: 11px; font-weight: 650; line-height: 1.3; letter-spacing: -0.005em; }
+.v .bk span { display: block; margin-top: 1px; font-size: 9.5px; font-weight: 500; line-height: 1.35; opacity: 0.9; }
+/* the buffer after a session, hatched as the product draws it */
+.v .bk::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 13px; background: repeating-linear-gradient(135deg, rgb(255 255 255 / 0.2) 0 2px, transparent 2px 5px); }
+.v .on { background: #798F5E; } .v .bo { background: #B86B2E; }
+.v .done { background: #8D968B; } .v .done::after { content: none; }
+
+/* ---- Leafmark: the popup under the toolbar button it opens from ----
+   extension/review.html and style.css (paper, ink, moss, sage). */
+.lm { display: flex; flex-direction: column; gap: 9px; width: 284px; font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; color: #34362e; }
+.lm .tool { display: flex; align-items: center; gap: 7px; height: 32px; padding: 0 6px; border-radius: 9px; background: #fff; }
+.lm .url { flex: 1; display: flex; align-items: center; height: 21px; padding: 0 7px 0 10px; border-radius: 999px; background: #f1efea; color: #57534e; font-size: 10px; }
+.lm .url svg { width: 10px; height: 10px; margin-left: auto; }
+.lm .ext { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: #e1e9d4; box-shadow: inset 0 0 0 1.2px #4f6b3c; }
+.lm .ext img { width: 15px; height: 15px; }
+.lm .pop { position: relative; padding: 13px 14px 14px; border-radius: 10px; background: #f2eee4; }
+.lm .pop::before { content: ""; position: absolute; top: -5px; right: 11px; width: 12px; height: 12px; border-radius: 2px; background: #f2eee4; transform: rotate(45deg); }
+.lm .brand { display: flex; align-items: center; gap: 6px; }
+.lm .brand img { width: 22px; height: 22px; }
+.lm .brand b { font: 400 16px/1.1 "Iowan Old Style", Palatino, Georgia, serif; letter-spacing: 0.04em; }
+.lm .t { margin-top: 11px; font-size: 12.5px; font-weight: 600; line-height: 1.3; }
+.lm .m { margin-top: 2px; color: #6e6b60; font: italic 400 11px/1.4 "Iowan Old Style", Palatino, Georgia, serif; }
+.lm ol { display: grid; gap: 5px; margin: 9px 0 0; padding: 0; list-style: none; }
+.lm li { display: flex; align-items: center; gap: 8px; height: 26px; padding: 0 10px; border-radius: 7px; background: rgba(151, 174, 114, 0.2); font-size: 10.5px; }
+.lm li span { margin-right: auto; }
+.lm li i { width: 40px; height: 4px; border-radius: 2px; overflow: hidden; background: rgba(79, 107, 60, 0.16); }
+.lm li i::before { content: ""; display: block; width: var(--p); height: 100%; border-radius: 2px; background: #4f6b3c; }
+.lm li em { width: 24px; text-align: right; color: #6e6b60; font-style: normal; font-size: 10px; font-variant-numeric: tabular-nums; }
+
+/* ---- Flee the Faculty: a classmate's misconception, the player's spoken answer ----
+   Lines from presets/photosynthesis.json and the student table in student-prompt.md.
+   No sprites: the game's faceless head sprites read as rings at 22px. */
+.f { width: 310px; background: #fff; font-family: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, sans-serif; color: #16323c; }
+.f header { display: flex; align-items: center; gap: 7px; height: 38px; padding: 0 13px; border-bottom: 1px solid #d3e6eb; font-size: 11px; font-weight: 600; }
+.f .steps { display: flex; gap: 3px; margin-left: auto; }
+.f .steps i { width: 16px; height: 5px; border-radius: 3px; background: #1593b0; }
+.f .steps .no { background: #b7dfe8; }
+.f .who { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #c4ebf3; color: #0f6f86; font-size: 10px; font-weight: 700; }
+.f .chat { display: grid; gap: 8px; padding: 13px 13px 15px; }
+.f .them { display: flex; align-items: flex-end; gap: 7px; }
+.f .who { flex: none; }
+.f .bub { max-width: 204px; padding: 7px 11px; border-radius: 13px 13px 13px 4px; background: #e2f5f9; font-size: 12px; font-weight: 500; line-height: 1.35; }
+.f .bub small { display: block; margin-bottom: 1px; color: #0f7f9a; font-size: 10px; font-weight: 700; }
+.f .me { display: flex; align-items: center; gap: 9px; max-width: 226px; margin-left: auto; padding: 8px 12px 8px 8px; border-radius: 13px 13px 4px 13px; background: #1c1917; color: #fff; font-size: 12px; font-weight: 500; line-height: 1.35; }
+.f .me i { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #6fd6ea; }
+.f .me svg { width: 14px; height: 14px; color: #10262d; }
+
+/* ---- huly-cli: an issue list in a terminal window ----
+   src/huly_cli/commands/issues.py prints a Rich table titled "Issues". */
+.h { width: 336px; background: #1c1917; }
+.h .bar { display: flex; align-items: center; gap: 6px; height: 28px; padding: 0 13px; border-bottom: 1px solid #2e2a27; }
+.h .bar i { width: 8px; height: 8px; border-radius: 50%; background: #4d4741; }
+.h .bar b { margin-left: 7px; color: #9a938b; font: 500 10px -apple-system, system-ui, sans-serif; }
+.h .out { padding: 13px 14px 15px; color: #d6d0c9; font: 10px/1.5 "SF Mono", Menlo, monospace; font-variant-ligatures: none; }
+.h .cmd { white-space: pre; }
+.h .p { color: #f2b53a; } .h .c { color: #faf9f7; font-weight: 600; }
+.h .ttl { margin-top: 9px; text-align: center; font-style: italic; color: #a8a199; }
+.h table { width: 100%; margin-top: 4px; border-collapse: collapse; border: 1px solid #5d5750; }
+.h th, .h td { padding: 0 9px; text-align: left; font-weight: 400; white-space: nowrap; border-left: 1px solid #5d5750; }
+.h th { padding: 4px 9px; border-bottom: 1px solid #5d5750; color: #faf9f7; font-weight: 600; }
+.h tr:nth-child(2) td { padding-top: 4px; } .h tr:last-child td { padding-bottom: 5px; }
+.h .k { color: #8fd3d8; }
+.h .s1 { color: #f2b53a; } .h .s2 { color: #a8a199; } .h .s3 { color: #8fcf9a; }
+
+/* ---- Narrow pieces (r-<name>-n): the same feature drawn for a 303px tile,
+   three across or a phone, at about 146px tall. Each keeps the wide piece's
+   classes and overrides sizes; what it leaves out is noted beside it. ---- */
+/* Zervo: no panel header and no request bubble; the mark sits beside the title */
+.zn { width: 232px; padding: 11px 13px 12px; }
+.zn .hd { display: flex; align-items: flex-start; gap: 8px; }
+.zn .hd img { width: 18px; height: 18px; margin-top: 1px; border-radius: 5px; }
+.zn h3 { margin-top: 0; font-size: 12.5px; }
+.zn .sub { font-size: 10.5px; white-space: nowrap; }
+.zn dl { margin-top: 9px; padding: 7px 10px; }
+.zn dl div { grid-template-columns: 1fr; gap: 1px; }
+.zn footer { margin-top: 9px; }
+.zn footer button { height: 26px; padding: 0 12px; }
+/* VSenses: two beds, three half hours, no legend */
+.vn { width: 250px; }
+.vn header { height: 30px; padding: 0 11px; }
+.vn .cols { grid-template-columns: 58px repeat(2, 1fr); }
+.vn .bh { height: 23px; padding: 0 11px; }
+.vn .lane { height: 96px; background: repeating-linear-gradient(#fff 0 31px, #EFEADC 31px 32px); }
+.vn .rail time { left: 11px; padding-top: 4px; }
+.vn .bk { padding: 5px 7px; }
+.vn .bk::after { height: 9px; }
+/* Leafmark: the popup alone, without the toolbar and the note */
+.ln { width: 250px; }
+.ln .pop { padding: 11px 11px 11px; border-radius: 5px; }
+.ln .pop::before { content: none; }
+.ln .brand img { width: 20px; height: 20px; }
+.ln .brand b { font-size: 15px; }
+.ln .t { margin-top: 8px; font-size: 12px; }
+.ln ol { gap: 4px; margin-top: 8px; }
+.ln li { gap: 6px; height: 22px; padding: 0 8px; border-radius: 6px; font-size: 10px; }
+.ln li i { width: 24px; }
+.ln li span { white-space: nowrap; }
+.ln li em { width: 22px; font-size: 9.5px; }
+/* Flee the Faculty: the wrong idea and the spoken answer; no reply */
+.fn { width: 250px; }
+.fn header { height: 31px; padding: 0 11px; font-size: 10.5px; }
+.fn .steps i { width: 13px; }
+.fn .chat { gap: 7px; padding: 10px 11px 12px; }
+.fn .who { width: 20px; height: 20px; font-size: 9.5px; }
+.fn .bub { max-width: 186px; padding: 6px 10px; font-size: 11px; }
+.fn .me { max-width: 216px; gap: 8px; padding: 7px 11px 7px 7px; font-size: 11px; }
+.fn .me i { width: 21px; height: 21px; }
+.fn .me svg { width: 12px; height: 12px; }
+/* huly-cli: a shorter command, four rows, no table title */
+.hn { width: 264px; }
+.hn .bar { height: 24px; padding: 0 11px; }
+.hn .bar i { width: 7px; height: 7px; }
+.hn .out { padding: 9px 12px 11px; font-size: 9.5px; line-height: 1.42; }
+.hn table { margin-top: 6px; }
+.hn th, .hn td { padding-inline: 5px; }
+.hn th { padding-block: 3px; }
+</style>
+
+<div data-piece="r-zervo" class="z">
+  <header>
+    <img src="../../public/projects/marks/zervo.png" alt=""><b>Zervo AI</b>
+    <span>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4M13.5 2.5 9 7M2.5 13.5 7 9"/></svg>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m3.5 3.5 9 9M12.5 3.5l-9 9"/></svg>
+    </span>
+  </header>
+  <div class="zb">
+    <p class="you">Change the CBC price to 750</p>
+    <h3>Update a service</h3>
+    <p class="sub">Complete Blood Count (LAB-CBC)</p>
+    <dl>
+      <div><dt>Standard price</dt><dd><s>PHP 500.00</s><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8h11M9.5 4l4 4-4 4"/></svg><b>PHP 750.00</b></dd></div>
+      <div><dt>Department</dt><dd>Laboratory (LAB)</dd></div>
+    </dl>
+    <footer><button class="ok">Save changes</button><button>Cancel</button></footer>
+  </div>
+</div>
+
+<div data-piece="r-vsenses" class="v">
+  <header>
+    <b>Ground Floor</b>
+    <ul>
+      <li><i style="background:#798F5E"></i>Ongoing</li>
+      <li><i style="background:#B86B2E"></i>Booked</li>
+      <li><i style="background:#8D968B"></i>Completed</li>
+    </ul>
+  </header>
+  <div class="cols">
+    <div><div class="bh"></div></div>
+    <div><div class="bh">Bed 1</div></div>
+    <div><div class="bh">Bed 2</div></div>
+    <div><div class="bh">Bed 3</div></div>
+  </div>
+  <div class="cols">
+    <div><div class="lane rail">
+      <time style="top:0">11:00 AM</time><time style="top:40px">11:30 AM</time><time style="top:80px">12:00 PM</time><time style="top:120px">12:30 PM</time>
+    </div></div>
+    <div><div class="lane">
+      <div class="bk on" style="top:2px;height:116px"><b>Ana Cruz</b><span>Deep Tissue</span><span>90 min</span></div>
+    </div></div>
+    <div><div class="lane">
+      <div class="bk bo" style="top:42px;height:76px"><b>Carla Dizon</b><span>Hot Stone</span><span>60 min</span></div>
+    </div></div>
+    <div><div class="lane">
+      <div class="bk done" style="top:2px;height:56px"><b>Dina Lim</b><span>Swedish</span><span>45 min</span></div>
+      <div class="bk bo" style="top:92px;height:66px"><b>Ella Tan</b><span>Deep Tissue</span><span>45 min</span></div>
+    </div></div>
+  </div>
+</div>
+
+<div data-piece="r-leafmark" class="lm">
+  <div class="tool">
+    <span class="url">humanlayer.dev<svg viewBox="0 0 24 24" fill="#4f6b3c"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4.5L5 21V4a1 1 0 0 1 1-1z"/></svg></span>
+    <span class="ext"><img src="../../public/projects/marks/leafmark.png" alt=""></span>
+  </div>
+  <div class="pop">
+    <div class="brand"><img src="../../public/projects/marks/leafmark.png" alt=""><b>Leafmark</b></div>
+    <p class="t">12 Factor Agents</p>
+    <p class="m">Not sure between these.</p>
+    <ol>
+      <li><span>References › GenAI &amp; Agents</span><i style="--p:46%"></i><em>46%</em></li>
+      <li><span>Tools › Agents &amp; Dev Workflow</span><i style="--p:38%"></i><em>38%</em></li>
+      <li><span>Learning › Courses</span><i style="--p:9%"></i><em>9%</em></li>
+    </ol>
+  </div>
+</div>
+
+<div data-piece="r-flee" class="f">
+  <header>Students helped: 3 / 4<span class="steps"><i></i><i></i><i></i><i class="no"></i></span></header>
+  <div class="chat">
+    <div class="them"><span class="who">Z</span><p class="bub"><small>Zion</small>Plants eat the dirt, right? That's what the soil is for.</p></div>
+    <p class="me"><i><svg viewBox="0 0 16 16" fill="currentColor"><rect x="5.5" y="1.5" width="5" height="8.5" rx="2.5"/><path d="M3.2 7.4a.7.7 0 0 1 1.4 0 3.4 3.4 0 0 0 6.8 0 .7.7 0 0 1 1.4 0 4.8 4.8 0 0 1-4.1 4.75V14a.7.7 0 0 1-1.4 0v-1.85A4.8 4.8 0 0 1 3.2 7.4Z"/></svg></i>A plant makes its own food from air, water, and light.</p>
+    <div class="them"><span class="who">Z</span><p class="bub">ohhhhhhhhhhhhhh</p></div>
+  </div>
+</div>
+
+<div data-piece="r-huly" class="h">
+  <div class="bar"><i></i><i></i><i></i><b>huly</b></div>
+  <div class="out">
+    <div class="cmd"><span class="p">❯</span> <span class="c">huly issues list --project DEMO --limit 5</span></div>
+    <div class="ttl">Issues</div>
+    <table>
+      <tr><th>identifier</th><th>title</th><th>status</th></tr>
+      <tr><td class="k">DEMO-41</td><td>Fix login redirect</td><td class="s1">In Progress</td></tr>
+      <tr><td class="k">DEMO-40</td><td>Add search rate limit</td><td class="s1">In Progress</td></tr>
+      <tr><td class="k">DEMO-39</td><td>Export issues as CSV</td><td class="s2">Todo</td></tr>
+      <tr><td class="k">DEMO-38</td><td>Update onboarding doc</td><td class="s2">Backlog</td></tr>
+      <tr><td class="k">DEMO-37</td><td>Archive old milestones</td><td class="s3">Done</td></tr>
+    </table>
+  </div>
+</div>
+
+<div data-piece="r-zervo-n" class="z zn">
+  <div class="hd"><img src="../../public/projects/marks/zervo.png" alt=""><div><h3>Update a service</h3><p class="sub">Complete Blood Count (LAB-CBC)</p></div></div>
+  <dl>
+    <div><dt>Standard price</dt><dd><s>PHP 500.00</s><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 8h11M9.5 4l4 4-4 4"/></svg><b>PHP 750.00</b></dd></div>
+  </dl>
+  <footer><button class="ok">Save changes</button><button>Cancel</button></footer>
+</div>
+
+<div data-piece="r-vsenses-n" class="v vn">
+  <header><b>Ground Floor</b></header>
+  <div class="cols">
+    <div><div class="bh"></div></div>
+    <div><div class="bh">Bed 1</div></div>
+    <div><div class="bh">Bed 2</div></div>
+  </div>
+  <div class="cols">
+    <div><div class="lane rail">
+      <time style="top:0">11:00 AM</time><time style="top:32px">11:30 AM</time><time style="top:64px">12:00 PM</time>
+    </div></div>
+    <div><div class="lane">
+      <div class="bk on" style="top:2px;height:60px"><b>Ana Cruz</b><span>Deep Tissue</span><span>60 min</span></div>
+    </div></div>
+    <div><div class="lane">
+      <div class="bk done" style="top:2px;height:28px"><b>Dina Lim</b></div>
+      <div class="bk bo" style="top:34px;height:60px"><b>Carla Dizon</b><span>Hot Stone</span><span>60 min</span></div>
+    </div></div>
+  </div>
+</div>
+
+<div data-piece="r-leafmark-n" class="lm ln">
+  <div class="pop">
+    <div class="brand"><img src="../../public/projects/marks/leafmark.png" alt=""><b>Leafmark</b></div>
+    <p class="t">12 Factor Agents</p>
+    <ol>
+      <li><span>References › GenAI &amp; Agents</span><i style="--p:46%"></i><em>46%</em></li>
+      <li><span>Tools › Agents &amp; Dev Workflow</span><i style="--p:38%"></i><em>38%</em></li>
+      <li><span>Learning › Courses</span><i style="--p:9%"></i><em>9%</em></li>
+    </ol>
+  </div>
+</div>
+
+<div data-piece="r-flee-n" class="f fn">
+  <header>Students helped: 3 / 4<span class="steps"><i></i><i></i><i></i><i class="no"></i></span></header>
+  <div class="chat">
+    <div class="them"><span class="who">Z</span><p class="bub">Plants eat the dirt, right? That's what the soil is for.</p></div>
+    <p class="me"><i><svg viewBox="0 0 16 16" fill="currentColor"><rect x="5.5" y="1.5" width="5" height="8.5" rx="2.5"/><path d="M3.2 7.4a.7.7 0 0 1 1.4 0 3.4 3.4 0 0 0 6.8 0 .7.7 0 0 1 1.4 0 4.8 4.8 0 0 1-4.1 4.75V14a.7.7 0 0 1-1.4 0v-1.85A4.8 4.8 0 0 1 3.2 7.4Z"/></svg></i>A plant makes its own food from air, water, and light.</p>
+  </div>
+</div>
+
+<div data-piece="r-huly-n" class="h hn">
+  <div class="bar"><i></i><i></i><i></i><b>huly</b></div>
+  <div class="out">
+    <div class="cmd"><span class="p">❯</span> <span class="c">huly issues list --limit 4</span></div>
+    <table>
+      <tr><th>identifier</th><th>title</th><th>status</th></tr>
+      <tr><td class="k">DEMO-41</td><td>Fix login loop</td><td class="s1">In Progress</td></tr>
+      <tr><td class="k">DEMO-40</td><td>Add rate limit</td><td class="s1">In Progress</td></tr>
+      <tr><td class="k">DEMO-39</td><td>Export as CSV</td><td class="s2">Todo</td></tr>
+      <tr><td class="k">DEMO-38</td><td>Update docs</td><td class="s3">Done</td></tr>
+    </table>
+  </div>
+</div>
+</html>
